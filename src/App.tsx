@@ -1,50 +1,136 @@
 import { useState } from 'react'
 import { SELEMENE_NODES } from './data/selemeneNodes'
 import { useReportGenerator } from './hooks/useReportGenerator'
+import { StellarNode, GeneratedReport } from './types'
 import { StellarNodeGraph } from './components/StellarNodeGraph'
-import { NodeDetailPanel } from './components/NodeDetailPanel'
-import { ReportViewer } from './components/ReportViewer'
-import { SelemeneHeader } from './components/SelemeneHeader'
+import { Modal } from './components/Modal'
+import { ReportForm } from './components/ReportForm'
+import { Sparkles, Activity, Archive } from 'lucide-react'
 
-function App() {
-  const [selectedNode, setSelectedNode] = useState(SELEMENE_NODES[0])
-  const { activeReport, generateReport } = useReportGenerator()
+type ModalView = 'input' | 'info' | 'result' | null
+
+export default function App() {
+  const [selectedNode, setSelectedNode] = useState<StellarNode | null>(null)
+  const [modalView, setModalView] = useState<ModalView>(null)
+  const [activeReport, setActiveReport] = useState<GeneratedReport | null>(null)
+  const { generateReport } = useReportGenerator()
+
+  const openNode = (node: StellarNode) => {
+    setSelectedNode(node)
+    setActiveReport(null)
+    if (node.id === 'engine' || node.id === 'folio') {
+      setModalView('info')
+    } else {
+      setModalView('input')
+    }
+  }
+
+  const closeModal = () => {
+    setModalView(null)
+    setSelectedNode(null)
+    setActiveReport(null)
+  }
+
+  const handleSubmit = (payload: Record<string, unknown>) => {
+    if (!selectedNode) return
+    generateReport(selectedNode, payload)
+    setModalView('result')
+  }
+
+  const renderInfoContent = () => {
+    if (!selectedNode) return null
+
+    if (selectedNode.id === 'engine') {
+      return (
+        <div className="space-y-5">
+          <div className="flex items-center gap-3 text-gold">
+            <Activity className="w-5 h-5" />
+            <span className="text-sm uppercase tracking-widest font-display">Live Engine Status</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {['Anamnesis', 'Gene Keys', 'Enneagram', 'Human Design', 'Vedic Clock', 'Panchanga', 'I Ching', 'Astro'].map((engine) => (
+              <div key={engine} className="rounded-lg bg-void/60 border border-gold/10 px-3 py-2 text-sm text-parchment">
+                {engine}
+              </div>
+            ))}
+          </div>
+          <div className="rounded-lg bg-emerald/10 border border-emerald/20 px-3 py-2 text-sm text-emerald">
+            All 16 consciousness engines responsive. Pulse at localhost:31337.
+          </div>
+        </div>
+      )
+    }
+
+    if (selectedNode.id === 'folio') {
+      return (
+        <div className="space-y-5">
+          <div className="flex items-center gap-3 text-gold">
+            <Archive className="w-5 h-5" />
+            <span className="text-sm uppercase tracking-widest font-display">Folio Archive</span>
+          </div>
+          <p className="text-silver">No saved reports in this session yet.</p>
+          <div className="rounded-lg bg-void/60 border border-gold/10 p-4 text-center text-silver text-sm">
+            Generated reports will appear here.
+          </div>
+        </div>
+      )
+    }
+
+    return null
+  }
 
   return (
-    <div className="min-h-screen bg-void text-parchment">
-      <SelemeneHeader />
-
-      <main className="max-w-7xl mx-auto px-6 py-10">
-        <div className="mb-8">
-          <h2 className="text-3xl md:text-4xl font-display font-semibold text-parchment mb-2">
-            Stellar Node Console
-          </h2>
-          <p className="text-silver max-w-2xl">
-            Select a stellar node to generate a Selemene report. The architecture mirrors the seven
-            report surfaces and their branching sub-criteria.
+    <div className="relative min-h-screen bg-void overflow-hidden">
+      <div className="fixed top-6 left-6 z-10 flex items-center gap-3">
+        <div className="p-2 rounded-lg bg-gold/10">
+          <Sparkles className="w-5 h-5 text-gold" />
+        </div>
+        <div>
+          <h1 className="text-sm font-display font-semibold text-parchment tracking-widest">
+            URANIA 137
+          </h1>
+          <p className="text-[10px] text-silver uppercase tracking-widest font-display">
+            Selemene Report Console
           </p>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-7">
-            <div className="rounded-3xl border border-gold/10 bg-void p-4 shadow-2xl overflow-hidden">
-              <StellarNodeGraph
-                nodes={SELEMENE_NODES}
-                selectedNode={selectedNode}
-                onNodeSelect={setSelectedNode}
-              />
-            </div>
+      <div className="fixed bottom-6 left-6 z-10 max-w-xs text-xs text-silver/70">
+        Click any stellar node to open its input window. The graph is the interface.
+      </div>
+
+      <StellarNodeGraph
+        nodes={SELEMENE_NODES}
+        selectedNode={selectedNode}
+        onNodeSelect={openNode}
+      />
+
+      <Modal
+        isOpen={modalView === 'input' || modalView === 'info'}
+        title={selectedNode?.label ?? ''}
+        onClose={closeModal}
+      >
+        {modalView === 'input' && selectedNode && (
+          <ReportForm node={selectedNode} onSubmit={handleSubmit} />
+        )}
+        {modalView === 'info' && renderInfoContent()}
+      </Modal>
+
+      <Modal
+        isOpen={modalView === 'result'}
+        title={activeReport?.title ?? 'Report'}
+        onClose={closeModal}
+      >
+        <div className="space-y-4">
+          <div className="rounded-lg bg-emerald/10 border border-emerald/20 px-3 py-2 text-sm text-emerald flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald animate-pulse" />
+            Report generated
           </div>
-
-          <div className="lg:col-span-5 space-y-6">
-            <NodeDetailPanel node={selectedNode} onGenerate={generateReport} />
-
-            <ReportViewer report={activeReport} />
-          </div>
+          <pre className="rounded-lg bg-void/60 border border-gold/10 p-4 text-xs text-parchment/90 font-mono overflow-auto max-h-[320px]">
+            {activeReport?.content ?? 'No report content.'}
+          </pre>
         </div>
-      </main>
+      </Modal>
     </div>
   )
 }
-
-export default App

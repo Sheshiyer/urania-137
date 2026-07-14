@@ -1,11 +1,10 @@
+import { useEffect, useState } from 'react'
 import { StellarNode } from '../types'
 
 interface StellarNodeGraphProps {
   nodes: StellarNode[]
   selectedNode: StellarNode | null
   onNodeSelect: (node: StellarNode) => void
-  width?: number
-  height?: number
 }
 
 const COLORS = {
@@ -17,16 +16,25 @@ const COLORS = {
   silver: '#8A9BA8',
 }
 
-export function StellarNodeGraph({
-  nodes,
-  selectedNode,
-  onNodeSelect,
-  width = 760,
-  height = 760,
-}: StellarNodeGraphProps) {
+export function StellarNodeGraph({ nodes, selectedNode, onNodeSelect }: StellarNodeGraphProps) {
+  const [dimensions, setDimensions] = useState({ width: 1200, height: 800 })
+
+  useEffect(() => {
+    const update = () => {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      })
+    }
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
+
+  const { width, height } = dimensions
   const centerX = width / 2
   const centerY = height / 2
-  const orbitRadius = Math.min(width, height) * 0.34
+  const orbitRadius = Math.min(width, height) * 0.32
 
   const toRad = (deg: number) => (deg * Math.PI) / 180
 
@@ -40,18 +48,18 @@ export function StellarNodeGraph({
     }
   })
 
-  // Decorative field dots
-  const fieldDots = Array.from({ length: 48 }).map((_, i) => {
-    const angle = (i / 48) * Math.PI * 2
-    const r = orbitRadius + 60 + (i % 3) * 28
+  // Decorative field dots in concentric rings
+  const fieldDots = Array.from({ length: 64 }).map((_, i) => {
+    const angle = (i / 64) * Math.PI * 2
+    const r = orbitRadius + 80 + (i % 4) * 30
     return {
       x: centerX + r * Math.cos(angle),
       y: centerY + r * Math.sin(angle),
-      opacity: 0.15 + (i % 5) * 0.05,
+      opacity: 0.1 + (i % 7) * 0.04,
     }
   })
 
-  // Inter-node constellation links between nearby outer nodes
+  // Inter-node constellation links
   const constellationLinks = []
   for (let i = 0; i < nodePositions.length; i++) {
     const a = nodePositions[i]
@@ -60,7 +68,7 @@ export function StellarNodeGraph({
   }
 
   return (
-    <div className="relative w-full max-w-3xl mx-auto aspect-square">
+    <div className="fixed inset-0">
       <svg
         viewBox={`0 0 ${width} ${height}`}
         className="w-full h-full"
@@ -89,31 +97,40 @@ export function StellarNodeGraph({
           </filter>
         </defs>
 
-        {/* Void canvas */}
-        <rect width={width} height={height} fill="#070B1D" rx="24" />
+        <rect width={width} height={height} fill="#070B1D" />
 
-        {/* Subtle compass frame */}
+        {/* Compass frame rings */}
         <circle
           cx={centerX}
           cy={centerY}
-          r={orbitRadius + 80}
+          r={orbitRadius + 96}
+          fill="none"
+          stroke={COLORS.gold}
+          strokeOpacity={0.04}
+          strokeWidth={1}
+        />
+        <circle
+          cx={centerX}
+          cy={centerY}
+          r={orbitRadius + 48}
           fill="none"
           stroke={COLORS.gold}
           strokeOpacity={0.06}
           strokeWidth={1}
+          strokeDasharray="2 6"
         />
         <circle
           cx={centerX}
           cy={centerY}
-          r={orbitRadius + 40}
+          r={orbitRadius}
           fill="none"
           stroke={COLORS.gold}
           strokeOpacity={0.08}
           strokeWidth={1}
-          strokeDasharray="2 6"
+          strokeDasharray="4 8"
         />
 
-        {/* Constellation field dots */}
+        {/* Field dots */}
         {fieldDots.map((dot, i) => (
           <circle
             key={`field-${i}`}
@@ -125,7 +142,7 @@ export function StellarNodeGraph({
           />
         ))}
 
-        {/* Inter-node constellation links */}
+        {/* Constellation links between outer nodes */}
         {constellationLinks.map((link, i) => (
           <line
             key={`constellation-${i}`}
@@ -134,7 +151,7 @@ export function StellarNodeGraph({
             x2={link.x2}
             y2={link.y2}
             stroke={COLORS.gold}
-            strokeOpacity={0.08}
+            strokeOpacity={0.06}
             strokeWidth={0.5}
           />
         ))}
@@ -151,7 +168,7 @@ export function StellarNodeGraph({
               y2={y}
               stroke={isSelected ? COLORS.gold : COLORS.silver}
               strokeOpacity={isSelected ? 0.85 : 0.25}
-              strokeWidth={isSelected ? 1.5 : 1}
+              strokeWidth={isSelected ? 2 : 1}
               className="transition-all duration-500"
             />
           )
@@ -162,7 +179,7 @@ export function StellarNodeGraph({
           const isSelected = selectedNode?.id === node.id
           return node.subNodes.map((_, i) => {
             const subAngle = angle + (i - (node.subNodes.length - 1) / 2) * 0.32
-            const subRadius = isSelected ? 46 : 34
+            const subRadius = isSelected ? 52 : 38
             const sx = x + subRadius * Math.cos(subAngle)
             const sy = y + subRadius * Math.sin(subAngle)
             return (
@@ -173,7 +190,7 @@ export function StellarNodeGraph({
                   x2={sx}
                   y2={sy}
                   stroke={COLORS.gold}
-                  strokeOpacity={isSelected ? 0.45 : 0.22}
+                  strokeOpacity={isSelected ? 0.5 : 0.22}
                   strokeWidth={0.75}
                 />
                 <circle
@@ -194,47 +211,43 @@ export function StellarNodeGraph({
           const color = isSelected ? COLORS.gold : COLORS.silver
           return (
             <g key={node.id} className="cursor-pointer" onClick={() => onNodeSelect(node)}>
-              {/* Outer halo */}
               <circle
                 cx={x}
                 cy={y}
-                r={isSelected ? 28 : 18}
+                r={isSelected ? 32 : 22}
                 fill="none"
                 stroke={color}
                 strokeOpacity={isSelected ? 0.25 : 0.12}
                 strokeWidth={1}
                 className="transition-all duration-300"
               />
-              {/* Node ring */}
               <circle
                 cx={x}
                 cy={y}
-                r={isSelected ? 14 : 9}
+                r={isSelected ? 16 : 10}
                 fill="#070B1D"
                 stroke={color}
                 strokeWidth={isSelected ? 2.5 : 1.5}
                 filter={isSelected ? 'url(#glow)' : undefined}
                 className="transition-all duration-300"
               />
-              {/* Inner glow */}
               <circle
                 cx={x}
                 cy={y}
-                r={isSelected ? 6 : 4}
+                r={isSelected ? 7 : 4.5}
                 fill={isSelected ? COLORS.gold : COLORS.parchment}
                 fillOpacity={isSelected ? 1 : 0.6}
                 className="transition-all duration-300"
               />
 
-              {/* Label */}
               <text
                 x={x}
-                y={y + (y > centerY ? 34 : -26)}
+                y={y + (y > centerY ? 42 : -34)}
                 textAnchor="middle"
                 fill={isSelected ? COLORS.parchment : COLORS.silver}
-                fontSize={isSelected ? 13 : 11}
+                fontSize={isSelected ? 14 : 12}
                 fontWeight={isSelected ? 600 : 500}
-                letterSpacing="0.12em"
+                letterSpacing="0.14em"
                 className="uppercase transition-all duration-300 font-display"
               >
                 {node.label}
@@ -243,19 +256,19 @@ export function StellarNodeGraph({
           )
         })}
 
-        {/* Central core rings */}
+        {/* Central core */}
         <g className="animate-pulse-slow">
           <circle
             cx={centerX}
             cy={centerY}
-            r={70}
+            r={80}
             fill="url(#coreGradient)"
             opacity={0.35}
           />
           <circle
             cx={centerX}
             cy={centerY}
-            r={52}
+            r={60}
             fill="none"
             stroke={COLORS.gold}
             strokeWidth={1}
@@ -264,19 +277,19 @@ export function StellarNodeGraph({
           <circle
             cx={centerX}
             cy={centerY}
-            r={38}
+            r={44}
             fill="none"
             stroke={COLORS.gold}
             strokeWidth={0.5}
             strokeOpacity={0.25}
             strokeDasharray="3 4"
-            className="origin-center animate-drift"
             style={{ transformOrigin: `${centerX}px ${centerY}px` }}
+            className="animate-drift"
           />
           <circle
             cx={centerX}
             cy={centerY}
-            r={16}
+            r={18}
             fill={COLORS.gold}
             fillOpacity={0.9}
             filter="url(#glow)"
@@ -284,7 +297,7 @@ export function StellarNodeGraph({
           <circle
             cx={centerX}
             cy={centerY}
-            r={7}
+            r={8}
             fill="#fff"
             fillOpacity={0.9}
           />
@@ -292,12 +305,12 @@ export function StellarNodeGraph({
 
         <text
           x={centerX}
-          y={centerY + 5}
+          y={centerY + 6}
           textAnchor="middle"
-          fill="#070B1D"
-          fontSize={11}
+          fill={COLORS.gold}
+          fontSize={12}
           fontWeight={800}
-          letterSpacing="0.14em"
+          letterSpacing="0.16em"
           className="uppercase pointer-events-none font-display"
         >
           NOESIS

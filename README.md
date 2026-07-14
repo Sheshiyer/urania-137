@@ -23,10 +23,11 @@
 
 Urania 137 is a browser-based frontend for the Selemene consciousness engines. It recreates the **stellar node branching architecture** from the reference Instagram post (`@alassafi.ai`) as an interactive report console:
 
-- A central **NOESIS** core.
+- The **entire interface is the graph**: a central NOESIS core with seven radial report nodes.
 - Seven radial report nodes: Birth Witness, Union Mirror, Sky Weather, Noesis Reading, Engine Status, Folio Archive, and Bridge Query.
 - Each node branches into sub-criteria, matching the original "enterprise second brain" graph structure.
-- One click generates a report panel for the selected node.
+- Clicking any node opens a **modal popup** with the Selemene input variables for that report surface (subjects, birth data, relationship context, language, report level, etc.).
+- No side panels, no embedded report widgets — the graph is the only persistent UI surface.
 
 The visual language is anchored in the **Tryambakam Noesis** brand identity: Void Black canvas, Sacred Gold wireframe, Witness Violet gradients, and bioluminescent accents.
 
@@ -44,7 +45,7 @@ Live preview of the built interface:
 
 <div align="center">
 
-![Urania 137 Preview](./.assets/urania-137-preview.png)
+![Urania 137 Preview](./.assets/urania-137-preview-v2.png)
 
 </div>
 
@@ -72,12 +73,11 @@ npm run preview
 
 ```mermaid
 graph TD
-    A[React 19 + Vite] --> B[StellarNodeGraph]
-    A --> C[NodeDetailPanel]
-    A --> D[ReportViewer]
-    B --> E[SVG radial graph + constellation grid]
-    C --> F[Report generation trigger]
-    D --> G[Mock async report state]
+    A[React 19 + Vite] --> B[Full-screen StellarNodeGraph]
+    B --> C[Node click]
+    C --> D[Modal popup]
+    D --> E[ReportForm with Selemene variables]
+    E --> F[Mock async report generation]
 ```
 
 - **React 19** with TypeScript for UI components.
@@ -91,25 +91,24 @@ graph TD
 ```
 urania-137
 ├── .assets
-│   ├── moodboard.png              # Brand + composition moodboard
-│   ├── urania-137-preview.png     # Built UI preview
-│   └── instagram-download/        # Reference extraction artifacts
-├── dist/                          # Production build
+│   ├── moodboard.png                  # Brand + composition moodboard
+│   ├── urania-137-preview-v2.png      # Built UI preview (full graph + modal)
+│   └── instagram-download/            # Reference extraction artifacts
+├── dist/                              # Production build
 ├── src
 │   ├── components
-│   │   ├── StellarNodeGraph.tsx   # SVG radial node graph
-│   │   ├── NodeDetailPanel.tsx    # Node info + report trigger
-│   │   ├── ReportViewer.tsx       # Generated report display
-│   │   └── SelemeneHeader.tsx     # Top navigation
+│   │   ├── StellarNodeGraph.tsx       # Full-screen SVG radial node graph
+│   │   ├── Modal.tsx                  # Modal popup shell
+│   │   └── ReportForm.tsx             # Selemene variable input form
 │   ├── data
-│   │   └── selemeneNodes.ts       # Seven report surfaces
+│   │   └── selemeneNodes.ts           # Seven report surfaces
 │   ├── hooks
-│   │   └── useReportGenerator.ts  # Mock report generation state
+│   │   └── useReportGenerator.ts      # Mock report generation state
 │   ├── types
-│   │   └── index.ts               # TypeScript interfaces
+│   │   └── index.ts                   # TypeScript interfaces
 │   ├── App.tsx
 │   ├── main.tsx
-│   └── index.css                  # Fonts + Tailwind entry
+│   └── index.css                      # Fonts + Tailwind entry
 ├── index.html
 ├── package.json
 ├── tailwind.config.js

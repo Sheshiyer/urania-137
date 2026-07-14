@@ -10,6 +10,7 @@ export const SELEMENE_NODES: StellarNode[] = [
     color: 'gold',
     subNodes: ['Sun', 'Moon', 'Ascendant', 'Nodes'],
     reportType: 'birth-report',
+    reportMode: 'birth-blueprint',
   },
   {
     id: 'compat',
@@ -20,6 +21,7 @@ export const SELEMENE_NODES: StellarNode[] = [
     color: 'violet',
     subNodes: ['Synastry', 'Composite', 'Karmic Threads'],
     reportType: 'compatibility-report',
+    reportMode: 'synastry',
   },
   {
     id: 'transit',
@@ -30,6 +32,7 @@ export const SELEMENE_NODES: StellarNode[] = [
     color: 'cyan',
     subNodes: ['Active Transits', 'Progressions', 'Eclipses'],
     reportType: 'transit-report',
+    reportMode: 'transit',
   },
   {
     id: 'witness',
@@ -40,6 +43,7 @@ export const SELEMENE_NODES: StellarNode[] = [
     color: 'amber',
     subNodes: ['L0', 'L1', 'L2', 'L3', 'L4', 'L5'],
     reportType: 'witness-reading',
+    reportMode: 'integrated-reading',
   },
   {
     id: 'engine',
@@ -70,5 +74,6 @@ export const SELEMENE_NODES: StellarNode[] = [
     color: 'violet',
     subNodes: ['Question', 'Engine Pool', 'Response'],
     reportType: 'bridge-query',
+    reportMode: 'bridge-query',
   },
 ]
