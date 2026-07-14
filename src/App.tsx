@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { SELEMENE_NODES } from './data/selemeneNodes'
 import { useReportGenerator } from './hooks/useReportGenerator'
-import { StellarNode, GeneratedReport } from './types'
+import { StellarNode, GeneratedReport, Surface, ReportGenerationRequest, DeterministicRequest } from './types'
 import { StellarNodeGraph } from './components/StellarNodeGraph'
 import { Modal } from './components/Modal'
 import { ReportForm } from './components/ReportForm'
@@ -11,12 +11,14 @@ type ModalView = 'input' | 'info' | 'result' | null
 
 export default function App() {
   const [selectedNode, setSelectedNode] = useState<StellarNode | null>(null)
+  const [selectedMode, setSelectedMode] = useState<string | null>(null)
   const [modalView, setModalView] = useState<ModalView>(null)
   const [activeReport, setActiveReport] = useState<GeneratedReport | null>(null)
   const { generateReport } = useReportGenerator()
 
   const openNode = (node: StellarNode) => {
     setSelectedNode(node)
+    setSelectedMode(node.modes[0] ? `${node.modes[0].surface}:${node.modes[0].id}` : null)
     setActiveReport(null)
     if (node.id === 'engine' || node.id === 'folio') {
       setModalView('info')
@@ -28,12 +30,26 @@ export default function App() {
   const closeModal = () => {
     setModalView(null)
     setSelectedNode(null)
+    setSelectedMode(null)
     setActiveReport(null)
   }
 
-  const handleSubmit = (payload: Record<string, unknown>) => {
-    if (!selectedNode) return
-    generateReport(selectedNode, payload)
+  const handleSubmit = (payload: {
+    surface: Surface
+    request: ReportGenerationRequest | DeterministicRequest
+  }) => {
+    if (!selectedNode || !selectedMode) return
+    const mode = selectedNode.modes.find((m) => `${m.surface}:${m.id}` === selectedMode)
+    if (!mode) return
+
+    if (payload.surface === 'witness') {
+      generateReport(selectedNode, 'witness', payload.request)
+    } else {
+      generateReport(selectedNode, 'deterministic', {
+        workflowId: mode.id,
+        payload: payload.request,
+      })
+    }
     setModalView('result')
   }
 
@@ -48,7 +64,16 @@ export default function App() {
             <span className="text-sm uppercase tracking-widest font-display">Live Engine Status</span>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {['Anamnesis', 'Gene Keys', 'Enneagram', 'Human Design', 'Vedic Clock', 'Panchanga', 'I Ching', 'Astro'].map((engine) => (
+            {[
+              'Anamnesis',
+              'Gene Keys',
+              'Enneagram',
+              'Human Design',
+              'Vedic Clock',
+              'Panchanga',
+              'I Ching',
+              'Astro',
+            ].map((engine) => (
               <div key={engine} className="rounded-lg bg-void/60 border border-gold/10 px-3 py-2 text-sm text-parchment">
                 {engine}
               </div>
@@ -111,7 +136,10 @@ export default function App() {
         onClose={closeModal}
       >
         {modalView === 'input' && selectedNode && (
-          <ReportForm node={selectedNode} onSubmit={handleSubmit} />
+          <ReportForm
+            node={selectedNode}
+            onSubmit={handleSubmit}
+          />
         )}
         {modalView === 'info' && renderInfoContent()}
       </Modal>
@@ -122,9 +150,19 @@ export default function App() {
         onClose={closeModal}
       >
         <div className="space-y-4">
-          <div className="rounded-lg bg-emerald/10 border border-emerald/20 px-3 py-2 text-sm text-emerald flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald animate-pulse" />
-            Report generated
+          <div
+            className={`rounded-lg border px-3 py-2 text-sm flex items-center gap-2 ${
+              activeReport?.status === 'error'
+                ? 'bg-terracotta/10 border-terracotta/20 text-terracotta'
+                : 'bg-emerald/10 border-emerald/20 text-emerald'
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
+                activeReport?.status === 'generating' ? 'bg-emerald animate-pulse' : activeReport?.status === 'error' ? 'bg-terracotta' : 'bg-emerald'
+              }`}
+            />
+            {activeReport?.status}
           </div>
           <pre className="rounded-lg bg-void/60 border border-gold/10 p-4 text-xs text-parchment/90 font-mono overflow-auto max-h-[320px]">
             {activeReport?.content ?? 'No report content.'}
