@@ -4,11 +4,11 @@ slug: 20260714-160000_urania-137-architecture-review
 project: Urania 137
 effort: advanced
 effort_source: auto
-phase: execute
+phase: complete
 progress: 7/12
 mode: interactive
 started: 2026-07-14T16:00:00Z
-updated: 2026-07-15T11:25:00Z
+updated: 2026-07-15T11:35:00Z
 ---
 
 ## Problem
@@ -175,6 +175,11 @@ Produce a clear architectural map of the full Instagram reference and a phased i
   refuted by: visual inspection of the reference reveals each of the seven parent nodes is a hub with its own dense sub-tree of branching criteria, not a leaf. The caption "137 jobs across 7 departments" implies ~20 dimensions per department.
   learned: the home screen is the galactic overview; every parent node needs its own page that re-centers that node and branches into its children. Modal inputs belong to the deepest child, not to the parent directly.
   criterion now: ISC-4, ISC-5, ISC-6, ISC-7 added to enforce the multi-page, multi-depth architecture.
+
+- 2026-07-15 | conjectured: the parent-page references would need to be hand-sketched or browser-prototyped first.
+  refuted by: codex-gpt-image, guided by the existing moodboard, produced high-fidelity brand-consistent page references faster than sketching and gave us a shared visual target for all seven parent pages.
+  learned: using the existing moodboard as a style reference for Codex image generation keeps the whole family of assets visually coherent and surfaces layout choices (e.g., corner ornamentation, page title treatment) before code is written.
+  criterion now: ISC-6 satisfied by generated design references; verification updated to include the `.assets/page-references/` files.
 ## Verification
 
 - ISC-1: Read `instagram-post-chrome.png` and `stellar-node-branching.jpg`; identified seven radial parent labels in the reference.
