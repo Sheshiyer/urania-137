@@ -23,10 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# Assets extracted from Instagram (kept local)
-.assets/instagram-download/*.html
-.assets/instagram-download/instagram-post-screenshot.png
-.assets/instagram-download/instagram-post-chrome.png
+# Third-party source material extracted from Instagram — kept local only, never published
+.assets/instagram-download/
 
 # README generation artifacts (optional)
 .readme-notebooklm
