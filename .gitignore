@@ -29,3 +29,4 @@ dist-ssr
 # README generation artifacts (optional)
 .readme-notebooklm
 .readme-gen.json
+.vercel
