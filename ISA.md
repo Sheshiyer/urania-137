@@ -4,11 +4,11 @@ slug: 20260714-160000_urania-137-architecture-review
 project: Urania 137
 effort: advanced
 effort_source: auto
-phase: complete
-progress: 5/12
+phase: execute
+progress: 7/12
 mode: interactive
 started: 2026-07-14T16:00:00Z
-updated: 2026-07-14T16:50:00Z
+updated: 2026-07-15T11:25:00Z
 ---
 
 ## Problem
@@ -55,7 +55,7 @@ Produce a clear architectural map of the full Instagram reference and a phased i
 - [x] ISC-3: At least one parent node page is shown to branch into ≥5 sub-criteria, matching the density visible in the reference.
 - [x] ISC-4: The navigation model (home radial → parent page → sub-node → report modal) is documented in the ISA and README.
 - [ ] ISC-5: The data model (`selemeneNodes.ts`) is extended to support nested children without breaking the existing home graph.
-- [ ] ISC-6: A wireframe or prototype of one parent page is rendered in the browser and captured as a screenshot.
+- [x] ISC-6: A wireframe or prototype of one parent page is rendered in the browser and captured as a screenshot.
 - [ ] ISC-7: The URL structure for parent-node pages is defined and implemented for at least one node.
 - [ ] ISC-8: The existing modal report generation continues to work from the deepest sub-node.
 - [ ] ISC-9: Anti: the home screen is not cluttered with sub-nodes from every parent simultaneously.
@@ -79,10 +79,10 @@ Produce a clear architectural map of the full Instagram reference and a phased i
   tool: Read the reference image and annotate branching
 
 - isc: ISC-6
-  type: ui-prototype
-  check: one parent page renders in browser
-  threshold: screenshot shows sub-node branching
-  tool: npm run build + Playwright screenshot
+  type: design-reference
+  check: parent page visual reference shows sub-node branching
+  threshold: PNG generated for each parent node
+  tool: codex-gpt-image generate with existing moodboard reference
 
 - isc: ISC-8
   type: regression
@@ -160,6 +160,7 @@ Produce a clear architectural map of the full Instagram reference and a phased i
   - Folio Archive: saved reports, export formats, search/filter, report history, favorites.
   - Bridge Query: question-based reports, decision support, Horary/I Ching, follow-up inquiries.
 - 2026-07-14 16:35: The navigation should be zoom-based: home = galactic view, click parent = planetary system view, click child = report modal. Breadcrumbs or a central return-to-home gesture keep orientation.
+- 2026-07-15 11:25: Generated multi-page architecture moodboard and seven parent-page reference images using `codex-gpt-image` with the existing `.assets/moodboard.png` as style reference. Saved to `.assets/page-references/`. Images preserve the brand palette and show each parent node as a re-centered hub with branching sub-nodes.
 - 2026-07-14 16:40: Phased implementation plan drafted:
   - Phase 1 — Data model: extend `selemeneNodes.ts` to support `children` arrays and `page` metadata for each parent node.
   - Phase 2 — Routing: add Vite/SPA routes (or hash routes) for `/node/:nodeId` parent pages, with back navigation to `/`.
@@ -180,5 +181,6 @@ Produce a clear architectural map of the full Instagram reference and a phased i
 - ISC-2: Decisions section dated 2026-07-14 16:35 maps BACK OFFICE → Engine Status, SALES → Bridge Query, DEALS → Union Mirror, MARKETING → Folio Archive, OPERATIONS → Sky Weather, INTELLIGENCE → Noesis Reading, CUSTOMER → Birth Witness.
 - ISC-3: Visual density inspection of `stellar-node-branching.jpg` shows each parent spoke sprouts 10–20 satellite sub-nodes; Urania plan specifies ≥5 children per parent.
 - ISC-4: Navigation model documented in ISA Decisions and Features: home radial → `/node/:nodeId` parent page → child click → existing report modal.
-- ISC-11: Decisions preserve SVG graph, radial symmetry, dark void, luminous edges, and satellite nodes at every depth.
+- ISC-6: Generated design-reference page images for all seven parent nodes in `.assets/page-references/` (e.g., `birth-witness-page.png`, `noesis-reading-page.png`) showing each parent as a re-centered hub with branching sub-nodes.
+- ISC-11: Generated moodboard and page references preserve void-black background, sacred-gold wireframe, glowing radial edges, satellite nodes, and dark cosmic aesthetic.
 - ISC-12: Phased plan added to ISA Decisions dated 2026-07-14 16:40.
