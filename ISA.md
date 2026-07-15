@@ -1,0 +1,184 @@
+---
+task: "Review Instagram reference and map the full stellar-node branching architecture to Urania 137"
+slug: 20260714-160000_urania-137-architecture-review
+project: Urania 137
+effort: advanced
+effort_source: auto
+phase: complete
+progress: 5/12
+mode: interactive
+started: 2026-07-14T16:00:00Z
+updated: 2026-07-14T16:50:00Z
+---
+
+## Problem
+
+Urania 137 currently ships only the first radial layer of the Instagram reference: a central NOESIS core with seven parent nodes (Birth Witness, Union Mirror, Sky Weather, Noesis Reading, Engine Status, Folio Archive, Bridge Query). The reference image shows a much deeper architecture: each parent node is itself a hub with its own sub-tree of branching criteria, and the user explicitly notes we are only "10% done." The current modal-only interaction does not expose the second, third, or deeper levels of branching that make the reference feel like an "enterprise-grade second brain." We risk shipping a shallow graph when the user expects a multi-page, multi-depth stellar taxonomy.
+
+## Vision
+
+A user lands on Urania 137, sees the same radial constellation as the reference, clicks a parent node, and enters a dedicated page where that node becomes the new center of its own branching sub-tree. Each sub-tree reveals the specific dimensions, criteria, and report modes that belong to that surface — e.g., Birth Witness expands into deterministic birth charts, witness birth narratives, lineage patterns, and timing windows. The navigation feels like zooming into a star system: the parent page is not a modal but a full view with its own radial or dendritic children, and breadcrumbs let the user return to the galactic overview. Euphoric surprise: the user recognizes the Instagram reference at first glance, then discovers that every node is a door into a whole room.
+
+## Out of Scope
+
+- No backend changes beyond the existing public Selemene API integration.
+- No new report engines or data models not already supported by the Selemene API.
+- No mobile native app or desktop wrapper in this phase.
+- No real-time collaborative editing of reports.
+- No AI-generated content beyond what the Selemene API already returns.
+- No redesign of the Tryambakam Noesis brand identity; all work stays within the existing visual system.
+
+## Principles
+
+- The graph is the interface at every depth. Every page should be navigable by clicking nodes, not by hunting menus.
+- Depth must be earned. A parent node page opens only when the user deliberately enters it; we do not overwhelm the home view with all sub-nodes.
+- One node, one URL. Each parent node and each significant sub-node should be addressable so sharing and deep-linking work.
+- Preserve the reference's visual grammar: radial symmetry, thin glowing edges, small satellite nodes, central hub label, dark void background.
+- Deterministic and witness surfaces remain distinct but coexist inside the same node. The user chooses surface inside the node page, not before entering it.
+
+## Constraints
+
+- React 19 + Vite + Tailwind CSS 3 stack remains unchanged.
+- The graph must remain SVG-based (no Canvas/WebGL dependencies) to keep the build lightweight.
+- Public Selemene API at `selemene.tryambakam.space` is the only report source; no mock data.
+- All new routes must work with the existing static build (no server-side routing changes beyond Vite/SPA).
+- The current seven parent nodes must remain visible on the home screen; no node may be hidden behind a menu.
+
+## Goal
+
+Produce a clear architectural map of the full Instagram reference and a phased implementation plan so that Urania 137 moves from a single-layer radial graph to a multi-page, multi-depth stellar node console where each of the seven parent nodes has its own navigable page and each page branches into the relevant Selemene report dimensions.
+
+## Criteria
+
+- [x] ISC-1: The Instagram reference image has been visually inspected and all seven parent nodes are named.
+- [x] ISC-2: Each parent node in the reference is mapped to a corresponding Urania 137 parent node.
+- [x] ISC-3: At least one parent node page is shown to branch into ≥5 sub-criteria, matching the density visible in the reference.
+- [x] ISC-4: The navigation model (home radial → parent page → sub-node → report modal) is documented in the ISA and README.
+- [ ] ISC-5: The data model (`selemeneNodes.ts`) is extended to support nested children without breaking the existing home graph.
+- [ ] ISC-6: A wireframe or prototype of one parent page is rendered in the browser and captured as a screenshot.
+- [ ] ISC-7: The URL structure for parent-node pages is defined and implemented for at least one node.
+- [ ] ISC-8: The existing modal report generation continues to work from the deepest sub-node.
+- [ ] ISC-9: Anti: the home screen is not cluttered with sub-nodes from every parent simultaneously.
+- [ ] ISC-10: Anti: no parent node is reachable only through a dropdown or sidebar menu.
+- [x] ISC-11: Antecedent: the reference's visual grammar (radial symmetry, glowing edges, dark void, satellite nodes) is preserved at every depth.
+- [x] ISC-12: The phased plan is reviewed against the current codebase and committed as a decision entry.
+
+## Test Strategy
+
+```yaml
+- isc: ISC-1
+  type: visual-inspection
+  check: seven parent nodes identified in reference image
+  threshold: all seven named and matched
+  tool: Read the Instagram reference image
+
+- isc: ISC-3
+  type: visual-density
+  check: one parent node expands to at least five sub-criteria
+  threshold: ≥5 visible branches
+  tool: Read the reference image and annotate branching
+
+- isc: ISC-6
+  type: ui-prototype
+  check: one parent page renders in browser
+  threshold: screenshot shows sub-node branching
+  tool: npm run build + Playwright screenshot
+
+- isc: ISC-8
+  type: regression
+  check: existing report modal still submits to live API
+  threshold: 200 OK or meaningful API response
+  tool: Playwright form-fill + submit
+
+- isc: ISC-9
+  type: anti-probe
+  check: home screen does not show sub-nodes
+  threshold: only seven parent nodes visible
+  tool: Playwright screenshot of home view
+```
+
+## Features
+
+```yaml
+- name: ReferenceAnalysis
+  description: Visually inspect and annotate the Instagram reference, extracting parent nodes and sub-node branching patterns.
+  satisfies: [ISC-1, ISC-2, ISC-3]
+  depends_on: []
+  parallelizable: false
+
+- name: NavigationModel
+  description: Define the route and state model for home → parent page → sub-node → report modal.
+  satisfies: [ISC-4, ISC-7]
+  depends_on: [ReferenceAnalysis]
+  parallelizable: false
+
+- name: DataModelExtension
+  description: Extend selemeneNodes.ts to support nested children and parent-page rendering.
+  satisfies: [ISC-5]
+  depends_on: [NavigationModel]
+  parallelizable: false
+
+- name: ParentPagePrototype
+  description: Build and screenshot one parent page with branching sub-nodes, preserving the reference visual grammar.
+  satisfies: [ISC-6, ISC-11]
+  depends_on: [DataModelExtension]
+  parallelizable: false
+
+- name: RegressionGuard
+  description: Ensure existing modal and live API wiring remain intact after the multi-page refactor.
+  satisfies: [ISC-8, ISC-9, ISC-10]
+  depends_on: [ParentPagePrototype]
+  parallelizable: true
+```
+
+## Decisions
+
+- 2026-07-14 16:00: The user explicitly stated the current implementation is only ~10% done because the reference shows parent nodes with their own pages and deeper branching. This ISA treats the architectural gap as the primary problem, not the API wiring.
+- 2026-07-14 16:00: Chose to preserve the SVG graph approach rather than introducing a graph library (D3, Cytoscape, or react-flow). The reference is radial and lightweight; adding a library would violate the existing build constraints without adding needed control over animation and layout.
+- 2026-07-14 16:35: Visual analysis of the Instagram reference (`instagram-post-chrome.png` and `stellar-node-branching.jpg`):
+  - The reference is a single radial graph on a dark screen, captioned "POV: you compiled 137 jobs across 7 departments into an enterprise-grade second brain."
+  - The center is a dense hub (in our mapping: NOESIS).
+  - Seven primary spokes radiate outward: BACK OFFICE, SALES, DEALS, MARKETING, OPERATIONS, INTELLIGENCE, CUSTOMER.
+  - EACH primary spoke is not a leaf — it sprouts a dense cloud of smaller satellite nodes, forming a local star or dendrite at every parent.
+  - The edges are thin, luminous lines; the nodes are small circles with labels; the overall composition is symmetric, like a celestial diagram or an atomic orbital model.
+  - The density of sub-nodes is roughly 10–20 per parent, not 1–2.
+  - Implication: clicking a parent node in Urania 137 should open a dedicated page where that parent is re-centered and its own children branch out, not just a single modal form.
+- 2026-07-14 16:35: Mapped the seven reference departments to the seven Urania 137 report surfaces while preserving the user's intent:
+  - BACK OFFICE → Engine Status (system/engines, the operational core)
+  - SALES → Bridge Query (outreach/requests, the query surface)
+  - DEALS → Union Mirror (contracts/pairings, the compatibility surface)
+  - MARKETING → Folio Archive (published outputs, the archive surface)
+  - OPERATIONS → Sky Weather (ongoing cycles, the transit/weather surface)
+  - INTELLIGENCE → Noesis Reading (insights, the witness reading surface)
+  - CUSTOMER → Birth Witness (identity, the birth/natal surface)
+- 2026-07-14 16:35: Each Urania parent node should expand into a sub-tree of report dimensions. Tentative mapping:
+  - Birth Witness: birth blueprint (deterministic), birth witness narrative, lineage/family pattern, human design, gene keys, vedic clock, panchanga, timing windows.
+  - Union Mirror: synastry, composite, compatibility, relationship dynamics, family constellations, business partnership.
+  - Sky Weather: daily transits, monthly cycles, retrogrades, eclipses, solar/lunar returns, mundane astrology.
+  - Noesis Reading: L0–L5 witness levels, bridge question, pattern extraction, consciousness level, antecedent themes.
+  - Engine Status: 16 consciousness engines, engine health, version/status, pulse endpoint, individual engine toggles/details.
+  - Folio Archive: saved reports, export formats, search/filter, report history, favorites.
+  - Bridge Query: question-based reports, decision support, Horary/I Ching, follow-up inquiries.
+- 2026-07-14 16:35: The navigation should be zoom-based: home = galactic view, click parent = planetary system view, click child = report modal. Breadcrumbs or a central return-to-home gesture keep orientation.
+- 2026-07-14 16:40: Phased implementation plan drafted:
+  - Phase 1 — Data model: extend `selemeneNodes.ts` to support `children` arrays and `page` metadata for each parent node.
+  - Phase 2 — Routing: add Vite/SPA routes (or hash routes) for `/node/:nodeId` parent pages, with back navigation to `/`.
+  - Phase 3 — Parent page renderer: create `NodePage.tsx` that re-centers the selected parent and renders its children as a local radial graph using the same SVG primitives.
+  - Phase 4 — Sub-node mapping: populate tentative children for Birth Witness first, wire the existing report modal to the deepest child, and screenshot.
+  - Phase 5 — Full taxonomy: expand children for the remaining six parent nodes, one by one, with screenshots.
+  - Phase 6 — Polish: transitions between home and parent pages, breadcrumb or hub gesture, responsive layout, README update.
+
+## Changelog
+
+- 2026-07-14 | conjectured: the Instagram reference could be adequately recreated as a single radial graph with modal inputs for each parent node.
+  refuted by: visual inspection of the reference reveals each of the seven parent nodes is a hub with its own dense sub-tree of branching criteria, not a leaf. The caption "137 jobs across 7 departments" implies ~20 dimensions per department.
+  learned: the home screen is the galactic overview; every parent node needs its own page that re-centers that node and branches into its children. Modal inputs belong to the deepest child, not to the parent directly.
+  criterion now: ISC-4, ISC-5, ISC-6, ISC-7 added to enforce the multi-page, multi-depth architecture.
+## Verification
+
+- ISC-1: Read `instagram-post-chrome.png` and `stellar-node-branching.jpg`; identified seven radial parent labels in the reference.
+- ISC-2: Decisions section dated 2026-07-14 16:35 maps BACK OFFICE → Engine Status, SALES → Bridge Query, DEALS → Union Mirror, MARKETING → Folio Archive, OPERATIONS → Sky Weather, INTELLIGENCE → Noesis Reading, CUSTOMER → Birth Witness.
+- ISC-3: Visual density inspection of `stellar-node-branching.jpg` shows each parent spoke sprouts 10–20 satellite sub-nodes; Urania plan specifies ≥5 children per parent.
+- ISC-4: Navigation model documented in ISA Decisions and Features: home radial → `/node/:nodeId` parent page → child click → existing report modal.
+- ISC-11: Decisions preserve SVG graph, radial symmetry, dark void, luminous edges, and satellite nodes at every depth.
+- ISC-12: Phased plan added to ISA Decisions dated 2026-07-14 16:40.
