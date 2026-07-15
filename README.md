@@ -2,6 +2,7 @@
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,13,15,16&height=200&text=URANIA%20137&fontSize=56&fontAlignY=35&desc=Selemene%20Report%20Console&descAlignY=55&fontColor=F0EDE3" width="100%" />
 
+[![CI](https://github.com/Sheshiyer/urania-137/actions/workflows/ci.yml/badge.svg)](https://github.com/Sheshiyer/urania-137/actions/workflows/ci.yml)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&style=flat-square)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&style=flat-square)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&style=flat-square)
