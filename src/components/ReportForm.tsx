@@ -13,7 +13,15 @@ import {
 
 interface ReportFormProps {
   node: StellarNode
-  onSubmit: (payload: { surface: Surface; request: ReportGenerationRequest | DeterministicRequest }) => void
+  onSubmit: (payload: {
+    surface: Surface
+    modeId: string
+    request: ReportGenerationRequest | DeterministicRequest
+  }) => void
+  /** Preselect a surface:modeId when the form is opened from a specific child node. */
+  initialModeKey?: string
+  /** Preselect the witness report level (used by the Noesis Reading L0–L5 children). */
+  initialLevel?: ReportLevel
 }
 
 const EMPTY_LOCATION: NormalizedLocation = {
@@ -41,12 +49,14 @@ const EMPTY_RELATIONSHIP: RelationshipContext = {
   sensitivity_level: 'medium',
 }
 
-export function ReportForm({ node, onSubmit }: ReportFormProps) {
-  const [mode, setMode] = useState<SelemeneMode | null>(node.modes[0] || null)
+export function ReportForm({ node, onSubmit, initialModeKey, initialLevel }: ReportFormProps) {
+  const initialMode =
+    (initialModeKey && node.modes.find((m) => `${m.surface}:${m.id}` === initialModeKey)) || node.modes[0] || null
+  const [mode, setMode] = useState<SelemeneMode | null>(initialMode)
   const [subjects, setSubjects] = useState<SubjectInput[]>([{ ...EMPTY_SUBJECT }])
   const [relationship, setRelationship] = useState<RelationshipContext>({ ...EMPTY_RELATIONSHIP })
   const [language, setLanguage] = useState('en')
-  const [reportLevel, setReportLevel] = useState<ReportLevel>('L2')
+  const [reportLevel, setReportLevel] = useState<ReportLevel>(initialLevel ?? 'L2')
   const [consciousnessLevel, setConsciousnessLevel] = useState(2)
   const [transitDate, setTransitDate] = useState('')
   const [question, setQuestion] = useState('')
@@ -130,7 +140,7 @@ export function ReportForm({ node, onSubmit }: ReportFormProps) {
         },
       }
       if (needsRelationship) request.relationship_context = relationship
-      onSubmit({ surface: 'witness', request })
+      onSubmit({ surface: 'witness', modeId: mode.id, request })
       return
     }
 
@@ -148,7 +158,7 @@ export function ReportForm({ node, onSubmit }: ReportFormProps) {
     if (needsTransitDate) request.current_time = new Date(transitDate).toISOString()
     if (needsQuestion) request.options = { ...request.options, question }
 
-    onSubmit({ surface: 'deterministic', request })
+    onSubmit({ surface: 'deterministic', modeId: mode.id, request })
   }
 
   if (!mode) {

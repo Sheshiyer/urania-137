@@ -27,6 +27,16 @@ export const SELEMENE_NODES: StellarNode[] = [
         description: 'Narrative witness of the natal imprint.',
       },
     ],
+    // One-to-one with birth-witness-page.png (clockwise from top).
+    children: [
+      { id: 'birth-blueprint', label: 'Birth Blueprint', report: { surface: 'deterministic', modeId: 'birth-blueprint' } },
+      { id: 'lineage', label: 'Lineage', report: { surface: 'witness', modeId: 'birth-blueprint' } },
+      { id: 'human-design', label: 'Human Design', report: { surface: 'deterministic', modeId: 'birth-blueprint' } },
+      { id: 'gene-keys', label: 'Gene Keys', report: { surface: 'deterministic', modeId: 'birth-blueprint' } },
+      { id: 'vedic-clock', label: 'Vedic Clock', report: { surface: 'deterministic', modeId: 'birth-blueprint' } },
+      { id: 'panchanga', label: 'Panchanga', report: { surface: 'deterministic', modeId: 'birth-blueprint' } },
+      { id: 'timing-windows', label: 'Timing Windows', report: { surface: 'witness', modeId: 'birth-blueprint' } },
+    ],
   },
   {
     id: 'compat',
@@ -86,6 +96,15 @@ export const SELEMENE_NODES: StellarNode[] = [
         needsRelationship: true,
       },
     ],
+    // One-to-one with union-mirror-page.png (clockwise from top).
+    children: [
+      { id: 'synastry', label: 'Synastry', report: { surface: 'witness', modeId: 'synastry' } },
+      { id: 'compatibility', label: 'Compatibility', report: { surface: 'witness', modeId: 'synastry' } },
+      { id: 'family-constellations', label: 'Family Constellations', report: { surface: 'witness', modeId: 'family-penta' } },
+      { id: 'business-partnership', label: 'Business Partnership', report: { surface: 'witness', modeId: 'business-partners' } },
+      { id: 'relationship-dynamics', label: 'Relationship Dynamics', report: { surface: 'witness', modeId: 'married-partners' } },
+      { id: 'composite', label: 'Composite', report: { surface: 'witness', modeId: 'synastry' } },
+    ],
   },
   {
     id: 'transit',
@@ -113,6 +132,16 @@ export const SELEMENE_NODES: StellarNode[] = [
         needsTransitDate: true,
       },
     ],
+    // One-to-one with sky-weather-page.png (clockwise from top).
+    children: [
+      { id: 'daily-transits', label: 'Daily Transits', report: { surface: 'deterministic', modeId: 'daily-practice' } },
+      { id: 'monthly-cycles', label: 'Monthly Cycles', report: { surface: 'witness', modeId: 'transit' } },
+      { id: 'retrogrades', label: 'Retrogrades', report: { surface: 'witness', modeId: 'transit' } },
+      { id: 'eclipses', label: 'Eclipses', report: { surface: 'witness', modeId: 'transit' } },
+      { id: 'solar-returns', label: 'Solar Returns', report: { surface: 'witness', modeId: 'transit' } },
+      { id: 'lunar-returns', label: 'Lunar Returns', report: { surface: 'witness', modeId: 'transit' } },
+      { id: 'mundane-astrology', label: 'Mundane Astrology', report: { surface: 'witness', modeId: 'transit' } },
+    ],
   },
   {
     id: 'witness',
@@ -138,6 +167,17 @@ export const SELEMENE_NODES: StellarNode[] = [
         maxSubjects: 5,
       },
     ],
+    // One-to-one with noesis-reading-page.png — L0..L5 preset the report level.
+    children: [
+      { id: 'l0-minimal', label: 'L0 Minimal', report: { surface: 'witness', modeId: 'integrated-reading', level: 'L0' } },
+      { id: 'l1-brief', label: 'L1 Brief', report: { surface: 'witness', modeId: 'integrated-reading', level: 'L1' } },
+      { id: 'l2-standard', label: 'L2 Standard', report: { surface: 'witness', modeId: 'integrated-reading', level: 'L2' } },
+      { id: 'l3-detailed', label: 'L3 Detailed', report: { surface: 'witness', modeId: 'integrated-reading', level: 'L3' } },
+      { id: 'l4-deep', label: 'L4 Deep', report: { surface: 'witness', modeId: 'integrated-reading-l4', level: 'L4' } },
+      { id: 'l5-comprehensive', label: 'L5 Comprehensive', report: { surface: 'witness', modeId: 'integrated-reading', level: 'L5' } },
+      { id: 'bridge-question', label: 'Bridge Question', report: { surface: 'witness', modeId: 'integrated-reading' } },
+      { id: 'pattern-extraction', label: 'Pattern Extraction', report: { surface: 'witness', modeId: 'integrated-reading' } },
+    ],
   },
   {
     id: 'engine',
@@ -148,6 +188,20 @@ export const SELEMENE_NODES: StellarNode[] = [
     color: 'cyan',
     subNodes: ['16 Engines', '6 Workflows', 'Pulse'],
     modes: [],
+    // One-to-one with engine-status-page.png — info-only (no report surface).
+    children: [
+      { id: 'consciousness-engines', label: '16 Consciousness Engines', info: true },
+      { id: 'vedic-clock', label: 'Vedic Clock', info: true },
+      { id: 'panchanga', label: 'Panchanga', info: true },
+      { id: 'i-ching', label: 'I Ching', info: true },
+      { id: 'astro', label: 'Astro', info: true },
+      { id: 'health', label: 'Health', info: true },
+      { id: 'pulse', label: 'Pulse', info: true },
+      { id: 'human-design', label: 'Human Design', info: true },
+      { id: 'enneagram', label: 'Enneagram', info: true },
+      { id: 'gene-keys', label: 'Gene Keys', info: true },
+      { id: 'anamnesis', label: 'Anamnesis', info: true },
+    ],
   },
   {
     id: 'folio',
@@ -158,6 +212,17 @@ export const SELEMENE_NODES: StellarNode[] = [
     color: 'gold',
     subNodes: ['Recent', 'Favorites', 'Search'],
     modes: [],
+    // One-to-one with folio-archive-page.png — info-only (no report surface).
+    children: [
+      { id: 'saved-reports', label: 'Saved Reports', info: true },
+      { id: 'search', label: 'Search', info: true },
+      { id: 'history', label: 'History', info: true },
+      { id: 'favorites', label: 'Favorites', info: true },
+      { id: 'markdown', label: 'Markdown', info: true },
+      { id: 'docx', label: 'DOCX', info: true },
+      { id: 'pdf', label: 'PDF', info: true },
+      { id: 'exports', label: 'Exports', info: true },
+    ],
   },
   {
     id: 'bridge',
@@ -193,5 +258,16 @@ export const SELEMENE_NODES: StellarNode[] = [
         needsQuestion: true,
       },
     ],
+    // One-to-one with bridge-query-page.png (clockwise from top).
+    children: [
+      { id: 'question-based-reports', label: 'Question-Based Reports', report: { surface: 'witness', modeId: 'bridge-query' } },
+      { id: 'horary', label: 'Horary', report: { surface: 'witness', modeId: 'bridge-query' } },
+      { id: 'follow-up-inquiries', label: 'Follow-Up Inquiries', report: { surface: 'witness', modeId: 'bridge-query' } },
+      { id: 'i-ching', label: 'I Ching', report: { surface: 'deterministic', modeId: 'full-spectrum' } },
+      { id: 'decision-support', label: 'Decision Support', report: { surface: 'deterministic', modeId: 'decision-support' } },
+    ],
   },
 ]
+
+export const getNodeById = (id: string): StellarNode | undefined =>
+  SELEMENE_NODES.find((node) => node.id === id)

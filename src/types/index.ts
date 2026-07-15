@@ -59,6 +59,20 @@ export interface SelemeneMode {
   description?: string
 }
 
+/**
+ * A child of a parent node, revealed on that node's `/node/:id` page.
+ * Sourced one-to-one from the generated page references in
+ * `.assets/page-references/`. Clicking a child opens the report modal:
+ * `report` presets the ReportForm to an EXISTING Selemene mode/level;
+ * `info` children (Engine Status, Folio Archive) open an info panel instead.
+ */
+export interface SelemeneChild {
+  id: string
+  label: string
+  report?: { surface: Surface; modeId: string; level?: ReportLevel }
+  info?: boolean
+}
+
 export interface StellarNode {
   id: string
   label: string
@@ -68,6 +82,23 @@ export interface StellarNode {
   color: 'gold' | 'cyan' | 'violet' | 'amber'
   subNodes: string[]
   modes: SelemeneMode[]
+  /** Sub-tree revealed on the parent-node page. Absent = leaf on the home graph. */
+  children?: SelemeneChild[]
+}
+
+/**
+ * Minimal shape the radial graph needs to place and draw one orbital item.
+ * Both the home nodes and a parent's children reduce to this, so a single
+ * `StellarNodeGraph` renders every depth (primary anti-drift lever).
+ */
+export interface GraphOrbital {
+  id: string
+  label: string
+  /** Degrees; 0 = top, increasing clockwise. */
+  angle: number
+  /** Decorative satellite branches drawn around this orbital. */
+  subCount: number
+  color?: StellarNode['color']
 }
 
 export interface ReportGenerationRequest {

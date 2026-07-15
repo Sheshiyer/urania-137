@@ -479,6 +479,45 @@ Each generated page reference maps to a single implementation target. The refere
 
 ---
 
+## 10b. Phase 4 — Motion & Interactivity (reel-flow emulation)
+
+Added 2026-07-15 by user request: make the app live and interactive rather than
+static, closely emulating the flow of the source Instagram reel
+(`.assets/instagram-download/`) in our own NOESIS branding. Full spec:
+`docs/superpowers/specs/2026-07-15-motion-reel-flow-design.md`.
+
+**Locked decisions:** immersive graph scrub (no stacked sections); `gsap` +
+`ScrollTrigger` (new dependency, lifts the no-motion-library constraint); scope =
+home **and** node pages (retires the "home stays pixel-identical" gate);
+`prefers-reduced-motion` renders the static final state.
+
+### The choreography — "compile the second brain"
+The reel compiles the graph from the center outward ("what ties it together is the
+first node"). Reproduced at every depth:
+1. Void → **NOESIS core ignites** (the first node).
+2. **7 spokes draw outward** (`strokeDashoffset` stagger).
+3. **Parent nodes ignite** as each spoke lands.
+4. **Sub-nodes bloom** (dendrite grow-out) + labels fade.
+5. Settle into ambient pulse/drift; scroll drives a slow camera zoom + starfield parallax.
+6. Entering a node = zoom-in + the **same sequence one depth down** (recursive bloom).
+
+### Wave 1 — Motion foundation
+- T-107: Add `gsap` dependency (lock-zone `package.json`, serialized); register `ScrollTrigger`.
+- T-108: Create `src/lib/motion.ts` (reduced-motion guard, plugin registration, easing/timing tokens).
+- T-109: Create `src/components/motion/MotionStage.tsx` wrapper (scroll spacer, scoped `gsap.context`, cleanup).
+- T-110: Add `.cn-*` grouping/classes to `StellarNodeGraph` and `ConstellationGraph` (additive; no static-layout change).
+
+### Wave 2 — Choreography
+- T-111: Entrance "compile" timeline (core ignite → spokes draw → nodes ignite → sub-nodes bloom → labels).
+- T-112: Immersive scroll scrub (camera zoom + starfield parallax + drift) via ScrollTrigger.
+- T-113: Pointer parallax (near/far layers, GSAP `quickTo`, off React render loop) + orb hover states.
+- T-114: Enter-node zoom + recursive bloom on route change (`motionKey` re-trigger); inverse on return home.
+
+### Wave 3 — Hardening
+- T-115: `prefers-reduced-motion` path renders the static constellation instantly (no spacer, no animation).
+- T-116: Verify 60fps (no React re-renders from parallax/scroll), node-clicking + report modal intact.
+- T-117: `npm run build` passes; capture home + node compile-flow screenshots/GIF; update README + ISA.
+
 ## 11. Dependency Rationale
 
 ### What must happen before parallelization
