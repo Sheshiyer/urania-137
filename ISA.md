@@ -5,10 +5,10 @@ project: Urania 137
 effort: advanced
 effort_source: auto
 phase: complete
-progress: 7/12
+progress: 12/12
 mode: interactive
 started: 2026-07-14T16:00:00Z
-updated: 2026-07-15T12:05:00Z
+updated: 2026-07-15T21:20:00Z
 ---
 
 ## Problem
@@ -54,12 +54,12 @@ Produce a clear architectural map of the full Instagram reference and a phased i
 - [x] ISC-2: Each parent node in the reference is mapped to a corresponding Urania 137 parent node.
 - [x] ISC-3: At least one parent node page is shown to branch into ≥5 sub-criteria, matching the density visible in the reference.
 - [x] ISC-4: The navigation model (home radial → parent page → sub-node → report modal) is documented in the ISA and README.
-- [ ] ISC-5: The data model (`selemeneNodes.ts`) is extended to support nested children without breaking the existing home graph.
+- [x] ISC-5: The data model (`selemeneNodes.ts`) is extended to support nested children without breaking the existing home graph.
 - [x] ISC-6: A wireframe or prototype of one parent page is rendered in the browser and captured as a screenshot.
-- [ ] ISC-7: The URL structure for parent-node pages is defined and implemented for at least one node.
-- [ ] ISC-8: The existing modal report generation continues to work from the deepest sub-node.
-- [ ] ISC-9: Anti: the home screen is not cluttered with sub-nodes from every parent simultaneously.
-- [ ] ISC-10: Anti: no parent node is reachable only through a dropdown or sidebar menu.
+- [x] ISC-7: The URL structure for parent-node pages is defined and implemented for at least one node.
+- [x] ISC-8: The existing modal report generation continues to work from the deepest sub-node.
+- [x] ISC-9: Anti: the home screen is not cluttered with sub-nodes from every parent simultaneously.
+- [x] ISC-10: Anti: no parent node is reachable only through a dropdown or sidebar menu.
 - [x] ISC-11: Antecedent: the reference's visual grammar (radial symmetry, glowing edges, dark void, satellite nodes) is preserved at every depth.
 - [x] ISC-12: The phased plan is reviewed against the current codebase and committed as a decision entry.
 
@@ -169,6 +169,7 @@ Produce a clear architectural map of the full Instagram reference and a phased i
   - Phase 4 — Sub-node mapping: populate tentative children for Birth Witness first, wire the existing report modal to the deepest child, and screenshot.
   - Phase 5 — Full taxonomy: expand children for the remaining six parent nodes, one by one, with screenshots.
   - Phase 6 — Polish: transitions between home and parent pages, breadcrumb or hub gesture, responsive layout, README update.
+- 2026-07-15 21:20: Shipped the full implementation (commit `0208c42`, fast-forward merged to `main`). Delivered a scroll-driven camera JOURNEY rather than separate routed pages: a galactic overview of the seven parent nodes, and scrolling dives into each node's cluster (the parent re-centres and its sub-nodes appear) then resurfaces before the next — emulating the source reel's "compile the second brain" flow in the NOESIS brand. A reusable, data-driven layer prevents design drift: one `ConstellationGraph` renders all seven cluster pages from `SELEMENE_NODES[].children`, and primitives + `src/styles/tokens.ts` are the single source of visual truth. Navigation is hash-based (`#/node/:id` syncs while passing each cluster; deep-links land at the right beat) with no router dependency. Motion uses GSAP + `@gsap/react` ScrollTrigger, gated by `prefers-reduced-motion` (static overview↔cluster fallback). Child-orb clicks open the existing report modal against the live Selemene API.
 
 ## Changelog
 
@@ -181,6 +182,12 @@ Produce a clear architectural map of the full Instagram reference and a phased i
   refuted by: codex-gpt-image, guided by the existing moodboard, produced high-fidelity brand-consistent page references faster than sketching and gave us a shared visual target for all seven parent pages.
   learned: using the existing moodboard as a style reference for Codex image generation keeps the whole family of assets visually coherent and surfaces layout choices (e.g., corner ornamentation, page title treatment) before code is written.
   criterion now: ISC-6 satisfied by generated design references; verification updated to include the `.assets/page-references/` files.
+
+- 2026-07-15 | conjectured: the multi-depth architecture needed separate routed `/node/:id` pages, one per parent, each entered by a click.
+  refuted by: the user's intent (and the source reel) is a single scroll-driven camera journey — the overview dives into each cluster in turn and resurfaces — not a set of discrete pages. A unified `ScrollJourney` with two layers (overview + active cluster) driven by a per-segment dive curve matches the reel and keeps the graph the sole interface.
+  learned: "one node, one URL" is satisfied by hash sync during the journey (`history.replaceState`) plus deep-link-to-scroll, with no router and no separate page components; clicking a node jumps the journey rather than navigating away.
+  criterion now: ISC-5, ISC-7, ISC-8, ISC-9, ISC-10 satisfied by the shipped build.
+
 ## Verification
 
 - ISC-1: Read `instagram-post-chrome.png` and `stellar-node-branching.jpg`; identified seven radial parent labels in the reference.
@@ -190,3 +197,8 @@ Produce a clear architectural map of the full Instagram reference and a phased i
 - ISC-6: Generated design-reference page images for all seven parent nodes in `.assets/page-references/` (e.g., `birth-witness-page.png`, `noesis-reading-page.png`) showing each parent as a re-centered hub with branching sub-nodes.
 - ISC-11: Generated moodboard and page references preserve void-black background, sacred-gold wireframe, glowing radial edges, satellite nodes, and dark cosmic aesthetic.
 - ISC-12: Phased plan added to ISA Decisions dated 2026-07-14 16:40.
+- ISC-5: `src/types/index.ts` adds `SelemeneChild` + `StellarNode.children`; `src/data/selemeneNodes.ts` carries a one-to-one child taxonomy for all seven nodes; the home overview renders only the seven parents (children live on the cluster view), so the home graph is unaffected — verified in-browser (overview shows 7 nodes; each cluster shows its own children).
+- ISC-7: hash routing `#/node/:id` implemented in `ScrollJourney` — syncs via `history.replaceState` as each cluster is reached, and a deep-link reload lands at the cluster's scroll beat (verified `#/node/engine` → Engine Status at the expected scroll position, `history.scrollRestoration='manual'`).
+- ISC-8: clicking a child orb opens the existing `Modal` + `ReportForm` preset to the child's Selemene mode/level and submits to the live API — verified (Daily Transits → `deterministic:daily-practice`; Birth Blueprint → deterministic birth-blueprint).
+- ISC-9: the home overview shows only the seven parent nodes; sub-nodes appear only inside a node's cluster on dive — verified in-browser via layer measurement.
+- ISC-10: every parent and child is reachable by clicking a node (or scrolling the journey); there is no dropdown/sidebar navigation — the graph is the interface at every depth.
