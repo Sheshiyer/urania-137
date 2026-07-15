@@ -42,6 +42,17 @@ The moodboard below locks the palette, typography, and node-graph composition be
 
 </div>
 
+Multi-page architecture moodboard and per-parent page references (brand-aligned design comps) live in `.assets/page-references/`:
+
+- `multi-page-architecture-moodboard.png` — home view + parent page + modal popup
+- `birth-witness-page.png`
+- `union-mirror-page.png`
+- `sky-weather-page.png`
+- `noesis-reading-page.png`
+- `engine-status-page.png`
+- `folio-archive-page.png`
+- `bridge-query-page.png`
+
 Live preview of the built interface:
 
 <div align="center">
