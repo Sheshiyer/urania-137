@@ -8,27 +8,27 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&style=flat-square)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&style=flat-square)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-3-06B6D4?logo=tailwindcss&style=flat-square)
-![GSAP](https://img.shields.io/badge/GSAP-ScrollTrigger-88CE02?logo=greensock&style=flat-square)
 
 </div>
 
 ---
 
-> **Urania 137** is the frontend for the Selemene consciousness engines — rendered as a **scroll-driven journey through a stellar constellation**. You land on a galactic overview of seven report surfaces; scrolling *dives* the camera into each one, revealing its sub-nodes, before resurfacing to travel to the next. The graph is the only interface, at every depth.
+> **Urania 137** is the frontend for the Selemene consciousness engines — a **multi-page stellar console**. You land on a galactic overview of seven report surfaces; clicking a node opens its own page, where that node re-centres as a golden astrolabe and its sub-nodes orbit it. The graph is the interface at every depth.
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=12,13,15,16&height=1" width="100%" />
 
 ## The idea
 
-Everything is the graph. A central **NOESIS** core is ringed by seven parent nodes; each node is a doorway into its own cluster of sub-criteria. The experience emulates the "compile the second brain" flow of the source Instagram reel by [@alassafi.ai](https://instagram.com/alassafi.ai) — but rendered as a live, navigable console in the **Tryambakam Noesis** visual identity (void-black canvas, sacred-gold wireframe, glowing radial edges).
+Everything is the graph. A central **NOESIS** core is ringed by seven parent nodes; each node is a doorway into its own page of sub-criteria, drawn as a dense golden sacred-geometry mandala in the **Tryambakam Noesis** visual identity (void-black canvas, sacred-gold wireframe, glowing radial edges, nebula, art-deco frames). The taxonomy is the "137 jobs across 7 departments / second brain" concept from the source reel by [@alassafi.ai](https://instagram.com/alassafi.ai).
 
-- **Galactic overview** → the seven parent nodes around the NOESIS core.
-- **Scroll = camera dive** → each scroll segment zooms into one node's cluster (it re-centres and its sub-nodes bloom in), then resurfaces before the next.
-- **Click jumps the journey** → clicking a node smooth-scrolls straight to its cluster.
-- **One node, one URL** → the hash syncs to `#/node/:id` as you pass each cluster, and deep-links land at the right beat.
-- **The report modal is the leaf** → clicking a sub-node opens the Selemene input form, preset to that surface's mode, and submits to the **live public API**.
-- **No menus, no side panels** — navigation is always by clicking or scrolling the graph.
-- **`prefers-reduced-motion`** falls back to a static overview ↔ cluster toggle.
+- **Galactic home** (`#/`) → the seven parent nodes around the NOESIS core, with a console top-bar and stat footer.
+- **Click a node → its page** (`#/node/:id`) → the node re-centres as a golden astrolabe and its sub-nodes orbit it, each a labelled orb (with a sacred-geometry glyph on Engine Status).
+- **One node, one URL** → hash routing with zero router dependency; every page is deep-linkable.
+- **The report modal is the leaf** → clicking a sub-node opens the Selemene input form, preset to that surface's mode, and submits to the **live public API**; the reading is saved to the Folio.
+- **Engine Status is live** → real `/health`, `/health/ready`, and engine roster telemetry (no mock data).
+- **Folio Archive is real** → every generated report persists to `localStorage` with search, favorites, and Markdown/DOCX/PDF export.
+- **The graph is the interface** — the top nav is an additive convenience; every destination is also a node you can click.
+- **`prefers-reduced-motion`** skips the entrance bloom and renders the static console.
 
 ## The seven surfaces
 
@@ -106,25 +106,28 @@ SELEMENE_API_URL=https://selemene.tryambakam.space
 
 ```mermaid
 graph TD
-    S[Scroll position] --> ST[GSAP ScrollTrigger onUpdate]
-    ST --> D["dive curve  sin(segTπ)  per segment"]
-    D --> OV[Overview layer: zoom toward parent + fade]
-    D --> CL[Active-cluster layer: ConstellationGraph zooms in]
-    ST --> URL["history.replaceState → #/node/:id"]
-    CL --> K[Click a sub-node orb]
-    K --> M[Modal + ReportForm preset to its mode]
+    URL["#/  or  #/node/:id"] --> RT[useHashRoute]
+    RT --> HP["HomePage — variant=home"]
+    RT --> NP["NodePage — variant=node"]
+    HP --> G["ConstellationGraph (shared renderer)"]
+    NP --> G
+    NP --> K[Click a sub-node orb]
+    K -->|report| M[Modal + ReportForm preset to its mode]
+    K -->|engine| ES["EngineStatusPanel — live /health + roster"]
+    K -->|folio| FP["FolioPanel — localStorage archive"]
     M --> P["fetch same-origin /api/selemene/*"]
     P --> PX["Vercel proxy: inject X-API-Key server-side"]
     PX --> H["POST /api/v1/assets/generate (mode-keyed)"]
-    H --> R["assembled reading → result modal"]
+    H --> R["assembled reading → result modal → saved to Folio"]
 ```
 
-**One data-driven component renders all seven cluster pages.** `ConstellationGraph` reads `SELEMENE_NODES[i].children` and draws that node re-centred with its sub-nodes — so the seven pages cannot drift from one another. The visual grammar lives in a frozen primitive layer:
+**One data-driven component renders every depth.** `ConstellationGraph` reads a node's children and draws it re-centred with its sub-nodes — `variant="home"` for the NOESIS overview, `variant="node"` for a parent page — so the eight surfaces cannot drift from one another. The visual grammar lives in a frozen primitive layer:
 
 - `src/styles/tokens.ts` — the single source of colour + typography truth.
-- `primitives/` — `StellarNode` (plain + ornate orb), `StellarEdge`, `StellarSubNode`, `CoreGlow` (simple + ornate hub), `CompassStar`.
-- `StellarNodeGraph` (the overview) and `ConstellationGraph` (a cluster) compose the same primitives.
-- `ScrollJourney` orchestrates the two layers, the ScrollTrigger camera, URL sync, click-jump, deep-linking, and the report modal.
+- `primitives/` — `StellarNode` (plain / ornate orb / home planet), `CoreGlow` (ornate astrolabe hub with flower-of-life), `Glyph` (sacred-geometry icon set), `CompassStar`.
+- `chrome/` — `TopNav`, `StatFooter`, `PageTabs` (the console dressing).
+- `panels/` — `EngineStatusPanel` (live telemetry), `FolioPanel` (persisted archive).
+- `App` → `useHashRoute` → `HomePage` / `NodePage`; `NodePage` owns the report/info/result modals.
 
 ## Project structure
 
@@ -138,16 +141,18 @@ urania-137
 │   └── superpowers/specs/2026-07-15-motion-reel-flow-design.md
 ├── scripts/screenshot.mjs                 # Playwright screenshot helper
 ├── src/
+│   ├── App.tsx                            # Router: TopNav + HomePage / NodePage
+│   ├── pages/  (HomePage, NodePage)        # The two views
 │   ├── components/
-│   │   ├── StellarNodeGraph.tsx           # Overview radial graph (generic)
-│   │   ├── ConstellationGraph.tsx         # Ornate per-node cluster (data-driven)
+│   │   ├── ConstellationGraph.tsx         # Shared renderer (variant: home | node)
 │   │   ├── Modal.tsx  ·  ReportForm.tsx    # Report input + result shell
-│   │   ├── motion/ScrollJourney.tsx       # Scroll-driven camera journey
-│   │   ├── layout/  (PageHeader, PageFrame)
-│   │   └── primitives/ (StellarNode, StellarEdge, StellarSubNode, CoreGlow, CompassStar)
+│   │   ├── chrome/   (TopNav, StatFooter, PageTabs)
+│   │   ├── panels/   (EngineStatusPanel, FolioPanel)
+│   │   ├── layout/   (PageHeader, PageFrame)
+│   │   └── primitives/ (StellarNode, CoreGlow, Glyph, CompassStar)
 │   ├── data/selemeneNodes.ts              # Seven surfaces, their modes and children
-│   ├── hooks/  (useNodeGraph, useReportGenerator)
-│   ├── lib/    (motion.ts, graphUtils.ts, selemeneApi.ts)
+│   ├── hooks/  (useHashRoute, useNodeGraph, useReportGenerator, useEngineStatus, useFolio)
+│   ├── lib/    (selemeneApi.ts, folioStore.ts, graphUtils.ts)
 │   ├── styles/tokens.ts                   # Design tokens (single source of truth)
 │   └── types/index.ts
 ├── ISA.md                                 # Ideal State Artifact (goals + verification)
@@ -158,8 +163,9 @@ urania-137
 
 - **React 19** + **TypeScript 5**, built with **Vite 6**.
 - **Tailwind CSS 3** for utilities; **SVG** for the graph (no canvas/WebGL — lightweight, responsive).
-- **GSAP + `@gsap/react` (ScrollTrigger)** for the scroll journey and entrance motion.
-- **Hash-based routing** (`#/node/:id`) with zero router dependency.
+- **CSS entrance animation** (`motion-safe:animate-graph-in`), gated by `prefers-reduced-motion`.
+- **Hash-based routing** (`useHashRoute`, `#/node/:id`) with zero router dependency.
+- **Live status** via `useEngineStatus` (`/health`, `/health/ready`, `/api/v1/engines`) and a `localStorage` Folio archive (`folioStore.ts`).
 - API client in `src/lib/selemeneApi.ts` → same-origin proxy (`api/proxy.ts`) → Selemene `POST /api/v1/assets/generate`; the reading's `assembled` markdown renders in the result modal.
 
 ## Brand identity
@@ -173,7 +179,7 @@ urania-137
 | Coherence Emerald | `#10B5A7` | Success, coherence |
 | Parchment | `#F0EDE3` | Primary text |
 
-Typography: **Panchang** (display) and **Satoshi** (body) via FontShare.
+Typography: **Cinzel** (engraved serif — wordmark + page titles), **Panchang** (display — node labels), **Satoshi** (body).
 
 ## Credits
 

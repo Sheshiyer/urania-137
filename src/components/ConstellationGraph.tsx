@@ -17,6 +17,12 @@ interface ConstellationGraphProps {
   centerYOffset?: number
   /** Positioning class for the root wrapper (journey layers pass 'absolute inset-0'). */
   wrapperClassName?: string
+  /**
+   * 'node' = a parent page (children as big labelled orbs). 'home' = the galactic
+   * overview (parents as smaller ringed "planets" with labels outside). One
+   * renderer, both depths — the structural anti-drift guarantee.
+   */
+  variant?: 'home' | 'node'
 }
 
 /**
@@ -35,12 +41,18 @@ export function ConstellationGraph({
   ariaLabel = 'stellar node constellation',
   centerYOffset = 0,
   wrapperClassName = 'fixed inset-0',
+  variant = 'node',
 }: ConstellationGraphProps) {
   const { width, height, centerX, centerY: baseCenterY, orbitRadius } = useNodeGraph()
   const centerY = baseCenterY + centerYOffset * height
+  const isHome = variant === 'home'
+  const small = width < 640
 
-  const hubSize = Math.min(Math.max(orbitRadius * 0.46, 72), 128)
-  const orbR = Math.min(Math.max(orbitRadius * 0.2, 36), 56)
+  const hubSize = Math.min(Math.max(orbitRadius * (isHome ? 0.4 : 0.46), small ? 46 : 72), 128)
+  const orbR = isHome
+    ? Math.min(Math.max(orbitRadius * 0.13, small ? 15 : 22), 34)
+    : Math.min(Math.max(orbitRadius * 0.2, small ? 26 : 36), 56)
+  const labelScale = small ? 0.8 : 1
   // A warmer, brighter gold for glows/blooms than the flat token gold.
   const WARM = '#E6B84D'
 
@@ -115,7 +127,7 @@ export function ConstellationGraph({
   })
 
   return (
-    <div className={wrapperClassName}>
+    <div className={`${wrapperClassName} motion-safe:animate-graph-in`}>
       <svg viewBox={`0 0 ${width} ${height}`} className="h-full w-full" role="img" aria-label={ariaLabel}>
         <defs>
           <radialGradient id="pageBloom" cx="50%" cy="50%" r="60%">
@@ -138,6 +150,16 @@ export function ConstellationGraph({
             <stop offset="55%" stopColor="#000" stopOpacity="0" />
             <stop offset="100%" stopColor="#000" stopOpacity="0.55" />
           </radialGradient>
+          <radialGradient id="nebulaViolet" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={COLORS.violet} stopOpacity="0.5" />
+            <stop offset="55%" stopColor={COLORS.violet} stopOpacity="0.14" />
+            <stop offset="100%" stopColor={COLORS.violet} stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="nebulaIndigo" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={COLORS.indigo} stopOpacity="0.28" />
+            <stop offset="60%" stopColor={COLORS.indigo} stopOpacity="0.08" />
+            <stop offset="100%" stopColor={COLORS.indigo} stopOpacity="0" />
+          </radialGradient>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="2.5" result="blur" />
             <feMerge>
@@ -148,6 +170,14 @@ export function ConstellationGraph({
         </defs>
 
         <rect width={width} height={height} fill={COLORS.void} />
+
+        {/* Nebula clouds (deep background) */}
+        <g className="cn-nebula" pointerEvents="none">
+          <ellipse cx={width * 0.2} cy={height * 0.24} rx={width * 0.34} ry={height * 0.3} fill="url(#nebulaViolet)" opacity={0.7} />
+          <ellipse cx={width * 0.82} cy={height * 0.7} rx={width * 0.3} ry={height * 0.32} fill="url(#nebulaIndigo)" opacity={0.7} />
+          <ellipse cx={width * 0.7} cy={height * 0.16} rx={width * 0.22} ry={height * 0.2} fill="url(#nebulaViolet)" opacity={0.4} />
+        </g>
+
         <rect width={width} height={height} fill="url(#pageBloom)" />
 
         {/* Starfield (far parallax layer) */}
@@ -214,18 +244,21 @@ export function ConstellationGraph({
           return <CompassStar key={`glyph-${i}`} cx={centerX + rr * Math.cos(mid)} cy={centerY + rr * Math.sin(mid)} size={7} opacity={0.45} />
         })}
 
-        {/* Child orbs */}
+        {/* Child orbs (node) / parent planets (home) */}
         {positions.map(({ orbital, x, y, angle }) => (
           <StellarNode
             key={orbital.id}
-            className="cn-orb"
-            variant="orb"
+            className={isHome ? 'cn-node' : 'cn-orb'}
+            variant={isHome ? 'planet' : 'orb'}
             x={x}
             y={y}
             centerY={centerY}
             label={orbital.label}
             radius={orbR}
             outwardAngle={angle}
+            glyph={orbital.glyph}
+            subCount={orbital.subCount}
+            labelScale={labelScale}
             selected={selectedId === orbital.id}
             onClick={() => onSelect(orbital.id)}
           />
