@@ -126,6 +126,30 @@ export interface DeterministicRequest {
   options?: Record<string, unknown>
 }
 
+/**
+ * Request body for `POST /api/v1/assets/generate` (the Selemene "witness" surface).
+ * Mirrors the Rust `AssetGenerateRequest`: `mode` is required, the rest optional.
+ */
+export interface AssetGenerateRequest {
+  mode: string
+  report_level?: ReportLevel
+  language?: string
+  consciousness_level?: number
+  subjects?: SubjectInput[]
+  relationship_context?: RelationshipContext
+  options?: Record<string, unknown>
+}
+
+/** Response from `POST /api/v1/assets/generate` (Rust `AssetGenerateResponse`). */
+export interface AssetGenerateResponse {
+  mode: string
+  register: string
+  passes: { id: string; title: string; output: string }[]
+  assembled: string
+  engines_used: string[]
+  source_pack?: unknown
+}
+
 export interface GeneratedReport {
   id: string
   nodeId: string

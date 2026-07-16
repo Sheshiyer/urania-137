@@ -6,9 +6,7 @@ import {
   GraphOrbital,
   SelemeneChild,
   StellarNode as StellarNodeType,
-  Surface,
-  ReportGenerationRequest,
-  DeterministicRequest,
+  AssetGenerateRequest,
 } from '../../types'
 import { useReportGenerator } from '../../hooks/useReportGenerator'
 import { StellarNodeGraph } from '../StellarNodeGraph'
@@ -115,13 +113,8 @@ export function ScrollJourney() {
     setModalView(null)
     setSelectedChild(null)
   }
-  const handleSubmit = (payload: {
-    surface: Surface
-    modeId: string
-    request: ReportGenerationRequest | DeterministicRequest
-  }) => {
-    if (payload.surface === 'witness') generateReport(node, 'witness', payload.request)
-    else generateReport(node, 'deterministic', { workflowId: payload.modeId, payload: payload.request })
+  const handleSubmit = (request: AssetGenerateRequest) => {
+    generateReport(node, request)
     setModalView('result')
   }
   const initialModeKey = selectedChild?.report ? `${selectedChild.report.surface}:${selectedChild.report.modeId}` : undefined

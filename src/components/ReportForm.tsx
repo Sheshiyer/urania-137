@@ -5,19 +5,15 @@ import {
   SubjectInput,
   RelationshipContext,
   ReportLevel,
-  Surface,
   ReportGenerationRequest,
-  DeterministicRequest,
+  AssetGenerateRequest,
   NormalizedLocation,
 } from '../types'
 
 interface ReportFormProps {
   node: StellarNode
-  onSubmit: (payload: {
-    surface: Surface
-    modeId: string
-    request: ReportGenerationRequest | DeterministicRequest
-  }) => void
+  /** Emits the unified Selemene asset-generation request (POST /api/v1/assets/generate). */
+  onSubmit: (request: AssetGenerateRequest) => void
   /** Preselect a surface:modeId when the form is opened from a specific child node. */
   initialModeKey?: string
   /** Preselect the witness report level (used by the Noesis Reading L0–L5 children). */
@@ -127,38 +123,26 @@ export function ReportForm({ node, onSubmit, initialModeKey, initialLevel }: Rep
     e.preventDefault()
     if (!mode) return
 
-    if (mode.surface === 'witness') {
-      const request: ReportGenerationRequest = {
-        report_level: reportLevel,
-        report_mode: mode.id as ReportGenerationRequest['report_mode'],
-        subjects,
-        language,
-        output: {
-          format: outputFormat,
-          include_rubric: includeRubric,
-          include_pattern_extraction: includePatterns,
-        },
-      }
-      if (needsRelationship) request.relationship_context = relationship
-      onSubmit({ surface: 'witness', modeId: mode.id, request })
-      return
+    // Every surface routes through POST /api/v1/assets/generate, keyed by `mode`.
+    const request: AssetGenerateRequest = {
+      mode: mode.id,
+      report_level: reportLevel,
+      language,
+      consciousness_level: consciousnessLevel,
+      subjects,
     }
+    if (needsRelationship) request.relationship_context = relationship
 
-    const subject = subjects[0]
-    const request: DeterministicRequest = {
-      birth_data: {
-        date: subject.birth_date,
-        time: subject.birth_time || '00:00',
-        latitude: subject.normalized_location.latitude || 0,
-        longitude: subject.normalized_location.longitude || 0,
-        timezone: subject.normalized_location.timezone || 'UTC',
-      },
-      options: {},
+    const options: Record<string, unknown> = {
+      output_format: outputFormat,
+      include_rubric: includeRubric,
+      include_pattern_extraction: includePatterns,
     }
-    if (needsTransitDate) request.current_time = new Date(transitDate).toISOString()
-    if (needsQuestion) request.options = { ...request.options, question }
+    if (needsTransitDate && transitDate) options.current_time = new Date(transitDate).toISOString()
+    if (needsQuestion && question) options.question = question
+    request.options = options
 
-    onSubmit({ surface: 'deterministic', modeId: mode.id, request })
+    onSubmit(request)
   }
 
   if (!mode) {
