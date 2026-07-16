@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { AssetGenerateRequest, GeneratedReport, StellarNode } from '../types'
 import { generateAsset } from '../lib/selemeneApi'
+import { saveReport } from '../lib/folioStore'
 
 export function useReportGenerator() {
   const [reports, setReports] = useState<GeneratedReport[]>([])
@@ -32,6 +33,8 @@ export function useReportGenerator() {
       const completed: GeneratedReport = { ...newReport, status: 'complete', content: content + engines, raw }
       setReports((prev) => prev.map((r) => (r.id === id ? completed : r)))
       setActiveReport((current) => (current?.id === id ? completed : current))
+      // Persist to the Folio Archive so it reflects real prior work.
+      saveReport({ nodeId: node.id, nodeLabel: node.label, mode: request.mode, title: completed.title, content: completed.content })
     } catch (err) {
       const errorReport: GeneratedReport = {
         ...newReport,

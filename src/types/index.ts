@@ -71,6 +71,12 @@ export interface SelemeneChild {
   label: string
   report?: { surface: Surface; modeId: string; level?: ReportLevel }
   info?: boolean
+  /** Optional sacred-geometry glyph id (see `primitives/Glyph.tsx`). */
+  glyph?: string
+  /** Optional action for functional surfaces (Folio Archive). */
+  action?: 'list' | 'search' | 'history' | 'favorites' | 'export'
+  /** Export format for `action: 'export'`. */
+  format?: 'markdown' | 'docx' | 'pdf'
 }
 
 export interface StellarNode {
@@ -84,6 +90,8 @@ export interface StellarNode {
   modes: SelemeneMode[]
   /** Sub-tree revealed on the parent-node page. Absent = leaf on the home graph. */
   children?: SelemeneChild[]
+  /** Optional sacred-geometry glyph id for the home planet (see `primitives/Glyph.tsx`). */
+  glyph?: string
 }
 
 /**
@@ -99,6 +107,8 @@ export interface GraphOrbital {
   /** Decorative satellite branches drawn around this orbital. */
   subCount: number
   color?: StellarNode['color']
+  /** Optional sacred-geometry glyph id drawn in the orb. */
+  glyph?: string
 }
 
 export interface ReportGenerationRequest {
@@ -165,4 +175,41 @@ export interface NodeGraphConfig {
   height: number
   centerRadius: number
   orbitRadius: number
+}
+
+/** `GET /health` — overall Selemene liveness. */
+export interface SelemeneHealth {
+  status: string
+  version: string
+  uptime_seconds: number
+  engines_loaded: number
+  workflows_loaded: number
+}
+
+/** One engine's live health from `GET /health/ready#bridge_engines`. */
+export interface BridgeEngineHealth {
+  engine_id: string
+  healthy: boolean
+  detail: string
+  latency_ms: number
+}
+
+/** `GET /health/ready` — infra + per-engine readiness. */
+export interface SelemeneReady {
+  redis: string
+  postgres: string
+  orchestrator: string
+  bridge_status: string
+  bridge_engines: BridgeEngineHealth[]
+  bridge_failed_engines: string[]
+  overall_status: string
+}
+
+/** Combined live status the Engine Status surface renders. */
+export interface EngineStatus {
+  health: SelemeneHealth | null
+  ready: SelemeneReady | null
+  engines: string[]
+  loading: boolean
+  error: string | null
 }

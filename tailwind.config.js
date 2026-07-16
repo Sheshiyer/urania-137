@@ -19,12 +19,14 @@ export default {
       },
       fontFamily: {
         display: ['Panchang', 'sans-serif'],
+        serif: ['Cinzel', 'Times New Roman', 'serif'],
         body: ['Satoshi', 'system-ui', 'sans-serif'],
         mono: ['SF Mono', 'SFMono-Regular', 'monospace'],
       },
       animation: {
         'pulse-slow': 'pulse-slow 5s ease-in-out infinite',
         'drift': 'drift 20s linear infinite',
+        'graph-in': 'graph-in 0.9s ease-out both',
       },
       keyframes: {
         'pulse-slow': {
@@ -34,6 +36,10 @@ export default {
         'drift': {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(360deg)' },
+        },
+        'graph-in': {
+          '0%': { opacity: '0', transform: 'scale(0.985)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
         },
       },
     },

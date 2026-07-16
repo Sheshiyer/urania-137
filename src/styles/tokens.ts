@@ -40,11 +40,14 @@ export const NODE_ACCENTS: Record<string, string> = {
 
 export const TYPOGRAPHY = {
   display: 'font-display',
+  serif: 'font-serif',
   body: 'font-body',
   /** Node label treatment used on the graph and satellite labels. */
   nodeLabel: 'uppercase tracking-[0.14em] font-display',
-  /** Full-page parent title treatment (matches the generated references). */
-  pageTitle: 'text-4xl font-display tracking-[0.3em] text-parchment uppercase',
+  /** Full-page parent title treatment — engraved Roman caps (Cinzel). */
+  pageTitle: 'text-4xl font-serif tracking-[0.28em] text-parchment uppercase',
+  /** The URANIA 137 / NOESIS wordmark — engraved serif. */
+  wordmark: 'font-serif uppercase tracking-[0.24em] text-parchment',
   /** Small overline / eyebrow used above titles and in the corner brand mark. */
   eyebrow: 'text-[10px] uppercase tracking-[0.2em] font-display text-silver',
 } as const

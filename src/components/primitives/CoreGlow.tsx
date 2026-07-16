@@ -69,6 +69,21 @@ function OrnateCore({ centerX, centerY, label, onClick, size = 96, className }: 
     width: i % 2 === 0 ? 1 : 0.6,
   }))
 
+  // Flower-of-life: a triangular lattice of overlapping circles woven through
+  // the disc (the sacred geometry visible in the reference cores). Radius = the
+  // lattice spacing so neighbours intersect; kept within ~2 cells of centre.
+  const cell = size * 0.2
+  const e1 = { x: cell, y: 0 }
+  const e2 = { x: cell / 2, y: (cell * Math.sqrt(3)) / 2 }
+  const flower: { x: number; y: number }[] = []
+  for (let i = -3; i <= 3; i++) {
+    for (let j = -3; j <= 3; j++) {
+      const x = i * e1.x + j * e2.x
+      const y = i * e1.y + j * e2.y
+      if (Math.hypot(x, y) <= cell * 2 + 0.5) flower.push({ x: centerX + x, y: centerY + y })
+    }
+  }
+
   return (
     <g
       onClick={onClick}
@@ -95,6 +110,13 @@ function OrnateCore({ centerX, centerY, label, onClick, size = 96, className }: 
       {rings.map((ring, i) => (
         <circle key={`ring-${i}`} cx={centerX} cy={centerY} r={ring.r} fill="none" stroke={COLORS.gold} strokeOpacity={ring.opacity} strokeWidth={ring.width} />
       ))}
+
+      {/* flower-of-life sacred geometry woven through the disc */}
+      <g opacity={0.5}>
+        {flower.map((c, i) => (
+          <circle key={`fol-${i}`} cx={c.x} cy={c.y} r={cell} fill="none" stroke={COLORS.gold} strokeOpacity={0.28} strokeWidth={0.4} />
+        ))}
+      </g>
 
       {/* two luminous highlight rings */}
       <circle cx={centerX} cy={centerY} r={size * 0.62} fill="none" stroke={COLORS.gold} strokeOpacity={0.9} strokeWidth={1.2} filter="url(#glow)" />

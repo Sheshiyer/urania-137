@@ -1,4 +1,4 @@
-import { AssetGenerateRequest, AssetGenerateResponse } from '../types'
+import { AssetGenerateRequest, AssetGenerateResponse, SelemeneHealth, SelemeneReady } from '../types'
 
 /**
  * All calls go through the same-origin serverless proxy (`/api/selemene/*`),
@@ -24,12 +24,13 @@ export async function generateAsset(request: AssetGenerateRequest): Promise<Asse
   return res.json()
 }
 
-/** Lightweight liveness probe (used for diagnostics). */
-export async function checkHealth(): Promise<boolean> {
-  try {
-    const res = await fetch(`${PROXY_BASE}/health/live`)
-    return res.ok
-  } catch {
-    return false
-  }
+async function getJson<T>(path: string): Promise<T> {
+  const res = await fetch(`${PROXY_BASE}${path}`, { headers: { Accept: 'application/json' } })
+  if (!res.ok) throw new Error(`Selemene ${path} ${res.status}`)
+  return res.json()
 }
+
+/** Live engine/system status — powers the real Engine Status surface. */
+export const fetchHealth = () => getJson<SelemeneHealth>('/health')
+export const fetchReady = () => getJson<SelemeneReady>('/health/ready')
+export const fetchEngines = () => getJson<{ engines: string[] }>('/api/v1/engines').then((r) => r.engines)
