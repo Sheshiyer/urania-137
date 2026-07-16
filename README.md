@@ -86,12 +86,20 @@ npm run build      # tsc + vite build
 npm run preview
 ```
 
-Point it at a Selemene deployment with environment variables (defaults target the public API):
+The Selemene API needs an `X-API-Key` and sends no CORS header for other origins,
+so the browser never calls it directly. A **server-side proxy** (`api/proxy.ts`,
+routed by `vercel.json`) injects the key and gives the SPA a same-origin endpoint.
+The key is a **server-only** env var — never a `VITE_` variable (those are inlined
+into the public bundle).
 
 ```bash
-# .env.local
-VITE_SELEMENE_API_URL=https://selemene.tryambakam.space
-VITE_SELEMENE_API_KEY=            # optional; sent as X-API-Key when set
+# Vercel: Project → Settings → Environment Variables (Production/Preview)
+SELEMENE_API_KEY=nk_...                      # secret, server-side only
+SELEMENE_API_URL=https://selemene.tryambakam.space
+
+# Local dev: .env.local (gitignored) — the Vite dev server proxies the same way
+SELEMENE_API_KEY=nk_...
+SELEMENE_API_URL=https://selemene.tryambakam.space
 ```
 
 ## How it works
@@ -105,9 +113,10 @@ graph TD
     ST --> URL["history.replaceState → #/node/:id"]
     CL --> K[Click a sub-node orb]
     K --> M[Modal + ReportForm preset to its mode]
-    M --> F{Surface}
-    F -->|deterministic| G["POST /api/v1/workflows/{id}/execute"]
-    F -->|witness| H[POST /api/v1/assets/generate]
+    M --> P["fetch same-origin /api/selemene/*"]
+    P --> PX["Vercel proxy: inject X-API-Key server-side"]
+    PX --> H["POST /api/v1/assets/generate (mode-keyed)"]
+    H --> R["assembled reading → result modal"]
 ```
 
 **One data-driven component renders all seven cluster pages.** `ConstellationGraph` reads `SELEMENE_NODES[i].children` and draws that node re-centred with its sub-nodes — so the seven pages cannot drift from one another. The visual grammar lives in a frozen primitive layer:
@@ -151,7 +160,7 @@ urania-137
 - **Tailwind CSS 3** for utilities; **SVG** for the graph (no canvas/WebGL — lightweight, responsive).
 - **GSAP + `@gsap/react` (ScrollTrigger)** for the scroll journey and entrance motion.
 - **Hash-based routing** (`#/node/:id`) with zero router dependency.
-- Live API client in `src/lib/selemeneApi.ts` (deterministic workflows + witness asset generation).
+- API client in `src/lib/selemeneApi.ts` → same-origin proxy (`api/proxy.ts`) → Selemene `POST /api/v1/assets/generate`; the reading's `assembled` markdown renders in the result modal.
 
 ## Brand identity
 
