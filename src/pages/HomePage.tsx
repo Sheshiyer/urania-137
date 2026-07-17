@@ -3,6 +3,8 @@ import { GraphOrbital } from '../types'
 import { ConstellationGraph } from '../components/ConstellationGraph'
 import { PageFrame } from '../components/layout/PageFrame'
 import { StatFooter, Stat } from '../components/chrome/StatFooter'
+import { BottomChrome } from '../components/chrome/BottomChrome'
+import { CHROME } from '../components/chrome/insets'
 import { navigate } from '../hooks/useHashRoute'
 
 const overviewOrbitals: GraphOrbital[] = SELEMENE_NODES.map((node) => ({
@@ -37,9 +39,13 @@ export function HomePage() {
         onSelect={(id) => navigate(`/node/${id}`)}
         centerLabel="NOESIS"
         ariaLabel="Selemene stellar node overview"
+        topInset={CHROME.nav}
+        bottomInset={CHROME.footer}
       />
       <PageFrame />
-      <StatFooter stats={HOME_STATS} />
+      <BottomChrome>
+        <StatFooter stats={HOME_STATS} />
+      </BottomChrome>
     </div>
   )
 }

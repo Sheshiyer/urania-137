@@ -12,6 +12,8 @@ import { PageHeader } from '../components/layout/PageHeader'
 import { PageFrame } from '../components/layout/PageFrame'
 import { StatFooter } from '../components/chrome/StatFooter'
 import { PageTabs } from '../components/chrome/PageTabs'
+import { BottomChrome } from '../components/chrome/BottomChrome'
+import { CHROME } from '../components/chrome/insets'
 import { navigate } from '../hooks/useHashRoute'
 
 type ModalView = 'report' | 'info' | 'result' | null
@@ -74,12 +76,15 @@ export function NodePage({ nodeId }: { nodeId: string }) {
         centerLabel={node.label}
         onHomeRequest={() => navigate('/')}
         ariaLabel={`${node.label} sub-node constellation`}
-        centerYOffset={0.06}
+        topInset={CHROME.navAndTitle}
+        bottomInset={CHROME.tabsAndFooter}
       />
       <PageHeader title={node.label} subtitle={node.description} onBack={() => navigate('/')} />
       <PageFrame />
-      <PageTabs />
-      <StatFooter stats={nodeStats} />
+      <BottomChrome>
+        <PageTabs />
+        <StatFooter stats={nodeStats} />
+      </BottomChrome>
 
       <Modal isOpen={modalView === 'report'} title={selectedChild?.label ?? node.label} onClose={closeModal}>
         {modalView === 'report' && (
