@@ -32,15 +32,19 @@ Everything is the graph. A central **NOESIS** core is ringed by seven parent nod
 
 ## The seven surfaces
 
-| Node | URL | Sub-nodes |
-|------|-----|-----------|
-| **Birth Witness** | `#/node/birth` | Birth Blueprint · Lineage · Human Design · Gene Keys · Vedic Clock · Panchanga · Timing Windows |
-| **Union Mirror** | `#/node/compat` | Synastry · Compatibility · Family Constellations · Business Partnership · Relationship Dynamics · Composite |
-| **Sky Weather** | `#/node/transit` | Daily Transits · Monthly Cycles · Retrogrades · Eclipses · Solar Returns · Lunar Returns · Mundane Astrology |
-| **Noesis Reading** | `#/node/witness` | L0 Minimal → L5 Comprehensive · Bridge Question · Pattern Extraction |
-| **Engine Status** | `#/node/engine` | 16 Consciousness Engines · Vedic Clock · Panchanga · I Ching · Astro · Health · Pulse · Human Design · Enneagram · Gene Keys · Anamnesis |
-| **Folio Archive** | `#/node/folio` | Saved Reports · Search · History · Favorites · Markdown · DOCX · PDF · Exports |
-| **Bridge Query** | `#/node/bridge` | Question-Based Reports · Horary · Follow-Up Inquiries · I Ching · Decision Support |
+Every child is wired to a capability the engine **actually serves** — verified against the live API and `noesis-api`'s source. Nothing here sends a mode the engine can't resolve.
+
+| Node | URL | Wired to |
+|------|-----|----------|
+| **Birth Witness** | `#/node/birth` | `birth-blueprint` **workflow** · numerology · human-design · gene-keys · vimshottari · panchanga · vedic-clock **engines** |
+| **Union Mirror** | `#/node/compat` | `composite-dyad` · `integrated-reading` (2+ subjects) **witness** |
+| **Sky Weather** | `#/node/transit` | `daily-practice` **workflow** · transits · panchanga · vedic-clock · biorhythm **engines** |
+| **Noesis Reading** | `#/node/witness` | `integrated-kundali-l0` (12-part reading) · `integrated-reading` **witness** · `full-spectrum` · `creative-expression` **workflows** |
+| **Engine Status** | `#/node/engine` | live `/health` + `/health/ready` + roster · 10 individually runnable **engines** |
+| **Folio Archive** | `#/node/folio` | `localStorage` archive — search · favorites · Markdown/DOCX/PDF export |
+| **Bridge Query** | `#/node/bridge` | `decision-support` · `self-inquiry` **workflows** · tarot · i-ching · enneagram **engines** |
+
+> **On witness modes.** `POST /api/v1/assets/generate` does not validate `mode` — an unknown or empty mode returns `200` with a generic one-pass `default: Reading`, indistinguishable from a real result. `noesis-api`'s `load_mode_document` resolves only `integrated-reading`/`composite-dyad` and `integrated-kundali-l0`/`kundali`/`kundali-l0`. The richer partner and lineage modes exist as authored docs in the engine repo (`packages/witness-pipeline/modes/`) but aren't loaded yet; they'll get a child here once the engine serves them. `report_level` is currently ignored by the engine.
 
 ## Visual direction
 

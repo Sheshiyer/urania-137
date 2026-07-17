@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import { getNodeById } from '../data/selemeneNodes'
-import { GraphOrbital, SelemeneChild, AssetGenerateRequest } from '../types'
+import { GraphOrbital, SelemeneChild, AssetGenerateRequest, BirthData } from '../types'
 import { useReportGenerator } from '../hooks/useReportGenerator'
 import { useEngineStatus } from '../hooks/useEngineStatus'
+import { useDeterministicRun } from '../hooks/useDeterministicRun'
 import { ConstellationGraph } from '../components/ConstellationGraph'
 import { Modal } from '../components/Modal'
-import { ReportForm } from '../components/ReportForm'
+import { WitnessForm } from '../components/forms/WitnessForm'
+import { BirthDataForm } from '../components/forms/BirthDataForm'
 import { EngineStatusPanel } from '../components/panels/EngineStatusPanel'
 import { FolioPanel } from '../components/panels/FolioPanel'
+import { DeterministicResult } from '../components/panels/DeterministicResult'
 import { PageHeader } from '../components/layout/PageHeader'
 import { PageFrame } from '../components/layout/PageFrame'
 import { StatFooter } from '../components/chrome/StatFooter'
@@ -16,7 +19,7 @@ import { BottomChrome } from '../components/chrome/BottomChrome'
 import { CHROME } from '../components/chrome/insets'
 import { navigate } from '../hooks/useHashRoute'
 
-type ModalView = 'report' | 'info' | 'result' | null
+type ModalView = 'witness' | 'birth' | 'info' | 'result' | 'deterministic' | null
 
 /** Evenly distribute a node's children around its ring (clockwise from top). */
 function childOrbitals(kids: SelemeneChild[], color: string): GraphOrbital[] {
@@ -32,38 +35,51 @@ function childOrbitals(kids: SelemeneChild[], color: string): GraphOrbital[] {
 
 /**
  * A parent-node page (`#/node/:id`): the node re-centers as a golden astrolabe
- * mandala and its children orbit as labelled orbs. Clicking a child opens the
- * report form (live Selemene API) or an info panel — the report flow migrated
- * intact from the retired ScrollJourney.
+ * and its children orbit as labelled orbs. Clicking a child runs the real
+ * capability it's wired to — a deterministic workflow/engine, a witness reading,
+ * or a live panel — against the live Selemene engine.
  */
 export function NodePage({ nodeId }: { nodeId: string }) {
   const node = getNodeById(nodeId)!
   const [selectedChild, setSelectedChild] = useState<SelemeneChild | null>(null)
   const [modalView, setModalView] = useState<ModalView>(null)
-  const { generateReport, activeReport } = useReportGenerator()
+  const { generateReport, activeReport, isGenerating } = useReportGenerator()
   const engineStatus = useEngineStatus(node.id === 'engine')
+  const det = useDeterministicRun()
 
   const openChild = (childId: string) => {
     const child = node.children?.find((c) => c.id === childId)
     if (!child) return
     setSelectedChild(child)
-    setModalView(child.info || node.modes.length === 0 ? 'info' : 'report')
+    det.reset()
+    if (child.info || !child.run) setModalView('info')
+    else if (child.run.kind === 'witness') setModalView('witness')
+    else setModalView('birth')
   }
+
   const closeModal = () => {
     setModalView(null)
     setSelectedChild(null)
+    det.reset()
   }
-  const handleSubmit = (request: AssetGenerateRequest) => {
+
+  const submitWitness = (request: AssetGenerateRequest) => {
     generateReport(node, request)
     setModalView('result')
   }
-  const initialModeKey = selectedChild?.report ? `${selectedChild.report.surface}:${selectedChild.report.modeId}` : undefined
+
+  const submitBirth = (birth: BirthData) => {
+    if (!selectedChild?.run) return
+    setModalView('deterministic')
+    void det.run(node, selectedChild.label, selectedChild.run, birth)
+  }
 
   const kids = node.children ?? []
+  const runnable = kids.filter((c) => c.run).length
   const nodeStats = [
     { label: 'Sub-Nodes', value: String(kids.length) },
-    { label: 'Active Paths', value: String(node.modes.length || kids.length) },
-    { label: 'Resonance', value: `${(62 + ((node.label.length * 7) % 34))}.${(kids.length * 3) % 10}%` },
+    { label: 'Live Paths', value: String(runnable || kids.length) },
+    { label: 'Resonance', value: `${62 + ((node.label.length * 7) % 34)}.${(kids.length * 3) % 10}%` },
   ]
 
   return (
@@ -86,29 +102,43 @@ export function NodePage({ nodeId }: { nodeId: string }) {
         <StatFooter stats={nodeStats} />
       </BottomChrome>
 
-      <Modal isOpen={modalView === 'report'} title={selectedChild?.label ?? node.label} onClose={closeModal}>
-        {modalView === 'report' && (
-          <ReportForm node={node} onSubmit={handleSubmit} initialModeKey={initialModeKey} initialLevel={selectedChild?.report?.level} />
+      {/* Witness reading — a mode the engine actually resolves */}
+      <Modal isOpen={modalView === 'witness'} title={selectedChild?.label ?? node.label} onClose={closeModal}>
+        {modalView === 'witness' && selectedChild?.run?.kind === 'witness' && (
+          <WitnessForm run={selectedChild.run} actionLabel={`Generate ${selectedChild.label}`} onSubmit={submitWitness} busy={isGenerating} />
         )}
       </Modal>
 
+      {/* Deterministic workflow / engine — needs birth_data */}
+      <Modal isOpen={modalView === 'birth'} title={selectedChild?.label ?? node.label} onClose={closeModal}>
+        {modalView === 'birth' && selectedChild?.run && (
+          <BirthDataForm actionLabel={`Run ${selectedChild.label}`} onSubmit={submitBirth} busy={det.busy} />
+        )}
+      </Modal>
+
+      <Modal isOpen={modalView === 'deterministic'} title={selectedChild?.label ?? node.label} onClose={closeModal}>
+        <DeterministicResult
+          result={det.workflow}
+          engine={det.engine}
+          declaredEngines={det.declaredEngines}
+          busy={det.busy}
+          error={det.error}
+        />
+      </Modal>
+
+      {/* Live panels */}
       <Modal isOpen={modalView === 'info'} title={selectedChild?.label ?? node.label} onClose={closeModal}>
         {node.id === 'engine' ? (
           <EngineStatusPanel child={selectedChild} status={engineStatus} />
         ) : node.id === 'folio' ? (
           <FolioPanel child={selectedChild} />
         ) : (
-          <div className="space-y-4">
-            <p className="leading-relaxed text-silver">{node.description}</p>
-            <div className="rounded-lg border border-gold/10 bg-void/60 px-4 py-3 text-sm text-parchment">
-              <span className="font-display uppercase tracking-widest text-gold">{selectedChild?.label}</span>
-              <p className="mt-2 text-silver">This surface is informational.</p>
-            </div>
-          </div>
+          <p className="leading-relaxed text-silver">{node.description}</p>
         )}
       </Modal>
 
-      <Modal isOpen={modalView === 'result'} title={activeReport?.title ?? 'Report'} onClose={closeModal}>
+      {/* Witness result — assembled markdown */}
+      <Modal isOpen={modalView === 'result'} title={activeReport?.title ?? 'Reading'} onClose={closeModal}>
         <div className="space-y-4">
           <div
             className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm ${

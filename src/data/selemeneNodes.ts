@@ -1,5 +1,21 @@
 import { StellarNode } from '../types'
 
+/**
+ * The seven surfaces, mapped one-to-one onto capabilities the Selemene engine
+ * actually serves. Verified against the live API and `noesis-api`'s source:
+ *
+ *  - `workflow` children  → POST /api/v1/workflows/{id}        — 6 real workflows
+ *  - `engine` children    → POST /api/v1/engines/{id}/calculate — 18 real engines
+ *  - `witness` children   → POST /api/v1/assets/generate        — ONLY the modes
+ *    `load_mode_document` resolves: `integrated-reading` (+`composite-dyad`) and
+ *    `integrated-kundali-l0` (+`kundali`, `kundali-l0`). Every other mode string
+ *    silently returns a generic one-pass "default: Reading" — indistinguishable
+ *    from a typo — so we never send one.
+ *
+ * The richer partner/lineage modes exist as authored docs in the engine repo
+ * (`packages/witness-pipeline/modes/`) but are not yet loaded by noesis-api;
+ * they'll earn a child here once the engine serves them.
+ */
 export const SELEMENE_NODES: StellarNode[] = [
   {
     id: 'birth',
@@ -9,33 +25,14 @@ export const SELEMENE_NODES: StellarNode[] = [
     distance: 1,
     color: 'gold',
     subNodes: ['Sun', 'Moon', 'Ascendant', 'Nodes'],
-    modes: [
-      {
-        id: 'birth-blueprint',
-        label: 'Birth Blueprint (Deterministic)',
-        surface: 'deterministic',
-        minSubjects: 1,
-        maxSubjects: 1,
-        description: 'Core identity mapping through numerology, human-design, and vimshottari.',
-      },
-      {
-        id: 'birth-blueprint',
-        label: 'Birth Blueprint (Witness)',
-        surface: 'witness',
-        minSubjects: 1,
-        maxSubjects: 1,
-        description: 'Narrative witness of the natal imprint.',
-      },
-    ],
-    // One-to-one with birth-witness-page.png (clockwise from top).
     children: [
-      { id: 'birth-blueprint', label: 'Birth Blueprint', report: { surface: 'deterministic', modeId: 'birth-blueprint' } },
-      { id: 'lineage', label: 'Lineage', report: { surface: 'witness', modeId: 'birth-blueprint' } },
-      { id: 'human-design', label: 'Human Design', report: { surface: 'deterministic', modeId: 'birth-blueprint' } },
-      { id: 'gene-keys', label: 'Gene Keys', report: { surface: 'deterministic', modeId: 'birth-blueprint' } },
-      { id: 'vedic-clock', label: 'Vedic Clock', report: { surface: 'deterministic', modeId: 'birth-blueprint' } },
-      { id: 'panchanga', label: 'Panchanga', report: { surface: 'deterministic', modeId: 'birth-blueprint' } },
-      { id: 'timing-windows', label: 'Timing Windows', report: { surface: 'witness', modeId: 'birth-blueprint' } },
+      { id: 'birth-blueprint', label: 'Birth Blueprint', glyph: 'flower', run: { kind: 'workflow', workflowId: 'birth-blueprint' } },
+      { id: 'numerology', label: 'Numerology', glyph: 'star', run: { kind: 'engine', engineId: 'numerology' } },
+      { id: 'human-design', label: 'Human Design', glyph: 'bodygraph', run: { kind: 'engine', engineId: 'human-design' } },
+      { id: 'gene-keys', label: 'Gene Keys', glyph: 'key', run: { kind: 'engine', engineId: 'gene-keys' } },
+      { id: 'vimshottari', label: 'Vimshottari', glyph: 'spiral', run: { kind: 'engine', engineId: 'vimshottari' } },
+      { id: 'panchanga', label: 'Panchanga', glyph: 'sun', run: { kind: 'engine', engineId: 'panchanga' } },
+      { id: 'vedic-clock', label: 'Vedic Clock', glyph: 'astrolabe', run: { kind: 'engine', engineId: 'vedic-clock' } },
     ],
   },
   {
@@ -46,64 +43,9 @@ export const SELEMENE_NODES: StellarNode[] = [
     distance: 1,
     color: 'violet',
     subNodes: ['Synastry', 'Composite', 'Karmic Threads'],
-    modes: [
-      {
-        id: 'synastry',
-        label: 'Synastry',
-        surface: 'witness',
-        minSubjects: 2,
-        maxSubjects: 2,
-        needsRelationship: true,
-      },
-      {
-        id: 'mother-son-lineage',
-        label: 'Mother-Son Lineage',
-        surface: 'witness',
-        minSubjects: 2,
-        maxSubjects: 2,
-        needsRelationship: true,
-      },
-      {
-        id: 'business-partners',
-        label: 'Business Partners',
-        surface: 'witness',
-        minSubjects: 2,
-        maxSubjects: 2,
-        needsRelationship: true,
-      },
-      {
-        id: 'family-penta',
-        label: 'Family Penta',
-        surface: 'witness',
-        minSubjects: 2,
-        maxSubjects: 5,
-        needsRelationship: true,
-      },
-      {
-        id: 'unmarried-partners',
-        label: 'Unmarried Partners',
-        surface: 'witness',
-        minSubjects: 2,
-        maxSubjects: 2,
-        needsRelationship: true,
-      },
-      {
-        id: 'married-partners',
-        label: 'Married Partners',
-        surface: 'witness',
-        minSubjects: 2,
-        maxSubjects: 2,
-        needsRelationship: true,
-      },
-    ],
-    // One-to-one with union-mirror-page.png (clockwise from top).
     children: [
-      { id: 'synastry', label: 'Synastry', report: { surface: 'witness', modeId: 'synastry' } },
-      { id: 'compatibility', label: 'Compatibility', report: { surface: 'witness', modeId: 'synastry' } },
-      { id: 'family-constellations', label: 'Family Constellations', report: { surface: 'witness', modeId: 'family-penta' } },
-      { id: 'business-partnership', label: 'Business Partnership', report: { surface: 'witness', modeId: 'business-partners' } },
-      { id: 'relationship-dynamics', label: 'Relationship Dynamics', report: { surface: 'witness', modeId: 'married-partners' } },
-      { id: 'composite', label: 'Composite', report: { surface: 'witness', modeId: 'synastry' } },
+      { id: 'composite-dyad', label: 'Composite Dyad', glyph: 'union', run: { kind: 'witness', mode: 'composite-dyad', minSubjects: 2, maxSubjects: 2 } },
+      { id: 'relationship-reading', label: 'Relationship Reading', glyph: 'union', run: { kind: 'witness', mode: 'integrated-reading', minSubjects: 2, maxSubjects: 5 } },
     ],
   },
   {
@@ -114,33 +56,12 @@ export const SELEMENE_NODES: StellarNode[] = [
     distance: 1,
     color: 'cyan',
     subNodes: ['Active Transits', 'Progressions', 'Eclipses'],
-    modes: [
-      {
-        id: 'daily-practice',
-        label: 'Daily Practice (Deterministic)',
-        surface: 'deterministic',
-        minSubjects: 1,
-        maxSubjects: 1,
-        needsTransitDate: true,
-      },
-      {
-        id: 'transit',
-        label: 'Transit Witness',
-        surface: 'witness',
-        minSubjects: 1,
-        maxSubjects: 1,
-        needsTransitDate: true,
-      },
-    ],
-    // One-to-one with sky-weather-page.png (clockwise from top).
     children: [
-      { id: 'daily-transits', label: 'Daily Transits', report: { surface: 'deterministic', modeId: 'daily-practice' } },
-      { id: 'monthly-cycles', label: 'Monthly Cycles', report: { surface: 'witness', modeId: 'transit' } },
-      { id: 'retrogrades', label: 'Retrogrades', report: { surface: 'witness', modeId: 'transit' } },
-      { id: 'eclipses', label: 'Eclipses', report: { surface: 'witness', modeId: 'transit' } },
-      { id: 'solar-returns', label: 'Solar Returns', report: { surface: 'witness', modeId: 'transit' } },
-      { id: 'lunar-returns', label: 'Lunar Returns', report: { surface: 'witness', modeId: 'transit' } },
-      { id: 'mundane-astrology', label: 'Mundane Astrology', report: { surface: 'witness', modeId: 'transit' } },
+      { id: 'daily-practice', label: 'Daily Practice', glyph: 'orbit', run: { kind: 'workflow', workflowId: 'daily-practice' } },
+      { id: 'transits', label: 'Transits', glyph: 'orbit', run: { kind: 'engine', engineId: 'transits' } },
+      { id: 'panchanga', label: 'Panchanga', glyph: 'sun', run: { kind: 'engine', engineId: 'panchanga' } },
+      { id: 'vedic-clock', label: 'Vedic Clock', glyph: 'astrolabe', run: { kind: 'engine', engineId: 'vedic-clock' } },
+      { id: 'biorhythm', label: 'Biorhythm', glyph: 'pulse', run: { kind: 'engine', engineId: 'biorhythm' } },
     ],
   },
   {
@@ -150,121 +71,69 @@ export const SELEMENE_NODES: StellarNode[] = [
     angle: 154.2,
     distance: 1,
     color: 'amber',
-    subNodes: ['L0', 'L1', 'L2', 'L3', 'L4', 'L5'],
-    modes: [
-      {
-        id: 'integrated-reading',
-        label: 'Integrated Reading',
-        surface: 'witness',
-        minSubjects: 1,
-        maxSubjects: 5,
-      },
-      {
-        id: 'integrated-reading-l4',
-        label: 'Integrated Reading L4',
-        surface: 'witness',
-        minSubjects: 1,
-        maxSubjects: 5,
-      },
-    ],
-    // One-to-one with noesis-reading-page.png — L0..L5 preset the report level.
+    subNodes: ['Kundali', 'Structural', 'Somatic'],
     children: [
-      { id: 'l0-minimal', label: 'L0 Minimal', report: { surface: 'witness', modeId: 'integrated-reading', level: 'L0' } },
-      { id: 'l1-brief', label: 'L1 Brief', report: { surface: 'witness', modeId: 'integrated-reading', level: 'L1' } },
-      { id: 'l2-standard', label: 'L2 Standard', report: { surface: 'witness', modeId: 'integrated-reading', level: 'L2' } },
-      { id: 'l3-detailed', label: 'L3 Detailed', report: { surface: 'witness', modeId: 'integrated-reading', level: 'L3' } },
-      { id: 'l4-deep', label: 'L4 Deep', report: { surface: 'witness', modeId: 'integrated-reading-l4', level: 'L4' } },
-      { id: 'l5-comprehensive', label: 'L5 Comprehensive', report: { surface: 'witness', modeId: 'integrated-reading', level: 'L5' } },
-      { id: 'bridge-question', label: 'Bridge Question', report: { surface: 'witness', modeId: 'integrated-reading' } },
-      { id: 'pattern-extraction', label: 'Pattern Extraction', report: { surface: 'witness', modeId: 'integrated-reading' } },
+      { id: 'integrated-kundali-l0', label: 'Integrated Kundali', glyph: 'flower', run: { kind: 'witness', mode: 'integrated-kundali-l0', minSubjects: 1, maxSubjects: 5, level: 'L0' } },
+      { id: 'integrated-reading', label: 'Integrated Reading', glyph: 'spiral', run: { kind: 'witness', mode: 'integrated-reading', minSubjects: 1, maxSubjects: 5 } },
+      { id: 'full-spectrum', label: 'Full Spectrum', glyph: 'sun', run: { kind: 'workflow', workflowId: 'full-spectrum' } },
+      { id: 'creative-expression', label: 'Creative Expression', glyph: 'lotus', run: { kind: 'workflow', workflowId: 'creative-expression' } },
     ],
   },
   {
     id: 'engine',
     label: 'Engine Status',
-    description: 'Diagnostic view of the 16 consciousness engines and workflows.',
+    description: 'Diagnostic view of the consciousness engines and workflows.',
     angle: 205.6,
     distance: 1,
     color: 'cyan',
-    subNodes: ['16 Engines', '6 Workflows', 'Pulse'],
-    modes: [],
-    // One-to-one with engine-status-page.png — info-only (no report surface).
+    subNodes: ['Engines', 'Workflows', 'Pulse'],
     children: [
-      { id: 'consciousness-engines', label: '16 Consciousness Engines', info: true, glyph: 'flower' },
-      { id: 'vedic-clock', label: 'Vedic Clock', info: true, glyph: 'astrolabe' },
-      { id: 'panchanga', label: 'Panchanga', info: true, glyph: 'sun' },
-      { id: 'i-ching', label: 'I Ching', info: true, glyph: 'hexagram' },
-      { id: 'astro', label: 'Astro', info: true, glyph: 'astrolabe' },
-      { id: 'health', label: 'Health', info: true, glyph: 'lotus' },
-      { id: 'pulse', label: 'Pulse', info: true, glyph: 'pulse' },
-      { id: 'human-design', label: 'Human Design', info: true, glyph: 'bodygraph' },
-      { id: 'enneagram', label: 'Enneagram', info: true, glyph: 'enneagram' },
-      { id: 'gene-keys', label: 'Gene Keys', info: true, glyph: 'key' },
-      { id: 'anamnesis', label: 'Anamnesis', info: true, glyph: 'spiral' },
+      { id: 'live-status', label: 'Live Status', glyph: 'flower', info: true },
+      { id: 'panchanga', label: 'Panchanga', glyph: 'sun', run: { kind: 'engine', engineId: 'panchanga' } },
+      { id: 'vedic-clock', label: 'Vedic Clock', glyph: 'astrolabe', run: { kind: 'engine', engineId: 'vedic-clock' } },
+      { id: 'i-ching', label: 'I Ching', glyph: 'hexagram', run: { kind: 'engine', engineId: 'i-ching' } },
+      { id: 'tarot', label: 'Tarot', glyph: 'star', run: { kind: 'engine', engineId: 'tarot' } },
+      { id: 'transits', label: 'Transits', glyph: 'orbit', run: { kind: 'engine', engineId: 'transits' } },
+      { id: 'biorhythm', label: 'Biorhythm', glyph: 'pulse', run: { kind: 'engine', engineId: 'biorhythm' } },
+      { id: 'human-design', label: 'Human Design', glyph: 'bodygraph', run: { kind: 'engine', engineId: 'human-design' } },
+      { id: 'enneagram', label: 'Enneagram', glyph: 'enneagram', run: { kind: 'engine', engineId: 'enneagram' } },
+      { id: 'gene-keys', label: 'Gene Keys', glyph: 'key', run: { kind: 'engine', engineId: 'gene-keys' } },
+      { id: 'sacred-geometry', label: 'Sacred Geometry', glyph: 'flower', run: { kind: 'engine', engineId: 'sacred-geometry' } },
     ],
   },
   {
     id: 'folio',
     label: 'Folio Archive',
-    description: 'Previously generated reports, saved witnesses, and B-surface headers.',
+    description: 'Previously generated readings, saved witnesses, and exports.',
     angle: 257,
     distance: 1,
     color: 'gold',
     subNodes: ['Recent', 'Favorites', 'Search'],
-    modes: [],
-    // One-to-one with folio-archive-page.png — info-only (no report surface).
     children: [
-      { id: 'saved-reports', label: 'Saved Reports', info: true },
-      { id: 'search', label: 'Search', info: true },
-      { id: 'history', label: 'History', info: true },
-      { id: 'favorites', label: 'Favorites', info: true },
-      { id: 'markdown', label: 'Markdown', info: true },
-      { id: 'docx', label: 'DOCX', info: true },
-      { id: 'pdf', label: 'PDF', info: true },
-      { id: 'exports', label: 'Exports', info: true },
+      { id: 'saved-reports', label: 'Saved Reports', info: true, action: 'list' },
+      { id: 'search', label: 'Search', info: true, action: 'search' },
+      { id: 'history', label: 'History', info: true, action: 'history' },
+      { id: 'favorites', label: 'Favorites', info: true, action: 'favorites' },
+      { id: 'markdown', label: 'Markdown', info: true, action: 'export', format: 'markdown' },
+      { id: 'docx', label: 'DOCX', info: true, action: 'export', format: 'docx' },
+      { id: 'pdf', label: 'PDF', info: true, action: 'export', format: 'pdf' },
+      { id: 'exports', label: 'Exports', info: true, action: 'export' },
     ],
   },
   {
     id: 'bridge',
     label: 'Bridge Query',
-    description: 'Direct inquiry into the Selemene Bridge and its 16 engines.',
+    description: 'Direct inquiry into the Selemene Bridge and its engines.',
     angle: 308.4,
     distance: 1,
     color: 'violet',
     subNodes: ['Question', 'Engine Pool', 'Response'],
-    modes: [
-      {
-        id: 'full-spectrum',
-        label: 'Full Spectrum (Deterministic)',
-        surface: 'deterministic',
-        minSubjects: 1,
-        maxSubjects: 1,
-        needsQuestion: true,
-      },
-      {
-        id: 'bridge-query',
-        label: 'Bridge Witness',
-        surface: 'witness',
-        minSubjects: 1,
-        maxSubjects: 1,
-        needsQuestion: true,
-      },
-      {
-        id: 'decision-support',
-        label: 'Decision Support (Deterministic)',
-        surface: 'deterministic',
-        minSubjects: 1,
-        maxSubjects: 1,
-        needsQuestion: true,
-      },
-    ],
-    // One-to-one with bridge-query-page.png (clockwise from top).
     children: [
-      { id: 'question-based-reports', label: 'Question-Based Reports', report: { surface: 'witness', modeId: 'bridge-query' } },
-      { id: 'horary', label: 'Horary', report: { surface: 'witness', modeId: 'bridge-query' } },
-      { id: 'follow-up-inquiries', label: 'Follow-Up Inquiries', report: { surface: 'witness', modeId: 'bridge-query' } },
-      { id: 'i-ching', label: 'I Ching', report: { surface: 'deterministic', modeId: 'full-spectrum' } },
-      { id: 'decision-support', label: 'Decision Support', report: { surface: 'deterministic', modeId: 'decision-support' } },
+      { id: 'decision-support', label: 'Decision Support', glyph: 'query', run: { kind: 'workflow', workflowId: 'decision-support' } },
+      { id: 'self-inquiry', label: 'Self-Inquiry', glyph: 'spiral', run: { kind: 'workflow', workflowId: 'self-inquiry' } },
+      { id: 'tarot', label: 'Tarot', glyph: 'star', run: { kind: 'engine', engineId: 'tarot' } },
+      { id: 'i-ching', label: 'I Ching', glyph: 'hexagram', run: { kind: 'engine', engineId: 'i-ching' } },
+      { id: 'enneagram', label: 'Enneagram', glyph: 'enneagram', run: { kind: 'engine', engineId: 'enneagram' } },
     ],
   },
 ]
