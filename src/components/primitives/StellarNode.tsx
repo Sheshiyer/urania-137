@@ -23,9 +23,19 @@ interface StellarNodeProps {
   subCount?: number
   /** Scales label typography down on small viewports. */
   labelScale?: number
+  /** Viewport width — clamps outside labels so they can't run off the edge. */
+  boundsWidth?: number
   /** Extra class (motion targeting, e.g. cn-node / cn-orb). */
   className?: string
 }
+
+/**
+ * Approximate advance width per character as a fraction of the font size, for
+ * Panchang at our 0.12–0.16em tracking. Used to fit labels to the geometry —
+ * SVG can't measure text before layout, so we estimate and size from that.
+ */
+const CHAR_W = 0.74
+const ORB_CHAR_W = 0.66
 
 /** Home node: concentric rings, glowing core, label below. Legacy baseline. */
 function PlainNode({ x, y, centerY, label, selected, onClick, ariaLabel, className }: StellarNodeProps) {
@@ -61,7 +71,7 @@ function PlainNode({ x, y, centerY, label, selected, onClick, ariaLabel, classNa
  * Home parent: a luminous ringed "planet" with its own small orbital system and
  * the label set outside — matching the galactic home view in the moodboard.
  */
-function PlanetNode({ x, y, centerY, label, selected, onClick, ariaLabel, radius = 30, outwardAngle = 0, subCount = 3, labelScale = 1, className }: StellarNodeProps) {
+function PlanetNode({ x, y, centerY, label, selected, onClick, ariaLabel, radius = 30, outwardAngle = 0, subCount = 3, labelScale = 1, boundsWidth, className }: StellarNodeProps) {
   const r = selected ? radius * 1.08 : radius
   const below = y > centerY
   const sats = Array.from({ length: Math.min(Math.max(subCount, 2), 5) }).map((_, i, arr) => {
@@ -70,6 +80,16 @@ function PlanetNode({ x, y, centerY, label, selected, onClick, ariaLabel, radius
     const rr = r + 12
     return { cx: x + rr * Math.cos(a), cy: y + rr * Math.sin(a) }
   })
+
+  // Narrow screens: wrap to two lines so a long name neither runs off the edge
+  // nor collides with the neighbouring node's label, then clamp the block inside
+  // the viewport so it can never clip regardless of where the node sits.
+  const fontSize = (selected ? 13 : 12) * labelScale
+  const lines = labelScale < 1 ? wrapLabel(label, 9, 2) : [label]
+  const halfW = (Math.max(...lines.map((l) => l.length)) * fontSize * CHAR_W) / 2
+  const labelX = boundsWidth ? Math.min(Math.max(x, halfW + 4), boundsWidth - halfW - 4) : x
+  const lineHeight = fontSize + 3
+  const firstLineY = below ? y + r + 20 : y - (r + 12) - (lines.length - 1) * lineHeight
 
   return (
     <g
@@ -99,28 +119,37 @@ function PlanetNode({ x, y, centerY, label, selected, onClick, ariaLabel, radius
 
       {/* label outside */}
       <text
-        x={x}
-        y={y + (below ? r + 22 : -(r + 14))}
         textAnchor="middle"
         fill={selected ? COLORS.parchment : COLORS.silver}
-        fontSize={(selected ? 13 : 12) * labelScale}
+        fontSize={fontSize}
         fontWeight={selected ? 600 : 500}
         letterSpacing="0.16em"
         className="uppercase transition-all duration-300 font-display group-hover:fill-parchment"
       >
-        {label}
+        {lines.map((ln, i) => (
+          <tspan key={i} x={labelX} y={firstLineY + i * lineHeight}>
+            {ln}
+          </tspan>
+        ))}
       </text>
     </g>
   )
 }
 
 /** Node-page child: a luminous ringed orb with an optional glyph + label inside. */
-function OrbNode({ x, y, label, selected, onClick, ariaLabel, radius = 46, outwardAngle = 0, glyph, labelScale = 1, className }: StellarNodeProps) {
+function OrbNode({ x, y, label, selected, onClick, ariaLabel, radius = 46, outwardAngle = 0, glyph, className }: StellarNodeProps) {
   const r = selected ? radius * 1.07 : radius
   const hasGlyph = Boolean(glyph)
-  const lines = wrapLabel(label, 11, 3)
-  const fontSize = (lines.length >= 3 ? 8 : lines.length === 2 ? 9 : 10.5) * labelScale
-  const lineHeight = fontSize + 3
+  // Fit the label to the orb rather than to a fixed line count: derive the wrap
+  // width from the orb's usable chord, then shrink the type until the longest
+  // line fits inside the circle. Keeps labels contained at any radius, so they
+  // never spill over a neighbour on a narrow screen.
+  const avail = r * 1.72
+  const maxChars = Math.max(5, Math.round(avail / (10.5 * ORB_CHAR_W)))
+  const lines = wrapLabel(label, maxChars, 3)
+  const longest = Math.max(...lines.map((l) => l.length), 1)
+  const fontSize = Math.max(5.5, Math.min(hasGlyph ? 9.5 : 10.5, avail / (longest * ORB_CHAR_W)))
+  const lineHeight = fontSize + 2.5
   // With a glyph, the label sits in the lower half of the orb; otherwise centred.
   const labelMidY = hasGlyph ? y + r * 0.34 : y
   const startY = labelMidY - ((lines.length - 1) * lineHeight) / 2
