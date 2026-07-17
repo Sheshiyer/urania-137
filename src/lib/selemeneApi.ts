@@ -64,13 +64,18 @@ export const fetchWorkflow = (id: string) =>
 
 /**
  * The deterministic surface — a composed workflow across several engines.
- * Note the engine composes best-effort: an engine that errors is simply absent
- * from `engine_outputs` (e.g. numerology without `birth_data.name`), so callers
- * should compare against the workflow's declared engine list.
+ *
+ * The engine composes best-effort: an engine that errors is simply absent from
+ * `engine_outputs` rather than failing the call. Two inputs cause that silently,
+ * so pass them:
+ *  - `birth_data.name` — numerology 422s without it
+ *  - `options.intention` — sigil-forge 422s without it ("requires
+ *    options.intention (or question/intent/intent_text)"), which is why
+ *    full-spectrum returned 16/17 and creative-expression 2/3.
  */
-export const runWorkflow = (workflowId: string, birth: BirthData) =>
-  postJson<WorkflowResult>(`/api/v1/workflows/${workflowId}`, { birth_data: birth })
+export const runWorkflow = (workflowId: string, birth: BirthData, options?: Record<string, unknown>) =>
+  postJson<WorkflowResult>(`/api/v1/workflows/${workflowId}`, { birth_data: birth, ...(options ? { options } : {}) })
 
 /** A single consciousness engine, computed directly. */
-export const calculateEngine = (engineId: string, birth: BirthData) =>
-  postJson<EngineResult>(`/api/v1/engines/${engineId}/calculate`, { birth_data: birth })
+export const calculateEngine = (engineId: string, birth: BirthData, options?: Record<string, unknown>) =>
+  postJson<EngineResult>(`/api/v1/engines/${engineId}/calculate`, { birth_data: birth, ...(options ? { options } : {}) })

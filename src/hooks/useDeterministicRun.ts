@@ -26,14 +26,17 @@ export function useDeterministicRun() {
   const [state, setState] = useState<State>(EMPTY)
   const reset = useCallback(() => setState(EMPTY), [])
 
-  const run = useCallback(async (node: StellarNode, label: string, r: ChildRun, birth: BirthData) => {
+  const run = useCallback(async (node: StellarNode, label: string, r: ChildRun, birth: BirthData, intention?: string) => {
     setState({ ...EMPTY, busy: true })
+    // sigil-forge requires `options.intention`; without it the engine 422s and
+    // the workflow drops it silently (full-spectrum 16/17, creative-expression 2/3).
+    const options = intention?.trim() ? { intention: intention.trim() } : undefined
     try {
       if (r.kind === 'workflow') {
         // Fetch the definition alongside the run so we can show which declared
         // engines the API dropped instead of silently returning fewer.
         const [result, def] = await Promise.all([
-          runWorkflow(r.workflowId, birth),
+          runWorkflow(r.workflowId, birth, options),
           fetchWorkflow(r.workflowId).catch(() => null),
         ])
         setState({ busy: false, error: null, workflow: result, engine: null, declaredEngines: def?.engine_ids ?? [] })
@@ -45,7 +48,7 @@ export function useDeterministicRun() {
           content: toMarkdown(`${label} (${r.workflowId})`, result),
         })
       } else if (r.kind === 'engine') {
-        const result = await calculateEngine(r.engineId, birth)
+        const result = await calculateEngine(r.engineId, birth, options)
         setState({ busy: false, error: null, workflow: null, engine: result, declaredEngines: [] })
         saveReport({
           nodeId: node.id,

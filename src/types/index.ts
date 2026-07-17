@@ -107,8 +107,8 @@ export interface SelemeneWorkflow {
  *    silently returns a generic "default: Reading" pass)
  */
 export type ChildRun =
-  | { kind: 'workflow'; workflowId: string }
-  | { kind: 'engine'; engineId: string }
+  | { kind: 'workflow'; workflowId: string; needsIntention?: boolean }
+  | { kind: 'engine'; engineId: string; needsIntention?: boolean }
   | { kind: 'witness'; mode: string; minSubjects: number; maxSubjects: number; level?: ReportLevel }
 
 /**

@@ -68,10 +68,10 @@ export function NodePage({ nodeId }: { nodeId: string }) {
     setModalView('result')
   }
 
-  const submitBirth = (birth: BirthData) => {
+  const submitBirth = (birth: BirthData, intention?: string) => {
     if (!selectedChild?.run) return
     setModalView('deterministic')
-    void det.run(node, selectedChild.label, selectedChild.run, birth)
+    void det.run(node, selectedChild.label, selectedChild.run, birth, intention)
   }
 
   const kids = node.children ?? []
@@ -111,8 +111,13 @@ export function NodePage({ nodeId }: { nodeId: string }) {
 
       {/* Deterministic workflow / engine — needs birth_data */}
       <Modal isOpen={modalView === 'birth'} title={selectedChild?.label ?? node.label} onClose={closeModal}>
-        {modalView === 'birth' && selectedChild?.run && (
-          <BirthDataForm actionLabel={`Run ${selectedChild.label}`} onSubmit={submitBirth} busy={det.busy} />
+        {modalView === 'birth' && selectedChild?.run && selectedChild.run.kind !== 'witness' && (
+          <BirthDataForm
+            actionLabel={`Run ${selectedChild.label}`}
+            needsIntention={selectedChild.run.needsIntention}
+            onSubmit={submitBirth}
+            busy={det.busy}
+          />
         )}
       </Modal>
 

@@ -5,7 +5,10 @@ import { Collapsible } from '../ui/Collapsible'
 interface BirthDataFormProps {
   /** What this run needs, for the button label. */
   actionLabel: string
-  onSubmit: (birth: BirthData) => void
+  /** sigil-forge requires `options.intention` — collect it rather than let the
+   *  engine 422 and the workflow drop it without saying so. */
+  needsIntention?: boolean
+  onSubmit: (birth: BirthData, intention?: string) => void
   busy?: boolean
 }
 
@@ -18,8 +21,9 @@ const EMPTY: BirthData = { name: '', date: '', time: '', latitude: 0, longitude:
  * will silently omit that engine from `engine_outputs` rather than failing — so
  * the form enforces it rather than letting the result quietly lose an engine.
  */
-export function BirthDataForm({ actionLabel, onSubmit, busy }: BirthDataFormProps) {
+export function BirthDataForm({ actionLabel, needsIntention, onSubmit, busy }: BirthDataFormProps) {
   const [birth, setBirth] = useState<BirthData>({ ...EMPTY })
+  const [intention, setIntention] = useState('')
   const [query, setQuery] = useState('')
   const [geo, setGeo] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
 
@@ -43,18 +47,25 @@ export function BirthDataForm({ actionLabel, onSubmit, busy }: BirthDataFormProp
     }
   }
 
-  const ready = birth.name.trim() && birth.date && birth.time && birth.timezone
+  const ready = Boolean(birth.name.trim() && birth.date && birth.time && birth.timezone && (!needsIntention || intention.trim()))
   const field = 'w-full rounded-lg border border-gold/10 bg-surface px-3 py-2 text-parchment placeholder-silver/50 focus:border-gold focus:outline-none'
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault()
-        if (ready) onSubmit(birth)
+        if (ready) onSubmit(birth, needsIntention ? intention : undefined)
       }}
       className="space-y-4"
     >
       <input className={field} placeholder="Name (required — numerology needs it)" value={birth.name} onChange={(e) => set('name', e.target.value)} />
+
+      {needsIntention && (
+        <div className="space-y-1.5">
+          <input className={field} placeholder="Intention (required — sigil-forge needs it)" value={intention} onChange={(e) => setIntention(e.target.value)} />
+          <p className="text-[11px] text-silver/60">Without an intention the engine rejects sigil-forge and the workflow drops it silently.</p>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-3">
         <input type="date" className={field} value={birth.date} onChange={(e) => set('date', e.target.value)} />
