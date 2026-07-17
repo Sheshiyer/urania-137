@@ -113,7 +113,7 @@ export function NodePage({ nodeId }: { nodeId: string }) {
             <span className={`h-2 w-2 rounded-full ${activeReport?.status === 'generating' ? 'animate-pulse bg-emerald' : activeReport?.status === 'error' ? 'bg-terracotta' : 'bg-emerald'}`} />
             {activeReport?.status ?? 'generating'}
           </div>
-          <pre className="max-h-[320px] overflow-auto rounded-lg border border-gold/10 bg-void/60 p-4 font-mono text-xs text-parchment/90">
+          <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded-lg border border-gold/10 bg-void/60 p-4 font-mono text-xs leading-relaxed text-parchment/90">
             {activeReport?.content || 'Contacting the Selemene engines…'}
           </pre>
         </div>
