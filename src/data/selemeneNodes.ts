@@ -91,6 +91,8 @@ export const SELEMENE_NODES: StellarNode[] = [
     subNodes: ['Engines', 'Workflows', 'Pulse'],
     children: [
       { id: 'live-status', label: 'Live Status', glyph: 'flower', info: true },
+      // The consent-gated engines can't run in a tab — name where they live.
+      { id: 'sankalpa', label: 'Sankalpa Desktop', glyph: 'bodygraph', info: true },
       { id: 'panchanga', label: 'Panchanga', glyph: 'sun', run: { kind: 'engine', engineId: 'panchanga' } },
       { id: 'vedic-clock', label: 'Vedic Clock', glyph: 'astrolabe', run: { kind: 'engine', engineId: 'vedic-clock' } },
       { id: 'i-ching', label: 'I Ching', glyph: 'hexagram', run: { kind: 'engine', engineId: 'i-ching' } },
@@ -113,6 +115,8 @@ export const SELEMENE_NODES: StellarNode[] = [
     subNodes: ['Recent', 'Favorites', 'Search'],
     children: [
       { id: 'saved-reports', label: 'Saved Reports', info: true, action: 'list' },
+      // The same packs, walkable — Noesis Mirror renders them as beacons.
+      { id: 'noesis-mirror', label: 'Noesis Mirror', glyph: 'orbit', info: true },
       { id: 'search', label: 'Search', info: true, action: 'search' },
       { id: 'history', label: 'History', info: true, action: 'history' },
       { id: 'favorites', label: 'Favorites', info: true, action: 'favorites' },
