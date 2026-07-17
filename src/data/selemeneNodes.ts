@@ -75,8 +75,10 @@ export const SELEMENE_NODES: StellarNode[] = [
     children: [
       { id: 'integrated-kundali-l0', label: 'Integrated Kundali', glyph: 'flower', run: { kind: 'witness', mode: 'integrated-kundali-l0', minSubjects: 1, maxSubjects: 5, level: 'L0' } },
       { id: 'integrated-reading', label: 'Integrated Reading', glyph: 'spiral', run: { kind: 'witness', mode: 'integrated-reading', minSubjects: 1, maxSubjects: 5 } },
-      { id: 'full-spectrum', label: 'Full Spectrum', glyph: 'sun', run: { kind: 'workflow', workflowId: 'full-spectrum' } },
-      { id: 'creative-expression', label: 'Creative Expression', glyph: 'lotus', run: { kind: 'workflow', workflowId: 'creative-expression' } },
+      // Both compose sigil-forge, which requires `options.intention` — collect it
+      // or the engine 422s and the workflow drops it (16/17, 2/3).
+      { id: 'full-spectrum', label: 'Full Spectrum', glyph: 'sun', run: { kind: 'workflow', workflowId: 'full-spectrum', needsIntention: true } },
+      { id: 'creative-expression', label: 'Creative Expression', glyph: 'lotus', run: { kind: 'workflow', workflowId: 'creative-expression', needsIntention: true } },
     ],
   },
   {
@@ -133,6 +135,7 @@ export const SELEMENE_NODES: StellarNode[] = [
       { id: 'self-inquiry', label: 'Self-Inquiry', glyph: 'spiral', run: { kind: 'workflow', workflowId: 'self-inquiry' } },
       { id: 'tarot', label: 'Tarot', glyph: 'star', run: { kind: 'engine', engineId: 'tarot' } },
       { id: 'i-ching', label: 'I Ching', glyph: 'hexagram', run: { kind: 'engine', engineId: 'i-ching' } },
+      { id: 'sigil-forge', label: 'Sigil Forge', glyph: 'key', run: { kind: 'engine', engineId: 'sigil-forge', needsIntention: true } },
       { id: 'enneagram', label: 'Enneagram', glyph: 'enneagram', run: { kind: 'engine', engineId: 'enneagram' } },
     ],
   },
