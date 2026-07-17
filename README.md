@@ -13,7 +13,17 @@
 
 ---
 
-> **Urania 137** is the frontend for the Selemene consciousness engines — a **multi-page stellar console**. You land on a galactic overview of seven report surfaces; clicking a node opens its own page, where that node re-centres as a golden astrolabe and its sub-nodes orbit it. The graph is the interface at every depth.
+> **Urania 137** is the **online entry** to Tryambakam Noesis — a **multi-page stellar console** over the Selemene consciousness engines. You land on a galactic overview of seven surfaces; clicking a node opens its own page, where that node re-centres as a golden astrolabe and its sub-nodes orbit it. The graph is the interface at every depth.
+
+### Part of an integrated product
+
+| Surface | Role | Where |
+|---|---|---|
+| **Urania 137** (this) | The online entry — the graph. No install, no capture. | `urania-137.vercel.app` |
+| **Noesis Mirror** | The person's walkable 3D field; proximity is the interface. | `314.tryambakam.space/p/:personId` |
+| **Sankalpa** | The Electron instrument — consent-gated capture (biofield, face-reading). | v0.1.0, unreleased |
+
+Both doors are **nodes, not menu items**: Folio Archive → Noesis Mirror, Engine Status → Sankalpa Desktop. See **[`docs/integrated-product-map.md`](./docs/integrated-product-map.md)** for who owns which engine, where the consent boundary sits, and the two gates a witness mode must pass before it's exposed.
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=12,13,15,16&height=1" width="100%" />
 

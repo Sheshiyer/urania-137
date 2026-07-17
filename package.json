@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "verify:taxonomy": "node scripts/verify/taxonomy.mjs",
+    "verify:modes": "node scripts/verify/mode-gates.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
