@@ -60,16 +60,65 @@ export interface SelemeneMode {
 }
 
 /**
- * A child of a parent node, revealed on that node's `/node/:id` page.
- * Sourced one-to-one from the generated page references in
- * `.assets/page-references/`. Clicking a child opens the report modal:
- * `report` presets the ReportForm to an EXISTING Selemene mode/level;
- * `info` children (Engine Status, Folio Archive) open an info panel instead.
+ * Birth data for the deterministic surface (`noesis_core::BirthData`).
+ * `name` is REQUIRED — numerology 422s without it, and a workflow will silently
+ * drop that engine from `engine_outputs` rather than erroring.
+ */
+export interface BirthData {
+  name: string
+  date: string
+  time: string
+  latitude: number
+  longitude: number
+  timezone: string
+}
+
+/** `POST /api/v1/engines/{id}/calculate` */
+export interface EngineResult {
+  engine_id: string
+  result: Record<string, unknown>
+}
+
+/** `POST /api/v1/workflows/{id}` */
+export interface WorkflowResult {
+  workflow_id: string
+  engine_outputs: Record<string, EngineResult>
+  synthesis: unknown | null
+  total_time_ms: number
+  timestamp?: string
+  engine_results?: Record<string, EngineResult>
+}
+
+/** `GET /api/v1/workflows` */
+export interface SelemeneWorkflow {
+  id: string
+  name: string
+  description: string
+  engine_count: number
+}
+
+/**
+ * What a child actually runs against the live engine. Every child maps to a
+ * real, verified capability — no mode is sent that the API doesn't serve:
+ *  - `workflow` → POST /api/v1/workflows/{id}        (6 real workflows)
+ *  - `engine`   → POST /api/v1/engines/{id}/calculate (18 real engines)
+ *  - `witness`  → POST /api/v1/assets/generate        (only the modes
+ *    noesis-api's `load_mode_document` actually resolves; anything else
+ *    silently returns a generic "default: Reading" pass)
+ */
+export type ChildRun =
+  | { kind: 'workflow'; workflowId: string }
+  | { kind: 'engine'; engineId: string }
+  | { kind: 'witness'; mode: string; minSubjects: number; maxSubjects: number; level?: ReportLevel }
+
+/**
+ * A child of a parent node, revealed on that node's `#/node/:id` page.
+ * `run` wires it to a live capability; `info` children render a panel instead.
  */
 export interface SelemeneChild {
   id: string
   label: string
-  report?: { surface: Surface; modeId: string; level?: ReportLevel }
+  run?: ChildRun
   info?: boolean
   /** Optional sacred-geometry glyph id (see `primitives/Glyph.tsx`). */
   glyph?: string
@@ -87,7 +136,6 @@ export interface StellarNode {
   distance: number
   color: 'gold' | 'cyan' | 'violet' | 'amber'
   subNodes: string[]
-  modes: SelemeneMode[]
   /** Sub-tree revealed on the parent-node page. Absent = leaf on the home graph. */
   children?: SelemeneChild[]
   /** Optional sacred-geometry glyph id for the home planet (see `primitives/Glyph.tsx`). */
