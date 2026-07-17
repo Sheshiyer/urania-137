@@ -9,6 +9,7 @@ import {
   AssetGenerateRequest,
   NormalizedLocation,
 } from '../types'
+import { Collapsible } from './ui/Collapsible'
 
 interface ReportFormProps {
   node: StellarNode
@@ -174,83 +175,70 @@ export function ReportForm({ node, onSubmit, initialModeKey, initialLevel }: Rep
       </div>
 
       {mode.surface === 'witness' && (
-        <div className="grid grid-cols-2 gap-3">
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="rounded-lg bg-surface border border-gold/10 px-3 py-2 text-parchment focus:border-gold focus:outline-none"
-          >
-            <option value="en">English</option>
-            <option value="hi">Hindi</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="de">German</option>
-          </select>
+        <Collapsible title="Reading options" badge={`${reportLevel} · ${language.toUpperCase()}`}>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="rounded-lg bg-surface border border-gold/10 px-3 py-2 text-parchment focus:border-gold focus:outline-none"
+            >
+              <option value="en">English</option>
+              <option value="hi">Hindi</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="de">German</option>
+            </select>
 
-          <select
-            value={reportLevel}
-            onChange={(e) => setReportLevel(e.target.value as ReportLevel)}
-            className="rounded-lg bg-surface border border-gold/10 px-3 py-2 text-parchment focus:border-gold focus:outline-none"
-          >
-            <option value="L0">L0 — Minimal</option>
-            <option value="L1">L1 — Brief</option>
-            <option value="L2">L2 — Standard</option>
-            <option value="L3">L3 — Detailed</option>
-            <option value="L4">L4 — Deep</option>
-            <option value="L5">L5 — Comprehensive</option>
-          </select>
+            <select
+              value={reportLevel}
+              onChange={(e) => setReportLevel(e.target.value as ReportLevel)}
+              className="rounded-lg bg-surface border border-gold/10 px-3 py-2 text-parchment focus:border-gold focus:outline-none"
+            >
+              <option value="L0">L0 — Minimal</option>
+              <option value="L1">L1 — Brief</option>
+              <option value="L2">L2 — Standard</option>
+              <option value="L3">L3 — Detailed</option>
+              <option value="L4">L4 — Deep</option>
+              <option value="L5">L5 — Comprehensive</option>
+            </select>
 
-          <select
-            value={outputFormat}
-            onChange={(e) => setOutputFormat(e.target.value as ReportGenerationRequest['output']['format'])}
-            className="rounded-lg bg-surface border border-gold/10 px-3 py-2 text-parchment focus:border-gold focus:outline-none"
-          >
-            <option value="markdown">Markdown</option>
-            <option value="docx">DOCX</option>
-            <option value="pdf">PDF</option>
-            <option value="source-pack">Source Pack</option>
-          </select>
+            <select
+              value={outputFormat}
+              onChange={(e) => setOutputFormat(e.target.value as ReportGenerationRequest['output']['format'])}
+              className="rounded-lg bg-surface border border-gold/10 px-3 py-2 text-parchment focus:border-gold focus:outline-none"
+            >
+              <option value="markdown">Markdown</option>
+              <option value="docx">DOCX</option>
+              <option value="pdf">PDF</option>
+              <option value="source-pack">Source Pack</option>
+            </select>
 
-          <div className="rounded-lg bg-surface border border-gold/10 px-3 py-2 flex items-center gap-3"
-          >
-            <label className="text-xs text-silver">Consciousness L{consciousnessLevel}</label>
-            <input
-              type="range"
-              min={0}
-              max={5}
-              step={1}
-              value={consciousnessLevel}
-              onChange={(e) => setConsciousnessLevel(Number(e.target.value))}
-              className="w-full accent-gold"
-            />
-          </div>
-        </div>
-      )}
-
-      <div className="flex flex-wrap gap-3">
-        {mode.surface === 'witness' && (
-          <>
-            <label className="flex items-center gap-2 text-sm text-silver">
+            <div className="flex items-center gap-3 rounded-lg border border-gold/10 bg-surface px-3 py-2">
+              <label className="whitespace-nowrap text-xs text-silver">Consciousness L{consciousnessLevel}</label>
               <input
-                type="checkbox"
-                checked={includeRubric}
-                onChange={(e) => setIncludeRubric(e.target.checked)}
-                className="accent-gold"
+                type="range"
+                min={0}
+                max={5}
+                step={1}
+                value={consciousnessLevel}
+                onChange={(e) => setConsciousnessLevel(Number(e.target.value))}
+                className="w-full accent-gold"
               />
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-4 pt-1">
+            <label className="flex items-center gap-2 text-sm text-silver">
+              <input type="checkbox" checked={includeRubric} onChange={(e) => setIncludeRubric(e.target.checked)} className="accent-gold" />
               Include rubric
             </label>
             <label className="flex items-center gap-2 text-sm text-silver">
-              <input
-                type="checkbox"
-                checked={includePatterns}
-                onChange={(e) => setIncludePatterns(e.target.checked)}
-                className="accent-gold"
-              />
+              <input type="checkbox" checked={includePatterns} onChange={(e) => setIncludePatterns(e.target.checked)} className="accent-gold" />
               Include pattern extraction
             </label>
-          </>
-        )}
-      </div>
+          </div>
+        </Collapsible>
+      )}
 
       {subjects.map((subject, idx) => (
         <div key={idx} className="rounded-2xl border border-gold/10 bg-void/60 p-4 space-y-3">
@@ -315,35 +303,36 @@ export function ReportForm({ node, onSubmit, initialModeKey, initialLevel }: Rep
               {geocoding[idx] === 'loading' ? 'Geocoding...' : 'Auto-locate'}
             </button>
             {geocoding[idx] === 'done' && <span className="text-xs text-emerald">Located</span>}
-            {geocoding[idx] === 'error' && <span className="text-xs text-terracotta">Not found — fill manually below</span>}
+            {geocoding[idx] === 'error' && <span className="text-xs text-terracotta">Not found — open “Precise coordinates”</span>}
           </div>
 
-          <div className="grid grid-cols-3 gap-3"
-          >
-            <input
-              type="number"
-              step="any"
-              placeholder="Latitude"
-              value={subject.normalized_location.latitude || ''}
-              onChange={(e) => updateSubjectLocation(idx, 'latitude', parseFloat(e.target.value) || 0)}
-              className="rounded-lg bg-surface border border-gold/10 px-3 py-2 text-parchment placeholder-silver/50 focus:border-gold focus:outline-none"
-            />
-            <input
-              type="number"
-              step="any"
-              placeholder="Longitude"
-              value={subject.normalized_location.longitude || ''}
-              onChange={(e) => updateSubjectLocation(idx, 'longitude', parseFloat(e.target.value) || 0)}
-              className="rounded-lg bg-surface border border-gold/10 px-3 py-2 text-parchment placeholder-silver/50 focus:border-gold focus:outline-none"
-            />
-            <input
-              type="text"
-              placeholder="Timezone (e.g. Asia/Kolkata)"
-              value={subject.normalized_location.timezone}
-              onChange={(e) => updateSubjectLocation(idx, 'timezone', e.target.value)}
-              className="rounded-lg bg-surface border border-gold/10 px-3 py-2 text-parchment placeholder-silver/50 focus:border-gold focus:outline-none"
-            />
-          </div>
+          <Collapsible title="Precise coordinates" badge="auto-filled">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <input
+                type="number"
+                step="any"
+                placeholder="Latitude"
+                value={subject.normalized_location.latitude || ''}
+                onChange={(e) => updateSubjectLocation(idx, 'latitude', parseFloat(e.target.value) || 0)}
+                className="rounded-lg bg-surface border border-gold/10 px-3 py-2 text-parchment placeholder-silver/50 focus:border-gold focus:outline-none"
+              />
+              <input
+                type="number"
+                step="any"
+                placeholder="Longitude"
+                value={subject.normalized_location.longitude || ''}
+                onChange={(e) => updateSubjectLocation(idx, 'longitude', parseFloat(e.target.value) || 0)}
+                className="rounded-lg bg-surface border border-gold/10 px-3 py-2 text-parchment placeholder-silver/50 focus:border-gold focus:outline-none"
+              />
+              <input
+                type="text"
+                placeholder="Timezone (e.g. Asia/Kolkata)"
+                value={subject.normalized_location.timezone}
+                onChange={(e) => updateSubjectLocation(idx, 'timezone', e.target.value)}
+                className="rounded-lg bg-surface border border-gold/10 px-3 py-2 text-parchment placeholder-silver/50 focus:border-gold focus:outline-none"
+              />
+            </div>
+          </Collapsible>
         </div>
       ))}
 

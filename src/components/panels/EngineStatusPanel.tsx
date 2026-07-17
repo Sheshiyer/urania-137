@@ -1,4 +1,5 @@
 import { EngineStatus, SelemeneChild } from '../../types'
+import { Collapsible } from '../ui/Collapsible'
 
 /** child.id → real Selemene engine_id where a 1:1 mapping exists. */
 const ENGINE_ALIAS: Record<string, string> = {
@@ -52,48 +53,49 @@ export function EngineStatusPanel({ child, status }: { child: SelemeneChild | nu
 
       {/* Infra */}
       {ready && (
-        <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
-          {([
-            ['redis', ready.redis],
-            ['postgres', ready.postgres],
-            ['orchestrator', ready.orchestrator],
-            ['bridge', ready.bridge_status],
-          ] as const).map(([k, v]) => (
-            <div key={k} className="flex items-center gap-2 rounded-md border border-gold/10 bg-void/40 px-2.5 py-2">
-              <Dot ok={v === 'ok' || v === 'ready' || v === 'available'} />
-              <div className="min-w-0">
-                <div className="font-display uppercase tracking-wider text-silver/70 text-[9px]">{k}</div>
-                <div className="truncate text-parchment">{v}</div>
+        <Collapsible title="Infrastructure" defaultOpen badge={ready.overall_status}>
+          <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
+            {([
+              ['redis', ready.redis],
+              ['postgres', ready.postgres],
+              ['orchestrator', ready.orchestrator],
+              ['bridge', ready.bridge_status],
+            ] as const).map(([k, v]) => (
+              <div key={k} className="flex items-center gap-2 rounded-md border border-gold/10 bg-void/40 px-2.5 py-2">
+                <Dot ok={v === 'ok' || v === 'ready' || v === 'available'} />
+                <div className="min-w-0">
+                  <div className="font-display uppercase tracking-wider text-silver/70 text-[9px]">{k}</div>
+                  <div className="truncate text-parchment">{v}</div>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </Collapsible>
       )}
 
       {/* Engine roster */}
-      <div>
-        <div className="mb-2 font-display text-[10px] uppercase tracking-[0.2em] text-silver/70">
-          {engines.length} Consciousness Engines
-        </div>
-        <ul className="grid max-h-56 grid-cols-2 gap-x-4 gap-y-1.5 overflow-auto pr-1 sm:grid-cols-3">
-          {engines.map((id) => {
-            const h = healthById.get(id)
-            const ok = h ? h.healthy : true
-            const isSel = id === highlight
-            return (
-              <li
-                key={id}
-                className={`flex items-center gap-2 rounded px-1.5 py-0.5 text-xs ${isSel ? 'bg-gold/15 text-parchment' : 'text-silver'}`}
-                title={h ? `${h.detail} · ${h.latency_ms}ms` : 'loaded'}
-              >
-                <Dot ok={ok} />
-                <span className="truncate">{id}</span>
-                {h && <span className="ml-auto shrink-0 text-[10px] text-silver/50">{h.latency_ms}ms</span>}
-              </li>
-            )
-          })}
-        </ul>
-      </div>
+      {engines.length > 0 && (
+        <Collapsible title="Engine roster" defaultOpen={Boolean(highlight)} badge={`${engines.length} engines`}>
+          <ul className="grid grid-cols-2 gap-x-4 gap-y-1.5 sm:grid-cols-3">
+            {engines.map((id) => {
+              const h = healthById.get(id)
+              const ok = h ? h.healthy : true
+              const isSel = id === highlight
+              return (
+                <li
+                  key={id}
+                  className={`flex items-center gap-2 rounded px-1.5 py-0.5 text-xs ${isSel ? 'bg-gold/15 text-parchment' : 'text-silver'}`}
+                  title={h ? `${h.detail} · ${h.latency_ms}ms` : 'loaded'}
+                >
+                  <Dot ok={ok} />
+                  <span className="truncate">{id}</span>
+                  {h && <span className="ml-auto shrink-0 text-[10px] text-silver/50">{h.latency_ms}ms</span>}
+                </li>
+              )
+            })}
+          </ul>
+        </Collapsible>
+      )}
       <p className="text-[11px] text-silver/60">Live from the Selemene engine bridge · {ready?.overall_status ?? health?.status}.</p>
     </div>
   )
