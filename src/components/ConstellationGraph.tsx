@@ -51,7 +51,7 @@ export function ConstellationGraph({
   const hubSize = Math.min(Math.max(orbitRadius * (isHome ? 0.4 : 0.46), small ? 46 : 72), 128)
   const orbR = isHome
     ? Math.min(Math.max(orbitRadius * 0.13, small ? 15 : 22), 34)
-    : Math.min(Math.max(orbitRadius * 0.2, small ? 26 : 36), 56)
+    : Math.min(Math.max(orbitRadius * 0.2, small ? 30 : 36), 56)
   const labelScale = small ? 0.8 : 1
   // A warmer, brighter gold for glows/blooms than the flat token gold.
   const WARM = '#E6B84D'
@@ -259,6 +259,7 @@ export function ConstellationGraph({
             glyph={orbital.glyph}
             subCount={orbital.subCount}
             labelScale={labelScale}
+            boundsWidth={width}
             selected={selectedId === orbital.id}
             onClick={() => onSelect(orbital.id)}
           />
