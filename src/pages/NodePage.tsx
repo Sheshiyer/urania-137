@@ -10,6 +10,8 @@ import { WitnessForm } from '../components/forms/WitnessForm'
 import { BirthDataForm } from '../components/forms/BirthDataForm'
 import { EngineStatusPanel } from '../components/panels/EngineStatusPanel'
 import { FolioPanel } from '../components/panels/FolioPanel'
+import { MirrorPanel } from '../components/panels/MirrorPanel'
+import { SankalpaPanel } from '../components/panels/SankalpaPanel'
 import { DeterministicResult } from '../components/panels/DeterministicResult'
 import { PageHeader } from '../components/layout/PageHeader'
 import { PageFrame } from '../components/layout/PageFrame'
@@ -131,9 +133,13 @@ export function NodePage({ nodeId }: { nodeId: string }) {
         />
       </Modal>
 
-      {/* Live panels */}
+      {/* Live panels — including the doors into the rest of the product */}
       <Modal isOpen={modalView === 'info'} title={selectedChild?.label ?? node.label} onClose={closeModal}>
-        {node.id === 'engine' ? (
+        {selectedChild?.id === 'noesis-mirror' ? (
+          <MirrorPanel />
+        ) : selectedChild?.id === 'sankalpa' ? (
+          <SankalpaPanel />
+        ) : node.id === 'engine' ? (
           <EngineStatusPanel child={selectedChild} status={engineStatus} />
         ) : node.id === 'folio' ? (
           <FolioPanel child={selectedChild} />
