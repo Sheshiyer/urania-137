@@ -13,8 +13,10 @@ interface ConstellationGraphProps {
   centerLabel: string
   onHomeRequest?: () => void
   ariaLabel?: string
-  /** Shift the mandala down by this fraction of height to clear the title band. */
-  centerYOffset?: number
+  /** Height (px) of the chrome above the graph — nav, and the page title on a node page. */
+  topInset?: number
+  /** Height (px) of the chrome below the graph — the tab strip and stat footer. */
+  bottomInset?: number
   /** Positioning class for the root wrapper (journey layers pass 'absolute inset-0'). */
   wrapperClassName?: string
   /**
@@ -39,20 +41,44 @@ export function ConstellationGraph({
   centerLabel,
   onHomeRequest,
   ariaLabel = 'stellar node constellation',
-  centerYOffset = 0,
+  topInset = 0,
+  bottomInset = 0,
   wrapperClassName = 'fixed inset-0',
   variant = 'node',
 }: ConstellationGraphProps) {
-  const { width, height, centerX, centerY: baseCenterY, orbitRadius } = useNodeGraph()
-  const centerY = baseCenterY + centerYOffset * height
+  const { width, height, centerX } = useNodeGraph()
   const isHome = variant === 'home'
   const small = width < 640
-
-  const hubSize = Math.min(Math.max(orbitRadius * (isHome ? 0.4 : 0.46), small ? 46 : 72), 128)
-  const orbR = isHome
-    ? Math.min(Math.max(orbitRadius * 0.13, small ? 15 : 22), 34)
-    : Math.min(Math.max(orbitRadius * 0.2, small ? 30 : 36), 56)
   const labelScale = small ? 0.8 : 1
+
+  // Chrome-aware layout: the mandala is centred in — and sized to fill — the
+  // band between the top chrome (nav / page title) and the bottom chrome (tabs +
+  // stat footer), so orbs and their labels can never slide under either. The
+  // reference art frames the mandala the same way.
+  const bandTop = topInset
+  const bandHeight = Math.max(height - topInset - bottomInset, 200)
+  const centerY = bandTop + bandHeight / 2
+
+  // Home labels sit outside the planet, so they need clearance beyond the orb.
+  const labelPad = isHome ? (small ? 34 : 24) : 0
+  // Pick a rough radius to size the orbs from, then take the largest radius whose
+  // orbs + labels still fit the band vertically and the viewport horizontally.
+  const rough = Math.min(bandHeight / 2, width / 2) * 0.8
+  const orbRRough = isHome
+    ? Math.min(Math.max(rough * 0.13, small ? 15 : 22), 34)
+    : Math.min(Math.max(rough * 0.2, small ? 30 : 36), 56)
+  const orbitRadius = Math.max(
+    Math.min(bandHeight / 2 - orbRRough - labelPad - 6, width / 2 - orbRRough - 12),
+    56,
+  )
+  // Never let an orb overlap its neighbours around the ring.
+  const orbR = Math.min(orbRRough, ((Math.PI * orbitRadius) / Math.max(orbitals.length, 1)) * 0.92)
+
+  const hubSize = Math.min(
+    Math.max(orbitRadius * (isHome ? 0.4 : 0.46), small ? 46 : 72),
+    128,
+    Math.max(orbitRadius - orbR - 8, 40),
+  )
   // A warmer, brighter gold for glows/blooms than the flat token gold.
   const WARM = '#E6B84D'
 

@@ -15,10 +15,12 @@ interface PageHeaderProps {
 export function PageHeader({ title, subtitle, showBack = true, onBack }: PageHeaderProps) {
   return (
     <>
+      {/* Below sm the nav wordmark owns the top-left, so the breadcrumb hides —
+          MAP and the central hub both still return home. */}
       {showBack && (
         <button
           onClick={onBack}
-          className="fixed top-6 left-6 z-20 flex items-center gap-1.5 rounded-full border border-gold/20 bg-void/40 px-4 py-2 text-xs uppercase tracking-[0.2em] font-display text-silver backdrop-blur-sm transition-colors hover:border-gold/50 hover:text-parchment"
+          className="fixed top-6 left-6 z-20 hidden items-center gap-1.5 rounded-full border border-gold/20 bg-void/40 px-4 py-2 text-xs uppercase tracking-[0.2em] font-display text-silver backdrop-blur-sm transition-colors hover:border-gold/50 hover:text-parchment sm:flex"
           aria-label="Return to home constellation"
         >
           <ChevronLeft className="h-4 w-4" />
@@ -26,9 +28,9 @@ export function PageHeader({ title, subtitle, showBack = true, onBack }: PageHea
         </button>
       )}
 
-      <div className="pointer-events-none fixed top-5 left-0 right-0 z-10 flex flex-col items-center px-16">
+      <div className="pointer-events-none fixed top-14 left-0 right-0 z-10 flex flex-col items-center px-6 sm:top-5 sm:px-16">
         <span className="mb-2 h-1.5 w-1.5 rotate-45 border border-gold/60" aria-hidden="true" />
-        <h1 className="text-center text-3xl font-display font-light uppercase tracking-[0.42em] text-parchment sm:text-4xl md:text-5xl">
+        <h1 className="text-center text-xl font-serif font-light uppercase tracking-[0.32em] text-parchment sm:text-4xl sm:tracking-[0.42em] md:text-5xl">
           {title}
         </h1>
         {/* Wide rule + center diamond, echoing the reference's full-width divider. */}

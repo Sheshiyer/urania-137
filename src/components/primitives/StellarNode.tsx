@@ -30,12 +30,17 @@ interface StellarNodeProps {
 }
 
 /**
- * Approximate advance width per character as a fraction of the font size, for
- * Panchang at our 0.12–0.16em tracking. Used to fit labels to the geometry —
- * SVG can't measure text before layout, so we estimate and size from that.
+ * Advance width per character as a fraction of the font size, for Panchang
+ * uppercase at our tracking. Used to fit labels to the geometry — SVG can't
+ * measure text before layout, so we estimate and size from that.
+ *
+ * Measured off the render rather than guessed: "ARCHIVE" (7 chars at 9.6px)
+ * lays out ~75px wide → ~1.12em per char at 0.16em tracking. Under-estimating
+ * this silently defeats the clamp and lets labels run off the edge.
  */
-const CHAR_W = 0.74
-const ORB_CHAR_W = 0.66
+const CHAR_W = 1.12
+/** Same, at the orbs' tighter 0.12em tracking. */
+const ORB_CHAR_W = 1.08
 
 /** Home node: concentric rings, glowing core, label below. Legacy baseline. */
 function PlainNode({ x, y, centerY, label, selected, onClick, ariaLabel, className }: StellarNodeProps) {
@@ -137,18 +142,19 @@ function PlanetNode({ x, y, centerY, label, selected, onClick, ariaLabel, radius
 }
 
 /** Node-page child: a luminous ringed orb with an optional glyph + label inside. */
-function OrbNode({ x, y, label, selected, onClick, ariaLabel, radius = 46, outwardAngle = 0, glyph, className }: StellarNodeProps) {
+function OrbNode({ x, y, label, selected, onClick, ariaLabel, radius = 46, outwardAngle = 0, glyph, labelScale = 1, className }: StellarNodeProps) {
   const r = selected ? radius * 1.07 : radius
   const hasGlyph = Boolean(glyph)
-  // Fit the label to the orb rather than to a fixed line count: derive the wrap
-  // width from the orb's usable chord, then shrink the type until the longest
-  // line fits inside the circle. Keeps labels contained at any radius, so they
-  // never spill over a neighbour on a narrow screen.
+  // Wrap to the orb's usable chord (not a fixed char count, which overflowed a
+  // small orb), keep the familiar line-count type scale so labels read at a
+  // consistent size across the ring, then shrink only if a long word still
+  // wouldn't fit — so a label can never spill onto its neighbour.
   const avail = r * 1.72
   const maxChars = Math.max(5, Math.round(avail / (10.5 * ORB_CHAR_W)))
   const lines = wrapLabel(label, maxChars, 3)
   const longest = Math.max(...lines.map((l) => l.length), 1)
-  const fontSize = Math.max(5.5, Math.min(hasGlyph ? 9.5 : 10.5, avail / (longest * ORB_CHAR_W)))
+  const base = (lines.length >= 3 ? 8 : lines.length === 2 ? 9 : 10.5) * labelScale
+  const fontSize = Math.max(5.5, Math.min(base, avail / (longest * ORB_CHAR_W)))
   const lineHeight = fontSize + 2.5
   // With a glyph, the label sits in the lower half of the orb; otherwise centred.
   const labelMidY = hasGlyph ? y + r * 0.34 : y
