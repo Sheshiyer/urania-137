@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:daily": "vitest run src/lib/daily",
+    "verify:daily-contracts": "node scripts/verify/daily-contracts.mjs",
     "verify:taxonomy": "node scripts/verify/taxonomy.mjs",
     "verify:modes": "node scripts/verify/mode-gates.mjs"
   },
