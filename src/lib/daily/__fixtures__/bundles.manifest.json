@@ -1,0 +1,76 @@
+{
+  "note": "Real live captures from the Selemene panchanga/transits engines via the prod proxy. Location BLR (12.9716,77.5946,Asia/Kolkata); overlay natal 1990-05-15.",
+  "bundles": [
+    {
+      "id": "base-nanda-shukla",
+      "axis": "Nanda + Shukla (waxing), base-only",
+      "panchanga": "panchanga.2026-07-19.blr.json",
+      "overlay": false,
+      "panchanga_limbs": {
+        "tithi_name": "Shashthi (Shukla)",
+        "tithi_index": 5,
+        "paksha": "Shukla",
+        "category": "Nanda",
+        "nakshatra_name": "Uttara Phalguni",
+        "vara_name": "Ravivara (Sunday)"
+      }
+    },
+    {
+      "id": "base-rikta-shukla",
+      "axis": "Rikta + Shukla (waxing), base-only",
+      "panchanga": "panchanga.2026-07-22.blr.json",
+      "overlay": false,
+      "panchanga_limbs": {
+        "tithi_name": "Navami (Shukla)",
+        "tithi_index": 8,
+        "paksha": "Shukla",
+        "category": "Rikta",
+        "nakshatra_name": "Swati",
+        "vara_name": "Budhavara (Wednesday)"
+      }
+    },
+    {
+      "id": "base-purna",
+      "axis": "Purna / Purnima (full), base-only",
+      "panchanga": "panchanga.2026-07-29.blr.json",
+      "overlay": false,
+      "panchanga_limbs": {
+        "tithi_name": "Purnima",
+        "tithi_index": 14,
+        "paksha": "Shukla",
+        "category": "Purna",
+        "nakshatra_name": "Uttara Ashadha",
+        "vara_name": "Budhavara (Wednesday)"
+      }
+    },
+    {
+      "id": "base-rikta-krishna",
+      "axis": "Rikta + Krishna (waning), base-only",
+      "panchanga": "panchanga.2026-08-02.blr.json",
+      "overlay": false,
+      "panchanga_limbs": {
+        "tithi_name": "Chaturthi (Krishna)",
+        "tithi_index": 18,
+        "paksha": "Krishna",
+        "category": "Rikta",
+        "nakshatra_name": "Purva Bhadrapada",
+        "vara_name": "Ravivara (Sunday)"
+      }
+    },
+    {
+      "id": "overlay-present",
+      "axis": "overlay present (natal transits)",
+      "panchanga": "panchanga.2026-07-19.blr.json",
+      "transits": "transits.natal-19900515.blr.json",
+      "overlay": true,
+      "panchanga_limbs": {
+        "tithi_name": "Shashthi (Shukla)",
+        "tithi_index": 5,
+        "paksha": "Shukla",
+        "category": "Nanda",
+        "nakshatra_name": "Uttara Phalguni",
+        "vara_name": "Ravivara (Sunday)"
+      }
+    }
+  ]
+}
