@@ -113,7 +113,7 @@ export function NodePage({ nodeId }: { nodeId: string }) {
 
       {/* Deterministic workflow / engine — needs birth_data */}
       <Modal isOpen={modalView === 'birth'} title={selectedChild?.label ?? node.label} onClose={closeModal}>
-        {modalView === 'birth' && selectedChild?.run && selectedChild.run.kind !== 'witness' && (
+        {modalView === 'birth' && selectedChild?.run && (selectedChild.run.kind === 'workflow' || selectedChild.run.kind === 'engine') && (
           <BirthDataForm
             actionLabel={`Run ${selectedChild.label}`}
             needsIntention={selectedChild.run.needsIntention}
