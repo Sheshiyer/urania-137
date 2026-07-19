@@ -1,18 +1,21 @@
 import { DAILY_SOURCE, DailyReadingInput, DailyReadingSource } from './source'
 import { DeterministicInterpreter } from './deterministic'
+import { WitnessModeSource } from './witness'
 import { lexicon } from './lexicon'
 
 /**
- * The single source-selection site (T-021) — the ①→③ flip-point (spec §3).
- * Default `deterministic` (①). Phase 4 registers the `witness` source (③) here;
- * until then a `witness` flag throws loudly rather than silently falling back to ①
- * (the anti-drift discipline mirrored from the mode-gates law).
+ * The single source-selection site (T-021, T-091) — the ①→③ flip-point (spec §3).
+ * Default `deterministic` (①). Setting DAILY_SOURCE='witness' selects ③ — but that
+ * flip is gated on the engine serving `daily-panchanga` (ledger REQ-1..5 ✅ live);
+ * flipping it before then makes ③ 400 on every call. No silent fallback either way.
  */
 let deterministic: DailyReadingSource | null = null
+let witness: DailyReadingSource | null = null
 
 function resolveSource(): DailyReadingSource {
   if (DAILY_SOURCE === 'witness') {
-    throw new Error("daily: the 'witness' source (③) is not yet registered — it lands in Phase 4")
+    if (!witness) witness = new WitnessModeSource()
+    return witness
   }
   if (!deterministic) deterministic = new DeterministicInterpreter(lexicon)
   return deterministic

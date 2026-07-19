@@ -70,7 +70,19 @@ there are **no transition timestamps**. Enum spellings frozen in `src/lib/daily/
 - **Accept command:** `node scripts/verify/daily-gates.mjs <base>` (G2 stage — authored in Phase 3, T-081).
 - **Current:** ✅ keys present live (2026-07-19).
 
-## The flip procedure
+## The flip procedure (①→③)
 
-Documented in Phase 4 (T-095): confirm all REQ ✅ live via the acceptance harness, set
-`DAILY_SOURCE='witness'`, run `daily-seam-swap.mjs` + the G7 behavioral check, confirm no UX change.
+Gated on **all REQ ✅ live** — asserted by the harness, not by a claim. Steps:
+
+1. **Confirm the capability landed:** `node scripts/verify/engine-requests.mjs https://urania-137.vercel.app`
+   must exit `0` (`daily-panchanga capability: LANDED`). While it exits non-zero, do not flip.
+2. **Prove the shapes still match:** `node scripts/verify/daily-seam-swap.mjs` (G8) — ① and ③
+   return the same `DailyReading` shape, differing only in `meta.source`.
+3. **Flip the flag:** set `DAILY_SOURCE='witness'` — via `VITE_DAILY_SOURCE=witness` at build,
+   or the default in `src/lib/daily/source.ts`. One line; no other code change.
+4. **Verify the running service:** `node scripts/verify/daily-gates.mjs <preview-url>` (G2) and the
+   G7 behavioral check — the rendered "Today" reading must still name the live tithi and archive to Folio.
+5. **Confirm no UX change:** the graph, the Modal, the Folio round-trip are identical; only the
+   prose source changed. If anything regresses, revert the flag (instant rollback).
+
+Rollback is a one-line flag revert — ③ is additive and dormant until step 3.

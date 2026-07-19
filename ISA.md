@@ -73,6 +73,7 @@ Produce a clear architectural map of the full Instagram reference and a phased i
 - [x] ISC-19 (G6): No birth data → complete base reading + closing invitation; birth data → the native overlay appends (graceful degradation).
 - [ ] ISC-20 (G7): The **running app** names today's actual live tithi/nakshatra and archives the reading to the Folio — `daily-gates.behavioral.mjs` against the deployed preview (pending deploy).
 - [x] ISC-21 (G8): ① `DeterministicInterpreter` and ③ `WitnessModeSource` produce the same `DailyReading` shape (seam-swap) — the ①→③ flip is proven shape-safe before the engine route exists.
+- [x] ISC-22 (③ readiness): `WitnessModeSource` is a dormant, drop-in adapter of the seam; it stays uninvoked under the default flag (dormancy guard), and the flip is gated on `node scripts/verify/engine-requests.mjs` going green live — which today correctly reports the capability NOT-yet-landed (REQ-1 → 400, no false green). Engine execution is out-of-repo (Selemene), tracked in `docs/selemene-engine-requests.md`.
 
 ## Test Strategy
 
