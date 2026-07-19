@@ -147,7 +147,20 @@ node scratchpad/verify-taxonomy.mjs http://localhost:5191
 
 # The two gates — run against the engine before exposing any new mode
 node scratchpad/differentiation-gate.mjs https://urania-137.vercel.app
+
+# Daily panchanga reading — offline units + contracts, then the live gates
+npm run test:daily              # G3/G4/G5/G6/G8 + purity/drift + interpret over the real lexicon
+npm run verify:daily-contracts  # Phase-0 exit gate — the frozen contract surface is complete
+npm run verify:daily            # G2 live schema-contract (panchanga keys present, prod proxy)
+npm run verify:all              # units + contracts + G1 taxonomy + G2, chained
 ```
+
+**Daily reading:** the `panchanga`/`transits` engines had data but no *reading* — raw JSON,
+never interpreted. `src/lib/daily/` adds a `DailyReadingSource` seam: ① an in-app
+`DeterministicInterpreter` (engine JSON → authored lexicon → prose) now, ③ a dormant
+`WitnessModeSource` (`daily-panchanga` mode) later, tracked in
+`docs/selemene-engine-requests.md`. Surfaced as **Sky Weather ▸ Today**. Enum domains are
+ground-truth from the live engine (`lexicon/domains.ts`); G2 fails loud on schema drift.
 
 | What | Endpoint | Verified |
 |---|---|---|
