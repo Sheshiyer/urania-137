@@ -82,6 +82,19 @@ export function todayInTz(timezone: string): string {
   }).format(new Date())
 }
 
+/**
+ * Approximate an IANA timezone from longitude (whole-hour `Etc/GMT` offset — valid
+ * for Intl). No tz-lookup library ships in this SVG-only app, so a picked location
+ * gets a ±30-min-accurate zone; the reading labels the zone it used, and the default
+ * location (Ujjain) carries its exact tz. Good enough for the day boundary.
+ */
+export function tzFromLongitude(longitude: number): string {
+  const offset = Math.round(longitude / 15)
+  if (offset === 0) return 'UTC'
+  // Etc/GMT signs are inverted: Etc/GMT-5 === UTC+5.
+  return `Etc/GMT${offset > 0 ? '-' : '+'}${Math.abs(offset)}`
+}
+
 /** Opt-in browser geolocation — fires only when the user asks. Resolves null on denial. */
 export function requestGeolocation(): Promise<{ latitude: number; longitude: number } | null> {
   return new Promise((resolve) => {
