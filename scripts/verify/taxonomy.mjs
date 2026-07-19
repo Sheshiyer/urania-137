@@ -25,7 +25,7 @@ const B = subject('partner', 'harshita', '1987-10-15', '12:05', 12.97, 77.59)
 // --- parse the taxonomy out of the source ----------------------------------
 const src = readFileSync(SRC, 'utf8')
 const children = []
-const childRe = /\{\s*id:\s*'([^']+)',\s*label:\s*'([^']+)'[^}]*?run:\s*\{\s*kind:\s*'(workflow|engine|witness)'[^}]*?\}/g
+const childRe = /\{\s*id:\s*'([^']+)',\s*label:\s*'([^']+)'[^}]*?run:\s*\{\s*kind:\s*'(workflow|engine|witness|daily)'[^}]*?\}/g
 let m
 while ((m = childRe.exec(src))) {
   const [full, id, label, kind] = m
@@ -63,6 +63,20 @@ const check = async (c) => {
     const keys = Object.keys(json?.result ?? {})
     return { ok: status === 200 && keys.length > 0, status, detail: `${keys.length} result fields` }
   }
+  if (c.kind === 'daily') {
+    // The daily reading resolves to the DailyReadingSource seam, which fetches the
+    // panchanga (base) + transits (overlay) engines. Assert both are live.
+    const pan = await post('/api/v1/engines/panchanga/calculate', { birth_data: BIRTH })
+    const tra = await post('/api/v1/engines/transits/calculate', { birth_data: BIRTH })
+    const pk = Object.keys(pan.json?.result ?? {})
+    const tk = Object.keys(tra.json?.result ?? {})
+    const ok = pan.status === 200 && pk.length > 0 && tra.status === 200 && tk.length > 0
+    return {
+      ok,
+      status: `${pan.status}/${tra.status}`,
+      detail: ok ? `seam → panchanga(${pk.length})+transits(${tk.length}) live` : 'panchanga/transits not both live',
+    }
+  }
   // witness — the one that actually needs a real assertion
   const subjects = c.min >= 2 ? [A, B] : [A]
   const { status, json } = await post('/api/v1/assets/generate', {
@@ -85,7 +99,7 @@ const main = async () => {
     let r
     try { r = await check(c) } catch (e) { r = { ok: false, status: 'ERR', detail: String(e.message).slice(0, 90) } }
     rows.push({ ...c, ...r })
-    console.log(`  ${r.ok ? 'PASS' : 'FAIL'}  ${c.kind.padEnd(9)} ${(c.workflowId || c.engineId || c.mode).padEnd(24)} ${String(r.status).padEnd(4)} ${r.detail}`)
+    console.log(`  ${r.ok ? 'PASS' : 'FAIL'}  ${c.kind.padEnd(9)} ${(c.workflowId || c.engineId || c.mode || c.id).padEnd(24)} ${String(r.status).padEnd(5)} ${r.detail}`)
   }
   const bad = rows.filter((r) => !r.ok)
   console.log(`\n${rows.length - bad.length}/${rows.length} children hit a real, differentiated capability`)
