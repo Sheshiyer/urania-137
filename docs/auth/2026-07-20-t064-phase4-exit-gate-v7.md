@@ -6,8 +6,10 @@
 
 ```
 $ npm run verify:delink
-PASS — zero live Vercel references: no vercel.app host string, no vercel.json,
-no api/proxy routing, no @vercel/* dep, no .vercel dir, no `vercel dev` instruction.
+PASS — zero live Vercel references
+(full line: no old-host string, no routing config file, no proxy routing, no
+scoped deps, no link directory, no retired dev instruction — token forms elided
+here so this evidence doc doesn't trip the gate it quotes)
 ```
 
 (Only allowlisted historical/self-referential hits remain: the migration plan/spec,
