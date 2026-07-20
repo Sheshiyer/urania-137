@@ -3,6 +3,14 @@
  *
  *   node scripts/verify/daily-gates.mjs [base]      # default prod proxy
  *
+ * Base resolution (T-035): `URANIA_API_BASE` env > argv[2] > prod default. Point it
+ * at the local `wrangler pages dev` Worker (http://localhost:8788) to gate the
+ * Worker path; the Worker injects the prod-safe dev identity server-side from
+ * DEV_IDENTITY_EMAIL in .dev.vars (T-017/T-026) — no client identity header exists
+ * by design. The prod base stays the default / remains reachable via the same
+ * env/flag. If SELEMENE_API_KEY is set it is sent as `x-api-key` (only meaningful
+ * when BASE is the direct engine; dropped by any proxy — T-032).
+ *
  * G2 (live schema contract): today's live panchanga still carries every key the
  * interpreter reads — schema drift fails loud, it does not silently degrade.
  *
@@ -10,7 +18,8 @@
  * daily-gates.behavioral.mjs and run post-deploy against the preview URL (the
  * local dev server can't serve the happy path — the local API key is expired).
  */
-const BASE = (process.argv[2] || 'https://urania-137.vercel.app').replace(/\/+$/, '')
+const BASE = (process.env.URANIA_API_BASE || process.argv[2] || 'https://urania-137.vercel.app').replace(/\/+$/, '')
+const ENGINE_KEY = process.env.SELEMENE_API_KEY || ''
 const P = `${BASE}/api/selemene`
 const LOC = { latitude: 12.9716, longitude: 77.5946, timezone: 'Asia/Kolkata' }
 
@@ -26,7 +35,9 @@ const PANCHANGA_KEYS = [
 const ASPECT_KEYS = ['aspect_type', 'nature', 'natal_planet', 'transiting_planet', 'orb', 'is_applying']
 
 const post = async (path, body) => {
-  const r = await fetch(`${P}${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+  const headers = { 'Content-Type': 'application/json' }
+  if (ENGINE_KEY) headers['x-api-key'] = ENGINE_KEY
+  const r = await fetch(`${P}${path}`, { method: 'POST', headers, body: JSON.stringify(body) })
   const t = await r.text()
   let j = null
   try { j = JSON.parse(t) } catch {}
