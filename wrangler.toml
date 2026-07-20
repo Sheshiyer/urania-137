@@ -12,10 +12,16 @@ name = "urania-137"
 compatibility_date = "2026-07-01"
 pages_build_output_dir = "dist"
 
-# Public config (non-secret). Real values arrive from the 9d9d CF Access app (T-081).
+# Public config (non-secret) — T-059. Only values that are REAL and non-secret
+# belong here. SELEMENE_API_URL is the public engine base (also the code default).
+# CF_ACCESS_AUD / CF_ACCESS_TEAM_DOMAIN are intentionally ABSENT: their real values
+# come from the 9d9d Access app (T-081, human) and will be set then (T-067) — no
+# placeholders are pushed to production. Absent vars fail closed: any JWT presented
+# before then fails verification -> 401. SELEMENE_API_KEY (secret, pending rotation)
+# is set via `wrangler pages secret put`, never here. DEV_IDENTITY_EMAIL must never
+# appear in this file or in Pages production env.
 [vars]
-CF_ACCESS_AUD = "PLACEHOLDER_set_from_9d9d_access_app"
-CF_ACCESS_TEAM_DOMAIN = "PLACEHOLDER.cloudflareaccess.com"
+SELEMENE_API_URL = "https://selemene.tryambakam.space"
 
 # Per-user readings store (T-080). Production D1 provisioned 2026-07-20 in the
 # 9d9d account (region APAC). Pages applies this single binding to all deployments;
