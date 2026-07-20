@@ -7,7 +7,8 @@
  * modes means the surface is undifferentiated, whatever the pass is called.
  */
 import { createHash } from 'node:crypto'
-const BASE = (process.argv[2] || 'https://urania-137.vercel.app').replace(/\/+$/, '')
+// Prod default is the Cloudflare Pages deployment (T-055 delink; goes live with T-058).
+const BASE = (process.argv[2] || 'https://urania-137.pages.dev').replace(/\/+$/, '')
 const A = { role:'primary', name:'witnessalchemist', birth_date:'1991-08-13', birth_time:'13:31', birth_time_confidence:'exact',
   birth_location_query:'Asia/Kolkata', normalized_location:{display_name:'Asia/Kolkata',latitude:12.97,longitude:77.59,timezone:'Asia/Kolkata',provider:'manual',confidence:'manual'} }
 const B = { ...A, role:'partner', name:'harshita', birth_date:'1987-10-15', birth_time:'12:05' }

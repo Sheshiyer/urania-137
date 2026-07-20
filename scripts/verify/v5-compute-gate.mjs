@@ -13,7 +13,7 @@
  *
  * Run:
  *   node scripts/verify/v5-compute-gate.mjs [--worker http://localhost:8788] \
- *     [--stub-port 8795] [--record-target https://urania-137.vercel.app/api/selemene] \
+ *     [--stub-port 8795] [--record-target https://urania-137.pages.dev/api/selemene] \
  *     [--evidence scripts/verify/fixtures/v5]
  *
  * What it does (one command, self-contained):
@@ -36,7 +36,8 @@ const arg = (name, dflt) => {
 const WORKER = arg('worker', 'http://localhost:8788').replace(/\/+$/, '')
 const STUB_PORT = Number(arg('stub-port', 8795))
 const STUB = `http://localhost:${STUB_PORT}`
-const RECORD_TARGET = arg('record-target', 'https://urania-137.vercel.app/api/selemene')
+// Prod record default is the Pages deployment's /api/selemene proxy (T-055 delink).
+const RECORD_TARGET = arg('record-target', 'https://urania-137.pages.dev/api/selemene')
 const EVIDENCE = arg('evidence', 'scripts/verify/fixtures/v5')
 const STUB_KEY = 'p2-stub-key'
 const SESSION = join(EVIDENCE, 'session')

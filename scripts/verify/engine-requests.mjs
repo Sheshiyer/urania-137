@@ -7,7 +7,8 @@
  *
  *   node scripts/verify/engine-requests.mjs [base]
  */
-const BASE = (process.argv[2] || 'https://urania-137.vercel.app').replace(/\/+$/, '')
+// Prod default is the Cloudflare Pages deployment (T-055 delink; goes live with T-058).
+const BASE = (process.argv[2] || 'https://urania-137.pages.dev').replace(/\/+$/, '')
 const P = `${BASE}/api/selemene`
 const SUBJ = {
   role: 'primary', name: 'T', birth_date: '1990-05-15', birth_time: '08:30', birth_time_confidence: 'exact',

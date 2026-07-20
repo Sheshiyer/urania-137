@@ -2,10 +2,10 @@
  * Fixture engine (T-038) — a deterministic stand-in for the Selemene engine used
  * for golden parity runs when no valid local SELEMENE_API_KEY is obtainable.
  *
- *   # RECORD: proxy requests to a live upstream (e.g. the prod Vercel proxy,
+ *   # RECORD: proxy requests to a live upstream (e.g. the prod Pages proxy,
  *   #         which injects the valid server-side key) and persist each response.
  *   node scripts/verify/fixture-engine.mjs --port 8795 \
- *     --fixtures <dir> --record https://urania-137.vercel.app/api/selemene
+ *     --fixtures <dir> --record https://urania-137.pages.dev/api/selemene
  *
  *   # REPLAY: serve the persisted fixtures, streaming bodies in chunks.
  *   #         Asserts the upstream X-API-Key the Worker injects (T-032 proof).

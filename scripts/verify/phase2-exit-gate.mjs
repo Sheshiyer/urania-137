@@ -2,7 +2,7 @@
  * Phase-2 exit gate (T-039) — one command, one consolidated local pass:
  *
  *   node scripts/verify/phase2-exit-gate.mjs [--port 8788] [--stub-port 8795] \
- *     [--record-target https://urania-137.vercel.app/api/selemene] \
+ *     [--record-target https://urania-137.pages.dev/api/selemene] \
  *     [--evidence scripts/verify/fixtures/phase2-exit]
  *
  * In a single run it proves, against `wrangler pages dev` (which it boots and
@@ -39,7 +39,8 @@ const PORT = Number(arg('port', 8788))
 const WORKER = `http://localhost:${PORT}`
 const STUB_PORT = Number(arg('stub-port', 8795))
 const STUB = `http://localhost:${STUB_PORT}`
-const RECORD_TARGET = arg('record-target', 'https://urania-137.vercel.app/api/selemene')
+// Prod record default is the Pages deployment's /api/selemene proxy (T-055 delink).
+const RECORD_TARGET = arg('record-target', 'https://urania-137.pages.dev/api/selemene')
 const EVIDENCE = arg('evidence', 'scripts/verify/fixtures/phase2-exit')
 const SESSION = join(EVIDENCE, 'session')
 const STUB_KEY = 'p2-stub-key'

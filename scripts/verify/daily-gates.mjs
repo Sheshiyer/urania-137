@@ -18,7 +18,8 @@
  * daily-gates.behavioral.mjs and run post-deploy against the preview URL (the
  * local dev server can't serve the happy path — the local API key is expired).
  */
-const BASE = (process.env.URANIA_API_BASE || process.argv[2] || 'https://urania-137.vercel.app').replace(/\/+$/, '')
+// Prod default is the Cloudflare Pages deployment (T-055 delink; goes live with T-058).
+const BASE = (process.env.URANIA_API_BASE || process.argv[2] || 'https://urania-137.pages.dev').replace(/\/+$/, '')
 const ENGINE_KEY = process.env.SELEMENE_API_KEY || ''
 const P = `${BASE}/api/selemene`
 const LOC = { latitude: 12.9716, longitude: 77.5946, timezone: 'Asia/Kolkata' }
