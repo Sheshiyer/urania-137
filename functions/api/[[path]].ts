@@ -3,6 +3,7 @@ import type { ApiError, MeResponse } from '../../src/lib/api/contract'
 import { AccessVerifyError, extractIdentity, verifyAccessJwt, type AccessJwtClaims } from '../lib/cf-access'
 import { maybeInjectDevIdentity } from '../lib/dev-identity'
 import { upsertUser } from '../lib/db'
+import { forwardToEngineFromEnv } from '../lib/engine-proxy'
 
 /**
  * Pages Functions catch-all for /api/*.
@@ -99,7 +100,13 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
     })
   }
 
-  if (pathname.startsWith('/api/selemene/')) return stub('ALL /api/selemene/*')
+  // T-031 — ALL /api/selemene/*: CF Access verify (the middleware above) →
+  // inject the server-side key → forward unbuffered. This route supersedes
+  // api/proxy.ts as the sole engine entrypoint; compute passes through
+  // unchanged (the lib preserves method, path suffix, query, and body).
+  if (pathname === '/api/selemene' || pathname.startsWith('/api/selemene/')) {
+    return forwardToEngineFromEnv(ctx.request, ctx.env)
+  }
   if (pathname === '/api/folio' && method === 'GET') return stub('GET /api/folio')
   if (pathname === '/api/folio' && method === 'POST') return stub('POST /api/folio')
   if (pathname === '/api/folio/import' && method === 'POST') return stub('POST /api/folio/import')
