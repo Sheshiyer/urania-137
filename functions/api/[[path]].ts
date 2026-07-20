@@ -1,23 +1,20 @@
 import type { Env } from '../lib/env'
-import type { ApiError, FolioListResponse, MeResponse } from '../../src/lib/api/contract'
+import type { ApiError, FolioListResponse, ImportResponse, MeResponse, ReadingDTO } from '../../src/lib/api/contract'
 import { AccessVerifyError, extractIdentity, verifyAccessJwt, type AccessJwtClaims } from '../lib/cf-access'
 import { maybeInjectDevIdentity } from '../lib/dev-identity'
-import { upsertUser, listReadings, createReading, setReadingFavorite, deleteReading } from '../lib/db'
+import { upsertUser, listReadings, createReading, setReadingFavorite, deleteReading, bulkImportReadings } from '../lib/db'
 import { forwardToEngineFromEnv } from '../lib/engine-proxy'
 
 /**
  * Pages Functions catch-all for /api/*.
  *
- * Phase 0 (T-004): contract-shaped 501 stubs — surface + routing provable.
  * Phase 1 (T-019): CF-Access auth middleware on EVERY /api/* request — the
- *   sole trust boundary. Phase 2 (/api/selemene/*) and Phase 3 (/api/folio/*)
- *   are added behind this same gate.
+ *   sole trust boundary.
+ * Phase 2 (T-031..T-033): /api/selemene/* engine proxy behind that gate.
+ * Phase 3 (T-041..T-044): /api/folio/* per-user readings storage (D1).
  */
 const json = (data: unknown, status = 200): Response =>
   new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json' } })
-
-const stub = (name: string): Response =>
-  json({ error: 'NOT_IMPLEMENTED', message: `${name} — Phase 0 stub` } satisfies ApiError, 501)
 
 const unauthorized = (message: string): Response =>
   json({ error: 'UNAUTHORIZED', message } satisfies ApiError, 401)
@@ -35,6 +32,22 @@ async function readJson(request: Request): Promise<unknown | null> {
   } catch {
     return null
   }
+}
+
+/** Shape guard for legacy FolioEntry objects in the import payload. */
+function isReadingDTO(x: unknown): x is ReadingDTO {
+  if (typeof x !== 'object' || x === null) return false
+  const e = x as Record<string, unknown>
+  return (
+    typeof e.nodeId === 'string' &&
+    typeof e.nodeLabel === 'string' &&
+    typeof e.mode === 'string' &&
+    typeof e.title === 'string' &&
+    typeof e.content === 'string' &&
+    typeof e.createdAt === 'number' &&
+    typeof e.favorite === 'boolean' &&
+    (e.id === undefined || typeof e.id === 'string')
+  )
 }
 
 export type AuthResult =
@@ -195,7 +208,22 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
     })
     return json(created, 201)
   }
-  if (pathname === '/api/folio/import' && method === 'POST') return stub('POST /api/folio/import')
+  if (pathname === '/api/folio/import' && method === 'POST') {
+    // T-044 — idempotent bulk import of the legacy localStorage Folio. Body is
+    // the frozen ImportRequest ({ entries }); malformed entries are skipped,
+    // not fatal. Server-side dedupe (per-user stable key in the DAL) makes
+    // re-running the same payload a no-op. Response is the frozen
+    // ImportResponse ({ imported }).
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    const body = await readJson(ctx.request)
+    const entries = typeof body === 'object' && body !== null ? (body as Record<string, unknown>).entries : undefined
+    if (!Array.isArray(entries)) {
+      return badRequest('POST /api/folio/import expects a JSON body { entries: [...] }')
+    }
+    const { imported } = await bulkImportReadings(ctx.env.DB, u.user.id, entries.filter(isReadingDTO))
+    return json({ imported } satisfies ImportResponse)
+  }
 
   // T-043 — PATCH /api/folio/:id (explicit { favorite: boolean } set — the
   // client sends this shape) and DELETE /api/folio/:id, both ownership-guarded.

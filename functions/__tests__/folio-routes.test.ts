@@ -239,3 +239,74 @@ describe('PATCH + DELETE /api/folio/:id (T-043)', () => {
     expect(fake.readings.get(r.id)!.favorite).toBe(0)
   })
 })
+
+describe('POST /api/folio/import (T-044)', () => {
+  const IMPORT = `${FOLIO}/import`
+  const legacyEntry = (over: Record<string, unknown> = {}) => ({
+    id: 'legacy-1',
+    nodeId: 'moon',
+    nodeLabel: 'Moon',
+    mode: 'daily',
+    title: 'Legacy one',
+    content: 'legacy content',
+    createdAt: 1_751_000_000_000,
+    favorite: false,
+    ...over,
+  })
+  const importPayload = () => ({
+    entries: [
+      legacyEntry(),
+      legacyEntry({ id: 'legacy-2', title: 'Legacy two', favorite: true, createdAt: 1_752_000_000_000 }),
+      legacyEntry({ id: '', title: 'Legacy no-id', createdAt: 1_753_000_000_000 }),
+    ],
+  })
+
+  it('imports the {entries} payload and returns the frozen ImportResponse ({ imported })', async () => {
+    const res = await onRequest(asA(post(importPayload(), IMPORT), fake.db))
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ imported: 3 })
+    const list = (await (await onRequest(asA(new Request(FOLIO), fake.db))).json()) as FolioListResponse
+    expect(list.readings).toHaveLength(3)
+    expect(list.readings[0].createdAt).toBe(1_753_000_000_000) // newest first
+    const favs = (await (await onRequest(asA(new Request(`${FOLIO}?favorites=true`), fake.db))).json()) as FolioListResponse
+    expect(favs.readings.map((r) => r.title)).toEqual(['Legacy two'])
+  })
+
+  it('re-running the same payload imports 0 and duplicates nothing (idempotent)', async () => {
+    await onRequest(asA(post(importPayload(), IMPORT), fake.db))
+    const second = await onRequest(asA(post(importPayload(), IMPORT), fake.db))
+    expect(second.status).toBe(200)
+    expect(await second.json()).toEqual({ imported: 0 })
+    expect(fake.readings.size).toBe(3)
+  })
+
+  it('user A import leaves user B rows untouched; B importing the same payload gets B-owned copies', async () => {
+    await onRequest(asB(post(saveBody({ title: 'B reading' })), fake.db))
+    await onRequest(asA(post(importPayload(), IMPORT), fake.db))
+    const bList = (await (await onRequest(asB(new Request(FOLIO), fake.db))).json()) as FolioListResponse
+    expect(bList.readings.map((r) => r.title)).toEqual(['B reading'])
+
+    const bImport = await onRequest(asB(post(importPayload(), IMPORT), fake.db))
+    expect(await bImport.json()).toEqual({ imported: 3 })
+    expect([...fake.readings.values()].filter((r) => r.user_id === B)).toHaveLength(4)
+    expect([...fake.readings.values()].filter((r) => r.user_id === A)).toHaveLength(3)
+  })
+
+  it('malformed entries are skipped, not fatal; missing/invalid entries → 400', async () => {
+    const res = await onRequest(
+      asA(post({ entries: [legacyEntry(), { bogus: true }, null, 42] }, IMPORT), fake.db),
+    )
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ imported: 1 })
+
+    expect((await onRequest(asA(post({}, IMPORT), fake.db))).status).toBe(400)
+    expect((await onRequest(asA(post({ entries: 'nope' }, IMPORT), fake.db))).status).toBe(400)
+    expect((await onRequest(asA(post('not-json{{', IMPORT), fake.db))).status).toBe(400)
+  })
+
+  it('unauthenticated → 401, nothing imported', async () => {
+    const res = await onRequest(makeCtx(post(importPayload(), IMPORT), fake.db, undefined))
+    expect(res.status).toBe(401)
+    expect(fake.readings.size).toBe(0)
+  })
+})
