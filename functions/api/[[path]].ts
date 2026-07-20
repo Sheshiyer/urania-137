@@ -1,7 +1,8 @@
 import type { Env } from '../lib/env'
-import type { ApiError } from '../../src/lib/api/contract'
-import { AccessVerifyError, verifyAccessJwt, type AccessJwtClaims } from '../lib/cf-access'
+import type { ApiError, MeResponse } from '../../src/lib/api/contract'
+import { AccessVerifyError, extractIdentity, verifyAccessJwt, type AccessJwtClaims } from '../lib/cf-access'
 import { maybeInjectDevIdentity } from '../lib/dev-identity'
+import { upsertUser } from '../lib/db'
 
 /**
  * Pages Functions catch-all for /api/*.
@@ -75,7 +76,29 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
   const auth = await authenticate(ctx.request, ctx.env)
   if (!auth.ok) return auth.response
 
-  if (pathname === '/api/me' && method === 'GET') return stub('GET /api/me')
+  // T-020 — GET /api/me: verified claims → stable identity → user upsert →
+  // {id, email} (MeResponse). No token is written to or returned in the
+  // browser response; CF Access owns the session cookie.
+  if (pathname === '/api/me' && method === 'GET') {
+    let me: MeResponse
+    try {
+      me = await extractIdentity(auth.claims)
+    } catch (err) {
+      const reason = err instanceof AccessVerifyError ? err.reason : 'identity-failed'
+      return unauthorized(`cannot derive identity (${reason})`)
+    }
+    await upsertUser(ctx.env.DB, me)
+    return json(me)
+  }
+
+  // T-020 — logout: hand the session teardown to CF Access.
+  if (pathname === '/api/logout' && (method === 'GET' || method === 'POST')) {
+    return new Response(null, {
+      status: 302,
+      headers: { location: '/cdn-cgi/access/logout' },
+    })
+  }
+
   if (pathname.startsWith('/api/selemene/')) return stub('ALL /api/selemene/*')
   if (pathname === '/api/folio' && method === 'GET') return stub('GET /api/folio')
   if (pathname === '/api/folio' && method === 'POST') return stub('POST /api/folio')
