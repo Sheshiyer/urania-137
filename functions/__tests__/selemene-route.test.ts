@@ -125,3 +125,61 @@ describe('T-031 — wire /api/selemene/* (verify → inject → forward)', () =>
     expect(target).toBe(ENGINE)
   })
 })
+
+describe('T-032 — header & key hygiene at the route (trust boundary)', () => {
+  it('spoofed client x-api-key/authorization/cookie are dropped; the server key is injected upstream', async () => {
+    const spy = stubFetch(() => new Response('{"ok":true}'))
+    const res = await onRequest(
+      makeCtx(
+        new Request(`${LOCAL}/api/selemene/panchanga/daily`, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'x-api-key': 'spoofed-client-key',
+            authorization: 'Bearer spoofed',
+            cookie: 'CF_Authorization=session-material; other=1',
+          },
+          body: '{}',
+        }),
+        makeEnv(),
+      ),
+    )
+    expect(res.status).toBe(200)
+    const [, init] = spy.mock.calls[0] as unknown as [string, RequestInit]
+    const upstream = new Headers(init.headers)
+    expect(upstream.get('x-api-key')).toBe(SERVER_KEY)
+    expect(upstream.get('authorization')).toBeNull()
+    expect(upstream.get('cookie')).toBeNull()
+    // Only safe headers (content-type / accept) plus the injected key go out.
+    const names = [...upstream.keys()].sort()
+    expect(names).toEqual(['accept', 'content-type', 'x-api-key'])
+  })
+
+  it('the SELEMENE_API_KEY string appears in NO client-visible response header or body', async () => {
+    stubFetch(
+      () =>
+        new Response('{"reading":"engine compute"}', {
+          status: 200,
+          headers: { 'content-type': 'application/json', 'x-engine-trace': 'abc123' },
+        }),
+    )
+    const res = await onRequest(
+      makeCtx(new Request(`${LOCAL}/api/selemene/panchanga/daily`, { method: 'POST', body: '{}' }), makeEnv()),
+    )
+    expect(res.status).toBe(200)
+    for (const [name, value] of res.headers.entries()) {
+      expect(`${name}: ${value}`).not.toContain(SERVER_KEY)
+    }
+    expect(await res.text()).not.toContain(SERVER_KEY)
+  })
+
+  it('preserves the upstream status and content-type on the way back', async () => {
+    stubFetch(
+      () => new Response('event: daily\ndata: {"x":1}\n\n', { status: 200, headers: { 'content-type': 'text/event-stream' } }),
+    )
+    const res = await onRequest(makeCtx(new Request(`${LOCAL}/api/selemene/stream`), makeEnv()))
+    expect(res.status).toBe(200)
+    expect(res.headers.get('content-type')).toBe('text/event-stream')
+    expect(await res.text()).toBe('event: daily\ndata: {"x":1}\n\n')
+  })
+})
