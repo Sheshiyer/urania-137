@@ -19,7 +19,8 @@
     "migrate:local": "wrangler d1 migrations apply DB --local",
     "migrate:remote": "wrangler d1 migrations apply DB --remote",
     "typecheck:functions": "tsc -p tsconfig.functions.json --noEmit",
-    "verify:cf-contracts": "node scripts/verify/cf-contracts.mjs"
+    "verify:cf-contracts": "node scripts/verify/cf-contracts.mjs",
+    "verify:delink": "node scripts/verify/delink-check.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

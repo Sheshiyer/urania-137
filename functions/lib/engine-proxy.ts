@@ -1,8 +1,8 @@
 import type { Env } from './env'
 
 /**
- * Engine proxy forwarding (T-030) — a faithful port of the Vercel
- * `api/proxy.ts` forwarding logic to Pages Functions.
+ * Engine proxy forwarding (T-030) — a faithful port of the pre-migration
+ * (Vercel-era) serverless forwarding logic to Pages Functions.
  *
  * `forwardToEngine` reconstructs the upstream request against
  * `SELEMENE_API_URL`: it preserves the method, the `/api/selemene/*` path
@@ -40,7 +40,7 @@ function enginePathSuffix(pathname: string): string {
 /**
  * Forward only safe headers (content-type / accept), injecting the server
  * key. Everything else the client sent — spoofed credentials, cookies,
- * cf-* — is dropped, exactly like api/proxy.ts did.
+ * cf-* — is dropped, exactly like the pre-migration serverless proxy did.
  */
 function safeOutboundHeaders(inbound: Headers, apiKey: string): Headers {
   const headers = new Headers()
@@ -63,8 +63,8 @@ function jsonError(status: number, error: string, message: string): Response {
  *
  * Engine 4xx/5xx statuses pass through unaltered (status + body + headers).
  * A network failure maps to a deterministic `502 proxy_failed` (the
- * api/proxy.ts behavior); an upstream hang past `timeoutMs` maps to `504
- * engine_timeout`.
+ * pre-migration proxy's behavior); an upstream hang past `timeoutMs` maps to
+ * `504 engine_timeout`.
  */
 export async function forwardToEngine(
   req: Request,

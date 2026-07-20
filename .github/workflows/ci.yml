@@ -29,6 +29,9 @@ jobs:
       - name: Test (unit + V8 CF-Access suites)
         run: npm test
 
+      - name: V7 static delink gate (no Vercel remnants)
+        run: node scripts/verify/delink-check.mjs
+
       - name: Type check
         run: npx tsc --noEmit
 

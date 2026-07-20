@@ -163,8 +163,9 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
 
   // T-031 — ALL /api/selemene/*: CF Access verify (the middleware above) →
   // inject the server-side key → forward unbuffered. This route supersedes
-  // api/proxy.ts as the sole engine entrypoint; compute passes through
-  // unchanged (the lib preserves method, path suffix, query, and body).
+  // the pre-migration serverless proxy as the sole engine entrypoint;
+  // compute passes through unchanged (the lib preserves method, path
+  // suffix, query, and body).
   if (pathname === '/api/selemene' || pathname.startsWith('/api/selemene/')) {
     return forwardToEngineFromEnv(ctx.request, ctx.env, selemeneTimeoutMs(ctx.env))
   }
