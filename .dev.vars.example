@@ -11,3 +11,8 @@ CF_ACCESS_TEAM_DOMAIN="dev.cloudflareaccess.com"
 #
 # Dev-only identity injection (local only; MUST be unset in Pages production):
 DEV_IDENTITY_EMAIL="dev@urania.local"
+#
+# wrangler >=4.112 synthesizes CF_PAGES="1" inside `pages dev`, which trips the
+# fail-closed production marker in the dev-identity guard. Blank it locally so
+# dev injection can fire (production is unaffected — real Pages sets it for real):
+CF_PAGES=""
