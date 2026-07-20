@@ -20,7 +20,7 @@ with no UX change. **No engine code lives in this repo**; this ledger is the han
   `400 UNKNOWN_MODE` (verified) — the mode is not served, so ③ has nothing to call.
 - **Accept:** `POST /assets/generate {mode:'daily-panchanga', subjects:[…]}` returns
   `200` with `passes.length > 1` (a real multi-pass plan, not a single `default: Reading`).
-- **Accept command:** `node scripts/verify/engine-requests.mjs https://urania-137.vercel.app` (REQ-1 row) *(harness authored in Phase 4, T-094)*
+- **Accept command:** `node scripts/verify/engine-requests.mjs https://urania-137.pages.dev` (REQ-1 row) *(harness authored in Phase 4, T-094)*
 - **Current:** `400 UNKNOWN_MODE`.
 
 ### ✅ REQ-2 — unknown mode → `400 UNKNOWN_MODE` (not a silent `200`)
@@ -35,7 +35,7 @@ with no UX change. **No engine code lives in this repo**; this ledger is the han
   a relabelled clone is not a differentiated reading.
 - **Accept:** pass-plan comparison **by pass id/title**, NOT assembled text (assembled
   embeds time-varying seeds → a text hash false-PASSes). Reuse `scripts/verify/mode-gates.mjs`.
-- **Accept command:** `node scripts/verify/mode-gates.mjs https://urania-137.vercel.app` — `daily-panchanga` must not hash-collide with another mode's plan.
+- **Accept command:** `node scripts/verify/mode-gates.mjs https://urania-137.pages.dev` — `daily-panchanga` must not hash-collide with another mode's plan.
 - **Current:** blocked on REQ-1.
 
 ### ⬜ REQ-4 — the pass plan foregrounds the panchanga limbs + a transit overlay
@@ -74,7 +74,7 @@ there are **no transition timestamps**. Enum spellings frozen in `src/lib/daily/
 
 Gated on **all REQ ✅ live** — asserted by the harness, not by a claim. Steps:
 
-1. **Confirm the capability landed:** `node scripts/verify/engine-requests.mjs https://urania-137.vercel.app`
+1. **Confirm the capability landed:** `node scripts/verify/engine-requests.mjs https://urania-137.pages.dev`
    must exit `0` (`daily-panchanga capability: LANDED`). While it exits non-zero, do not flip.
 2. **Prove the shapes still match:** `node scripts/verify/daily-seam-swap.mjs` (G8) — ① and ③
    return the same `DailyReading` shape, differing only in `meta.source`.
