@@ -35,6 +35,7 @@ export type AccessVerifyErrorReason =
   | 'expired'
   | 'wrong-iss'
   | 'jwks-unavailable'
+  | 'missing-claims'
 
 export class AccessVerifyError extends Error {
   readonly reason: AccessVerifyErrorReason
@@ -234,4 +235,39 @@ export async function verifyAccessJwt(
   }
 
   return claims
+}
+
+// ---------- T-018 · claims → stable identity ----------
+
+/**
+ * Lowercase-hex SHA-256 of a UTF-8 string (WebCrypto — no deps).
+ */
+export async function sha256Hex(input: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input))
+  return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('')
+}
+
+/**
+ * T-018 — Derive the stable per-user identity from verified claims
+ * (docs/auth/contracts.md §b):
+ *
+ *   user_id = claims.sub when present and stable;
+ *   else the lowercase-hex SHA-256 of the lowercased, trimmed email.
+ *
+ * The returned email is normalized to lowercase. `sub` is preferred because
+ * it survives an email change. Deterministic across logins, casing, and
+ * surrounding whitespace.
+ */
+export async function extractIdentity(claims: {
+  sub?: string | null
+  email?: string | null
+}): Promise<{ id: string; email: string }> {
+  const email = claims.email?.trim().toLowerCase()
+  // email is mandatory: the frozen MeResponse DTO and D1 users.email both
+  // require it, and CF Access OTP tokens always carry it.
+  if (!email) {
+    throw new AccessVerifyError('missing-claims', 'claims carry no email')
+  }
+  const sub = typeof claims.sub === 'string' && claims.sub.trim().length > 0 ? claims.sub : null
+  return { id: sub ?? (await sha256Hex(email)), email }
 }
