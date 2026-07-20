@@ -1,11 +1,15 @@
 import type { Env } from '../lib/env'
 import type { ApiError } from '../../src/lib/api/contract'
+import { AccessVerifyError, verifyAccessJwt, type AccessJwtClaims } from '../lib/cf-access'
+import { maybeInjectDevIdentity } from '../lib/dev-identity'
 
 /**
- * Pages Functions catch-all for /api/* (T-004 skeleton). Phase 0 = contract-shaped
- * 501 stubs, one distinct per endpoint, so the surface + routing are provable before
- * any behavior lands. Phase 1 adds CF-Access verification + /api/me; Phase 2 the
- * /api/selemene proxy; Phase 3 the /api/folio CRUD.
+ * Pages Functions catch-all for /api/*.
+ *
+ * Phase 0 (T-004): contract-shaped 501 stubs — surface + routing provable.
+ * Phase 1 (T-019): CF-Access auth middleware on EVERY /api/* request — the
+ *   sole trust boundary. Phase 2 (/api/selemene/*) and Phase 3 (/api/folio/*)
+ *   are added behind this same gate.
  */
 const json = (data: unknown, status = 200): Response =>
   new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json' } })
@@ -13,9 +17,63 @@ const json = (data: unknown, status = 200): Response =>
 const stub = (name: string): Response =>
   json({ error: 'NOT_IMPLEMENTED', message: `${name} — Phase 0 stub` } satisfies ApiError, 501)
 
+const unauthorized = (message: string): Response =>
+  json({ error: 'UNAUTHORIZED', message } satisfies ApiError, 401)
+
+export type AuthResult =
+  | { ok: true; claims: AccessJwtClaims }
+  | { ok: false; response: Response }
+
+/** The CF Access token: Cf-Access-Jwt-Assertion header, else CF_Authorization cookie. */
+export function readAccessToken(request: Request): string | null {
+  const header = request.headers.get('Cf-Access-Jwt-Assertion')
+  if (header && header.trim().length > 0) return header.trim()
+  const cookie = request.headers.get('cookie')
+  if (!cookie) return null
+  for (const part of cookie.split(';')) {
+    const eq = part.indexOf('=')
+    if (eq === -1) continue
+    if (part.slice(0, eq).trim() === 'CF_Authorization') {
+      const value = part.slice(eq + 1).trim()
+      return value.length > 0 ? value : null
+    }
+  }
+  return null
+}
+
+/**
+ * T-019 — Auth middleware. Dev-injection (T-017) is honored ONLY outside
+ * production and is fail-closed; otherwise the Access JWT is verified against
+ * the Access JWKS (T-015). Missing/unsigned/invalid → 401 JSON (never a
+ * redirect). Exported so the T-022 negative-path suite can drive it directly.
+ */
+export async function authenticate(request: Request, env: Env): Promise<AuthResult> {
+  const dev = maybeInjectDevIdentity(env, request)
+  if (dev) return { ok: true, claims: { email: dev.email, sub: dev.sub } }
+
+  const token = readAccessToken(request)
+  if (!token) {
+    return { ok: false, response: unauthorized('missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie') }
+  }
+  try {
+    const claims = await verifyAccessJwt(token, {
+      aud: env.CF_ACCESS_AUD,
+      teamDomain: env.CF_ACCESS_TEAM_DOMAIN,
+    })
+    return { ok: true, claims }
+  } catch (err) {
+    const reason = err instanceof AccessVerifyError ? err.reason : 'verify-failed'
+    return { ok: false, response: unauthorized(`access token rejected (${reason})`) }
+  }
+}
+
 export const onRequest: PagesFunction<Env> = async (ctx) => {
   const { pathname } = new URL(ctx.request.url)
   const method = ctx.request.method
+
+  // Sole trust boundary — every /api/* request authenticates before routing.
+  const auth = await authenticate(ctx.request, ctx.env)
+  if (!auth.ok) return auth.response
 
   if (pathname === '/api/me' && method === 'GET') return stub('GET /api/me')
   if (pathname.startsWith('/api/selemene/')) return stub('ALL /api/selemene/*')
