@@ -31,7 +31,7 @@ graph LR
 
 | Surface | Role | Where |
 |---|---|---|
-| **urania-137** | The **online entry**. The graph is the interface at every depth; a browser tab, no install, no capture. | `urania-137.vercel.app` |
+| **urania-137** | The **online entry**. The graph is the interface at every depth; a browser tab, no install, no capture. **Login-required** via CF Access email OTP (Phase 1). | `urania-137.vercel.app` → Cloudflare Pages (Phase 4) |
 | **Noesis Mirror** | The **person's world**. A premium pack rendered as a walkable field; proximity is the interface. | `314.tryambakam.space/p/:personId` |
 | **Sankalpa** | The **local instrument**. One Electron shell over Noesis + Biofield; owns anything needing capture + consent. | v0.1.0 — **no published build yet** |
 
@@ -39,6 +39,46 @@ The same content flows through all three. `723/Solos/{personId}` holds a person'
 premium pack (reading, audio, video, slide-decks, study guide, flashcards). The
 Folio archives readings generated in the console; the Mirror renders that pack as
 beacons you walk up to.
+
+## Auth & identity — urania-137 (Phase 1, verified 2026-07-20)
+
+The console is **login-required**: Cloudflare Access renders the email-OTP login
+(there is no login UI to build), and every `/api/*` request passes one trust
+boundary in the Pages Functions Worker. Identity and per-user storage live at
+urania's edge; the Selemene engine stays a shared-key stateless compute backend
+and learns nothing about users.
+
+```mermaid
+graph LR
+    U["User's browser"] -->|"email OTP"| A["CF Access<br/>(9d9d team)"]
+    A -->|"Cf-Access-Jwt-Assertion<br/>RS256 JWT"| W["Pages Functions Worker<br/>functions/api/[[path]].ts"]
+    W -->|"verify: signature · aud · exp · iss"| J["Access JWKS<br/>{team}.cloudflareaccess.com"]
+    W -->|"claims → user_id"| D["D1 · users<br/>single-row upsert"]
+    W -->|"Phase 2–3"| E["Selemene engine<br/>shared-key, stateless"]
+```
+
+- **Verification:** RS256 signature against the Access app JWKS (cached by `kid`,
+  refetch on miss); `aud` contains `CF_ACCESS_AUD`; `exp` not past; `iss` == the
+  team domain. `alg=none` / unsigned tokens are rejected before any key lookup.
+- **Stable `user_id`:** the Access `sub` when present (survives an email change),
+  else the lowercase-hex SHA-256 of the lowercased, trimmed email — deterministic
+  across logins. There is **no anonymous or localStorage identity**: without a
+  verified JWT every `/api/*` returns 401. (The legacy Folio's localStorage
+  *content* cache migrates to per-user D1 in Phase 3 — that is data, not identity.)
+- **Surface:** `GET /api/me` → `{id,email}` + single-row `users` upsert
+  (`created_at` stable, `last_seen_at` advanced on repeat); `GET|POST /api/logout`
+  → 302 to `/cdn-cgi/access/logout` (Access owns the session). `/api/selemene/*`
+  and `/api/folio/*` land behind the same gate in Phases 2–3.
+- **Local dev:** `wrangler pages dev` may inject a synthetic identity via
+  `DEV_IDENTITY_EMAIL` — honored only when the var is set, no production marker
+  exists, and the host is loopback (single fail-closed conditional; the var is
+  never set in Pages production, so no dev-bypass path yields identity live).
+  Dev-mode ids carry the intended `dev:<email>` shape.
+
+Verified locally (T-026, evidence `docs/auth/2026-07-20-t026-local-identity-proof.md`):
+unauthenticated `/api/me` → 401; dev identity → 200 with exactly one `users` row
+and an advancing `last_seen_at`. Live OTP verification (gates V1–V4) is Phase 5,
+gated on the 9d9d CF Access provisioning (T-081).
 
 ## Which surface owns which engine
 
