@@ -167,3 +167,75 @@ describe('POST /api/folio (T-042)', () => {
     expect(fake.readings.size).toBe(0)
   })
 })
+
+describe('PATCH + DELETE /api/folio/:id (T-043)', () => {
+  async function savedByA(): Promise<ReadingDTO> {
+    const res = await onRequest(asA(post(saveBody({ title: 'Guarded' })), fake.db))
+    return (await res.json()) as ReadingDTO
+  }
+  const patch = (id: string, body: unknown) =>
+    new Request(`${FOLIO}/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: typeof body === 'string' ? body : JSON.stringify(body),
+    })
+
+  it('owner PATCH { favorite: true } sets it (reflected in ?favorites=true), explicit false clears it', async () => {
+    const r = await savedByA()
+    const on = await onRequest(asA(patch(r.id, { favorite: true }), fake.db))
+    expect(on.status).toBe(200)
+    expect(((await on.json()) as ReadingDTO).favorite).toBe(true)
+    const favs = (await (await onRequest(asA(new Request(`${FOLIO}?favorites=true`), fake.db))).json()) as FolioListResponse
+    expect(favs.readings.map((x) => x.id)).toEqual([r.id])
+
+    const off = await onRequest(asA(patch(r.id, { favorite: false }), fake.db))
+    expect(((await off.json()) as ReadingDTO).favorite).toBe(false)
+  })
+
+  it('cross-user PATCH → 404 and the row is provably unchanged', async () => {
+    const r = await savedByA()
+    const res = await onRequest(asB(patch(r.id, { favorite: true }), fake.db))
+    expect(res.status).toBe(404)
+    expect(((await res.json()) as { error: string }).error).toBe('NOT_FOUND')
+    expect(fake.readings.get(r.id)!.favorite).toBe(0)
+  })
+
+  it('unknown id PATCH → 404 (indistinguishable from cross-user)', async () => {
+    const res = await onRequest(asA(patch('does-not-exist', { favorite: true }), fake.db))
+    expect(res.status).toBe(404)
+  })
+
+  it('PATCH without a boolean favorite → 400, no mutation', async () => {
+    const r = await savedByA()
+    expect((await onRequest(asA(patch(r.id, {}), fake.db))).status).toBe(400)
+    expect((await onRequest(asA(patch(r.id, { favorite: 'yes' }), fake.db))).status).toBe(400)
+    expect((await onRequest(asA(patch(r.id, 'not-json{{'), fake.db))).status).toBe(400)
+    expect(fake.readings.get(r.id)!.favorite).toBe(0)
+  })
+
+  it('owner DELETE → 200 {} and the row disappears; repeat DELETE → 404', async () => {
+    const r = await savedByA()
+    const res = await onRequest(asA(new Request(`${FOLIO}/${r.id}`, { method: 'DELETE' }), fake.db))
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({})
+    expect(fake.readings.size).toBe(0)
+    const again = await onRequest(asA(new Request(`${FOLIO}/${r.id}`, { method: 'DELETE' }), fake.db))
+    expect(again.status).toBe(404)
+  })
+
+  it('cross-user DELETE → 404 and the row survives', async () => {
+    const r = await savedByA()
+    const res = await onRequest(asB(new Request(`${FOLIO}/${r.id}`, { method: 'DELETE' }), fake.db))
+    expect(res.status).toBe(404)
+    expect(fake.readings.size).toBe(1)
+    const mine = (await (await onRequest(asA(new Request(FOLIO), fake.db))).json()) as FolioListResponse
+    expect(mine.readings.map((x) => x.id)).toEqual([r.id])
+  })
+
+  it('unauthenticated PATCH/DELETE → 401, no mutation', async () => {
+    const r = await savedByA()
+    expect((await onRequest(makeCtx(patch(r.id, { favorite: true }), fake.db, undefined))).status).toBe(401)
+    expect((await onRequest(makeCtx(new Request(`${FOLIO}/${r.id}`, { method: 'DELETE' }), fake.db, undefined))).status).toBe(401)
+    expect(fake.readings.get(r.id)!.favorite).toBe(0)
+  })
+})

@@ -2,7 +2,7 @@ import type { Env } from '../lib/env'
 import type { ApiError, FolioListResponse, MeResponse } from '../../src/lib/api/contract'
 import { AccessVerifyError, extractIdentity, verifyAccessJwt, type AccessJwtClaims } from '../lib/cf-access'
 import { maybeInjectDevIdentity } from '../lib/dev-identity'
-import { upsertUser, listReadings, createReading } from '../lib/db'
+import { upsertUser, listReadings, createReading, setReadingFavorite, deleteReading } from '../lib/db'
 import { forwardToEngineFromEnv } from '../lib/engine-proxy'
 
 /**
@@ -24,6 +24,9 @@ const unauthorized = (message: string): Response =>
 
 const badRequest = (message: string): Response =>
   json({ error: 'BAD_REQUEST', message } satisfies ApiError, 400)
+
+const notFound = (message: string): Response =>
+  json({ error: 'NOT_FOUND', message } satisfies ApiError, 404)
 
 /** Parse a JSON request body; null on any parse failure (caller → 400). */
 async function readJson(request: Request): Promise<unknown | null> {
@@ -193,7 +196,35 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
     return json(created, 201)
   }
   if (pathname === '/api/folio/import' && method === 'POST') return stub('POST /api/folio/import')
-  if (/^\/api\/folio\/[^/]+$/.test(pathname) && (method === 'PATCH' || method === 'DELETE')) return stub(`${method} /api/folio/:id`)
+
+  // T-043 — PATCH /api/folio/:id (explicit { favorite: boolean } set — the
+  // client sends this shape) and DELETE /api/folio/:id, both ownership-guarded.
+  // An unknown id and a cross-user id are INDISTINGUISHABLE (404 either way):
+  // existence of another user's reading is never leaked.
+  const folioId = /^\/api\/folio\/([^/]+)$/.exec(pathname)?.[1]
+  if (folioId && (method === 'PATCH' || method === 'DELETE')) {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    let id: string
+    try {
+      id = decodeURIComponent(folioId)
+    } catch {
+      return badRequest('malformed reading id')
+    }
+    if (method === 'PATCH') {
+      const body = await readJson(ctx.request)
+      const favorite = typeof body === 'object' && body !== null ? (body as Record<string, unknown>).favorite : undefined
+      if (typeof favorite !== 'boolean') {
+        return badRequest('PATCH /api/folio/:id expects a JSON body { favorite: boolean }')
+      }
+      const updated = await setReadingFavorite(ctx.env.DB, u.user.id, id, favorite)
+      if (!updated) return notFound('reading not found')
+      return json(updated)
+    }
+    const deleted = await deleteReading(ctx.env.DB, u.user.id, id)
+    if (!deleted) return notFound('reading not found')
+    return json({})
+  }
 
   return json({ error: 'NOT_FOUND', message: `no route for ${method} ${pathname}` } satisfies ApiError, 404)
 }
