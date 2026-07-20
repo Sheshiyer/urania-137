@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react'
-import { Star, Download, Trash2, FileText } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Star, Download, Trash2, FileText, RefreshCw, AlertTriangle } from 'lucide-react'
 import { SelemeneChild } from '../../types'
-import { useFolio } from '../../hooks/useFolio'
-import { toggleFavorite, removeEntry, exportEntry } from '../../lib/folioStore'
+import { useFolioState } from '../../hooks/useFolio'
+import { toggleFavorite, removeEntry, exportEntry, refreshFolio, setFolioSearch, setFolioFavoritesOnly } from '../../lib/folioStore'
 
 const FORMATS = ['markdown', 'docx', 'pdf'] as const
 
@@ -10,14 +10,29 @@ function fmtDate(ts: number): string {
   return new Date(ts).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
+/** Placeholder rows shown while the D1-backed list is loading. */
+function LoadingSkeleton() {
+  return (
+    <ul className="space-y-2" aria-label="Loading saved reports">
+      {[0, 1, 2].map((i) => (
+        <li key={i} className="animate-pulse rounded-lg border border-gold/10 bg-void/50 px-3 py-2">
+          <div className="h-3.5 w-2/3 rounded bg-gold/10" />
+          <div className="mt-2 h-2.5 w-1/3 rounded bg-gold/5" />
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 /**
- * The Folio Archive surface — real saved reports from localStorage with search,
- * favorites, per-entry export (markdown/docx/pdf) and delete. The clicked child
- * sets the initial mode (Search focuses the box, Favorites filters, an export
- * child preselects that format).
+ * The Folio Archive surface — saved reports served per-user from D1 via
+ * /api/folio, with server-side search + favorites, per-entry export
+ * (markdown/docx/pdf) and delete. The clicked child sets the initial mode
+ * (Search focuses the box, Favorites filters, an export child preselects that
+ * format). Renders loading / empty / error states for the async data source.
  */
 export function FolioPanel({ child }: { child: SelemeneChild | null }) {
-  const entries = useFolio()
+  const { entries, status, error } = useFolioState()
   const onlyFavorites = child?.id === 'favorites'
   const defaultFormat = (child?.format ?? (child?.id === 'docx' ? 'docx' : child?.id === 'pdf' ? 'pdf' : child?.id === 'markdown' ? 'markdown' : undefined)) as
     | (typeof FORMATS)[number]
@@ -25,12 +40,13 @@ export function FolioPanel({ child }: { child: SelemeneChild | null }) {
   const [query, setQuery] = useState('')
   const [openId, setOpenId] = useState<string | null>(null)
 
-  const filtered = useMemo(() => {
-    const term = query.trim().toLowerCase()
-    return entries
-      .filter((e) => (onlyFavorites ? e.favorite : true))
-      .filter((e) => (term ? e.title.toLowerCase().includes(term) || e.nodeLabel.toLowerCase().includes(term) || e.content.toLowerCase().includes(term) : true))
-  }, [entries, query, onlyFavorites])
+  // Server-side filters: the store refetches /api/folio?search=&favorites=.
+  useEffect(() => setFolioFavoritesOnly(onlyFavorites), [onlyFavorites])
+  useEffect(() => setFolioSearch(query), [query])
+
+  const loading = status === 'loading' || status === 'idle'
+  const showSkeleton = loading && entries.length === 0
+  const showError = status === 'error' && entries.length === 0
 
   return (
     <div className="space-y-3">
@@ -43,13 +59,38 @@ export function FolioPanel({ child }: { child: SelemeneChild | null }) {
         aria-label="Search saved reports"
       />
 
-      {filtered.length === 0 ? (
+      {error && !showError && (
+        <p className="flex items-center gap-1.5 rounded-lg border border-terracotta/30 bg-terracotta/10 px-3 py-2 text-[11px] text-terracotta">
+          <AlertTriangle className="h-3 w-3 shrink-0" /> {error}
+        </p>
+      )}
+
+      {showSkeleton ? (
+        <LoadingSkeleton />
+      ) : showError ? (
+        <div className="py-8 text-center">
+          <p className="flex items-center justify-center gap-1.5 text-sm text-terracotta">
+            <AlertTriangle className="h-4 w-4" /> Could not load your saved reports.
+          </p>
+          <p className="mt-1 text-[11px] text-silver/70">{error}</p>
+          <button
+            onClick={() => void refreshFolio()}
+            className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-gold/20 px-3 py-1.5 text-xs text-parchment hover:border-gold/50"
+          >
+            <RefreshCw className="h-3 w-3" /> Retry
+          </button>
+        </div>
+      ) : entries.length === 0 ? (
         <p className="py-8 text-center text-sm text-silver">
-          {entries.length === 0 ? 'No saved reports yet — generate a report from any node and it lands here.' : 'No matches.'}
+          {query.trim()
+            ? 'No matches.'
+            : onlyFavorites
+              ? 'No favorites yet — star a saved report and it lands here.'
+              : 'No saved reports yet — generate a report from any node and it lands here.'}
         </p>
       ) : (
-        <ul className="max-h-[46vh] space-y-2 overflow-auto pr-1">
-          {filtered.map((e) => (
+        <ul className={`max-h-[46vh] space-y-2 overflow-auto pr-1 ${loading ? 'opacity-60' : ''}`}>
+          {entries.map((e) => (
             <li key={e.id} className="rounded-lg border border-gold/10 bg-void/50">
               <div className="flex items-center gap-2 px-3 py-2">
                 <button onClick={() => toggleFavorite(e.id)} aria-label={e.favorite ? 'Unfavorite' : 'Favorite'} className="shrink-0">
@@ -91,7 +132,7 @@ export function FolioPanel({ child }: { child: SelemeneChild | null }) {
       )}
 
       <p className="flex items-center gap-1.5 text-[11px] text-silver/60">
-        <FileText className="h-3 w-3" /> {entries.length} saved · stored locally in this browser.
+        <FileText className="h-3 w-3" /> {entries.length} saved · synced to your account.
       </p>
     </div>
   )
