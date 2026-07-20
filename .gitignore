@@ -30,3 +30,7 @@ dist-ssr
 .readme-notebooklm
 .readme-gen.json
 .vercel
+
+# Cloudflare
+.wrangler/
+.dev.vars

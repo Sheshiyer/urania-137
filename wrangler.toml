@@ -1,0 +1,18 @@
+# Cloudflare Pages + Functions + D1 (T-001). The SPA builds to dist/ (Pages),
+# and functions/ is the API layer. Secrets (SELEMENE_API_KEY, SELEMENE_API_URL)
+# are set via `wrangler pages secret put` / .dev.vars — never committed here.
+name = "urania-137"
+compatibility_date = "2026-07-01"
+pages_build_output_dir = "dist"
+
+# Public config (non-secret). Real values arrive from the 9d9d CF Access app (T-081).
+[vars]
+CF_ACCESS_AUD = "PLACEHOLDER_set_from_9d9d_access_app"
+CF_ACCESS_TEAM_DOMAIN = "PLACEHOLDER.cloudflareaccess.com"
+
+# Per-user readings store. database_id is a placeholder until T-080 provisions the
+# real preview/prod D1; `wrangler d1 migrations apply DB --local` works without it.
+[[d1_databases]]
+binding = "DB"
+database_name = "urania-137-db"
+database_id = "00000000-0000-0000-0000-000000000000"

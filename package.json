@@ -15,7 +15,12 @@
     "verify:daily": "node scripts/verify/daily-gates.mjs https://urania-137.vercel.app",
     "verify:all": "npm run test:daily && npm run verify:daily-contracts && node scripts/verify/taxonomy.mjs https://urania-137.vercel.app && npm run verify:daily",
     "verify:taxonomy": "node scripts/verify/taxonomy.mjs",
-    "verify:modes": "node scripts/verify/mode-gates.mjs"
+    "verify:modes": "node scripts/verify/mode-gates.mjs",
+    "cf:dev": "wrangler pages dev dist",
+    "migrate:local": "wrangler d1 migrations apply DB --local",
+    "migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "typecheck:functions": "tsc -p tsconfig.functions.json --noEmit",
+    "verify:cf-contracts": "node scripts/verify/cf-contracts.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -25,10 +30,12 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260714.1",
     "@types/node": "^20.19.43",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.0",
+    "wrangler": "^4.112.0",
     "autoprefixer": "^10.4.20",
     "playwright": "^1.61.1",
     "postcss": "^8.4.49",

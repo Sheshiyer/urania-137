@@ -1,0 +1,13 @@
+# Local dev vars for `wrangler pages dev` (T-002). Copy to `.dev.vars` (gitignored)
+# and fill real values. NEVER commit .dev.vars.
+#
+# Engine (the shared service credential the Worker injects):
+SELEMENE_API_URL="https://selemene.tryambakam.space"
+SELEMENE_API_KEY="<your-selemene-api-key>"
+#
+# CF Access verification (from the 9d9d Access app — placeholders ok for local dev):
+CF_ACCESS_AUD="dev-aud"
+CF_ACCESS_TEAM_DOMAIN="dev.cloudflareaccess.com"
+#
+# Dev-only identity injection (local only; MUST be unset in Pages production):
+DEV_IDENTITY_EMAIL="dev@urania.local"
