@@ -183,3 +183,83 @@ describe('T-032 — header & key hygiene at the route (trust boundary)', () => {
     expect(await res.text()).toBe('event: daily\ndata: {"x":1}\n\n')
   })
 })
+
+describe('T-033 — error, timeout, and streaming edge mapping at the route', () => {
+  it('engine 5xx/4xx pass through with status and body unaltered', async () => {
+    stubFetch(() => new Response('{"error":"engine_broke"}', { status: 500 }))
+    const res500 = await onRequest(
+      makeCtx(new Request(`${LOCAL}/api/selemene/boom`, { method: 'POST', body: '{}' }), makeEnv()),
+    )
+    expect(res500.status).toBe(500)
+    expect(await res500.text()).toBe('{"error":"engine_broke"}')
+
+    stubFetch(() => new Response('not found', { status: 404 }))
+    const res404 = await onRequest(makeCtx(new Request(`${LOCAL}/api/selemene/nope`), makeEnv()))
+    expect(res404.status).toBe(404)
+    expect(await res404.text()).toBe('not found')
+  })
+
+  it('upstream network failure → deterministic 502 proxy_failed', async () => {
+    stubFetch(() => {
+      throw new Error('connect ECONNREFUSED')
+    })
+    const res = await onRequest(makeCtx(new Request(`${LOCAL}/api/selemene/down`), makeEnv()))
+    expect(res.status).toBe(502)
+    const body = (await res.json()) as { error: string; message: string }
+    expect(body.error).toBe('proxy_failed')
+    expect(body.message).toContain('ECONNREFUSED')
+    // The error envelope must not leak the server key.
+    expect(JSON.stringify(body)).not.toContain(SERVER_KEY)
+  })
+
+  it('upstream hang → deterministic 504 engine_timeout (no client-side hang)', async () => {
+    stubFetch(
+      (_t, init) =>
+        new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () =>
+            reject(new DOMException('The operation was aborted.', 'AbortError')),
+          )
+        }),
+    )
+    const started = Date.now()
+    const res = await onRequest(
+      makeCtx(new Request(`${LOCAL}/api/selemene/hang`), makeEnv({ SELEMENE_TIMEOUT_MS: '10' })),
+    )
+    expect(Date.now() - started).toBeLessThan(5_000)
+    expect(res.status).toBe(504)
+    const body = (await res.json()) as { error: string }
+    expect(body.error).toBe('engine_timeout')
+  })
+
+  it('chunked/SSE engine responses stream incrementally (first bytes before stream end)', async () => {
+    const encoder = new TextEncoder()
+    let secondEnqueued = false
+    const stream = new ReadableStream<Uint8Array>({
+      start(c) {
+        c.enqueue(encoder.encode('data: chunk-1\n\n'))
+        setTimeout(() => {
+          secondEnqueued = true
+          c.enqueue(encoder.encode('data: chunk-2\n\n'))
+          c.close()
+        }, 25)
+      },
+    })
+    stubFetch(() => new Response(stream, { status: 200, headers: { 'content-type': 'text/event-stream' } }))
+    const res = await onRequest(makeCtx(new Request(`${LOCAL}/api/selemene/stream`), makeEnv()))
+    expect(res.status).toBe(200)
+    expect(res.headers.get('content-type')).toBe('text/event-stream')
+
+    const reader = res.body!.getReader()
+    const first = await reader.read()
+    expect(new TextDecoder().decode(first.value)).toBe('data: chunk-1\n\n')
+    // The first chunk arrived before the upstream stream finished — no buffering.
+    expect(secondEnqueued).toBe(false)
+    const rest: string[] = []
+    for (;;) {
+      const { done, value } = await reader.read()
+      if (done) break
+      rest.push(new TextDecoder().decode(value))
+    }
+    expect(rest.join('')).toContain('data: chunk-2\n\n')
+  })
+})

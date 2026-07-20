@@ -69,8 +69,21 @@ export async function authenticate(request: Request, env: Env): Promise<AuthResu
   }
 }
 
-export const onRequest: PagesFunction<Env> = async (ctx) => {
-  const { pathname } = new URL(ctx.request.url)
+/**
+ * T-033 — upstream timeout for the selemene proxy. Default 30s; overridable
+ * via the optional SELEMENE_TIMEOUT_MS binding (not part of the frozen Env
+ * interface — read defensively so local/tests can shorten it without touching
+ * the shared env.ts). An upstream hang past this maps to a deterministic 504
+ * (engine-proxy lib), never a hung client request.
+ */
+const SELEMENE_TIMEOUT_DEFAULT_MS = 30_000
+function selemeneTimeoutMs(env: Env): number {
+  const raw = (env as unknown as Record<string, unknown>).SELEMENE_TIMEOUT_MS
+  const n = typeof raw === 'string' ? Number(raw) : typeof raw === 'number' ? raw : NaN
+  return Number.isFinite(n) && n > 0 ? n : SELEMENE_TIMEOUT_DEFAULT_MS
+}
+
+export const onRequest: PagesFunction<Env> = async (ctx) => {  const { pathname } = new URL(ctx.request.url)
   const method = ctx.request.method
 
   // Sole trust boundary — every /api/* request authenticates before routing.
@@ -105,7 +118,7 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
   // api/proxy.ts as the sole engine entrypoint; compute passes through
   // unchanged (the lib preserves method, path suffix, query, and body).
   if (pathname === '/api/selemene' || pathname.startsWith('/api/selemene/')) {
-    return forwardToEngineFromEnv(ctx.request, ctx.env)
+    return forwardToEngineFromEnv(ctx.request, ctx.env, selemeneTimeoutMs(ctx.env))
   }
   if (pathname === '/api/folio' && method === 'GET') return stub('GET /api/folio')
   if (pathname === '/api/folio' && method === 'POST') return stub('POST /api/folio')
