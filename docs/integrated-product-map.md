@@ -31,7 +31,7 @@ graph LR
 
 | Surface | Role | Where |
 |---|---|---|
-| **urania-137** | The **online entry**. The graph is the interface at every depth; a browser tab, no install, no capture. **Login-required** via CF Access email OTP (Phase 1). | `urania-137.vercel.app` → Cloudflare Pages (Phase 4) |
+| **urania-137** | The **online entry**. The graph is the interface at every depth; a browser tab, no install, no capture. **Login-required** via CF Access email OTP (Phase 1). | **Cloudflare Pages** — `urania-137.pages.dev` (Vercel delinked Phase 4; first deploy pending — T-058) |
 | **Noesis Mirror** | The **person's world**. A premium pack rendered as a walkable field; proximity is the interface. | `314.tryambakam.space/p/:personId` |
 | **Sankalpa** | The **local instrument**. One Electron shell over Noesis + Biofield; owns anything needing capture + consent. | v0.1.0 — **no published build yet** |
 
@@ -39,6 +39,30 @@ The same content flows through all three. `723/Solos/{personId}` holds a person'
 premium pack (reading, audio, video, slide-decks, study guide, flashcards). The
 Folio archives readings generated in the console; the Mirror renders that pack as
 beacons you walk up to.
+
+## Host & API surface — urania-137 (Phase 4, delinked 2026-07-21)
+
+The console is hosted on **Cloudflare Pages** as a single project: the SPA ships
+as static assets (`npm run build` → `dist/`) and the `/api/*` surface ships as
+**Pages Functions** (`functions/api/[[path]].ts`):
+
+| Route | Served by |
+|---|---|
+| `/api/me` · `/api/logout` | identity surface (Access JWT verify → `users` upsert; logout → Access) |
+| `/api/selemene/*` | engine proxy — injects the shared `X-API-Key` server-side (`functions/lib/engine-proxy.ts`) |
+| `/api/folio/*` | per-user readings CRUD + import over the D1 `DB` binding |
+
+Local development is the same topology: `npm run dev` = build + `wrangler pages
+dev dist` (SPA + Functions + local D1). **Vercel is fully delinked** — no
+`vercel.json`, no serverless `api/`, no `.vercel/`, no Vercel dependency or host
+reference outside historical records (gate V7, `scripts/verify/delink-check.mjs`).
+The remote one-time steps (wrangler login, D1 provisioning, secrets, first
+deploy) are pending the owner's Cloudflare account — see the README deploy
+runbook.
+
+**Tracked fast-follow:** `birth_profiles` (per-user saved birth profiles) is
+recorded, not omitted — deliberately out of the readings slice; it lands as its
+own future ISC (ISA ISC-31).
 
 ## Auth & identity — urania-137 (Phase 1, verified 2026-07-20)
 
@@ -186,7 +210,7 @@ Weaker assertions that **do not work**, and why:
 node scratchpad/verify-taxonomy.mjs http://localhost:5191
 
 # The two gates — run against the engine before exposing any new mode
-node scratchpad/differentiation-gate.mjs https://urania-137.vercel.app
+node scratchpad/differentiation-gate.mjs https://urania-137.pages.dev
 
 # Daily panchanga reading — offline units + contracts, then the live gates
 npm run test:daily              # G3/G4/G5/G6/G8 + purity/drift + interpret over the real lexicon
