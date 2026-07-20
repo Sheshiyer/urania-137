@@ -7,6 +7,7 @@ export function useReportGenerator() {
   const [reports, setReports] = useState<GeneratedReport[]>([])
   const [activeReport, setActiveReport] = useState<GeneratedReport | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   const generateReport = useCallback(async (node: StellarNode, request: AssetGenerateRequest) => {
     const id = `${node.id}-${request.mode}`
@@ -33,8 +34,15 @@ export function useReportGenerator() {
       const completed: GeneratedReport = { ...newReport, status: 'complete', content: content + engines, raw }
       setReports((prev) => prev.map((r) => (r.id === id ? completed : r)))
       setActiveReport((current) => (current?.id === id ? completed : current))
-      // Persist to the Folio Archive so it reflects real prior work.
-      saveReport({ nodeId: node.id, nodeLabel: node.label, mode: request.mode, title: completed.title, content: completed.content })
+      // Persist to the Folio Archive (async, D1-backed). A save failure surfaces
+      // as saveError instead of silently dropping the reading; the generated
+      // report itself is already complete and stays complete.
+      try {
+        await saveReport({ nodeId: node.id, nodeLabel: node.label, mode: request.mode, title: completed.title, content: completed.content })
+        setSaveError(null)
+      } catch (e) {
+        setSaveError(e instanceof Error ? e.message : 'Could not save the report to the Folio.')
+      }
     } catch (err) {
       const errorReport: GeneratedReport = {
         ...newReport,
@@ -48,5 +56,5 @@ export function useReportGenerator() {
     }
   }, [])
 
-  return { reports, activeReport, isGenerating, generateReport, setActiveReport }
+  return { reports, activeReport, isGenerating, saveError, generateReport, setActiveReport }
 }

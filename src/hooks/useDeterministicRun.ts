@@ -26,6 +26,16 @@ export function useDeterministicRun() {
   const [state, setState] = useState<State>(EMPTY)
   const reset = useCallback(() => setState(EMPTY), [])
 
+  // Await the async D1-backed save; a failure surfaces in `error` (never a
+  // silent drop / floating promise) while preserving the computed result.
+  const archive = useCallback(async (payload: { nodeId: string; nodeLabel: string; mode: string; title: string; content: string }) => {
+    try {
+      await saveReport(payload)
+    } catch (e) {
+      setState((s) => ({ ...s, error: e instanceof Error ? e.message : 'Could not save the reading to the Folio.' }))
+    }
+  }, [])
+
   const run = useCallback(async (node: StellarNode, label: string, r: ChildRun, birth: BirthData, intention?: string) => {
     setState({ ...EMPTY, busy: true })
     // sigil-forge requires `options.intention`; without it the engine 422s and
@@ -40,7 +50,7 @@ export function useDeterministicRun() {
           fetchWorkflow(r.workflowId).catch(() => null),
         ])
         setState({ busy: false, error: null, workflow: result, engine: null, declaredEngines: def?.engine_ids ?? [] })
-        saveReport({
+        await archive({
           nodeId: node.id,
           nodeLabel: node.label,
           mode: `workflow:${r.workflowId}`,
@@ -50,7 +60,7 @@ export function useDeterministicRun() {
       } else if (r.kind === 'engine') {
         const result = await calculateEngine(r.engineId, birth, options)
         setState({ busy: false, error: null, workflow: null, engine: result, declaredEngines: [] })
-        saveReport({
+        await archive({
           nodeId: node.id,
           nodeLabel: node.label,
           mode: `engine:${r.engineId}`,
@@ -61,7 +71,7 @@ export function useDeterministicRun() {
     } catch (e) {
       setState({ ...EMPTY, error: e instanceof Error ? e.message : 'Engine call failed' })
     }
-  }, [])
+  }, [archive])
 
   return { ...state, run, reset }
 }

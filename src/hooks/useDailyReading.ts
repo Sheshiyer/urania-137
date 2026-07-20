@@ -12,13 +12,15 @@ import {
 import { saveReport } from '../lib/folioStore'
 
 type Fetcher = (input: DailyReadingInput) => Promise<DailyReading>
-type Archiver = (r: { nodeId: string; nodeLabel: string; mode: string; title: string; content: string }) => void
+type Archiver = (r: { nodeId: string; nodeLabel: string; mode: string; title: string; content: string }) => void | Promise<unknown>
 
 /**
  * Pure orchestration (T-041) — fetch → archive → return. Dependencies are
  * injectable so it unit-tests in node with no React/DOM (T-042). Archives ONLY
  * on success; an engine error throws before archiving, so a failed reading is
- * never written to the Folio.
+ * never written to the Folio. The archive is AWAITED (T-047): saveReport is now
+ * async against D1, so a save failure surfaces as an error instead of a
+ * silently dropped floating promise.
  */
 export async function fetchDailyReading(
   input: DailyReadingInput,
@@ -26,7 +28,7 @@ export async function fetchDailyReading(
   archive: Archiver = saveReport,
 ): Promise<DailyReading> {
   const reading = await fetcher(input)
-  archive({
+  await archive({
     nodeId: 'transit',
     nodeLabel: 'Sky Weather',
     mode: 'daily-panchanga',
