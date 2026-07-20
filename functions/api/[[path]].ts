@@ -2,7 +2,7 @@ import type { Env } from '../lib/env'
 import type { ApiError, FolioListResponse, MeResponse } from '../../src/lib/api/contract'
 import { AccessVerifyError, extractIdentity, verifyAccessJwt, type AccessJwtClaims } from '../lib/cf-access'
 import { maybeInjectDevIdentity } from '../lib/dev-identity'
-import { upsertUser, listReadings } from '../lib/db'
+import { upsertUser, listReadings, createReading } from '../lib/db'
 import { forwardToEngineFromEnv } from '../lib/engine-proxy'
 
 /**
@@ -21,6 +21,18 @@ const stub = (name: string): Response =>
 
 const unauthorized = (message: string): Response =>
   json({ error: 'UNAUTHORIZED', message } satisfies ApiError, 401)
+
+const badRequest = (message: string): Response =>
+  json({ error: 'BAD_REQUEST', message } satisfies ApiError, 400)
+
+/** Parse a JSON request body; null on any parse failure (caller → 400). */
+async function readJson(request: Request): Promise<unknown | null> {
+  try {
+    return await request.json()
+  } catch {
+    return null
+  }
+}
 
 export type AuthResult =
   | { ok: true; claims: AccessJwtClaims }
@@ -152,7 +164,34 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
     })
     return json({ readings } satisfies FolioListResponse)
   }
-  if (pathname === '/api/folio' && method === 'POST') return stub('POST /api/folio')
+  if (pathname === '/api/folio' && method === 'POST') {
+    // T-042 — save a reading. Validates the frozen SaveReadingRequest; the
+    // server assigns id/created_at/favorite=false. Returns 201 + stored DTO.
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    const body = await readJson(ctx.request)
+    if (typeof body !== 'object' || body === null) {
+      return badRequest('POST /api/folio expects a JSON object body')
+    }
+    const b = body as Record<string, unknown>
+    for (const field of ['nodeId', 'nodeLabel', 'mode', 'title', 'content'] as const) {
+      if (typeof b[field] !== 'string') {
+        return badRequest(`missing or non-string required field: ${field}`)
+      }
+    }
+    if (b.raw !== undefined && b.raw !== null && typeof b.raw !== 'string') {
+      return badRequest('optional field raw must be a string when present')
+    }
+    const created = await createReading(ctx.env.DB, u.user.id, {
+      nodeId: b.nodeId as string,
+      nodeLabel: b.nodeLabel as string,
+      mode: b.mode as string,
+      title: b.title as string,
+      content: b.content as string,
+      raw: (b.raw as string | null | undefined) ?? null,
+    })
+    return json(created, 201)
+  }
   if (pathname === '/api/folio/import' && method === 'POST') return stub('POST /api/folio/import')
   if (/^\/api\/folio\/[^/]+$/.test(pathname) && (method === 'PATCH' || method === 'DELETE')) return stub(`${method} /api/folio/:id`)
 

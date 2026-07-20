@@ -10,7 +10,7 @@ import type { Env } from '../lib/env'
 import { onRequest } from '../api/[[path]]'
 import { createReading, setReadingFavorite, upsertUser } from '../lib/db'
 import { makeFakeD1 } from './fake-d1'
-import type { FolioListResponse } from '../../src/lib/api/contract'
+import type { FolioListResponse, ReadingDTO } from '../../src/lib/api/contract'
 
 const LOCAL = 'http://localhost:8788'
 const A = 'dev:a@example.com'
@@ -32,6 +32,22 @@ const asA = (req: Request, db: unknown) => makeCtx(req, db, 'a@example.com')
 const asB = (req: Request, db: unknown) => makeCtx(req, db, 'b@example.com')
 
 const FOLIO = `${LOCAL}/api/folio`
+
+const saveBody = (over: Record<string, unknown> = {}) => ({
+  nodeId: 'moon',
+  nodeLabel: 'Moon',
+  mode: 'daily',
+  title: 'Daily reading',
+  content: 'Some content',
+  ...over,
+})
+
+const post = (body: unknown, url = FOLIO) =>
+  new Request(url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: typeof body === 'string' ? body : JSON.stringify(body),
+  })
 
 let fake: ReturnType<typeof makeFakeD1>
 let db: D1Database
@@ -92,5 +108,62 @@ describe('GET /api/folio (T-041)', () => {
   it('unauthenticated → 401', async () => {
     const res = await onRequest(makeCtx(new Request(FOLIO), fake.db, undefined))
     expect(res.status).toBe(401)
+  })
+})
+
+describe('POST /api/folio (T-042)', () => {
+  it('201 with the stored DTO (server id + createdAt + favorite=false), then listed by the owner only', async () => {
+    const res = await onRequest(asA(post(saveBody({ title: 'Saved one' })), fake.db))
+    expect(res.status).toBe(201)
+    const created = (await res.json()) as ReadingDTO
+    expect(created.id).toMatch(/^[0-9a-f-]{36}$/)
+    expect(created.createdAt).toBeGreaterThan(0)
+    expect(created.favorite).toBe(false)
+    expect(created).toMatchObject(saveBody({ title: 'Saved one' }))
+    expect('raw' in created).toBe(false)
+
+    const mine = (await (await onRequest(asA(new Request(FOLIO), fake.db))).json()) as FolioListResponse
+    expect(mine.readings.map((r) => r.id)).toContain(created.id)
+    const other = (await (await onRequest(asB(new Request(FOLIO), fake.db))).json()) as FolioListResponse
+    expect(other.readings).toHaveLength(0)
+  })
+
+  it('accepts the optional raw string (stored, not returned in the DTO)', async () => {
+    const res = await onRequest(asA(post(saveBody({ raw: '{"engine":true}' })), fake.db))
+    expect(res.status).toBe(201)
+    const created = (await res.json()) as ReadingDTO
+    expect(fake.readings.get(created.id)!.raw).toBe('{"engine":true}')
+  })
+
+  it('missing required field → 400 with no row written', async () => {
+    for (const field of ['nodeId', 'nodeLabel', 'mode', 'title', 'content']) {
+      const body = saveBody()
+      delete (body as Record<string, unknown>)[field]
+      const res = await onRequest(asA(post(body), fake.db))
+      expect(res.status).toBe(400)
+      const err = (await res.json()) as { error: string; message: string }
+      expect(err.error).toBe('BAD_REQUEST')
+      expect(err.message).toContain(field)
+    }
+    expect(fake.readings.size).toBe(0)
+  })
+
+  it('non-JSON / non-object body → 400 with no row written', async () => {
+    expect((await onRequest(asA(post('not-json{{'), fake.db))).status).toBe(400)
+    expect((await onRequest(asA(post([1, 2, 3]), fake.db))).status).toBe(400)
+    expect((await onRequest(asA(post(null), fake.db))).status).toBe(400)
+    expect(fake.readings.size).toBe(0)
+  })
+
+  it('non-string optional raw → 400', async () => {
+    const res = await onRequest(asA(post(saveBody({ raw: 42 })), fake.db))
+    expect(res.status).toBe(400)
+    expect(fake.readings.size).toBe(0)
+  })
+
+  it('unauthenticated → 401, no row written', async () => {
+    const res = await onRequest(makeCtx(post(saveBody()), fake.db, undefined))
+    expect(res.status).toBe(401)
+    expect(fake.readings.size).toBe(0)
   })
 })
