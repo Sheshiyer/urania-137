@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { Search, Compass, Share2 } from 'lucide-react'
 import { SELEMENE_NODES } from '../../data/selemeneNodes'
 import { Route, navigate } from '../../hooks/useHashRoute'
+import type { User } from '../../lib/api/contract'
+import { IdentityChip } from './IdentityChip'
 
 /**
  * The console top bar from the reference moodboard: the URANIA 137 wordmark and
@@ -10,7 +12,7 @@ import { Route, navigate } from '../../hooks/useHashRoute'
  * presentational dressing. Every destination is also reachable by clicking the
  * graph, so the graph stays the interface (ISA ISC-10).
  */
-export function TopNav({ route }: { route: Route }) {
+export function TopNav({ route, me }: { route: Route; me: User | null }) {
   const activeId = route.view === 'node' ? route.nodeId : null
 
   const items: { key: string; label: string; onClick?: () => void; active?: boolean }[] = [
@@ -54,6 +56,7 @@ export function TopNav({ route }: { route: Route }) {
           <Compass className="h-4 w-4" />
           <Share2 className="h-4 w-4" />
         </div>
+        <IdentityChip me={me} />
       </div>
     </header>
   )
