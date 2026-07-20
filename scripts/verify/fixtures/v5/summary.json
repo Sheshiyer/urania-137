@@ -1,6 +1,6 @@
 {
   "gate": "V5 compute-unchanged (T-037)",
-  "at": "2026-07-20T18:43:30.403Z",
+  "at": "2026-07-20T19:11:33.948Z",
   "worker": "http://localhost:8788",
   "baselineVia": "https://urania-137.vercel.app/api/selemene",
   "note": "local SELEMENE_API_KEY expired → baseline captured via the pre-migration prod proxy path and replayed byte-identically through the Worker",

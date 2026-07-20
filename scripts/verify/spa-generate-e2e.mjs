@@ -26,7 +26,8 @@ const FIXTURES = arg('fixtures', '/tmp/p2-fixtures')
 
 // The exact subject the form is driven with (defaults untouched: empty location
 // query, lat/lon 0, Asia/Kolkata — the form submits these as-is).
-const SPA_BODY = JSON.stringify({
+// Exported so the Phase-2 exit gate (T-039) can record the matching fixture.
+export const SPA_BODY = JSON.stringify({
   mode: 'integrated-kundali-l0', report_level: 'L0', language: 'en', consciousness_level: 2,
   subjects: [{ role: 'primary', name: 'goldenwitness', birth_date: '1990-05-15', birth_time: '08:30', birth_time_confidence: 'exact', birth_location_query: '', normalized_location: { display_name: '', latitude: 0, longitude: 0, timezone: 'Asia/Kolkata', provider: 'manual', confidence: 'manual' } }],
   options: { output_format: 'markdown', include_rubric: true, include_pattern_extraction: true },
@@ -83,4 +84,5 @@ const main = async () => {
   }
   console.log('\nSPA generate e2e: PASS — reading generated through the Worker, content identical to pre-migration app')
 }
-main()
+// Guard: importing SPA_BODY (phase2 exit gate) must not run the browser drive.
+if (process.argv[1] && process.argv[1].endsWith('spa-generate-e2e.mjs')) main()

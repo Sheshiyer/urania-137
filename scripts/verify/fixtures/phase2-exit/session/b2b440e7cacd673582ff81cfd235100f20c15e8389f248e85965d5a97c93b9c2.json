@@ -1,0 +1,1 @@
+{"method":"GET","path":"/health","status":200,"contentType":"application/json; charset=utf-8","body":"{\"status\":\"ok\",\"version\":\"3.1.0\",\"uptime_seconds\":209262,\"engines_loaded\":18,\"workflows_loaded\":6}"}

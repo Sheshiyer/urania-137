@@ -1,0 +1,65 @@
+{
+  "gate": "Phase-2 exit (T-039)",
+  "at": "2026-07-20T19:11:34.590Z",
+  "worker": "http://localhost:8788",
+  "baselineVia": "https://urania-137.vercel.app/api/selemene",
+  "caveat": "local SELEMENE_API_KEY expired → real engine bytes captured via the pre-migration prod proxy path and replayed through the Worker with a synthetic stub key; live parity with the real key is Phase-5 (T-074)",
+  "checks": [
+    {
+      "name": "git diff on src/lib/selemeneApi.ts empty (vs Phase-0 baseline + working tree)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "GET /api/me without token → 401",
+      "ok": true,
+      "detail": "got 401"
+    },
+    {
+      "name": "POST /api/selemene/* without token → 401 (no upstream call possible)",
+      "ok": true,
+      "detail": "got 401"
+    },
+    {
+      "name": "golden corpus captured (7 seeds)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "SPA generate body captured",
+      "ok": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "dev identity active (prod-safe, server-side)",
+      "ok": true,
+      "detail": "dev:dev@urania.local"
+    },
+    {
+      "name": "authed reading generated via /api/selemene/* · 7/7 seeds identical to baseline",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "engine key string absent from all client-visible headers/bodies",
+      "ok": true,
+      "detail": "5 responses scanned"
+    },
+    {
+      "name": "spoofed client x-api-key dropped (server key injected upstream)",
+      "ok": true,
+      "detail": "got 200"
+    },
+    {
+      "name": "browser SPA generate e2e through the Worker (content identical)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "V5: taxonomy + daily-gates green through the Worker AND diff-empty vs baseline",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "verdict": "PASS"
+}

@@ -1,0 +1,1 @@
+{"method":"GET","path":"/","status":404,"contentType":"application/json","body":"{\"error\": {\"code\": \"404\", \"message\": \"The page could not be found\"}}"}
