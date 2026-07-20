@@ -17,9 +17,13 @@ pages_build_output_dir = "dist"
 CF_ACCESS_AUD = "PLACEHOLDER_set_from_9d9d_access_app"
 CF_ACCESS_TEAM_DOMAIN = "PLACEHOLDER.cloudflareaccess.com"
 
-# Per-user readings store. database_id is a placeholder until T-080 provisions the
-# real preview/prod D1; `wrangler d1 migrations apply DB --local` works without it.
+# Per-user readings store (T-080). Production D1 provisioned 2026-07-20 in the
+# 9d9d account (region APAC). Pages applies this single binding to all deployments;
+# the preview database below is recorded for attaching to the Pages preview
+# environment via the dashboard if preview isolation is wanted:
+#   preview: database_name = "urania-137-db-preview"
+#            database_id   = "6b90d773-0233-4dcf-b548-2feb61365c77"
 [[d1_databases]]
 binding = "DB"
 database_name = "urania-137-db"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "d57550ea-c8d3-48fc-a2ee-c6b3fc41948e"
