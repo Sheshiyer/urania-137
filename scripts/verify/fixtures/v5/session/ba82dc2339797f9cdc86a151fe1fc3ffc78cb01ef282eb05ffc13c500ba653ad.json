@@ -1,0 +1,1 @@
+{"method":"GET","path":"/api/v1/workflows/birth-blueprint","status":200,"contentType":"application/json; charset=utf-8","body":"{\"id\":\"birth-blueprint\",\"name\":\"Birth Blueprint\",\"description\":\"Core identity mapping through birth data\",\"engine_ids\":[\"numerology\",\"human-design\",\"gene-keys\"]}"}

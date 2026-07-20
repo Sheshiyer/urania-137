@@ -1,0 +1,14 @@
+{
+  "gate": "V5 compute-unchanged (T-037)",
+  "at": "2026-07-20T18:43:30.403Z",
+  "worker": "http://localhost:8788",
+  "baselineVia": "https://urania-137.vercel.app/api/selemene",
+  "note": "local SELEMENE_API_KEY expired → baseline captured via the pre-migration prod proxy path and replayed byte-identically through the Worker",
+  "checks": {
+    "taxonomy.mjs passes against the Worker": true,
+    "daily-gates.mjs passes against the Worker": true,
+    "taxonomy output byte-identical to baseline": true,
+    "daily-gates output byte-identical to baseline": true
+  },
+  "verdict": "PASS"
+}

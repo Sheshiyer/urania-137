@@ -1,0 +1,8 @@
+Daily live gates · base http://localhost:8795
+
+  PASS  G2 live-schema-contract  panchanga carries all 17 keys · transits aspect carries all 6
+
+  note: G7 (behavioral, rendered tithi == live tithi + Folio row) runs via
+        daily-gates.behavioral.mjs against the deployed preview URL.
+
+Daily live gates: PASS

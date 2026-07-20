@@ -1,0 +1,1 @@
+{"method":"GET","path":"/api/v1/workflows/decision-support","status":200,"contentType":"application/json; charset=utf-8","body":"{\"id\":\"decision-support\",\"name\":\"Decision Support\",\"description\":\"Multi-system decision mirrors\",\"engine_ids\":[\"tarot\",\"i-ching\",\"human-design\"]}"}

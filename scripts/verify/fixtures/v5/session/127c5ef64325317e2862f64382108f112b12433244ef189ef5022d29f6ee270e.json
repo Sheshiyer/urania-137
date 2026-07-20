@@ -1,0 +1,1 @@
+{"method":"GET","path":"/api/v1/workflows/creative-expression","status":200,"contentType":"application/json; charset=utf-8","body":"{\"id\":\"creative-expression\",\"name\":\"Creative Expression\",\"description\":\"Creative and aesthetic exploration\",\"engine_ids\":[\"sigil-forge\",\"sacred-geometry\",\"raaga\"]}"}
