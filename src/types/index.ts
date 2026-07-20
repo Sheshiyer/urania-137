@@ -110,6 +110,9 @@ export type ChildRun =
   | { kind: 'workflow'; workflowId: string; needsIntention?: boolean }
   | { kind: 'engine'; engineId: string; needsIntention?: boolean }
   | { kind: 'witness'; mode: string; minSubjects: number; maxSubjects: number; level?: ReportLevel }
+  // Daily panchanga reading — resolves to the DailyReadingSource seam (① now / ③
+  // later, see src/lib/daily/source.ts). Location, not birth, is the entry input.
+  | { kind: 'daily'; needsLocation: true }
 
 /**
  * A child of a parent node, revealed on that node's `#/node/:id` page.

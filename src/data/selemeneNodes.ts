@@ -57,6 +57,9 @@ export const SELEMENE_NODES: StellarNode[] = [
     color: 'cyan',
     subNodes: ['Active Transits', 'Progressions', 'Eclipses'],
     children: [
+      // The daily reading — the panchanga of the day (base) + a personal transit
+      // overlay when birth data is present. Resolves to the DailyReadingSource seam.
+      { id: 'panchanga-flow', label: 'Today', glyph: 'sun', run: { kind: 'daily', needsLocation: true } },
       { id: 'daily-practice', label: 'Daily Practice', glyph: 'orbit', run: { kind: 'workflow', workflowId: 'daily-practice' } },
       { id: 'transits', label: 'Transits', glyph: 'orbit', run: { kind: 'engine', engineId: 'transits' } },
       { id: 'panchanga', label: 'Panchanga', glyph: 'sun', run: { kind: 'engine', engineId: 'panchanga' } },

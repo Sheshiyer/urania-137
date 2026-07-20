@@ -13,6 +13,7 @@ import { FolioPanel } from '../components/panels/FolioPanel'
 import { MirrorPanel } from '../components/panels/MirrorPanel'
 import { SankalpaPanel } from '../components/panels/SankalpaPanel'
 import { DeterministicResult } from '../components/panels/DeterministicResult'
+import { DailyReadingPanel } from '../components/panels/DailyReadingPanel'
 import { PageHeader } from '../components/layout/PageHeader'
 import { PageFrame } from '../components/layout/PageFrame'
 import { StatFooter } from '../components/chrome/StatFooter'
@@ -21,7 +22,7 @@ import { BottomChrome } from '../components/chrome/BottomChrome'
 import { CHROME } from '../components/chrome/insets'
 import { navigate } from '../hooks/useHashRoute'
 
-type ModalView = 'witness' | 'birth' | 'info' | 'result' | 'deterministic' | null
+type ModalView = 'witness' | 'birth' | 'info' | 'result' | 'deterministic' | 'daily' | null
 
 /** Evenly distribute a node's children around its ring (clockwise from top). */
 function childOrbitals(kids: SelemeneChild[], color: string): GraphOrbital[] {
@@ -56,6 +57,7 @@ export function NodePage({ nodeId }: { nodeId: string }) {
     det.reset()
     if (child.info || !child.run) setModalView('info')
     else if (child.run.kind === 'witness') setModalView('witness')
+    else if (child.run.kind === 'daily') setModalView('daily')
     else setModalView('birth')
   }
 
@@ -111,9 +113,14 @@ export function NodePage({ nodeId }: { nodeId: string }) {
         )}
       </Modal>
 
+      {/* Daily panchanga reading — universal base + optional personal overlay */}
+      <Modal isOpen={modalView === 'daily'} title={selectedChild?.label ?? node.label} onClose={closeModal}>
+        {modalView === 'daily' && <DailyReadingPanel />}
+      </Modal>
+
       {/* Deterministic workflow / engine — needs birth_data */}
       <Modal isOpen={modalView === 'birth'} title={selectedChild?.label ?? node.label} onClose={closeModal}>
-        {modalView === 'birth' && selectedChild?.run && selectedChild.run.kind !== 'witness' && (
+        {modalView === 'birth' && selectedChild?.run && (selectedChild.run.kind === 'workflow' || selectedChild.run.kind === 'engine') && (
           <BirthDataForm
             actionLabel={`Run ${selectedChild.label}`}
             needsIntention={selectedChild.run.needsIntention}

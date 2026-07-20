@@ -79,3 +79,11 @@ export const runWorkflow = (workflowId: string, birth: BirthData, options?: Reco
 /** A single consciousness engine, computed directly. */
 export const calculateEngine = (engineId: string, birth: BirthData, options?: Record<string, unknown>) =>
   postJson<EngineResult>(`/api/v1/engines/${engineId}/calculate`, { birth_data: birth, ...(options ? { options } : {}) })
+
+/**
+ * Post an arbitrary request body to an engine. Used by the daily interpreter,
+ * whose panchanga base request carries no birth identity (just date + location),
+ * so the birth-data-typed `calculateEngine` above doesn't fit.
+ */
+export const calculateEngineRaw = (engineId: string, body: unknown) =>
+  postJson<EngineResult>(`/api/v1/engines/${engineId}/calculate`, body)
