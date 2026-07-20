@@ -6,10 +6,21 @@
  * is exactly how 13 fake modes hid in plain sight.
  *
  * Runs are extracted from the source file so this can't drift from the data.
+ *
+ * Base resolution (T-034): `URANIA_API_BASE` env > argv[2] > local Worker default.
+ * Point it at the local `wrangler pages dev` Worker (default http://localhost:8788);
+ * the Worker injects the prod-safe dev identity server-side from DEV_IDENTITY_EMAIL
+ * in .dev.vars (T-017/T-026) — there is NO client identity header by design (any
+ * client-sent identity header is ignored), so this script needs no auth plumbing.
+ * The future prod base stays reachable via the same env/flag
+ * (e.g. URANIA_API_BASE=https://<pages-host> or the legacy prod proxy).
+ * If SELEMENE_API_KEY is set in the env it is sent as `x-api-key`, which only
+ * matters when BASE is the direct engine; through any proxy it is dropped (T-032).
  */
 import { readFileSync } from 'node:fs'
 
-const BASE = (process.argv[2] || 'http://localhost:5191').replace(/\/+$/, '')
+const BASE = (process.env.URANIA_API_BASE || process.argv[2] || 'http://localhost:8788').replace(/\/+$/, '')
+const ENGINE_KEY = process.env.SELEMENE_API_KEY || ''
 const P = `${BASE}/api/selemene`
 import { fileURLToPath } from 'node:url'
 const SRC = fileURLToPath(new URL('../../src/data/selemeneNodes.ts', import.meta.url))
@@ -38,7 +49,9 @@ while ((m = childRe.exec(src))) {
 }
 
 const post = async (path, body) => {
-  const r = await fetch(`${P}${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+  const headers = { 'Content-Type': 'application/json' }
+  if (ENGINE_KEY) headers['x-api-key'] = ENGINE_KEY
+  const r = await fetch(`${P}${path}`, { method: 'POST', headers, body: JSON.stringify(body) })
   const t = await r.text()
   let j = null
   try { j = JSON.parse(t) } catch {}
@@ -53,7 +66,8 @@ const check = async (c) => {
   if (c.kind === 'workflow') {
     const { status, json } = await post(`/api/v1/workflows/${c.workflowId}`, { birth_data: BIRTH, ...opts })
     const got = Object.keys(json?.engine_outputs ?? {})
-    const def = await fetch(`${P}/api/v1/workflows/${c.workflowId}`).then((r) => r.json()).catch(() => null)
+    const defHeaders = ENGINE_KEY ? { 'x-api-key': ENGINE_KEY } : {}
+    const def = await fetch(`${P}/api/v1/workflows/${c.workflowId}`, { headers: defHeaders }).then((r) => r.json()).catch(() => null)
     const declared = def?.engine_ids ?? []
     const missing = declared.filter((e) => !got.includes(e))
     return { ok: status === 200 && got.length > 0, status, detail: `${got.length}/${declared.length || '?'} engines${missing.length ? ` (dropped: ${missing.join(',')})` : ''}` }
