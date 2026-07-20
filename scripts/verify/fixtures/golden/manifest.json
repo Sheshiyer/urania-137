@@ -1,0 +1,69 @@
+{
+  "exportedAt": "2026-07-20T18:31:01.705Z",
+  "from": "/tmp/p2-fixtures",
+  "seeds": [
+    {
+      "name": "health",
+      "method": "GET",
+      "path": "/health",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 98,
+      "bodySha256": "b86c59dc7c49d402"
+    },
+    {
+      "name": "engines-list",
+      "method": "GET",
+      "path": "/api/v1/engines",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 245,
+      "bodySha256": "c9f4c5ec0b91d7e5"
+    },
+    {
+      "name": "workflows-list",
+      "method": "GET",
+      "path": "/api/v1/workflows",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 709,
+      "bodySha256": "60797eb0d7f7f006"
+    },
+    {
+      "name": "panchanga-fixed-date",
+      "method": "POST",
+      "path": "/api/v1/engines/panchanga/calculate",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 1032,
+      "bodySha256": "7c94d071c7e0e230"
+    },
+    {
+      "name": "transits-fixed-natal",
+      "method": "POST",
+      "path": "/api/v1/engines/transits/calculate",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 6096,
+      "bodySha256": "0ee6bb40ec6f9867"
+    },
+    {
+      "name": "kundali-l0-generate",
+      "method": "POST",
+      "path": "/api/v1/assets/generate",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 46756,
+      "bodySha256": "2c87c936f16dd347"
+    },
+    {
+      "name": "unknown-mode-400",
+      "method": "POST",
+      "path": "/api/v1/assets/generate",
+      "status": 400,
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 422,
+      "bodySha256": "e5d3fa181c545195"
+    }
+  ]
+}

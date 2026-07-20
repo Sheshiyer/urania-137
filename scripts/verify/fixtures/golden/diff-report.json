@@ -1,0 +1,78 @@
+{
+  "verifiedAt": "2026-07-20T18:31:52.433Z",
+  "base": "http://localhost:8788",
+  "fixtures": "scripts/verify/fixtures/golden",
+  "seeds": [
+    {
+      "name": "health",
+      "ok": true,
+      "status": 200,
+      "bytes": 98,
+      "ttfbMs": 3,
+      "totalMs": 3,
+      "streamed": true,
+      "diffs": []
+    },
+    {
+      "name": "engines-list",
+      "ok": true,
+      "status": 200,
+      "bytes": 245,
+      "ttfbMs": 6,
+      "totalMs": 7,
+      "streamed": true,
+      "diffs": []
+    },
+    {
+      "name": "workflows-list",
+      "ok": true,
+      "status": 200,
+      "bytes": 709,
+      "ttfbMs": 4,
+      "totalMs": 4,
+      "streamed": true,
+      "diffs": []
+    },
+    {
+      "name": "panchanga-fixed-date",
+      "ok": true,
+      "status": 200,
+      "bytes": 1032,
+      "ttfbMs": 5,
+      "totalMs": 5,
+      "streamed": true,
+      "diffs": []
+    },
+    {
+      "name": "transits-fixed-natal",
+      "ok": true,
+      "status": 200,
+      "bytes": 6096,
+      "ttfbMs": 3,
+      "totalMs": 3,
+      "streamed": true,
+      "diffs": []
+    },
+    {
+      "name": "kundali-l0-generate",
+      "ok": true,
+      "status": 200,
+      "bytes": 46756,
+      "ttfbMs": 16,
+      "totalMs": 16,
+      "streamed": true,
+      "diffs": []
+    },
+    {
+      "name": "unknown-mode-400",
+      "ok": true,
+      "status": 400,
+      "bytes": 422,
+      "ttfbMs": 0,
+      "totalMs": 0,
+      "streamed": true,
+      "diffs": []
+    }
+  ],
+  "differences": 0
+}
