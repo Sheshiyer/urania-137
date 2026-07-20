@@ -1,8 +1,8 @@
 import type { Env } from '../lib/env'
-import type { ApiError, MeResponse } from '../../src/lib/api/contract'
+import type { ApiError, FolioListResponse, MeResponse } from '../../src/lib/api/contract'
 import { AccessVerifyError, extractIdentity, verifyAccessJwt, type AccessJwtClaims } from '../lib/cf-access'
 import { maybeInjectDevIdentity } from '../lib/dev-identity'
-import { upsertUser } from '../lib/db'
+import { upsertUser, listReadings } from '../lib/db'
 import { forwardToEngineFromEnv } from '../lib/engine-proxy'
 
 /**
@@ -83,7 +83,27 @@ function selemeneTimeoutMs(env: Env): number {
   return Number.isFinite(n) && n > 0 ? n : SELEMENE_TIMEOUT_DEFAULT_MS
 }
 
-export const onRequest: PagesFunction<Env> = async (ctx) => {  const { pathname } = new URL(ctx.request.url)
+/**
+ * Phase 3 — derive the stable per-user identity from verified claims and
+ * upsert the users row (readings.user_id has a FK to users, and last_seen_at
+ * advances on any authenticated folio call, not just /api/me).
+ */
+async function requireUser(
+  env: Env,
+  claims: AccessJwtClaims,
+): Promise<{ ok: true; user: MeResponse } | { ok: false; response: Response }> {
+  try {
+    const user = await extractIdentity(claims)
+    await upsertUser(env.DB, user)
+    return { ok: true, user }
+  } catch (err) {
+    const reason = err instanceof AccessVerifyError ? err.reason : 'identity-failed'
+    return { ok: false, response: unauthorized(`cannot derive identity (${reason})`) }
+  }
+}
+
+export const onRequest: PagesFunction<Env> = async (ctx) => {
+  const { pathname } = new URL(ctx.request.url)
   const method = ctx.request.method
 
   // Sole trust boundary — every /api/* request authenticates before routing.
@@ -120,7 +140,18 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {  const { pathname 
   if (pathname === '/api/selemene' || pathname.startsWith('/api/selemene/')) {
     return forwardToEngineFromEnv(ctx.request, ctx.env, selemeneTimeoutMs(ctx.env))
   }
-  if (pathname === '/api/folio' && method === 'GET') return stub('GET /api/folio')
+  if (pathname === '/api/folio' && method === 'GET') {
+    // T-041 — list the caller's readings with server-side ?search=/?favorites=
+    // filters; response is the frozen FolioListResponse.
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    const query = new URL(ctx.request.url).searchParams
+    const readings = await listReadings(ctx.env.DB, u.user.id, {
+      search: query.get('search') ?? undefined,
+      favoritesOnly: query.get('favorites') === 'true',
+    })
+    return json({ readings } satisfies FolioListResponse)
+  }
   if (pathname === '/api/folio' && method === 'POST') return stub('POST /api/folio')
   if (pathname === '/api/folio/import' && method === 'POST') return stub('POST /api/folio/import')
   if (/^\/api\/folio\/[^/]+$/.test(pathname) && (method === 'PATCH' || method === 'DELETE')) return stub(`${method} /api/folio/:id`)
