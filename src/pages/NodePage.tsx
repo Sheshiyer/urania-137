@@ -21,8 +21,18 @@ import { PageTabs } from '../components/chrome/PageTabs'
 import { BottomChrome } from '../components/chrome/BottomChrome'
 import { CHROME } from '../components/chrome/insets'
 import { navigate } from '../hooks/useHashRoute'
+import { ChatSheet } from '../components/chat/ChatSheet'
+import { useChatHandoff } from '../hooks/useChatHandoff'
 
 type ModalView = 'witness' | 'birth' | 'info' | 'result' | 'deterministic' | 'daily' | null
+
+/**
+ * Wave 3-B cutover flag — run-children open the narrative ChatSheet by
+ * default. Set `VITE_CHAT_ONBOARDING=false` to restore the modal forms
+ * (WitnessForm / BirthDataForm / DailyReadingPanel) during Wave-4 UX_QA.
+ * Info children open the info modal regardless of this flag.
+ */
+const CHAT_ONBOARDING = import.meta.env.VITE_CHAT_ONBOARDING !== 'false'
 
 /** Evenly distribute a node's children around its ring (clockwise from top). */
 function childOrbitals(kids: SelemeneChild[], color: string): GraphOrbital[] {
@@ -46,6 +56,7 @@ export function NodePage({ nodeId }: { nodeId: string }) {
   const node = getNodeById(nodeId)!
   const [selectedChild, setSelectedChild] = useState<SelemeneChild | null>(null)
   const [modalView, setModalView] = useState<ModalView>(null)
+  const [chatChild, setChatChild] = useState<SelemeneChild | null>(null)
   const { generateReport, activeReport, isGenerating } = useReportGenerator()
   const engineStatus = useEngineStatus(node.id === 'engine')
   const det = useDeterministicRun()
@@ -53,10 +64,24 @@ export function NodePage({ nodeId }: { nodeId: string }) {
   const openChild = (childId: string) => {
     const child = node.children?.find((c) => c.id === childId)
     if (!child) return
+    // An open chat session for this child is already on screen — reselecting
+    // must not remount/duplicate it (the backend create-or-resume dedupes by
+    // seed anyway; this guard keeps the client from even re-dispatching).
+    if (chatChild?.id === childId) return
     setSelectedChild(child)
     det.reset()
-    if (child.info || !child.run) setModalView('info')
-    else if (child.run.kind === 'witness') setModalView('witness')
+    // Info children (no run) keep the info modal — flag-independent.
+    if (child.info || !child.run) {
+      setModalView('info')
+      return
+    }
+    // Wave 3-B cutover: run children open the chat sheet, seeded with the
+    // child's ChildRun. Behind the flag the modal forms stay reachable.
+    if (CHAT_ONBOARDING) {
+      setChatChild(child)
+      return
+    }
+    if (child.run.kind === 'witness') setModalView('witness')
     else if (child.run.kind === 'daily') setModalView('daily')
     else setModalView('birth')
   }
@@ -65,6 +90,14 @@ export function NodePage({ nodeId }: { nodeId: string }) {
     setModalView(null)
     setSelectedChild(null)
     det.reset()
+  }
+
+  // Closing the chat WITHOUT a handoff clears the selection, mirroring
+  // closeModal. On handoff the sinks below keep selectedChild so the result
+  // modal titles resolve, and closeModal clears it afterwards.
+  const closeChat = () => {
+    setChatChild(null)
+    setSelectedChild(null)
   }
 
   const submitWitness = (request: AssetGenerateRequest) => {
@@ -77,6 +110,31 @@ export function NodePage({ nodeId }: { nodeId: string }) {
     setModalView('deterministic')
     void det.run(node, selectedChild.label, selectedChild.run, birth, intention)
   }
+
+  /**
+   * Chat handoff (W3-B) — the chat flow ends here, then the CURRENT result UI
+   * takes over: the witness result modal, the deterministic result modal, or
+   * the daily reading panel. Every sink reuses the exact submit call the
+   * modal forms make above; nothing about generateReport / det.run /
+   * DailyReadingPanel / Folio saveReport is reimplemented.
+   */
+  const handleChatHandoff = useChatHandoff({
+    witness: (request) => {
+      setChatChild(null)
+      generateReport(node, request)
+      setModalView('result')
+    },
+    birth: (birth, intention) => {
+      if (!chatChild?.run) return
+      setChatChild(null)
+      setModalView('deterministic')
+      void det.run(node, chatChild.label, chatChild.run, birth, intention)
+    },
+    daily: () => {
+      setChatChild(null)
+      setModalView('daily')
+    },
+  })
 
   const kids = node.children ?? []
   const runnable = kids.filter((c) => c.run).length
@@ -105,6 +163,18 @@ export function NodePage({ nodeId }: { nodeId: string }) {
         <PageTabs />
         <StatFooter stats={nodeStats} />
       </BottomChrome>
+
+      {/* Narrative chat onboarding (W3-B) — replaces the intake modals when CHAT_ONBOARDING is on */}
+      {CHAT_ONBOARDING && chatChild?.run && (
+        <ChatSheet
+          seed={chatChild.run}
+          childLabel={chatChild.label}
+          nodeId={node.id}
+          nodeLabel={node.label}
+          onClose={closeChat}
+          onHandoff={handleChatHandoff}
+        />
+      )}
 
       {/* Witness reading — a mode the engine actually resolves */}
       <Modal isOpen={modalView === 'witness'} title={selectedChild?.label ?? node.label} onClose={closeModal}>
