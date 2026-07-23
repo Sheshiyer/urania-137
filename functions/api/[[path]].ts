@@ -4,6 +4,11 @@ import { AccessVerifyError, extractIdentity, verifyAccessJwt, type AccessJwtClai
 import { maybeInjectDevIdentity } from '../lib/dev-identity'
 import { upsertUser, listReadings, createReading, setReadingFavorite, deleteReading, bulkImportReadings } from '../lib/db'
 import { forwardToEngineFromEnv } from '../lib/engine-proxy'
+import { isStorySeed, initialSessionState } from '../lib/chat/stateMachine'
+import { createChatSession, findLatestOpenSession, getChatSession, listChatTurnEvents, listChatTurns, saveChatSession } from '../lib/chat/store'
+import { createSseStream, encodeEventFrame, numberTurnEvents } from '../lib/chat/sse'
+import { orchestrateTurn } from '../lib/chat/turn'
+import type { ChatEvent, ChatSessionState } from '../lib/chat/types'
 
 /**
  * Pages Functions catch-all for /api/*.
@@ -253,6 +258,188 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
     const deleted = await deleteReading(ctx.env.DB, u.user.id, id)
     if (!deleted) return notFound('reading not found')
     return json({})
+  }
+
+  // -----------------------------------------------------------------------
+  // Chat onboarding (Phase 1, W1-A) — narrative chat session backend.
+  // Ownership scoping mirrors /api/folio: every read/write binds the caller's
+  // user id, and unknown vs cross-user session ids are indistinguishable 404s.
+  // -----------------------------------------------------------------------
+
+  // POST /api/chat/session — create or resume the latest open session for
+  // (user, seed). Body: { seed: StorySeed }. 201 on create (resumed:false),
+  // 200 on resume (resumed:true).
+  if (pathname === '/api/chat/session' && method === 'POST') {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    const body = await readJson(ctx.request)
+    const seed = typeof body === 'object' && body !== null ? (body as Record<string, unknown>).seed : undefined
+    if (!isStorySeed(seed)) {
+      return badRequest('POST /api/chat/session expects a JSON body { seed } with a valid ChildRun/info seed')
+    }
+    const existing = await findLatestOpenSession(ctx.env.DB, u.user.id, seed)
+    if (existing) return json({ session: existing, resumed: true })
+    const state = initialSessionState(seed, { sessionId: crypto.randomUUID(), userId: u.user.id })
+    await createChatSession(ctx.env.DB, state)
+    return json({ session: state, resumed: false }, 201)
+  }
+
+  // GET /api/chat/session/:id — state + full turn history, ownership-guarded.
+  const chatSessionId = /^\/api\/chat\/session\/([^/]+)$/.exec(pathname)?.[1]
+  if (chatSessionId && method === 'GET') {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    let id: string
+    try {
+      id = decodeURIComponent(chatSessionId)
+    } catch {
+      return badRequest('malformed session id')
+    }
+    const session = await getChatSession(ctx.env.DB, u.user.id, id)
+    if (!session) return notFound('chat session not found')
+    const turns = await listChatTurns(ctx.env.DB, id)
+    return json({ session, turns })
+  }
+
+  // GET /api/chat/session/:id/events — W2 replay endpoint. Finite SSE body of
+  // the session's PERSISTED narrator event stream (the exact frames live turn
+  // streams emitted, in order), each with its session-wide `id:` ordinal.
+  // `?after=<n>` (or the `Last-Event-ID` header) resumes after event n; a
+  // disconnected client replays from its last received id and rebuilds state
+  // via the same accumulation rules as a live stream (docs/chat-protocol.md).
+  // Ownership-guarded like the sibling routes (unknown ≡ cross-user ≡ 404).
+  const chatEventsId = /^\/api\/chat\/session\/([^/]+)\/events$/.exec(pathname)?.[1]
+  if (chatEventsId && method === 'GET') {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    let id: string
+    try {
+      id = decodeURIComponent(chatEventsId)
+    } catch {
+      return badRequest('malformed session id')
+    }
+    const session = await getChatSession(ctx.env.DB, u.user.id, id)
+    if (!session) return notFound('chat session not found')
+
+    const afterRaw = new URL(ctx.request.url).searchParams.get('after') ?? ctx.request.headers.get('last-event-id')
+    let after = 0
+    if (afterRaw !== null && afterRaw.trim() !== '') {
+      after = Number(afterRaw)
+      if (!Number.isInteger(after) || after < 0) {
+        return badRequest('events replay expects ?after=<non-negative integer event id> (or a Last-Event-ID header)')
+      }
+    }
+
+    const slices = await listChatTurnEvents(ctx.env.DB, id)
+    const body = numberTurnEvents(slices)
+      .filter((n) => n.id > after)
+      .map((n) => encodeEventFrame(n.event, n.id))
+      .join('')
+    return new Response(body, {
+      status: 200,
+      headers: {
+        'content-type': 'text/event-stream; charset=utf-8',
+        'cache-control': 'no-cache, no-transform',
+      },
+    })
+  }
+
+  // POST /api/chat/session/:id/complete — W4 advance-on-consume. The client
+  // calls this AFTER consuming the handoff payload (docs/chat-protocol.md §
+  // Handoff completion): handoff → complete, persisted. Until then the
+  // session stays resumable at 'handoff' (a crash before completion can retry
+  // the handoff once more); afterwards create-or-resume excludes it, so a
+  // remounted client can never re-fire the handoff (duplicate engine submit +
+  // duplicate Folio save). Idempotent on 'complete'; 400 on any earlier
+  // chapter (no handoff was ever delivered). Ownership-guarded as above.
+  const chatCompleteId = /^\/api\/chat\/session\/([^/]+)\/complete$/.exec(pathname)?.[1]
+  if (chatCompleteId && method === 'POST') {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    let id: string
+    try {
+      id = decodeURIComponent(chatCompleteId)
+    } catch {
+      return badRequest('malformed session id')
+    }
+    const session = await getChatSession(ctx.env.DB, u.user.id, id)
+    if (!session) return notFound('chat session not found')
+    if (session.chapter !== 'handoff' && session.chapter !== 'complete') {
+      return badRequest(`cannot complete a session in chapter '${session.chapter}' — complete is only valid after handoff`)
+    }
+    if (session.chapter === 'handoff') {
+      const completed: ChatSessionState = { ...session, chapter: 'complete', updatedAt: new Date().toISOString() }
+      const saved = await saveChatSession(ctx.env.DB, completed)
+      if (!saved) return notFound('chat session not found')
+      return json({ session: completed })
+    }
+    return json({ session })
+  }
+
+  // POST /api/chat/turn — { sessionId, input } → one narrator reply streamed
+  // as SSE (see docs/chat-protocol.md). The ownership check runs BEFORE the
+  // stream starts (404, indistinguishable); the stream then carries the
+  // ChatEvent sequence ending in reply_end (or error).
+  //
+  // W2 disconnect semantics: the generator is driven to COMPLETION before any
+  // frame is written — the user msg, narrator msg, session state, and the
+  // emitted event sequence are all persisted before the client sees a single
+  // event, so a client disconnect can never lose or truncate a turn. The
+  // narrator await dominated time-to-first-event already, so buffering
+  // changes nothing perceptible; heartbeats keep the wire warm during the
+  // wait (and through any 30s proxy idle timeout — the narrator seam itself
+  // aborts at 25s and degrades to the deterministic fallback).
+  if (pathname === '/api/chat/turn' && method === 'POST') {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    const body = await readJson(ctx.request)
+    const b = typeof body === 'object' && body !== null ? (body as Record<string, unknown>) : null
+    if (!b || typeof b.sessionId !== 'string' || b.sessionId.length === 0) {
+      return badRequest('POST /api/chat/turn expects a JSON body { sessionId, input }')
+    }
+    if (!('input' in b)) {
+      return badRequest('POST /api/chat/turn expects a JSON body { sessionId, input }')
+    }
+    const session = await getChatSession(ctx.env.DB, u.user.id, b.sessionId)
+    if (!session) return notFound('chat session not found')
+
+    const sse = createSseStream()
+    void (async () => {
+      const events: ChatEvent[] = []
+      try {
+        for await (const event of orchestrateTurn({
+          db: ctx.env.DB,
+          env: ctx.env,
+          state: session,
+          input: b.input,
+        })) {
+          events.push(event)
+        }
+      } catch (err) {
+        events.push({ type: 'error', message: String((err as Error)?.message || err) })
+      }
+
+      // Event ids are assigned only to fully-persisted replies (…reply_end),
+      // in the session's persisted-stream id space (1..N, shared with the
+      // replay endpoint): this turn's events are the tail of that stream, so
+      // base = (total persisted events) − (this turn's events). Turns ending
+      // in `error` persisted no reply and stream without ids — a reconnecting
+      // client simply resumes from its last good id.
+      let base = 0
+      const persisted = events.at(-1)?.type === 'reply_end'
+      if (persisted) {
+        try {
+          const slices = await listChatTurnEvents(ctx.env.DB, session.sessionId)
+          const total = slices.reduce((n, s) => n + s.events.length, 0)
+          base = Math.max(0, total - events.length)
+        } catch {
+          base = 0 // id computation is best-effort; framing continues regardless
+        }
+      }
+      events.forEach((event, i) => sse.send(event, persisted ? base + i + 1 : undefined))
+      sse.close()
+    })()
+    return sse.response
   }
 
   return json({ error: 'NOT_FOUND', message: `no route for ${method} ${pathname}` } satisfies ApiError, 404)

@@ -13,4 +13,11 @@ export interface Env {
   SELEMENE_API_URL: string
   /** Present only in local `wrangler pages dev`; never in Pages production. */
   DEV_IDENTITY_EMAIL?: string
+  /**
+   * W2: shared secret for the upstream llm-proxy chat endpoint. When set, the
+   * narrator fetch sends it as `x-chat-key`; when unset nothing is sent and
+   * the LLM path is unchanged (inert by default). Must match the proxy's own
+   * CHAT_PROXY_TOKEN secret when that side enforces auth.
+   */
+  CHAT_PROXY_TOKEN?: string
 }
