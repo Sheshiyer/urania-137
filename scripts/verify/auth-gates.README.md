@@ -59,10 +59,12 @@ The harness accepts three session forms:
      allowed by the SELEMENE app's Access policy — add it in the dashboard
      first if the policy is email-listed.
 2. **Raw Access JWT** — e.g. from `cloudflared access token
-   -app=https://urania-137.pages.dev` (opens the same OTP login, prints the
-   JWT), or copied from the `Cf-Access-Jwt-Assertion` header of an
-   authenticated request:
-   - `--session-a '<jwt>'` (or `--session-a 'jwt:<jwt>'`)
+   -app=https://urania.tryambakam.space` (opens the same OTP login, prints the
+   JWT). NOTE (verified live 2026-07-24): the edge does NOT accept an inbound
+   `Cf-Access-Jwt-Assertion` header — that header is Access→origin only. A raw
+   JWT must be sent as the cookie: `--session-a 'cookie:<jwt>'`. The bare /
+   `jwt:` forms only work against an origin that validates the header itself
+   (local dev), not through the production edge.
 3. **Service token** (non-interactive, for CI): create a service token in the
    Zero Trust dashboard (Access → Service auth, team red-queen-4dfa) and pass
    `--session-a 'service:<CF-Access-Client-Id>:<CF-Access-Client-Secret>'`.
