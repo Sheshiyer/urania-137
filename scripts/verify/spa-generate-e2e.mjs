@@ -1,6 +1,15 @@
 /**
  * T-036 — SPA generate path through the Worker (browser e2e).
  *
+ * ⚠ DEPRECATED UI PATH (chat Phase 3, 2026-07-24): this script drives the
+ * retired modal form (Noesis Reading → Integrated Kundali → WitnessForm →
+ * Generate). That surface no longer exists — run children open the narrative
+ * ChatSheet — so the browser drive below will not match the current UI. The
+ * exports (SPA_BODY, the baseline-fixture derivation, and the content
+ * derivation mirror of useReportGenerator) remain valid engine-contract
+ * fixtures and are still imported by the Phase-2 exit gate; the submit hook
+ * they mirror is unchanged.
+ *
  * Drives the REAL UI served by `wrangler pages dev` (port 8788): Noesis Reading →
  * Integrated Kundali → WitnessForm → Generate, and asserts the rendered reading
  * content is identical to the pre-migration baseline (the recorded engine fixture

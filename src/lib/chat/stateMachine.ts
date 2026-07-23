@@ -247,7 +247,7 @@ function advance(state: ChatSessionState, field?: string): StoryTurn {
 export function initialSessionState(seed: StorySeed, ids: { sessionId: string; userId: string }): ChatSessionState {
   const ts = now()
   const bounds = subjectBounds(seed)
-  // Pre-create the first subject slot (role `primary`, per WitnessForm) so the
+  // Pre-create the first subject slot (role `primary`) so the
   // subjects loop always has a slot under the cursor.
   const subjects = bounds.min > 0 ? ([{ role: 'primary' }] as SubjectInput[]) : []
   const intake: Partial<AssetGenerateRequest> = { subjects }
@@ -532,7 +532,7 @@ export function isCompleteIntake(intake: Partial<AssetGenerateRequest>): boolean
 export type SubmitPayload =
   | AssetGenerateRequest // witness — feeds useReportGenerator.generateReport
   | { birthData: BirthData; intention?: string } // workflow/engine — feeds useDeterministicRun.run
-  | { locationQuery?: string } // daily — feeds the DailyReadingPanel location seam
+  | { locationQuery?: string } // daily — feeds the useDailyReading location seam via the handoff sink
 
 /**
  * Produces the handoff payload. Callable only at `handoff`/`complete`;
@@ -567,7 +567,7 @@ export function toSubmitPayload(state: ChatSessionState): SubmitPayload {
   if (seed.kind === 'workflow' || seed.kind === 'engine') {
     if (!isCompleteIntake(state.intake)) throw new Error('deterministic intake is incomplete — birth data needs name, date, time, and location.')
     const s = (state.intake.subjects as SubjectInput[])[0]
-    // Exactly the shape BirthDataForm's onSubmit emits.
+    // Exactly the shape the deterministic handoff sink passes to useDeterministicRun.run.
     const birthData: BirthData = {
       name: s.name,
       date: s.birth_date,
@@ -580,7 +580,7 @@ export function toSubmitPayload(state: ChatSessionState): SubmitPayload {
     return typeof intention === 'string' && intention ? { birthData, intention } : { birthData }
   }
 
-  // daily — the panel needs only an optional place query.
+  // daily — the sink needs only an optional place query.
   const lq = state.intake.options?.locationQuery
   return typeof lq === 'string' && lq ? { locationQuery: lq } : {}
 }

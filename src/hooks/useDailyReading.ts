@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { BirthData } from '../types'
 import { getDailyReading } from '../lib/daily/registry'
 import { DailyLocation, DailyReading, DailyReadingInput } from '../lib/daily/source'
@@ -47,9 +47,14 @@ export interface UseDailyReadingState {
 }
 
 /**
- * The React surface (T-041) — resolves the default location, runs the reading on
- * mount, exposes a `changeLocation` that re-runs + persists. Location, not birth,
- * is the entry input; birth (when present) drives the personal overlay.
+ * The React surface (T-041) — resolves the default location eagerly so the
+ * handoff sink can fire `run` without extra inputs, and exposes a
+ * `changeLocation` that re-runs + persists. Location, not birth, is the entry
+ * input; birth (when present) drives the personal overlay.
+ *
+ * Phase 3: the run is fired EXPLICITLY by the caller (the chat handoff sink
+ * in NodePage), never on mount — the hook now lives at page level, where an
+ * auto-run would fetch + Folio-archive a reading on every page visit.
  */
 export function useDailyReading(birth?: BirthData | null) {
   const [state, setState] = useState<UseDailyReadingState>(() => {
@@ -82,12 +87,6 @@ export function useDailyReading(birth?: BirthData | null) {
     },
     [run],
   )
-
-  // Run once on mount (and when birth presence changes).
-  useEffect(() => {
-    void run(state.location)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [run])
 
   return { ...state, run, changeLocation }
 }

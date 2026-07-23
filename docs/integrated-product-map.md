@@ -112,7 +112,7 @@ not arbitrary — it follows what input an engine needs.
 | Engine input | Runs online (urania-137) | Owner |
 |---|---|---|
 | `birth_data` only | ✅ yes | urania-137 |
-| `birth_data` + `options.intention` | ✅ yes (form collects it) | urania-137 |
+| `birth_data` + `options.intention` | ✅ yes (the chat story collects it) | urania-137 |
 | camera / image / consent | ❌ no | **Sankalpa** |
 
 - **Online (15):** numerology, human-design, gene-keys, vimshottari, panchanga,
@@ -142,8 +142,8 @@ both are now supplied by the console:
 **sigil-forge was never broken.** It 422s with a clear message
 (`"requires options.intention (or question/intent/intent_text)"`); the caller just
 never sent it. The genuine engine-side issue is narrower: **the workflow swallows
-the 422** and omits the engine instead of surfacing it. `DeterministicResult`
-reports dropped engines so this can't hide in the UI.
+the 422** and omits the engine instead of surfacing it. The in-thread result
+rendering (`resultMessages`) reports dropped engines so this can't hide in the UI.
 
 ## The witness-mode contract
 

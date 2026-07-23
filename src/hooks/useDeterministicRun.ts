@@ -13,9 +13,18 @@ interface State {
 
 const EMPTY: State = { busy: false, error: null, workflow: null, engine: null, declaredEngines: [] }
 
+/**
+ * Flatten a deterministic payload to a fenced-json block. Shared by the Folio
+ * archive (via `toMarkdown`) and the in-thread result chapter (Phase 3,
+ * `resultMessages`) so both render the identical serialization.
+ */
+export function deterministicMarkdown(payload: unknown): string {
+  return `\`\`\`json\n${JSON.stringify(payload, null, 2)}\n\`\`\``
+}
+
 /** Flatten a deterministic result to text so the Folio can archive/export it. */
 function toMarkdown(label: string, payload: unknown): string {
-  return `## ${label}\n\n\`\`\`json\n${JSON.stringify(payload, null, 2)}\n\`\`\`\n`
+  return `## ${label}\n\n${deterministicMarkdown(payload)}\n`
 }
 
 /**

@@ -3,15 +3,24 @@ import { Send, X } from 'lucide-react'
 import type { ChildRun } from '../../types'
 import type { ChatBlock, ChatEvent, ChatMsg, ChatSessionState } from '../../types/chat'
 import { toSubmitPayload, type SubmitPayload } from '../../lib/chat/stateMachine'
+import type { ThreadResult } from '../../lib/chat/resultMessages'
 import { createOrResumeSession, completeSession, getSession, replayEvents, streamTurn } from '../../lib/chatApi'
+import { ResultThread } from './ResultThread'
 
 /**
- * ChatSheet (Phase 2, W3-A) — the narrative onboarding surface that replaces
- * the node modal. One question at a time: the user answers, the narrator
- * replies over SSE, and every validated turn lands as an exact intake slot
- * server-side. When the story state machine reaches `handoff`, the sheet
- * refetches the authoritative session and fires `onHandoff(toSubmitPayload)`
- * exactly once — Node_Splice wires that to the existing submit hooks.
+ * ChatSheet (Phase 2 W3-A; Phase 3 in-thread results) — the narrative
+ * onboarding surface that replaced the node modal. One question at a time:
+ * the user answers, the narrator replies over SSE, and every validated turn
+ * lands as an exact intake slot server-side. When the story state machine
+ * reaches `handoff`, the sheet refetches the authoritative session and fires
+ * `onHandoff(toSubmitPayload)` exactly once.
+ *
+ * Phase 3: the sheet no longer closes at handoff. NodePage fires the same
+ * submit hooks the modal forms used and feeds their state back as `result`;
+ * the reading then renders HERE as narrator chapters (ResultThread) — a
+ * composing beat, one chapter per pass, a Folio closing beat, and an
+ * in-thread error + retry path. Result chapters are presentation only, never
+ * persisted as chat turns; the Folio row the hook saved is the durable copy.
  *
  * Shell styling is copied 1:1 from `Modal.tsx` (void backdrop, gold-bordered
  * bottom sheet on mobile / centered panel on ≥sm, sticky header) so the chat
@@ -36,6 +45,13 @@ export interface ChatSheetProps {
   onClose: () => void
   /** Fired once when the session chapter reaches 'handoff'. */
   onHandoff: (payload: SubmitPayload) => void
+  /**
+   * In-thread run result (Phase 3) — the mapped state of the submit hook the
+   * handoff fired. Present only while this child's run is in flight or done.
+   */
+  result?: ThreadResult | null
+  /** Re-fires the same submit call after an in-thread result error. */
+  onRetryResult?: () => void
 }
 
 const SEED_KIND_LABEL: Record<ChildRun['kind'], string> = {
@@ -45,7 +61,7 @@ const SEED_KIND_LABEL: Record<ChildRun['kind'], string> = {
   daily: 'Daily doorway',
 }
 
-/** WitnessForm's input treatment — the chat composer speaks the same visual language. */
+/** The composer speaks the same visual language the retired form era used. */
 const FIELD =
   'w-full rounded-lg border border-gold/10 bg-surface px-3 py-2 text-parchment placeholder-silver/50 focus:border-gold focus:outline-none'
 
@@ -104,7 +120,7 @@ function BlockView({ block }: { block: ChatBlock }) {
   }
 }
 
-export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHandoff }: ChatSheetProps) {
+export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHandoff, result, onRetryResult }: ChatSheetProps) {
   const [session, setSession] = useState<ChatSessionState | null>(null)
   const [msgs, setMsgs] = useState<ChatMsg[]>([])
   const [draft, setDraft] = useState('')
@@ -321,7 +337,7 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
     if (!el) return
     const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
     el.scrollTo({ top: el.scrollHeight, behavior: reduce ? 'auto' : 'smooth' })
-  }, [msgs, streaming])
+  }, [msgs, streaming, result])
 
   // -------------------------------------------------------------------------
   // Render
@@ -412,7 +428,14 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
             <p className="rounded-lg border border-terracotta/20 bg-terracotta/10 px-3 py-2 text-sm text-terracotta">{error}</p>
           )}
 
-          {done && (
+          {/* Phase 3 — the reading arrives in-thread as narrator chapters
+              (composing beat → chapters → Folio closing beat / error+retry).
+              Presentation only; the durable copy is the Folio row the hook saved. */}
+          {result && <ResultThread result={result} onRetry={onRetryResult} />}
+
+          {/* Fallback beat only when a handoff left no result feed (e.g. a
+              crash between handoff and completion on a remount). */}
+          {done && !result && (
             <p className="py-2 text-center font-display text-[10px] uppercase tracking-[0.25em] text-gold/60">
               ✦ The story has been handed off to the engines ✦
             </p>

@@ -151,6 +151,41 @@ Semantics:
   session at `handoff`, where a remount retries the handoff exactly once
   more; the client's once-per-mount guard remains as defense-in-depth.
 
+## Result delivery (Phase 3)
+
+The chat no longer closes at handoff. The run's result renders **in the
+thread**, derived client-side from the submit hook's state — it is never
+persisted as a chat turn and never touches the SSE contract above.
+
+```
+handoff → onHandoff(payload) → existing submit hook fires (unchanged)
+        → ChatSheet receives the hook's state as a `ThreadResult` prop
+        → composing beat → narrator chapters → Folio closing beat
+```
+
+- **Mapping** (`src/lib/chat/resultMessages.ts`): witness and daily readings
+  render ONE chapter per pass of the `{id, title, output}` pass model (pass
+  title as a small chapter heading, output as the body); deterministic
+  results render one chapter carrying the same fenced-json markdown the
+  Folio archive stores (`deterministicMarkdown`, byte-identical).
+- **Composing beat**: while the hook is in flight, a narrator-typed
+  stage-direction line ("The witness takes the pattern…") plus the typing
+  dots — luminous-witness register, reduced-motion honored.
+- **Errors**: hook failures (engine error, or a Folio save failure folded
+  into the deterministic hook's `error`) render an in-thread error block
+  with the exact error text and a retry affordance that re-fires the SAME
+  hook call with the SAME arguments. A witness Folio save failure after a
+  complete reading surfaces as `saveError` on the complete result — the
+  reading stays whole; never silent.
+- **Durability**: the Folio row saved inside the hook is the reading's
+  durable copy. Result chapters are presentation only; the session is
+  already `complete` after advance-on-consume, so reopening the doorway
+  starts a fresh story and the closing beat names the Folio archive as the
+  reading's home.
+- **Retry vs. handoff**: retry re-fires the submit hook only — it never
+  re-fires `onHandoff` and never posts another chat turn, so the
+  advance-on-consume guarantees (no duplicate handoff) are untouched.
+
 ## Guardrails (contract level)
 
 - Narrative freedom lives in **how** questions are asked, never **what** is

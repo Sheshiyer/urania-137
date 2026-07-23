@@ -34,7 +34,7 @@ Everything is the graph. A central **NOESIS** core is ringed by seven parent nod
 - **Galactic home** (`#/`) → the seven parent nodes around the NOESIS core, with a console top-bar and stat footer.
 - **Click a node → its page** (`#/node/:id`) → the node re-centres as a golden astrolabe and its sub-nodes orbit it, each a labelled orb (with a sacred-geometry glyph on Engine Status).
 - **One node, one URL** → hash routing with zero router dependency; every page is deep-linkable.
-- **The report modal is the leaf** → clicking a sub-node opens the Selemene input form, preset to that surface's mode, and submits to the **live public API**; the reading is saved to the Folio.
+- **The narrative chat is the leaf** → clicking a sub-node opens a story-driven onboarding chat (one question at a time, a narrator persona, every answer landing as an exact intake slot) that hands off to the **live public API**; the reading then arrives **in the thread** as narrator chapters and is saved to the Folio.
 - **Engine Status is live** → real `/health`, `/health/ready`, and engine roster telemetry (no mock data).
 - **Folio Archive is real** → every generated report persists to a **per-user Cloudflare D1 store** behind a login identity, with search, favorites, and Markdown/DOCX/PDF export.
 - **The graph is the interface** — the top nav is an additive convenience; every destination is also a node you can click.
@@ -74,7 +74,7 @@ Each node's cluster is a re-centred golden astrolabe — the design target for `
 
 </div>
 
-The multi-page architecture — overview, a parent cluster, and the report modal:
+The multi-page architecture — overview, a parent cluster, and the narrative chat onboarding:
 
 <div align="center">
 
@@ -153,13 +153,14 @@ graph TD
     HP --> G["ConstellationGraph (shared renderer)"]
     NP --> G
     NP --> K[Click a sub-node orb]
-    K -->|report| M[Modal + ReportForm preset to its mode]
+    K -->|run| C["ChatSheet — narrative onboarding (SSE)"]
     K -->|engine| ES["EngineStatusPanel — live /health + roster"]
     K -->|folio| FP["FolioPanel — per-user D1 archive"]
-    M --> P["fetch same-origin /api/selemene/*"]
+    C --> CT["/api/chat/* — D1 sessions + narrator turns"]
+    C -->|handoff| P["fetch same-origin /api/selemene/*"]
     P --> PX["Pages Function: inject X-API-Key server-side"]
     PX --> H["POST /api/v1/assets/generate (mode-keyed)"]
-    H --> R["assembled reading → result modal → saved to Folio"]
+    H --> R["reading → in-thread narrator chapters → saved to Folio"]
 ```
 
 **One data-driven component renders every depth.** `ConstellationGraph` reads a node's children and draws it re-centred with its sub-nodes — `variant="home"` for the NOESIS overview, `variant="node"` for a parent page — so the eight surfaces cannot drift from one another. The visual grammar lives in a frozen primitive layer:
@@ -168,7 +169,7 @@ graph TD
 - `primitives/` — `StellarNode` (plain / ornate orb / home planet), `CoreGlow` (ornate astrolabe hub with flower-of-life), `Glyph` (sacred-geometry icon set), `CompassStar`.
 - `chrome/` — `TopNav`, `StatFooter`, `PageTabs` (the console dressing).
 - `panels/` — `EngineStatusPanel` (live telemetry), `FolioPanel` (persisted archive).
-- `App` → `useHashRoute` → `HomePage` / `NodePage`; `NodePage` owns the report/info/result modals.
+- `App` → `useHashRoute` → `HomePage` / `NodePage`; `NodePage` owns the chat sheet and the info modal.
 
 ## Project structure
 
@@ -191,7 +192,8 @@ urania-137
 │   ├── pages/  (HomePage, NodePage)        # The two views
 │   ├── components/
 │   │   ├── ConstellationGraph.tsx         # Shared renderer (variant: home | node)
-│   │   ├── Modal.tsx  ·  ReportForm.tsx    # Report input + result shell
+│   │   ├── Modal.tsx                       # Info-panel shell (run children use chat)
+│   │   ├── chat/    (ChatSheet, ResultThread) # Narrative onboarding + in-thread results
 │   │   ├── chrome/   (TopNav, StatFooter, PageTabs)
 │   │   ├── panels/   (EngineStatusPanel, FolioPanel)
 │   │   ├── layout/   (PageHeader, PageFrame)
@@ -215,7 +217,7 @@ urania-137
 - **Hash-based routing** (`useHashRoute`, `#/node/:id`) with zero router dependency.
 - **Login identity** via Cloudflare Access email OTP (JWT verified in the Function); locally, a prod-safe dev identity is injected from `DEV_IDENTITY_EMAIL`.
 - **Live status** via `useEngineStatus` (`/health`, `/health/ready`, `/api/v1/engines`) and a per-user D1 Folio archive (`/api/folio/*`).
-- API client in `src/lib/selemeneApi.ts` → same-origin `/api/selemene/*` → Pages Function (`functions/lib/engine-proxy.ts`) injects the server-side key → Selemene `POST /api/v1/assets/generate`; the reading's `assembled` markdown renders in the result modal.
+- API client in `src/lib/selemeneApi.ts` → same-origin `/api/selemene/*` → Pages Function (`functions/lib/engine-proxy.ts`) injects the server-side key → Selemene `POST /api/v1/assets/generate`; the reading renders in the chat thread as narrator chapters (protocol: [`docs/chat-protocol.md`](./docs/chat-protocol.md)).
 
 ## Brand identity
 
