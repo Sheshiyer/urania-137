@@ -1,0 +1,28 @@
+V5 compute-unchanged gate · worker http://localhost:8788 · stub :8795 · evidence /tmp/t074-v5-evidence
+
+  ✓ Worker up · dev identity dev:dev@urania.local
+
+[1/4] recording baseline via https://urania.tryambakam.space/api/selemene …
+  ✓ baseline green (taxonomy 35/35 + daily-gates PASS expected; outputs saved)
+
+[2/4] replaying fixtures and running scripts through the Worker …
+
+[3/4] diffing …
+  PASS  taxonomy.mjs passes against the Worker
+  PASS  daily-gates.mjs passes against the Worker
+  PASS  taxonomy output byte-identical to baseline
+  PASS  daily-gates output byte-identical to baseline
+
+[4/4] evidence → /tmp/t074-v5-evidence (baseline/worker outputs, diffs, session fixtures, summary.json)
+
+V5 compute-unchanged gate: PASS — scripts green through the Worker AND diff-empty vs the engine baseline
+
+# summary.json (verdict block, evidence dir /tmp/t074-v5-evidence):
+#   "baselineVia": "https://urania.tryambakam.space/api/selemene"
+#   all four checks true · "verdict": "PASS" · at 2026-07-23T19:11:05Z
+# Run command: CF_ACCESS_SESSION="cookie:$(cat /tmp/urania-session-a.jwt)" \
+#   node scripts/verify/v5-compute-gate.mjs \
+#     --record-target https://urania.tryambakam.space/api/selemene \
+#     --evidence /tmp/t074-v5-evidence
+# (local worker: npx wrangler pages dev dist --port 8788 \
+#   --binding SELEMENE_API_URL=http://localhost:8795 --binding SELEMENE_API_KEY=p2-stub-key)

@@ -24,10 +24,18 @@
  *   3. swaps the stub to REPLAY mode and re-runs both scripts against the Worker,
  *   4. diffs normalized outputs (base URL line stripped) — byte-empty required,
  *   5. writes all outputs + diffs + summary.json into the evidence dir.
+ *
+ * CF Access (T-074): the gate itself is local-worker-oriented; its only prod
+ * path is --record-target (default the prod Pages /api/selemene proxy, now
+ * behind Cloudflare Access). Set CF_ACCESS_SESSION (see
+ * scripts/verify/cf-access-session.mjs) and the record stub forwards it as a
+ * session header; without it the baseline fails loud at the edge instead of
+ * recording the OTP-challenge HTML as fixtures.
  */
 import { spawn } from 'node:child_process'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { isAccessChallenge, sessionHeadersFor, accessBlockedDetail } from './cf-access-session.mjs'
 
 const arg = (name, dflt) => {
   const i = process.argv.indexOf(`--${name}`)
@@ -92,6 +100,14 @@ const main = async () => {
 
   // 1-2: record baseline
   console.log(`\n[1/4] recording baseline via ${RECORD_TARGET} …`)
+  // Preflight: a record target behind CF Access needs CF_ACCESS_SESSION —
+  // catch the edge challenge here rather than after a poisoned record phase.
+  const probeHeaders = { Accept: 'application/json', ...sessionHeadersFor(RECORD_TARGET) }
+  const probe = await fetch(`${RECORD_TARGET.replace(/\/+$/, '')}/api/v1/engines`, { headers: probeHeaders, redirect: 'manual' }).catch(() => null)
+  if (probe && isAccessChallenge(probe.status, probe.headers.get('location'))) {
+    console.error(`FATAL: record target ${accessBlockedDetail(Object.keys(probeHeaders).length > 1)}`)
+    process.exit(2)
+  }
   startStub('record')
   if (!(await waitPort(`${STUB}/`))) { console.error('FATAL: record stub did not start'); process.exit(2) }
   const taxBase = await runScript('scripts/verify/taxonomy.mjs', STUB)

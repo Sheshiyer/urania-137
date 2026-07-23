@@ -16,6 +16,12 @@
  * deterministic-seed requests resolve to identical bytes. Replay misses fail
  * LOUD (502) — a green parity run can never be a silent fallthrough.
  *
+ * CF Access (T-074): when the record upstream is the prod Pages app (behind
+ * Cloudflare Access), set CF_ACCESS_SESSION (see ./cf-access-session.mjs) and
+ * the record fetch carries it as a session header — never toward the direct
+ * engine. An Access challenge is NOT recorded as a fixture; it fails loud
+ * with 502 cf_access_block so a poisoned baseline is impossible.
+ *
  * Point the Worker at this stub with:
  *   SELEMENE_API_URL=http://localhost:8795 SELEMENE_API_KEY=p2-stub-key \
  *     npx wrangler pages dev dist --port 8788
@@ -25,6 +31,7 @@ import { createServer } from 'node:http'
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { sessionHeadersFor, isAccessChallenge, accessBlockedDetail } from './cf-access-session.mjs'
 
 const arg = (name, dflt = undefined) => {
   const i = process.argv.indexOf(`--${name}`)
@@ -67,11 +74,19 @@ const server = createServer(async (req, res) => {
   const file = join(FIXTURES, `${keyFor(method, path, body)}.json`)
 
   if (RECORD) {
+    const sessionHeaders = sessionHeadersFor(RECORD) // app-base only; never the direct engine
     const upstream = await fetch(`${RECORD.replace(/\/+$/, '')}${path}`, {
       method,
-      headers: { 'Content-Type': req.headers['content-type'] || 'application/json', Accept: 'application/json' },
+      headers: { 'Content-Type': req.headers['content-type'] || 'application/json', Accept: 'application/json', ...sessionHeaders },
+      redirect: 'manual',
       body: method === 'GET' || method === 'HEAD' ? undefined : body,
     })
+    // Never record a CF Access OTP challenge as a fixture — fail loud instead.
+    if (isAccessChallenge(upstream.status, upstream.headers.get('location'))) {
+      res.writeHead(502, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ error: 'cf_access_block', message: accessBlockedDetail(Object.keys(sessionHeaders).length > 0) }))
+      return
+    }
     const text = await upstream.text()
     const fixture = {
       method,

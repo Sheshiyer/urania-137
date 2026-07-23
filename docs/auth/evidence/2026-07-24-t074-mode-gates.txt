@@ -1,0 +1,16 @@
+  200  integrated-reading              alpha,beta #15c0189d49
+  200  composite-dyad                  alpha,beta #a1816bb189
+  200  integrated-kundali-l0           opening,convergence-map,vedic-foundation,karmic-architecture,career-dharma,wealth,love-marriage,health,family-lineage,master-timeline,remedies-practices,final-synthesis #ff63f617ca
+  200  birth-blueprint                 core #c4d74b713f
+  200  partner-synastry                core #a4e4b55cdc
+  200  business-partners               core #51803eede0
+  200  family-penta                    core #a4e4b55cdc
+  200  married-partners                core #b275a99514
+  200  mother-son-lineage              core #aca505a904
+  200  unmarried-partners              core #b616b08ed5
+  200  integrated-reading-l4           core #a4e4b55cdc
+  400  THIS-MODE-DOES-NOT-EXIST-xyz   UNKNOWN_MODE  
+
+  gate 1 — unknown mode rejected 400/UNKNOWN_MODE : PASS
+  gate 2 — accepted modes have distinct pass plans : FAIL
+      share one pass plan: birth-blueprint == partner-synastry == business-partners == family-penta == married-partners == mother-son-lineage == unmarried-partners == integrated-reading-l4

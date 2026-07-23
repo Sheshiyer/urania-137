@@ -5,10 +5,17 @@
  * "passes[0] !== default" → a whitelisted-but-unimplemented mode passes.
  * THIS: modes must differ FROM EACH OTHER. Identical output across distinct
  * modes means the surface is undifferentiated, whatever the pass is called.
+ *
+ * CF Access (T-074): prod is behind Cloudflare Access — set CF_ACCESS_SESSION
+ * (see scripts/verify/cf-access-session.mjs); without it the run fails loud
+ * at the edge instead of misreading the OTP-challenge HTML as engine output.
  */
 import { createHash } from 'node:crypto'
+import { sessionHeadersFor, isAccessChallenge, accessBlockedDetail } from './cf-access-session.mjs'
 // Prod default is the Cloudflare Pages deployment (T-055 delink; goes live with T-058).
 const BASE = (process.argv[2] || 'https://urania-137.pages.dev').replace(/\/+$/, '')
+const SESSION_HEADERS = sessionHeadersFor(BASE) // app-base only; never the direct engine
+const HAS_SESSION = Object.keys(SESSION_HEADERS).length > 0
 const A = { role:'primary', name:'witnessalchemist', birth_date:'1991-08-13', birth_time:'13:31', birth_time_confidence:'exact',
   birth_location_query:'Asia/Kolkata', normalized_location:{display_name:'Asia/Kolkata',latitude:12.97,longitude:77.59,timezone:'Asia/Kolkata',provider:'manual',confidence:'manual'} }
 const B = { ...A, role:'partner', name:'harshita', birth_date:'1987-10-15', birth_time:'12:05' }
@@ -19,8 +26,9 @@ const MODES = ['integrated-reading','composite-dyad','integrated-kundali-l0',
   'THIS-MODE-DOES-NOT-EXIST-xyz']
 
 const go = async (mode) => {
-  const r = await fetch(`${BASE}/api/selemene/api/v1/assets/generate`, { method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ mode, report_level:'L0', language:'en', consciousness_level:2, subjects:[A,B], options:{output_format:'markdown'} }) })
+  const r = await fetch(`${BASE}/api/selemene/api/v1/assets/generate`, { method:'POST', headers:{'Content-Type':'application/json', ...SESSION_HEADERS},
+    redirect:'manual', body: JSON.stringify({ mode, report_level:'L0', language:'en', consciousness_level:2, subjects:[A,B], options:{output_format:'markdown'} }) })
+  if (isAccessChallenge(r.status, r.headers.get('location'))) return { mode, status:r.status, code:null, hash:null, passes:null, accessBlocked:true }
   const t = await r.text(); let j=null; try{ j=JSON.parse(t) }catch{}
   if (r.status !== 200) return { mode, status:r.status, code:j?.error_code, hash:null, passes:null }
   const a = j?.assembled || ''
@@ -30,6 +38,12 @@ const go = async (mode) => {
 const rows = []
 for (const m of MODES) rows.push(await go(m))
 for (const r of rows) console.log(`  ${String(r.status).padEnd(4)} ${r.mode.padEnd(30)} ${r.code||''} ${r.passes ?? ''} ${r.hash?'#'+r.hash:''}`)
+
+// Fail LOUD at the Access edge — never misread the OTP challenge as a mode verdict.
+if (rows.some((r) => r.accessBlocked)) {
+  console.error(`\nFATAL: ${accessBlockedDetail(HAS_SESSION)}`)
+  process.exit(1)
+}
 
 // gate 1: unknown mode must be rejected
 const bogus = rows.find(r=>r.mode.startsWith('THIS-MODE'))

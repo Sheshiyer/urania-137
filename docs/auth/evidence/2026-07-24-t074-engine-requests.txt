@@ -1,0 +1,10 @@
+Ledger acceptance · base https://urania.tryambakam.space
+
+  FAIL  REQ-1     NOT served (HTTP 400 UNKNOWN_MODE)
+  PASS  REQ-2     400 UNKNOWN_MODE
+  FAIL  REQ-3     blocked on REQ-1
+  FAIL  REQ-4     blocked on REQ-1
+  FAIL  REQ-5     blocked on REQ-1
+  PASS  SCHEMA-1  panchanga keys stable
+
+daily-panchanga capability: NOT yet landed (see docs/selemene-engine-requests.md)

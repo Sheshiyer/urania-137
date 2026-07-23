@@ -16,11 +16,19 @@
  * (e.g. URANIA_API_BASE=https://<pages-host> or the legacy prod proxy).
  * If SELEMENE_API_KEY is set in the env it is sent as `x-api-key`, which only
  * matters when BASE is the direct engine; through any proxy it is dropped (T-032).
+ *
+ * CF Access (T-074): when BASE is the prod Pages app (behind Cloudflare
+ * Access), set CF_ACCESS_SESSION (see scripts/verify/cf-access-session.mjs)
+ * and it is sent as a session header on app-base requests — never to the
+ * direct engine. Without it, an Access edge challenge fails loud.
  */
 import { readFileSync } from 'node:fs'
+import { sessionHeadersFor, isAccessChallenge, accessBlockedDetail } from './cf-access-session.mjs'
 
 const BASE = (process.env.URANIA_API_BASE || process.argv[2] || 'http://localhost:8788').replace(/\/+$/, '')
 const ENGINE_KEY = process.env.SELEMENE_API_KEY || ''
+const SESSION_HEADERS = sessionHeadersFor(BASE) // app-base only; never the direct engine
+const HAS_SESSION = Object.keys(SESSION_HEADERS).length > 0
 const P = `${BASE}/api/selemene`
 import { fileURLToPath } from 'node:url'
 const SRC = fileURLToPath(new URL('../../src/data/selemeneNodes.ts', import.meta.url))
@@ -49,9 +57,10 @@ while ((m = childRe.exec(src))) {
 }
 
 const post = async (path, body) => {
-  const headers = { 'Content-Type': 'application/json' }
+  const headers = { 'Content-Type': 'application/json', ...SESSION_HEADERS }
   if (ENGINE_KEY) headers['x-api-key'] = ENGINE_KEY
-  const r = await fetch(`${P}${path}`, { method: 'POST', headers, body: JSON.stringify(body) })
+  const r = await fetch(`${P}${path}`, { method: 'POST', headers, redirect: 'manual', body: JSON.stringify(body) })
+  if (isAccessChallenge(r.status, r.headers.get('location'))) return { status: r.status, json: null, text: '', accessBlocked: true }
   const t = await r.text()
   let j = null
   try { j = JSON.parse(t) } catch {}
@@ -64,16 +73,23 @@ const check = async (c) => {
   // workflow drops it silently rather than failing.
   const opts = c.needsIntention ? { options: { intention: INTENTION } } : {}
   if (c.kind === 'workflow') {
-    const { status, json } = await post(`/api/v1/workflows/${c.workflowId}`, { birth_data: BIRTH, ...opts })
+    const { status, json, accessBlocked } = await post(`/api/v1/workflows/${c.workflowId}`, { birth_data: BIRTH, ...opts })
+    if (accessBlocked) return { ok: false, status, detail: accessBlockedDetail(HAS_SESSION) }
     const got = Object.keys(json?.engine_outputs ?? {})
-    const defHeaders = ENGINE_KEY ? { 'x-api-key': ENGINE_KEY } : {}
-    const def = await fetch(`${P}/api/v1/workflows/${c.workflowId}`, { headers: defHeaders }).then((r) => r.json()).catch(() => null)
+    const defHeaders = { ...SESSION_HEADERS }
+    if (ENGINE_KEY) defHeaders['x-api-key'] = ENGINE_KEY
+    const defRes = await fetch(`${P}/api/v1/workflows/${c.workflowId}`, { headers: defHeaders, redirect: 'manual' }).catch(() => null)
+    if (defRes && isAccessChallenge(defRes.status, defRes.headers.get('location'))) {
+      return { ok: false, status: defRes.status, detail: accessBlockedDetail(HAS_SESSION) }
+    }
+    const def = defRes ? await defRes.json().catch(() => null) : null
     const declared = def?.engine_ids ?? []
     const missing = declared.filter((e) => !got.includes(e))
     return { ok: status === 200 && got.length > 0, status, detail: `${got.length}/${declared.length || '?'} engines${missing.length ? ` (dropped: ${missing.join(',')})` : ''}` }
   }
   if (c.kind === 'engine') {
-    const { status, json } = await post(`/api/v1/engines/${c.engineId}/calculate`, { birth_data: BIRTH, ...opts })
+    const { status, json, accessBlocked } = await post(`/api/v1/engines/${c.engineId}/calculate`, { birth_data: BIRTH, ...opts })
+    if (accessBlocked) return { ok: false, status, detail: accessBlockedDetail(HAS_SESSION) }
     const keys = Object.keys(json?.result ?? {})
     return { ok: status === 200 && keys.length > 0, status, detail: `${keys.length} result fields` }
   }
@@ -82,6 +98,7 @@ const check = async (c) => {
     // panchanga (base) + transits (overlay) engines. Assert both are live.
     const pan = await post('/api/v1/engines/panchanga/calculate', { birth_data: BIRTH })
     const tra = await post('/api/v1/engines/transits/calculate', { birth_data: BIRTH })
+    if (pan.accessBlocked || tra.accessBlocked) return { ok: false, status: `${pan.status}/${tra.status}`, detail: accessBlockedDetail(HAS_SESSION) }
     const pk = Object.keys(pan.json?.result ?? {})
     const tk = Object.keys(tra.json?.result ?? {})
     const ok = pan.status === 200 && pk.length > 0 && tra.status === 200 && tk.length > 0
@@ -93,10 +110,11 @@ const check = async (c) => {
   }
   // witness — the one that actually needs a real assertion
   const subjects = c.min >= 2 ? [A, B] : [A]
-  const { status, json } = await post('/api/v1/assets/generate', {
+  const { status, json, accessBlocked } = await post('/api/v1/assets/generate', {
     mode: c.mode, report_level: 'L0', language: 'en', consciousness_level: 2, subjects,
     options: { output_format: 'markdown' },
   })
+  if (accessBlocked) return { ok: false, status, detail: accessBlockedDetail(HAS_SESSION) }
   const passes = (json?.passes ?? []).map((p) => p.id)
   const isDefault = passes.length === 1 && passes[0] === 'default'
   return {

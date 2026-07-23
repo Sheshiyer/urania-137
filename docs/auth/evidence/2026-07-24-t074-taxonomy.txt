@@ -1,0 +1,39 @@
+Base https://urania.tryambakam.space · 35 runnable children parsed from selemeneNodes.ts
+
+  PASS  workflow  birth-blueprint          200   3/3 engines
+  PASS  engine    numerology               200   6 result fields
+  PASS  engine    human-design             200   8 result fields
+  PASS  engine    gene-keys                200   3 result fields
+  PASS  engine    vimshottari              200   5 result fields
+  PASS  engine    panchanga                200   17 result fields
+  PASS  engine    vedic-clock              200   7 result fields
+  PASS  witness   composite-dyad           200   2 passes: alpha,beta
+  PASS  witness   integrated-reading       200   2 passes: alpha,beta
+  PASS  daily     transit                  200/200 seam → panchanga(17)+transits(6) live
+  PASS  workflow  daily-practice           200   4/4 engines
+  PASS  engine    transits                 200   6 result fields
+  PASS  engine    panchanga                200   17 result fields
+  PASS  engine    vedic-clock              200   7 result fields
+  PASS  engine    biorhythm                200   14 result fields
+  PASS  witness   integrated-kundali-l0    200   12 passes: opening,convergence-map,vedic-foundation…
+  PASS  witness   integrated-reading       200   2 passes: alpha,beta
+  PASS  workflow  full-spectrum            200   17/17 engines
+  PASS  workflow  creative-expression      200   3/3 engines
+  PASS  engine    panchanga                200   17 result fields
+  PASS  engine    vedic-clock              200   7 result fields
+  PASS  engine    i-ching                  200   5 result fields
+  PASS  engine    tarot                    200   2 result fields
+  PASS  engine    transits                 200   6 result fields
+  PASS  engine    biorhythm                200   14 result fields
+  PASS  engine    human-design             200   8 result fields
+  PASS  engine    enneagram                200   2 result fields
+  PASS  engine    gene-keys                200   3 result fields
+  PASS  engine    sacred-geometry          200   5 result fields
+  PASS  workflow  decision-support         200   3/3 engines
+  PASS  workflow  self-inquiry             200   2/2 engines
+  PASS  engine    tarot                    200   2 result fields
+  PASS  engine    i-ching                  200   5 result fields
+  PASS  engine    sigil-forge              200   9 result fields
+  PASS  engine    enneagram                200   2 result fields
+
+35/35 children hit a real, differentiated capability

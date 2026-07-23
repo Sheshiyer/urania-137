@@ -1,0 +1,17 @@
+npm warn Unknown user config "allow-scripts". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> urania-137@0.1.0 verify:daily-contracts
+> node scripts/verify/daily-contracts.mjs
+
+  ✓ seam + types (source.ts)
+  ✓ pass model (passModel.ts)
+  ✓ engine contract + request builders (engine-contract.ts)
+  ✓ lexicon entry schemas (lexicon/schema.ts)
+  ✓ enum key-domains at ground-truth counts (lexicon/domains.ts)
+  ✓ location contract (location.ts + doc)
+  ✓ ChildRun carries {kind:'daily'}
+  ✓ fixture bundle + manifest load (>=4 bundles, axes covered)
+  ✓ engine-request ledger seeded (REQ-1..5 + SCHEMA-1)
+  ✓ tsc --noEmit is green
+
+Phase-0 exit gate: PASS (10/10) — the frozen-contract surface is real and complete.

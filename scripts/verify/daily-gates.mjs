@@ -11,6 +11,12 @@
  * env/flag. If SELEMENE_API_KEY is set it is sent as `x-api-key` (only meaningful
  * when BASE is the direct engine; dropped by any proxy — T-032).
  *
+ * CF Access (T-074): prod is behind Cloudflare Access. Set CF_ACCESS_SESSION
+ * (see scripts/verify/cf-access-session.mjs for the accepted token forms) and
+ * it is sent as a session header on app-base requests — never to the direct
+ * engine. Without it, an Access edge challenge fails loud instead of surfacing
+ * as a confusing JSON-parse/status error.
+ *
  * G2 (live schema contract): today's live panchanga still carries every key the
  * interpreter reads — schema drift fails loud, it does not silently degrade.
  *
@@ -19,8 +25,11 @@
  * local dev server can't serve the happy path — the local API key is expired).
  */
 // Prod default is the Cloudflare Pages deployment (T-055 delink; goes live with T-058).
+import { sessionHeadersFor, isAccessChallenge, accessBlockedDetail } from './cf-access-session.mjs'
 const BASE = (process.env.URANIA_API_BASE || process.argv[2] || 'https://urania-137.pages.dev').replace(/\/+$/, '')
 const ENGINE_KEY = process.env.SELEMENE_API_KEY || ''
+const SESSION_HEADERS = sessionHeadersFor(BASE) // app-base only; never the direct engine
+const HAS_SESSION = Object.keys(SESSION_HEADERS).length > 0
 const P = `${BASE}/api/selemene`
 const LOC = { latitude: 12.9716, longitude: 77.5946, timezone: 'Asia/Kolkata' }
 
@@ -36,9 +45,10 @@ const PANCHANGA_KEYS = [
 const ASPECT_KEYS = ['aspect_type', 'nature', 'natal_planet', 'transiting_planet', 'orb', 'is_applying']
 
 const post = async (path, body) => {
-  const headers = { 'Content-Type': 'application/json' }
+  const headers = { 'Content-Type': 'application/json', ...SESSION_HEADERS }
   if (ENGINE_KEY) headers['x-api-key'] = ENGINE_KEY
-  const r = await fetch(`${P}${path}`, { method: 'POST', headers, body: JSON.stringify(body) })
+  const r = await fetch(`${P}${path}`, { method: 'POST', headers, redirect: 'manual', body: JSON.stringify(body) })
+  if (isAccessChallenge(r.status, r.headers.get('location'))) return { status: r.status, json: null, accessBlocked: true }
   const t = await r.text()
   let j = null
   try { j = JSON.parse(t) } catch {}
@@ -48,10 +58,14 @@ const post = async (path, body) => {
 const today = () => new Date().toISOString().slice(0, 10)
 
 async function g2() {
-  const { status, json } = await post('/api/v1/engines/panchanga/calculate', { birth_data: { date: today(), time: '12:00', ...LOC } })
+  const pan = await post('/api/v1/engines/panchanga/calculate', { birth_data: { date: today(), time: '12:00', ...LOC } })
+  if (pan.accessBlocked) return { ok: false, detail: accessBlockedDetail(HAS_SESSION) }
+  const { status, json } = pan
   if (status !== 200 || !json?.result) return { ok: false, detail: `panchanga HTTP ${status}` }
   const missing = PANCHANGA_KEYS.filter((k) => !(k in json.result))
-  const { status: ts, json: tj } = await post('/api/v1/engines/transits/calculate', { birth_data: { date: '1990-05-15', time: '08:30', ...LOC } })
+  const tra = await post('/api/v1/engines/transits/calculate', { birth_data: { date: '1990-05-15', time: '08:30', ...LOC } })
+  if (tra.accessBlocked) return { ok: false, detail: accessBlockedDetail(HAS_SESSION) }
+  const { status: ts, json: tj } = tra
   const aspect = tj?.result?.aspects?.[0] ?? {}
   const aMissing = ASPECT_KEYS.filter((k) => !(k in aspect))
   const ok = missing.length === 0 && ts === 200 && aMissing.length === 0
