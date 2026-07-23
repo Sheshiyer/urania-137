@@ -1,0 +1,299 @@
+{
+  "base": "https://urania-137.pages.dev",
+  "at": "2026-07-23T17:13:47.281Z",
+  "results": [
+    {
+      "gate": "V1",
+      "name": "me 401",
+      "verdict": "PASS",
+      "detail": "/api/me blocked at the Access edge (302 → OTP challenge)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9tZSIsInNlcnZpY2VfdG9rZW5fc3RhdHVzIjpmYWxzZSwiaXNfd2FycCI6ZmFsc2UsImlzX2dhdGV3YXkiOmZhbHNlLCJleHAiOjE3ODQ4MjcxMjYsIm5iZiI6MTc4NDgyNjgyNiwiaWF0IjoxNzg0ODI2ODI2LCJhdXRoX3N0YXR1cyI6Ik5PTkUiLCJtdGxzX2F1dGgiOnsiY2VydF9pc3N1ZXJfZG4iOiIiLCJjZXJ0X3NlcmlhbCI6IiIsImNlcnRfaXNzdWVyX3NraSI6IiIsImNlcnRfcHJlc2VudGVkIjpmYWxzZSwiY29tbW9uX25hbWUiOiIiLCJhdXRoX3N0YXR1cyI6Ik5PTkUifSwicmVhbF9jb3VudHJ5IjoiSU4iLCJhcHBfc2Vzc2lvbl9oYXNoIjoiZjYwYjBiN2Y2Y2U2MTQxN2RjZTQyNWNmNWUzMGM4Mjc0ZGRmNjdmODczMjlkZjA0ZmIxMmZjMGNiNzgyYjhjOSJ9.iI72Wjlr55xdPnHaCinFD8Jfdsd13EQd0Nz3G8rDmJ1DSkFV51IYLWRe4qOqywGjX8QXsUSXtRm3RKsipg3g13N5rK_GNZudawh3FUxOdwZYjWnZRXPQ43jmlN01vvex0BIwfQYwqrHhSgGs7gWVP0Op0y8VWNL_K07LVviWjLmtPiFJbMmOO6Hf_BPHWVGrBPORzFRjuX2u6t3enRNAX0wO3SnKXaafZfyK0RMD0xlZwX0wi0YpR56pGzfk6OhIX9B6CvSdsbLFNwRcRNoTlMElqxBqUtg_wa4UH1zTcHE9AVjpOmBBaMz7xEVfGN_RFDLsG5XHx-E08VnZ3_j6Mw&redirect_url=%2Fapi%2Fme",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "V1",
+      "name": "folio GET 401",
+      "verdict": "PASS",
+      "detail": "/api/folio blocked at the Access edge (302 → OTP challenge)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/folio",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9mb2xpbyIsInNlcnZpY2VfdG9rZW5fc3RhdHVzIjpmYWxzZSwiaXNfd2FycCI6ZmFsc2UsImlzX2dhdGV3YXkiOmZhbHNlLCJleHAiOjE3ODQ4MjcxMjcsIm5iZiI6MTc4NDgyNjgyNywiaWF0IjoxNzg0ODI2ODI3LCJhdXRoX3N0YXR1cyI6Ik5PTkUiLCJtdGxzX2F1dGgiOnsiY2VydF9pc3N1ZXJfZG4iOiIiLCJjZXJ0X3NlcmlhbCI6IiIsImNlcnRfaXNzdWVyX3NraSI6IiIsImNlcnRfcHJlc2VudGVkIjpmYWxzZSwiY29tbW9uX25hbWUiOiIiLCJhdXRoX3N0YXR1cyI6Ik5PTkUifSwicmVhbF9jb3VudHJ5IjoiSU4iLCJhcHBfc2Vzc2lvbl9oYXNoIjoiZmE5NjIxYjg4NjUzMzBjMjljODY2ZTg4NjQxM2UzYzNlNmJiMjk5ZTk5NzU2MWVlYTc3NThjN2ViMmM2NWUzNSJ9.mD3cqooBiVHRew6ZokwvVNaS18E23nhJVQXqnY9ozQ2SkOsqLtIMTyToSCSP8mrTRAvGk4RL1SkhVo0PWG_EIQjnzPiaFZWe0EtHaQwVlP2yN3KA8EUAWVXmBUGs4d6Q9M1FaZePM2Yo7VAWNtaz_r0a4GPrHWPeCcljcgwQ6Dhfr8P1KCtNgFObDMayyd9v209UByYKk061JY_FUklc9wOZJ0jDctvazCR6HLwc8scOmIIqOwJVJjtO2x-46-ySYBBwyfOOdKWxLGMo23exuYqyIVzNM_R7Y289NJ_8MH4-hIPDH_j3OCJeqEDOe1uVPGQAH59CwUy-_r_m4xK8Xg&redirect_url=%2Fapi%2Ffolio",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "V1",
+      "name": "folio POST 401",
+      "verdict": "PASS",
+      "detail": "POST /api/folio (auth precedes body validation) blocked at the Access edge (302 → OTP challenge)",
+      "evidence": [
+        {
+          "method": "POST",
+          "path": "/api/folio",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9mb2xpbyIsInNlcnZpY2VfdG9rZW5fc3RhdHVzIjpmYWxzZSwiaXNfd2FycCI6ZmFsc2UsImlzX2dhdGV3YXkiOmZhbHNlLCJleHAiOjE3ODQ4MjcxMjcsIm5iZiI6MTc4NDgyNjgyNywiaWF0IjoxNzg0ODI2ODI3LCJhdXRoX3N0YXR1cyI6Ik5PTkUiLCJtdGxzX2F1dGgiOnsiY2VydF9pc3N1ZXJfZG4iOiIiLCJjZXJ0X3NlcmlhbCI6IiIsImNlcnRfaXNzdWVyX3NraSI6IiIsImNlcnRfcHJlc2VudGVkIjpmYWxzZSwiY29tbW9uX25hbWUiOiIiLCJhdXRoX3N0YXR1cyI6Ik5PTkUifSwicmVhbF9jb3VudHJ5IjoiSU4iLCJhcHBfc2Vzc2lvbl9oYXNoIjoiZDU3OWQwYjkyNmU5OWZiZTZmYzE0ZGQwNWEwMWY0NmZkNWM5NjJkMGIzYzFmN2UyYzNiNDQ4MDNlYjUyNDY5NyJ9.dFrA_x5X89VYc1Uc3Emzofk6I_iPnCBemWJj9iGQK-QNGj6PjoHrPc-bzz1pvv-h85x5y_TnUVNps4tC7s0fn1msAkIRBN1hGAMYi8mdmRaHr4iesRoJtTCIupvBMkYSghQCU7T19Uu7YnFYnTNizs8D2JSwJ_UAbuqume9gn8M6rQBWWfmLGGB7iO37DsBkuEUc6LGItBbeG1mVfPC1D8KjRIKMsiUW6z65oPoA4k5sOTI8uPJYpv5VDg9wDTu7enww6fCw0m0hOKCIfMq3iHZC6mKULidHAKGfYEn_ufCule0d23nekDSanaZXAqJKSw6OFlm73yeJefKFJ1adHA&redirect_url=%2Fapi%2Ffolio",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "V1",
+      "name": "folio PATCH 401",
+      "verdict": "PASS",
+      "detail": "PATCH /api/folio/:id blocked at the Access edge (302 → OTP challenge)",
+      "evidence": [
+        {
+          "method": "PATCH",
+          "path": "/api/folio/auth-gates-probe",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9mb2xpby9hdXRoLWdhdGVzLXByb2JlIiwic2VydmljZV90b2tlbl9zdGF0dXMiOmZhbHNlLCJpc193YXJwIjpmYWxzZSwiaXNfZ2F0ZXdheSI6ZmFsc2UsImV4cCI6MTc4NDgyNzEyNywibmJmIjoxNzg0ODI2ODI3LCJpYXQiOjE3ODQ4MjY4MjcsImF1dGhfc3RhdHVzIjoiTk9ORSIsIm10bHNfYXV0aCI6eyJjZXJ0X2lzc3Vlcl9kbiI6IiIsImNlcnRfc2VyaWFsIjoiIiwiY2VydF9pc3N1ZXJfc2tpIjoiIiwiY2VydF9wcmVzZW50ZWQiOmZhbHNlLCJjb21tb25fbmFtZSI6IiIsImF1dGhfc3RhdHVzIjoiTk9ORSJ9LCJyZWFsX2NvdW50cnkiOiJJTiIsImFwcF9zZXNzaW9uX2hhc2giOiJlZjAxNzBmZGM3NzQ5YTg0ODE1MDNkOTRkN2EzZjI5MmU0MmNjOWZmMjc4ZTlmOGVlZTE2MzFhNjA0OWI4NzM2In0.o0IG3MRg5qP2MC-pAFrgzghLD6dnxHf7ML6D9iRnHO8Se0GuR-kodc8HuQfu614NctEu9uhQ13L67M0bzNFjsYhIRkk1NuSTMM4d2WpQIdUNCVVE8DGWcQTzzw53Yv2GmkCH-f9-KlX7bA7KCgCv3fS1lgGCjyjH57MrcAEUIrIuY8BRFt6VukoDmYy-ZdAvCh7G7Lv5i5J72aG0I1AhD272BONC5ICDJjparZV4m3Z9RVr1EKi9ZTsq1fKa3iofzz2oFLzKtX7yxxhHcdHdOaRL1Lf_04pE_wWQC1rgK8SQk4WnNrCykk5b9-K7YKYBaHpbQV4oA-nBE3ZPEoPFpw&redirect_url=%2Fapi%2Ffolio%2Fauth-gates-probe",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "V1",
+      "name": "folio DELETE 401",
+      "verdict": "PASS",
+      "detail": "DELETE /api/folio/:id blocked at the Access edge (302 → OTP challenge)",
+      "evidence": [
+        {
+          "method": "DELETE",
+          "path": "/api/folio/auth-gates-probe",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9mb2xpby9hdXRoLWdhdGVzLXByb2JlIiwic2VydmljZV90b2tlbl9zdGF0dXMiOmZhbHNlLCJpc193YXJwIjpmYWxzZSwiaXNfZ2F0ZXdheSI6ZmFsc2UsImV4cCI6MTc4NDgyNzEyNywibmJmIjoxNzg0ODI2ODI3LCJpYXQiOjE3ODQ4MjY4MjcsImF1dGhfc3RhdHVzIjoiTk9ORSIsIm10bHNfYXV0aCI6eyJjZXJ0X2lzc3Vlcl9kbiI6IiIsImNlcnRfc2VyaWFsIjoiIiwiY2VydF9pc3N1ZXJfc2tpIjoiIiwiY2VydF9wcmVzZW50ZWQiOmZhbHNlLCJjb21tb25fbmFtZSI6IiIsImF1dGhfc3RhdHVzIjoiTk9ORSJ9LCJyZWFsX2NvdW50cnkiOiJJTiIsImFwcF9zZXNzaW9uX2hhc2giOiIyZmEwOWQ4M2FlOGQ4MjExNjk2NTdkMWExOGNiYmViN2I0YTNhMGNkZDY2NjhmMDEyYmE4MWRjMzI2Y2FjZGU0In0.IJYiPyqyN86KL9Eq5J9bVCzZxI8TI5poBqV5YFVWz9z9CoNq2JDk1aBwDXbscpSAbLkWdFLCdzwFwf7N1Blza8JwBbHPyhav1xvejZHQDqhTItefbPP2rsOxsSHPhr5ijBj_mV0NsLv22wxc5JVGko8pQuQf3pdBMc4blryD-L-663q6cl5mJ4HNCAuKc4iXL6UXnDK3V5lPoJUtxF9h-ZfLWAY2dxMM_QB3UXZ-U0Y03OOGRSzv9SIp2ftssLjPQ4hdDKxZQotgLli4STC52P1YHuaeX4xdzDPv-2ZUgAaZ2JHVMHIixpKpEyIBs8kjG6DuiZA3TuBifwo_4MK9ZQ&redirect_url=%2Fapi%2Ffolio%2Fauth-gates-probe",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "V1",
+      "name": "folio import 401",
+      "verdict": "PASS",
+      "detail": "POST /api/folio/import blocked at the Access edge (302 → OTP challenge)",
+      "evidence": [
+        {
+          "method": "POST",
+          "path": "/api/folio/import",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9mb2xpby9pbXBvcnQiLCJzZXJ2aWNlX3Rva2VuX3N0YXR1cyI6ZmFsc2UsImlzX3dhcnAiOmZhbHNlLCJpc19nYXRld2F5IjpmYWxzZSwiZXhwIjoxNzg0ODI3MTI3LCJuYmYiOjE3ODQ4MjY4MjcsImlhdCI6MTc4NDgyNjgyNywiYXV0aF9zdGF0dXMiOiJOT05FIiwibXRsc19hdXRoIjp7ImNlcnRfaXNzdWVyX2RuIjoiIiwiY2VydF9zZXJpYWwiOiIiLCJjZXJ0X2lzc3Vlcl9za2kiOiIiLCJjZXJ0X3ByZXNlbnRlZCI6ZmFsc2UsImNvbW1vbl9uYW1lIjoiIiwiYXV0aF9zdGF0dXMiOiJOT05FIn0sInJlYWxfY291bnRyeSI6IklOIiwiYXBwX3Nlc3Npb25faGFzaCI6ImE2NjRkZTY0YTU0OTEzZWQwOThkZjQ1MmZkMTgwZDA5Mzk4NzU4OWYzZjVmNTMzNTRiNTkzMzkxYzJiZDA3MGUifQ.k-yEhd9_-Ph1HyqeLF4zhg1QD9SieIVAgra5IGIPlAjXm2bSSYtWLuoPg6Z7EwRUAYtpVprjad_M3st7FDVClv0mqSEXxgVdvo9AIH4-DligKkzbjoHnfx1PBF4yTur-i_Tagi-tmVnvzKOBes9yaiLms0sZg23U4aMBQkEtgz8OdLLUy-W74SxH4QhKm9FHxTgbGec4c2IeN2HL5zZek6jcfXquy5MV6eIQ-DJ2Nve3egCDCswy6jyPxKHMv1AsQ8YmaKUHnQlBrfL-UpBsdK2vqjom0_v6o1BfXBRLznsrTvhuTnMMxfKsGpKsJIBGzWLKVeTUM4ij_c_Z96IwxQ&redirect_url=%2Fapi%2Ffolio%2Fimport",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "V1",
+      "name": "selemene 401",
+      "verdict": "PASS",
+      "detail": "/api/selemene/* blocked at the Access edge (302 → OTP challenge)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/selemene/api/v1/workflows",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9zZWxlbWVuZS9hcGkvdjEvd29ya2Zsb3dzIiwic2VydmljZV90b2tlbl9zdGF0dXMiOmZhbHNlLCJpc193YXJwIjpmYWxzZSwiaXNfZ2F0ZXdheSI6ZmFsc2UsImV4cCI6MTc4NDgyNzEyNywibmJmIjoxNzg0ODI2ODI3LCJpYXQiOjE3ODQ4MjY4MjcsImF1dGhfc3RhdHVzIjoiTk9ORSIsIm10bHNfYXV0aCI6eyJjZXJ0X2lzc3Vlcl9kbiI6IiIsImNlcnRfc2VyaWFsIjoiIiwiY2VydF9pc3N1ZXJfc2tpIjoiIiwiY2VydF9wcmVzZW50ZWQiOmZhbHNlLCJjb21tb25fbmFtZSI6IiIsImF1dGhfc3RhdHVzIjoiTk9ORSJ9LCJyZWFsX2NvdW50cnkiOiJJTiIsImFwcF9zZXNzaW9uX2hhc2giOiJlMmRmM2FlOTNiMzdmMTlhNWYwNTcwNjZiYjBhM2ExNDJiYzk3ODJhNzg2NWNlZGQyYmI4YTFlODdhMzllZWFmIn0.mjYoLj3xLiR8WdzITvY069uJw8S84j5CWlPk94_rfrqHXr1X3Kg5UII8k_FbeCiTsK4YowapEPCb-X0dlWLvk-anEEA77-OSO73BP5nyqfc9gkrBxX-8kBfP0GNdBy-erzRN7O633ltR06aaq5AZlI5eLwKNpLjZR6fZEdf-3AcmY_rR-rjyxGqr7Nk9XeFFyFnZWvkGHpqaq7o6ucEgSmTzZfi4MEprRv8yJSCWbPRlfDWRLvHeeE5bHA0lbnobSv9gPnHGUzCfvQkcUG_W04fm1dS9_o1KNpGmLSoGU2RyvhPMg5k6VuwV2xRtf0i_8XHnAvGR3raHhuO2yMc58Q&redirect_url=%2Fapi%2Fselemene%2Fapi%2Fv1%2Fworkflows",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "V1",
+      "name": "unknown-route 401",
+      "verdict": "PASS",
+      "detail": "unknown /api/* route (auth precedes routing; 404 is behind-auth only) blocked at the Access edge (302 → OTP challenge)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/definitely-not-a-route",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9kZWZpbml0ZWx5LW5vdC1hLXJvdXRlIiwic2VydmljZV90b2tlbl9zdGF0dXMiOmZhbHNlLCJpc193YXJwIjpmYWxzZSwiaXNfZ2F0ZXdheSI6ZmFsc2UsImV4cCI6MTc4NDgyNzEyNywibmJmIjoxNzg0ODI2ODI3LCJpYXQiOjE3ODQ4MjY4MjcsImF1dGhfc3RhdHVzIjoiTk9ORSIsIm10bHNfYXV0aCI6eyJjZXJ0X2lzc3Vlcl9kbiI6IiIsImNlcnRfc2VyaWFsIjoiIiwiY2VydF9pc3N1ZXJfc2tpIjoiIiwiY2VydF9wcmVzZW50ZWQiOmZhbHNlLCJjb21tb25fbmFtZSI6IiIsImF1dGhfc3RhdHVzIjoiTk9ORSJ9LCJyZWFsX2NvdW50cnkiOiJJTiIsImFwcF9zZXNzaW9uX2hhc2giOiIyYTBlODBjMTcwNTI4ZmQxYWUxMzQ3NTBkZjFiYzhlNWFjZjRjNjE1NzBkMGMzMjZkNjUzMzUwMzc1ZTQ2YTJkIn0.RavAht_swIQrf3CJieDb5cbjYa-x_kkEd82RTTrNHBGJK__ncnEVIbUbcOHbaBrUsb-6ieea0tENMU-Y4VsfbIgphLv7G4sBTe-Eu6EZasC3_91TgitYsct5uoOO6kRpM3197-kfySPGPJ_5AMMUjseJc8MuPK86BP-vrxO1qVRXNpAku4NKJccA1la0_xasHRWgPo73ImHOyASmrrVExWqAe5-wmGPbdmvcJ4cpQppkT6hn9ijrxfu0XiC7kkwF5jfF0xVJrMADbgtbG49Iyg7Xo4KfzaoIcedYP-tiLOGkS1VKN6vsezFL2OWsrfselEju9_0t14CrjPKIOUsWqQ&redirect_url=%2Fapi%2Fdefinitely-not-a-route",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "SPA",
+      "name": "shell serves",
+      "verdict": "PASS",
+      "detail": "GET / → Access edge challenge (edge-level enforcement active post-T-081)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiLyIsInNlcnZpY2VfdG9rZW5fc3RhdHVzIjpmYWxzZSwiaXNfd2FycCI6ZmFsc2UsImlzX2dhdGV3YXkiOmZhbHNlLCJleHAiOjE3ODQ4MjcxMjcsIm5iZiI6MTc4NDgyNjgyNywiaWF0IjoxNzg0ODI2ODI3LCJhdXRoX3N0YXR1cyI6Ik5PTkUiLCJtdGxzX2F1dGgiOnsiY2VydF9pc3N1ZXJfZG4iOiIiLCJjZXJ0X3NlcmlhbCI6IiIsImNlcnRfaXNzdWVyX3NraSI6IiIsImNlcnRfcHJlc2VudGVkIjpmYWxzZSwiY29tbW9uX25hbWUiOiIiLCJhdXRoX3N0YXR1cyI6Ik5PTkUifSwicmVhbF9jb3VudHJ5IjoiSU4iLCJhcHBfc2Vzc2lvbl9oYXNoIjoiMWM0ODNkNmEwOWVmYThlMTg0YjNjZmU1NWFhNmE1Zjk2ZmJiZTY0ZGZlOTE1NjUwMDA5MjViZTE0M2FmOGM4NiJ9.M1dN0E1wNsIrXjtO0jJvjUy4dg6RHbE_8OBqCaUvhXfn8-j3D4sN1sGN__paN99AHe7aiM_Z5my6kA6rSXoIoe4b-em0yvTYwyhCkZzYh2VMy8usIBj4MiydiqwPxaehyHz_3gn8JNp2MXD35667tLoLJzNI9QyK_luWWGlR_B6jKKhyykCDX2T_8Vt7PITlDiGI3yxbLNX6PPenijLNaqPK6dmk_mw3O6wKJQ8RkHONp5Na-mOoXKXPov3VBWSt6GgkARnGBpNXdIzpFFH1vbRYAxBT9AMgADFflJZ-ZTbK4jann02d5DuxkA3haEbqXnr66OEB37-AJpj85vU0DA&redirect_url=%2F",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "bypass",
+      "name": "header DEV_IDENTITY_EMAIL",
+      "verdict": "PASS",
+      "detail": "header DEV_IDENTITY_EMAIL coerces no identity (302)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9tZSIsInNlcnZpY2VfdG9rZW5fc3RhdHVzIjpmYWxzZSwiaXNfd2FycCI6ZmFsc2UsImlzX2dhdGV3YXkiOmZhbHNlLCJleHAiOjE3ODQ4MjcxMjcsIm5iZiI6MTc4NDgyNjgyNywiaWF0IjoxNzg0ODI2ODI3LCJhdXRoX3N0YXR1cyI6Ik5PTkUiLCJtdGxzX2F1dGgiOnsiY2VydF9pc3N1ZXJfZG4iOiIiLCJjZXJ0X3NlcmlhbCI6IiIsImNlcnRfaXNzdWVyX3NraSI6IiIsImNlcnRfcHJlc2VudGVkIjpmYWxzZSwiY29tbW9uX25hbWUiOiIiLCJhdXRoX3N0YXR1cyI6Ik5PTkUifSwicmVhbF9jb3VudHJ5IjoiSU4iLCJhcHBfc2Vzc2lvbl9oYXNoIjoiMzQxYTcyNGViYTYwNDA5NTA0NzM2NWFmZDk4NmYyMzEzM2UyNDhjZDVkM2E1NzVlZGVlMGJjMTZiYzlmMzBhZCJ9.fR2LcqKCHDkt5IdBsfMT4YYntK6x-sYI28NbEtjumnObv6fzfSpjcpEs1upKaU9MGJV7_eLQAyvXGNmAUs7RGkJHGt3RrH3b1ndZAlzxLI856OFWTyYg--D6M68upUIBjVerxsSGeMb_X9Zsw4VLw_8j_hNh8X5m7PTqmwCl3nkJPXCSsoTY5GMoQdVqRHFByB9ZdyklSNFHbWTOtNx-rY54W6zwVUfzjsRuSReNpzoVfs_r2yoBssueG3i2RQDH01nXAyVv4cedY_StkXZESNtObXa78s5iuwFdY4-qePpfyRVD3AvpQzt3WwUPhTzX9FRQgs3wLlb98Yp7sOMMVQ&redirect_url=%2Fapi%2Fme",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "bypass",
+      "name": "header X-Dev-Identity-Email",
+      "verdict": "PASS",
+      "detail": "header X-Dev-Identity-Email coerces no identity (302)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9tZSIsInNlcnZpY2VfdG9rZW5fc3RhdHVzIjpmYWxzZSwiaXNfd2FycCI6ZmFsc2UsImlzX2dhdGV3YXkiOmZhbHNlLCJleHAiOjE3ODQ4MjcxMjcsIm5iZiI6MTc4NDgyNjgyNywiaWF0IjoxNzg0ODI2ODI3LCJhdXRoX3N0YXR1cyI6Ik5PTkUiLCJtdGxzX2F1dGgiOnsiY2VydF9pc3N1ZXJfZG4iOiIiLCJjZXJ0X3NlcmlhbCI6IiIsImNlcnRfaXNzdWVyX3NraSI6IiIsImNlcnRfcHJlc2VudGVkIjpmYWxzZSwiY29tbW9uX25hbWUiOiIiLCJhdXRoX3N0YXR1cyI6Ik5PTkUifSwicmVhbF9jb3VudHJ5IjoiSU4iLCJhcHBfc2Vzc2lvbl9oYXNoIjoiMDgxNGNmNzA5NjZlNmQ0ODE0NTdjZmQ2OGEzNTQ5NmFmOTUwMWUxMzVhMzRmMWMxYmMyNzM3Y2Y3YzhiMzBiNCJ9.DYV8ZGd24P2YOkZIlfXUhM2JJ1h5946YbtE55QL2lpF7lwDgSGgObsxbUaWlKQkfvO6eAAjx7V-MrZEsVwtA3fsf6b7n9UyqbqRNnceh5JwjOr2lB9QIOdpvVv2ToDeStdxzx9TPxy4XPlSXLPRuzbWJwWXjpKjd1Evxtei2lVxhVdnxRW6jc0eoNeoefPRjNsw-lV_VqIT7QTE2zONb9LkKn5A_kcRlbbTRINl6gYvCW6KGWsQ0TgNVrG_EXWf8XgI3mW3RXgFYINc0fQ-thpsa2_eRNTeweNONa8BIZCOMgm-k-biZdf61R47TolXiAN-gfGCENS1wuenFCrnqmQ&redirect_url=%2Fapi%2Fme",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "bypass",
+      "name": "header X-Dev-Identity",
+      "verdict": "PASS",
+      "detail": "header X-Dev-Identity coerces no identity (302)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9tZSIsInNlcnZpY2VfdG9rZW5fc3RhdHVzIjpmYWxzZSwiaXNfd2FycCI6ZmFsc2UsImlzX2dhdGV3YXkiOmZhbHNlLCJleHAiOjE3ODQ4MjcxMjcsIm5iZiI6MTc4NDgyNjgyNywiaWF0IjoxNzg0ODI2ODI3LCJhdXRoX3N0YXR1cyI6Ik5PTkUiLCJtdGxzX2F1dGgiOnsiY2VydF9pc3N1ZXJfZG4iOiIiLCJjZXJ0X3NlcmlhbCI6IiIsImNlcnRfaXNzdWVyX3NraSI6IiIsImNlcnRfcHJlc2VudGVkIjpmYWxzZSwiY29tbW9uX25hbWUiOiIiLCJhdXRoX3N0YXR1cyI6Ik5PTkUifSwicmVhbF9jb3VudHJ5IjoiSU4iLCJhcHBfc2Vzc2lvbl9oYXNoIjoiZjRkMzhhYWI2YWI1N2E3NTAyYTQ3NmZiYmI3MTU5YjUwZTFkYmQ3Y2EyNWNhNTM1ZTViM2M1OTZjOTc4Y2M5OCJ9.h8nbU57y3j-VhngeQdVIgfMhF1IvLASASDUBx6DOMH9pTz7TPfJedjeFY8mXlVV0y_verp9d6Axc4pkbtgRoKuGrMDBLVBoC_AAIK9LQu2Entcvny63hcTBDPvKsnyDfc3OhPe3ZvaR9IXnWOODSpQ2R2dF2ONR9syMkU0fW79qTq0gb5rXZ5IpIhAXZVgFMaT7D1s9DQN8OYJEKO3e_YYp1lP8EJQKqlt4V00bgZsk2Jy7LJdimSUJRktQofu4OTIujItEsWlh_NjWUZ2mvMyyxY4SNg6wW1RHndrxz-LOyB23q_uSAytJCspErkcyxY-rFzpd7wWoET6UfLOo5eg&redirect_url=%2Fapi%2Fme",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "bypass",
+      "name": "query param",
+      "verdict": "PASS",
+      "detail": "query param coerces no identity (302)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me?dev_identity_email=bypass@example.com&email=bypass@example.com",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9tZT9kZXZfaWRlbnRpdHlfZW1haWw9YnlwYXNzQGV4YW1wbGUuY29tJmVtYWlsPWJ5cGFzc0BleGFtcGxlLmNvbSIsInNlcnZpY2VfdG9rZW5fc3RhdHVzIjpmYWxzZSwiaXNfd2FycCI6ZmFsc2UsImlzX2dhdGV3YXkiOmZhbHNlLCJleHAiOjE3ODQ4MjcxMjcsIm5iZiI6MTc4NDgyNjgyNywiaWF0IjoxNzg0ODI2ODI3LCJhdXRoX3N0YXR1cyI6Ik5PTkUiLCJtdGxzX2F1dGgiOnsiY2VydF9pc3N1ZXJfZG4iOiIiLCJjZXJ0X3NlcmlhbCI6IiIsImNlcnRfaXNzdWVyX3NraSI6IiIsImNlcnRfcHJlc2VudGVkIjpmYWxzZSwiY29tbW9uX25hbWUiOiIiLCJhdXRoX3N0YXR1cyI6Ik5PTkUifSwicmVhbF9jb3VudHJ5IjoiSU4iLCJhcHBfc2Vzc2lvbl9oYXNoIjoiYjdmZTRkZjFhZjk1M2E4YWI2OWUwZDI5ODNhZmY1ZGRhMjk1ZGY4MGQ2N2EwNzJlZjc5MWE1MmM0OGQ3ZDY2OCJ9.a1PohPIDnw_dYo-jcDpFMNA9qCrW3TWhWTVTCA3lha30ARkFS8h657Z5M8LNzuAJpFjQBtCiHOp4GrbwQwpLp9f9JmB03_TiXqHjE0MhSCRJyyVv5jIc7GB6JN37Dj19C0eqaBcnKi6n-ydoULxypcPuFCHffFcknkvsBs-JJ2PbY2W2ySoc6q4_dTJvvyQENQJrZVJV-RKaV3is3RdaONpj9vzsfofIGG0Hj_QxfUVoNLNl5jIZ3xuLPoBn0iIqmcCaGLR08VhPG38ECJR0mooI7WqWUlvG04VPJs5cq2ybwh-zxbqfudja5zbfpq4K8stdXBNVsPMirMz8QZ3IJQ&redirect_url=%2Fapi%2Fme%3Fdev_identity_email%3Dbypass%40example.com%26email%3Dbypass%40example.com",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "bypass",
+      "name": "cookie",
+      "verdict": "PASS",
+      "detail": "cookie coerces no identity (302)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9tZSIsInNlcnZpY2VfdG9rZW5fc3RhdHVzIjpmYWxzZSwiaXNfd2FycCI6ZmFsc2UsImlzX2dhdGV3YXkiOmZhbHNlLCJleHAiOjE3ODQ4MjcxMjcsIm5iZiI6MTc4NDgyNjgyNywiaWF0IjoxNzg0ODI2ODI3LCJhdXRoX3N0YXR1cyI6Ik5PTkUiLCJtdGxzX2F1dGgiOnsiY2VydF9pc3N1ZXJfZG4iOiIiLCJjZXJ0X3NlcmlhbCI6IiIsImNlcnRfaXNzdWVyX3NraSI6IiIsImNlcnRfcHJlc2VudGVkIjpmYWxzZSwiY29tbW9uX25hbWUiOiIiLCJhdXRoX3N0YXR1cyI6Ik5PTkUifSwicmVhbF9jb3VudHJ5IjoiSU4iLCJhcHBfc2Vzc2lvbl9oYXNoIjoiNzM3NjJkMGI5N2QwOTE0OWUwODg5OTRiZWFkMTdmOTlmMmEwOWM0NmUyMmFmNGE1NzA1NWExZjIxZTZjYWI3NyJ9.ZWQaOwCNeNk2VvT6t7VV3aotPdW1k4MWVBqfR9VwJoNi5twTjCxH_kKMXKQ3mDX81MNc8hMsvjm952gUnv0MgbUDgBuHKZ8B9RNS0Oxl3aExe6-alHh_h-K_ooWSIGMWBO9lqlTv6fKKvCXYF4uznw8o8Z3OouLep7otNVvU51upInPMFlACtowjsgpz5iF8rtmM2-tn2-8O68HyBBla8T8Y6L-dUSyO5m0209KiOwGvvWEa0WgC-9fD5faw3iVrTda8EEt5HLphmR2lMfsrxvBAbx_xxuHlhhfoDZYFUS4BJ_VC_k3q5btGmXlJfI560TfiFCIEOtXfOrmY6zDRMg&redirect_url=%2Fapi%2Fme",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "bypass",
+      "name": "alg=none forged JWT",
+      "verdict": "PASS",
+      "detail": "alg=none forged JWT coerces no identity (302)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9tZSIsInNlcnZpY2VfdG9rZW5fc3RhdHVzIjpmYWxzZSwiaXNfd2FycCI6ZmFsc2UsImlzX2dhdGV3YXkiOmZhbHNlLCJleHAiOjE3ODQ4MjcxMjcsIm5iZiI6MTc4NDgyNjgyNywiaWF0IjoxNzg0ODI2ODI3LCJhdXRoX3N0YXR1cyI6Ik5PTkUiLCJtdGxzX2F1dGgiOnsiY2VydF9pc3N1ZXJfZG4iOiIiLCJjZXJ0X3NlcmlhbCI6IiIsImNlcnRfaXNzdWVyX3NraSI6IiIsImNlcnRfcHJlc2VudGVkIjpmYWxzZSwiY29tbW9uX25hbWUiOiIiLCJhdXRoX3N0YXR1cyI6Ik5PTkUifSwicmVhbF9jb3VudHJ5IjoiSU4iLCJhcHBfc2Vzc2lvbl9oYXNoIjoiNDU4NjIzNmNmM2M3ZDc2Y2ViMzZmZmZkMzQ2NjUzYmZlYWYwYmUzZGNhNDdmMWZkZGRhMDQ3NDk0YTM5ZTI3NSJ9.BXe77z1_6YnqdDsW3qDjKsx6uOEc5K-RZjz-uBMCmiS-ayE5rXhugnjI1Y1C0HH6FBsGITcRYDVJrAlu3F_BIJuKpooIVw8yV0YutLu__EhHsnaVuh24Kb4iSlvnh42rImdBvJwj8sxGGaqlu-WeHzZ4di7I3DMFdXVkKJH5nGUHWmWtX3Czpy7Norx_YWl9uea743SQSMj04NFVCU9-xt3-XKb_2s2HwItjaMtx69MR2uRGXUdTWaXZzcGiClgycf4bgOZ73qiHwGCSdZsCIUrtKa6Q5oZJaUD-iYmMIt-kRRps-NVkfRjoAjgKb6whb2XLecLbWp-g8coH-tigvw&redirect_url=%2Fapi%2Fme",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "bypass",
+      "name": "garbage token",
+      "verdict": "PASS",
+      "detail": "garbage token coerces no identity (302)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me",
+          "status": 302,
+          "location": "https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4&meta=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjViZGYxY2RiMzMzN2MzZWExZTkzZTU0NGRjYjQyZjkxYWFhYmYzYWIxMGZlMjViYWNmMjg1NzJhM2JlMTcwMTAifQ.eyJ0eXBlIjoibWV0YSIsImF1ZCI6ImRmOGEwMGIxZDE5ZjJlODAzNGVkMjYyNTQ0OTEyNjU2Y2E5NjlmY2RhZGYwZTI1OTliNjFkNGQyZjY4N2I2YjQiLCJob3N0bmFtZSI6InVyYW5pYS0xMzcucGFnZXMuZGV2IiwicmVkaXJlY3RfdXJsIjoiL2FwaS9tZSIsInNlcnZpY2VfdG9rZW5fc3RhdHVzIjpmYWxzZSwiaXNfd2FycCI6ZmFsc2UsImlzX2dhdGV3YXkiOmZhbHNlLCJleHAiOjE3ODQ4MjcxMjcsIm5iZiI6MTc4NDgyNjgyNywiaWF0IjoxNzg0ODI2ODI3LCJhdXRoX3N0YXR1cyI6Ik5PTkUiLCJtdGxzX2F1dGgiOnsiY2VydF9pc3N1ZXJfZG4iOiIiLCJjZXJ0X3NlcmlhbCI6IiIsImNlcnRfaXNzdWVyX3NraSI6IiIsImNlcnRfcHJlc2VudGVkIjpmYWxzZSwiY29tbW9uX25hbWUiOiIiLCJhdXRoX3N0YXR1cyI6Ik5PTkUifSwicmVhbF9jb3VudHJ5IjoiSU4iLCJhcHBfc2Vzc2lvbl9oYXNoIjoiMTExZTQxZmUwMjdjZDdmMzhlMmU5MzRiMjY4OGFlYmRmYWRhZTY1Yzc1M2EyYTdiNGU4ZjQyNzdjMWNlMzViZiJ9.DaqlVakwkGUTgm4DM7JPDO7gcgOfuHhGGlsWI4WaSrvX6jZLw3zB6FN4F-TW_tb4E5xhFYfM6bNXApR_zieRyo6U3lqNteXbUvNUC6N5FcZ5uU_ozMlp_psM9uJDKrJbWTefYHYcASG_83d1t7oigqMRjZZqibzH6-08vm4OkPLbIbmDmsBvI5Ry4kCzfdoQQeQuFwBvQlXoIC2RAkvReIoQDquaKke8k5Z2BuTpNP4SAvatn9ZbUQNhdPXvHz5TuO6KC1LdF30oFSillVKNtezKQLV6931l47GbMl7X8fEmjC1aVLyO6nS5MxVegONqVPIgsxm5e1YvJXf0O_-Slw&redirect_url=%2Fapi%2Fme",
+          "contentType": "text/html; charset=UTF-8",
+          "json": null,
+          "snippet": "<html> <head><title>302 Found</title></head> <body> <center><h1>302 Found</h1></center> <hr><center>cloudflare</center> </body> </html>"
+        }
+      ]
+    },
+    {
+      "gate": "V2",
+      "name": "identity-mapped",
+      "verdict": "SKIP",
+      "detail": "requires CF Access session A — blocked on T-081 (no real OTP identity yet)",
+      "evidence": []
+    },
+    {
+      "gate": "V3",
+      "name": "per-user isolation",
+      "verdict": "SKIP",
+      "detail": "requires CF Access session A+B — blocked on T-081 (no real OTP identity yet)",
+      "evidence": []
+    },
+    {
+      "gate": "V4",
+      "name": "durable read (fresh client)",
+      "verdict": "SKIP",
+      "detail": "requires CF Access session A — blocked on T-081 (no real OTP identity yet)",
+      "evidence": []
+    }
+  ]
+}
