@@ -12,16 +12,25 @@ name = "urania-137"
 compatibility_date = "2026-07-01"
 pages_build_output_dir = "dist"
 
-# Public config (non-secret) — T-059. Only values that are REAL and non-secret
-# belong here. SELEMENE_API_URL is the public engine base (also the code default).
-# CF_ACCESS_AUD / CF_ACCESS_TEAM_DOMAIN are intentionally ABSENT: their real values
-# come from the 9d9d Access app (T-081, human) and will be set then (T-067) — no
-# placeholders are pushed to production. Absent vars fail closed: any JWT presented
-# before then fails verification -> 401. SELEMENE_API_KEY (secret, pending rotation)
-# is set via `wrangler pages secret put`, never here. DEV_IDENTITY_EMAIL must never
-# appear in this file or in Pages production env.
+# Public config (non-secret) — T-059 / T-067. Only values that are REAL and
+# non-secret belong here. SELEMENE_API_URL is the public engine base (also the
+# code default).
+#
+# CF_ACCESS_AUD / CF_ACCESS_TEAM_DOMAIN — T-081 RESOLVED 2026-07-23 by REUSE:
+# no new Access application was created; urania-137.pages.dev was added to an
+# existing app in team red-queen-4dfa (9d9d account). The AUD below was
+# captured LIVE from the edge on 2026-07-23 (the `kid`/meta-aud of the 302
+# Access challenge on this hostname) — it supersedes the immersive API's AUD
+# (11a62a84…, a different app in the same team) and is the aud that Access
+# will actually issue JWTs with for sessions on this hostname. Fail-closed is
+# preserved: requests without a valid Access JWT for this AUD still get 401.
+# SELEMENE_API_KEY (secret, rotation deferred by the owner 2026-07-23 — set it
+# via scripts/deploy/t067-prod-secrets.sh when rotated), never here.
+# DEV_IDENTITY_EMAIL must never appear in this file or in Pages production env.
 [vars]
 SELEMENE_API_URL = "https://selemene.tryambakam.space"
+CF_ACCESS_AUD = "df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4"
+CF_ACCESS_TEAM_DOMAIN = "red-queen-4dfa.cloudflareaccess.com"
 
 # Per-user readings store (T-080). Production D1 provisioned 2026-07-20 in the
 # 9d9d account (region APAC). Pages applies this single binding to all deployments;

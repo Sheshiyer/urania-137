@@ -141,10 +141,23 @@ const check = async (gate, name, needs, fn) => {
   return r
 }
 
-const expect401 = (label) => (r) =>
-  isAuthBlock(r) && isErrorEnvelope(r)
+// Post-T-066 the Access edge answers unauthenticated requests FIRST with a
+// 302 → team OTP login (no JSON body). That IS the auth block; the Worker's
+// frozen {error,message} 401 envelope now lives behind the edge and is only
+// reachable with a credential that passes the edge but fails Worker
+// verification. So: a redirect to cloudflareaccess passes outright; a
+// 401/403 must additionally carry the frozen envelope.
+const expect401 = (label) => (r) => {
+  if (!isAuthBlock(r)) {
+    return { verdict: 'FAIL', detail: `${label} NOT blocked: status ${r.status}, envelope=${isErrorEnvelope(r)}` }
+  }
+  if ([301, 302, 303, 307, 308].includes(r.status)) {
+    return { verdict: 'PASS', detail: `${label} blocked at the Access edge (${r.status} → OTP challenge)` }
+  }
+  return isErrorEnvelope(r)
     ? { verdict: 'PASS', detail: `${label} blocked (${r.status}, {error,message} envelope, no data keys)` }
-    : { verdict: 'FAIL', detail: `${label} NOT blocked: status ${r.status}, envelope=${isErrorEnvelope(r)}` }
+    : { verdict: 'FAIL', detail: `${label} blocked with ${r.status} but the frozen {error,message} envelope is violated` }
+}
 
 // ---------- gates ---------------------------------------------------------------
 const main = async () => {

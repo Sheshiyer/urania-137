@@ -1,0 +1,39 @@
+# T-066 cutover evidence — 2026-07-23T17:04:48Z
+# Unauthenticated requests to the production hostname must be challenged
+# at the Access edge (302 -> red-queen-4dfa.cloudflareaccess.com).
+# Query-string values (kid/meta/redirect_url) redacted; they carry no
+# session credential but are per-request signed blobs.
+
+## curl -sI https://urania-137.pages.dev/
+HTTP/2 302 
+date: Thu, 23 Jul 2026 17:04:48 GMT
+content-type: text/html; charset=UTF-8
+location: https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=<redacted>&meta=<redacted>&redirect_url=<redacted>
+set-cookie: CF_AppSession=5f96918c8e570396; Expires=Fri, 24 Jul 2026 17:04:48 GMT; Path=/; Secure; HttpOnly
+www-authenticate: Cloudflare-Access resource_metadata="https://urania-137.pages.dev/.well-known/cloudflare-access-protected-resource/"
+access-control-allow-credentials: true
+expires: Thu, 01 Jan 1970 00:00:01 GMT
+cache-control: private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=cNE04mMdjojfqAftzn4mEOt3976dwUbFLn001WRTl6YRrGz%2FgMRPPhbFOcOvQGMk5Kh6oju7iHovyZWjIjSm%2B1ziCIgfqee9xtyyQOlMLBUowaZJCjJd%2BK0KgVqUQEAyMun7MUlmSA%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-ray: a1fc4431295217b4-MAA
+alt-svc: h3=":443"; ma=86400
+
+
+## curl -sI https://urania-137.pages.dev/api/me
+HTTP/2 302 
+date: Thu, 23 Jul 2026 17:04:48 GMT
+content-type: text/html; charset=UTF-8
+location: https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania-137.pages.dev?kid=<redacted>&meta=<redacted>&redirect_url=<redacted>
+expires: Thu, 01 Jan 1970 00:00:01 GMT
+www-authenticate: Cloudflare-Access resource_metadata="https://urania-137.pages.dev/.well-known/cloudflare-access-protected-resource/api/me"
+set-cookie: CF_AppSession=90d11b38ea086484; Expires=Fri, 24 Jul 2026 17:04:48 GMT; Path=/; Secure; HttpOnly
+cache-control: private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+access-control-allow-credentials: true
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=qrn8zRf%2F8qpR6GMz%2Fj4r4voNZXfBIMz4e%2FLXiuf7Q0wL5CGy%2FKaC1By6D7XCWyFGEArWHpHuyX1w5nXRy4D5YRs2Wc7asJSzC0HyAamXfjZeFonrG9xKvHwYubcmugKPOj%2FvagsSGA%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-ray: a1fc4431c90c802c-MAA
+alt-svc: h3=":443"; ma=86400
+

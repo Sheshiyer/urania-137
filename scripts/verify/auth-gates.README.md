@@ -39,24 +39,38 @@ is a **FAIL** (invalid/expired token), not a skip.
 
 ## Acquiring a CF Access session (post-T-081)
 
+> **T-081 resolved 2026-07-23 by reuse:** no new Access app.
+> `urania-137.pages.dev` was added to an existing app in team
+> `red-queen-4dfa` (9d9d account). The AUD is `df8a00b1…b6b4`, captured live
+> from the edge challenge on this hostname — NOT the immersive API's
+> `11a62a84…` (a different app in the same team). `CF_ACCESS_AUD` /
+> `CF_ACCESS_TEAM_DOMAIN` ship in `wrangler.toml [vars]` (T-067).
+
 The harness accepts three session forms:
 
-1. **Captured browser cookie (OTP login)** — the realistic path once the
-   Access app exists:
-   - Log in through the CF Access email-OTP challenge in a browser.
+1. **Captured browser cookie (OTP login)** — the realistic path:
+   - Log in through the CF Access email-OTP challenge at
+     `https://urania-137.pages.dev` (redirects to
+     `red-queen-4dfa.cloudflareaccess.com`).
    - DevTools → Application → Cookies → copy the `CF_Authorization` value.
    - `--session-a 'cookie:<value>'`
    - Repeat in a second browser profile / second email for session B (V3
-     needs two genuinely separate identities).
+     needs two genuinely separate identities). That second email must also be
+     allowed by the SELEMENE app's Access policy — add it in the dashboard
+     first if the policy is email-listed.
 2. **Raw Access JWT** — e.g. from `cloudflared access token
-   -app=https://urania-137.pages.dev`, or copied from the
-   `Cf-Access-Jwt-Assertion` header of an authenticated request:
+   -app=https://urania-137.pages.dev` (opens the same OTP login, prints the
+   JWT), or copied from the `Cf-Access-Jwt-Assertion` header of an
+   authenticated request:
    - `--session-a '<jwt>'` (or `--session-a 'jwt:<jwt>'`)
 3. **Service token** (non-interactive, for CI): create a service token in the
-   Zero Trust dashboard (Access → Service auth) and pass
+   Zero Trust dashboard (Access → Service auth, team red-queen-4dfa) and pass
    `--session-a 'service:<CF-Access-Client-Id>:<CF-Access-Client-Secret>'`.
    The Access edge exchanges it and injects the JWT assertion upstream, so
-   this only works once T-081 enforces Access in front of the hostname.
+   this only works once the SELEMENE app covers the hostname — and the
+   service token must be permitted by the app's policy. Note: a service-token
+   identity satisfies V1/V2 but is not a substitute for the two real OTP
+   identities V3 wants.
 
 ## Local dry-run (harness self-validation)
 
