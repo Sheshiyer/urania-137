@@ -79,6 +79,18 @@ export function clearJwksCache(): void {
   jwksCache.clear()
 }
 
+/**
+ * Test aid (T-075): number of cached JWKS entries. The cache is keyed by team
+ * domain — a value that comes ONLY from the CF_ACCESS_TEAM_DOMAIN binding,
+ * never from the request — so the size is bounded by configuration (one entry
+ * in any real deployment), and each entry's key map is REPLACED wholesale on
+ * every fetch (never accumulated). This export lets the hardening suite prove
+ * that boundedness directly. Production never calls this.
+ */
+export function jwksCacheSize(): number {
+  return jwksCache.size
+}
+
 export function jwksUrl(teamDomain: string): string {
   return `https://${teamDomain}/cdn-cgi/access/certs`
 }
