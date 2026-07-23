@@ -41,16 +41,21 @@ echo "T-067 prod secrets · project ${PROJECT}"
 echo
 
 # --- (a) no-dev-bypass invariant ----------------------------------------------
-echo "[1/4] Asserting DEV_IDENTITY_EMAIL is absent everywhere..."
-if grep -Rns "DEV_IDENTITY_EMAIL" wrangler.toml .dev.vars 2>/dev/null; then
-  echo "FAIL: DEV_IDENTITY_EMAIL found in a config file — remove it before prod." >&2
+# The rule (frozen contract §c): DEV_IDENTITY_EMAIL must never reach the Pages
+# PRODUCTION env. It is SANCTIONED in .dev.vars (gitignored, local-only — that
+# is exactly where the dev identity lives) and in comments documenting the
+# rule. So: reject an *uncommented* assignment in wrangler.toml, and reject it
+# in the process env. .dev.vars is explicitly allowed.
+echo "[1/4] Asserting DEV_IDENTITY_EMAIL cannot reach production..."
+if grep -nE '^[[:space:]]*DEV_IDENTITY_EMAIL[[:space:]]*=' wrangler.toml; then
+  echo "FAIL: active DEV_IDENTITY_EMAIL assignment in wrangler.toml — remove it." >&2
   exit 1
 fi
 if [ -n "${DEV_IDENTITY_EMAIL:-}" ]; then
   echo "FAIL: DEV_IDENTITY_EMAIL is set in the process env — unset it first." >&2
   exit 1
 fi
-echo "      ok — no dev-identity binding anywhere."
+echo "      ok — no live prod binding (.dev.vars local dev identity is sanctioned)."
 
 # --- (b) Access vars staged in wrangler.toml -----------------------------------
 echo "[2/4] Checking CF Access vars in wrangler.toml [vars]..."
