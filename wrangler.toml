@@ -29,6 +29,10 @@ pages_build_output_dir = "dist"
 # DEV_IDENTITY_EMAIL must never appear in this file or in Pages production env.
 [vars]
 SELEMENE_API_URL = "https://selemene.tryambakam.space"
+# Live narrator LLM endpoint (chat onboarding) — the selemene-llm-proxy worker
+# (command-code primary → NVIDIA NIM backup → openrouter → openai). Non-secret;
+# the shared-secret gate is CHAT_PROXY_TOKEN (Pages secret, never here).
+NARRATOR_LLM_URL = "https://selemene-llm-proxy.sheshnarayan-iyer.workers.dev"
 CF_ACCESS_AUD = "df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4"
 CF_ACCESS_TEAM_DOMAIN = "red-queen-4dfa.cloudflareaccess.com"
 

@@ -107,6 +107,33 @@ enforces the same secret (401 on mismatch) only when it has
 `CHAT_PROXY_TOKEN` configured. When either side is unconfigured the behavior
 is exactly the pre-W2 behavior (inert by default).
 
+### LLM path (live since 2026-07-24)
+
+The narrator's upstream base is `NARRATOR_LLM_URL` (wrangler.toml `[vars]`,
+non-secret), pointing at the **selemene-llm-proxy** Worker
+(`Selemene-engine/workers/llm-proxy`). When unset, the seam falls back to
+`SELEMENE_API_URL` (legacy engine path); when neither is configured the
+narrator speaks the deterministic `key :: template` prompts. The request
+omits `model` — the proxy applies per-provider defaults:
+
+| order | provider | endpoint | default model |
+|---|---|---|---|
+| 1 | command-code | `api.commandcode.ai/provider/v1/chat/completions` | `deepseek/deepseek-v4-pro` |
+| 2 | nvidia | `integrate.api.nvidia.com/v1/chat/completions` | `nvidia/llama-3.3-nemotron-super-49b-v1.5` |
+| 3 | openrouter | `openrouter.ai/api/v1/chat/completions` | `anthropic/claude-sonnet-4` |
+| 4 | openai | `api.openai.com/v1/chat/completions` | `gpt-4o-mini` |
+
+Command Code is called through its official **Provider API** (OpenAI-compatible
+shape) — never the CLI-only `/alpha/generate` route, whose TOS forbids
+non-CLI use. The owner's preferred narrator model `claude-sonnet-5` exists in
+the Provider catalog but (a) requires the Anthropic Messages shape
+(`/provider/v1/messages`) and (b) returned `PREMIUM_CREDITS_EXHAUSTED` on
+2026-07-24 — hence the verified-working open model as the default. Provider
+API keys live in the proxy's `LLM_SECRETS` KV; the shared-secret gate is
+`CHAT_PROXY_TOKEN` (worker secret + Pages secret). If every provider fails,
+the turn degrades to the deterministic fallback — a turn never 500s over the
+LLM.
+
 ## Chapters
 
 The session's `chapter` cursor (`ChatSessionState.chapter`) is owned by the

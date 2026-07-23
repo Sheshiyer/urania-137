@@ -5,9 +5,10 @@
  * Flow per turn (HITL resume — no long-lived process):
  *   load state (route, ownership-guarded) → applyUserInput (state machine is
  *   the SOLE intake writer — schema-validated slots, never parsed prose) →
- *   persist user turn → narratorReply seam (LLM path via SELEMENE_API_URL /
- *   SELEMENE_API_KEY when configured, deterministic currentQuestion()
- *   templates otherwise — a turn NEVER 500s because the LLM is down) →
+ *   persist user turn → narratorReply seam (LLM path via NARRATOR_LLM_URL —
+ *   the selemene-llm-proxy worker — falling back to SELEMENE_API_URL when
+ *   unset, deterministic currentQuestion() templates when neither is
+ *   configured — a turn NEVER 500s because the LLM is down) →
  *   emit reply_start → block frames → intake_recorded? → chapter_advanced? →
  *   persist narrator turn + new state → reply_end (exactly one ChatMsg).
  *
@@ -122,11 +123,15 @@ interface LlmToolCall {
  * is honored only when its field matches the slot the state machine just
  * validated, and the emitted value always comes from the validated state,
  * never from model output.
+ *
+ * Upstream base: `NARRATOR_LLM_URL` (the selemene-llm-proxy worker —
+ * command-code primary, NVIDIA NIM backup) when set, else the legacy
+ * `SELEMENE_API_URL` engine path; unset ⇒ deterministic templates. No
+ * `model` is sent — the proxy applies its per-provider defaults.
  */
 async function tryLlmNarrator(ctx: NarratorContext, env: Env): Promise<NarratorReply | null> {
-  const base = (env.SELEMENE_API_URL ?? '').replace(/\/+$/, '')
-  const key = env.SELEMENE_API_KEY ?? ''
-  if (!base || !key) return null
+  const base = (env.NARRATOR_LLM_URL ?? env.SELEMENE_API_URL ?? '').replace(/\/+$/, '')
+  if (!base) return null
 
   try {
     const userPrompt = [
@@ -144,7 +149,9 @@ async function tryLlmNarrator(ctx: NarratorContext, env: Env): Promise<NarratorR
     const timer = setTimeout(() => controller.abort(), NARRATOR_TIMEOUT_MS)
     let res: Response
     try {
-      const headers: Record<string, string> = { 'content-type': 'application/json', 'x-api-key': key }
+      const headers: Record<string, string> = { 'content-type': 'application/json' }
+      // Legacy engine credential (only sent when configured).
+      if (env.SELEMENE_API_KEY) headers['x-api-key'] = env.SELEMENE_API_KEY
       // W2: shared-secret gate on the upstream llm-proxy chat endpoint.
       // Inert by default — the header is sent only when CHAT_PROXY_TOKEN is
       // configured here (and the proxy enforces it only when it has the same
@@ -154,7 +161,8 @@ async function tryLlmNarrator(ctx: NarratorContext, env: Env): Promise<NarratorR
         method: 'POST',
         headers,
         body: JSON.stringify({
-          model: 'narrator',
+          // No `model`: the proxy applies its per-provider default
+          // (command-code: deepseek/deepseek-v4-pro; nvidia: nemotron-super-49b).
           messages: [
             { role: 'system', content: buildNarratorSystemPrompt(ctx.state) },
             { role: 'user', content: userPrompt },

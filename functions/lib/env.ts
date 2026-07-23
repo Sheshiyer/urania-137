@@ -20,4 +20,12 @@ export interface Env {
    * CHAT_PROXY_TOKEN secret when that side enforces auth.
    */
   CHAT_PROXY_TOKEN?: string
+  /**
+   * Live narrator LLM endpoint (the selemene-llm-proxy worker, OpenAI-compatible
+   * `/v1/chat/completions`). When set, the narrator speaks through the proxy
+   * (command-code primary, NVIDIA NIM backup); when unset the narrator falls
+   * back to `SELEMENE_API_URL` (legacy engine path) and then to deterministic
+   * templates. Non-secret — committed in wrangler.toml [vars].
+   */
+  NARRATOR_LLM_URL?: string
 }
