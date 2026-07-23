@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react'
-import type { ApiError, MeResponse } from '../lib/api/contract'
+import type { MeResponse } from '../lib/api/contract'
+import { loadMe, redirectToAccessLogin } from '../lib/me'
 
 /**
- * Signed-in identity for the SPA (T-024).
+ * Signed-in identity for the SPA (T-024), hardened for live CF Access (T-076).
  *
  * CF Access owns the session cookie, so no token is stored client-side — the
- * hook simply GETs /api/me on mount (same-origin, cookie sent by default) and
- * exposes { me, loading, error }, typed against the frozen Phase-0 shared API
- * contract. A 401 surfaces an unauthenticated state (me: null, error set)
- * rather than throwing; any other failure surfaces an error string.
+ * hook GETs /api/me on mount (same-origin, cookie sent by default). The
+ * classification lives in src/lib/me.ts: a real identity renders; a
+ * server-side failure surfaces an error string; and every unauthenticated
+ * manifestation — Worker 401, edge 302 followed/opaque, HTML login page, or
+ * the TypeError a CORS-blocked redirect raises — drives a full navigation to
+ * the origin so the Access edge re-challenges with the OTP login. There is no
+ * infinite spinner and no stale identity: on reauth the browser leaves the SPA
+ * before any signed-out state can paint.
  */
 export interface UseMe {
   me: MeResponse | null
@@ -21,31 +26,24 @@ export function useMe(): UseMe {
 
   useEffect(() => {
     let live = true
-    fetch('/api/me', { headers: { accept: 'application/json' } })
-      .then(async (res) => {
+    loadMe()
+      .then((outcome) => {
         if (!live) return
-        if (res.status === 401) {
-          // Unauthenticated — a state, not an exception.
-          setState({ me: null, loading: false, error: 'unauthenticated' })
+        if (outcome.kind === 'reauth') {
+          // Navigate away immediately; do not settle into a signed-out state.
+          redirectToAccessLogin()
           return
         }
-        if (!res.ok) {
-          let message = `GET /api/me failed (${res.status})`
-          try {
-            const body = (await res.json()) as ApiError
-            if (body.message) message = body.message
-          } catch {
-            /* non-JSON error body */
-          }
-          setState({ me: null, loading: false, error: message })
+        if (outcome.kind === 'error') {
+          setState({ me: null, loading: false, error: outcome.message })
           return
         }
-        const me = (await res.json()) as MeResponse
-        setState({ me, loading: false, error: null })
+        setState({ me: outcome.me, loading: false, error: null })
       })
       .catch(() => {
-        if (!live) return
-        setState({ me: null, loading: false, error: 'network error reaching /api/me' })
+        // loadMe never throws by contract; belt-and-braces — treat the unknown
+        // as unauthenticated rather than spinning forever.
+        if (live) redirectToAccessLogin()
       })
     return () => {
       live = false

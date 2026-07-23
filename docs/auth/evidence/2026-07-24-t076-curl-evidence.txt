@@ -1,0 +1,28 @@
+T-076 — live curl evidence, 2026-07-24, https://urania.tryambakam.space
+Session: /tmp/urania-session-a.jwt (CF_Authorization cookie, never printed/committed)
+
+== GET /api/me WITH session ==
+HTTP 200
+{"id":"c04424f4-d73a-5d60-a3ef-da0ac5705ae4","email":"sheshnarayan.iyer@gmail.com"}
+
+== GET /api/me WITHOUT session (redirect NOT followed) ==
+HTTP 302
+location: https://red-queen-4dfa.cloudflareaccess.com/cdn-cgi/access/login/urania.tryambakam.space?kid=df8a00b1…&meta=<CF-signed login ticket, truncated>&redirect_url=%2Fapi%2Fme
+→ This is the edge 302 class useMe now classifies as `reauth`: on a browser
+  fetch it surfaces as opaqueredirect (redirect: manual) or a TypeError when
+  the cross-origin redirect target fails CORS.
+
+== GET /api/logout WITH session (redirect NOT followed — session preserved) ==
+HTTP 302
+location: https://urania.tryambakam.space/cdn-cgi/access/logout
+→ Confirms the IdentityChip anchor target: a full navigation here lets the
+  browser follow into CF Access session teardown. Never followed during T-076.
+
+== GET /api/folio WITH session ==
+HTTP 200
+{"readings":[]}
+→ This account's Folio is empty: the live loaded state is the empty state
+  (screenshot t076-3-folio-loaded.png).
+
+== Post-evidence session re-check ==
+GET /api/me WITH session → HTTP 200 (session survived; logout never followed)
