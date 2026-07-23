@@ -1,0 +1,344 @@
+{
+  "base": "https://urania.tryambakam.space",
+  "at": "2026-07-23T18:12:09.511Z",
+  "results": [
+    {
+      "gate": "V1",
+      "name": "me 401",
+      "verdict": "PASS",
+      "detail": "/api/me blocked (401, {error,message} envelope, no data keys)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie\"}"
+        }
+      ]
+    },
+    {
+      "gate": "V1",
+      "name": "folio GET 401",
+      "verdict": "PASS",
+      "detail": "/api/folio blocked (401, {error,message} envelope, no data keys)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/folio",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie\"}"
+        }
+      ]
+    },
+    {
+      "gate": "V1",
+      "name": "folio POST 401",
+      "verdict": "PASS",
+      "detail": "POST /api/folio (auth precedes body validation) blocked (401, {error,message} envelope, no data keys)",
+      "evidence": [
+        {
+          "method": "POST",
+          "path": "/api/folio",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie\"}"
+        }
+      ]
+    },
+    {
+      "gate": "V1",
+      "name": "folio PATCH 401",
+      "verdict": "PASS",
+      "detail": "PATCH /api/folio/:id blocked (401, {error,message} envelope, no data keys)",
+      "evidence": [
+        {
+          "method": "PATCH",
+          "path": "/api/folio/auth-gates-probe",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie\"}"
+        }
+      ]
+    },
+    {
+      "gate": "V1",
+      "name": "folio DELETE 401",
+      "verdict": "PASS",
+      "detail": "DELETE /api/folio/:id blocked (401, {error,message} envelope, no data keys)",
+      "evidence": [
+        {
+          "method": "DELETE",
+          "path": "/api/folio/auth-gates-probe",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie\"}"
+        }
+      ]
+    },
+    {
+      "gate": "V1",
+      "name": "folio import 401",
+      "verdict": "PASS",
+      "detail": "POST /api/folio/import blocked (401, {error,message} envelope, no data keys)",
+      "evidence": [
+        {
+          "method": "POST",
+          "path": "/api/folio/import",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie\"}"
+        }
+      ]
+    },
+    {
+      "gate": "V1",
+      "name": "selemene 401",
+      "verdict": "PASS",
+      "detail": "/api/selemene/* blocked (401, {error,message} envelope, no data keys)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/selemene/api/v1/workflows",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie\"}"
+        }
+      ]
+    },
+    {
+      "gate": "V1",
+      "name": "unknown-route 401",
+      "verdict": "PASS",
+      "detail": "unknown /api/* route (auth precedes routing; 404 is behind-auth only) blocked (401, {error,message} envelope, no data keys)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/definitely-not-a-route",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie\"}"
+        }
+      ]
+    },
+    {
+      "gate": "SPA",
+      "name": "shell serves",
+      "verdict": "PASS",
+      "detail": "GET / → 200 text/html (Pages static asset; the Worker gate covers /api/* only)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/",
+          "status": 200,
+          "location": "",
+          "contentType": "text/html; charset=utf-8",
+          "json": null,
+          "snippet": "<!doctype html> <html lang=\"en\"> <head> <meta charset=\"UTF-8\" /> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" /> <title>U"
+        }
+      ]
+    },
+    {
+      "gate": "bypass",
+      "name": "header DEV_IDENTITY_EMAIL",
+      "verdict": "PASS",
+      "detail": "header DEV_IDENTITY_EMAIL coerces no identity (401)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie\"}"
+        }
+      ]
+    },
+    {
+      "gate": "bypass",
+      "name": "header X-Dev-Identity-Email",
+      "verdict": "PASS",
+      "detail": "header X-Dev-Identity-Email coerces no identity (401)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie\"}"
+        }
+      ]
+    },
+    {
+      "gate": "bypass",
+      "name": "header X-Dev-Identity",
+      "verdict": "PASS",
+      "detail": "header X-Dev-Identity coerces no identity (401)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie\"}"
+        }
+      ]
+    },
+    {
+      "gate": "bypass",
+      "name": "query param",
+      "verdict": "PASS",
+      "detail": "query param coerces no identity (401)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me?dev_identity_email=bypass@example.com&email=bypass@example.com",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie\"}"
+        }
+      ]
+    },
+    {
+      "gate": "bypass",
+      "name": "cookie",
+      "verdict": "PASS",
+      "detail": "cookie coerces no identity (401)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"missing Cf-Access-Jwt-Assertion header or CF_Authorization cookie\"}"
+        }
+      ]
+    },
+    {
+      "gate": "bypass",
+      "name": "alg=none forged JWT",
+      "verdict": "PASS",
+      "detail": "alg=none forged JWT coerces no identity (401)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "access token rejected (unsigned)"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"access token rejected (unsigned)\"}"
+        }
+      ]
+    },
+    {
+      "gate": "bypass",
+      "name": "garbage token",
+      "verdict": "PASS",
+      "detail": "garbage token coerces no identity (401)",
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/me",
+          "status": 401,
+          "location": "",
+          "contentType": "application/json",
+          "json": {
+            "error": "UNAUTHORIZED",
+            "message": "access token rejected (malformed)"
+          },
+          "snippet": "{\"error\":\"UNAUTHORIZED\",\"message\":\"access token rejected (malformed)\"}"
+        }
+      ]
+    },
+    {
+      "gate": "V2",
+      "name": "identity-mapped",
+      "verdict": "SKIP",
+      "detail": "requires CF Access session A — blocked on T-081 (no real OTP identity yet)",
+      "evidence": []
+    },
+    {
+      "gate": "V3",
+      "name": "per-user isolation",
+      "verdict": "SKIP",
+      "detail": "requires CF Access session A+B — blocked on T-081 (no real OTP identity yet)",
+      "evidence": []
+    },
+    {
+      "gate": "V4",
+      "name": "durable read (fresh client)",
+      "verdict": "SKIP",
+      "detail": "requires CF Access session A — blocked on T-081 (no real OTP identity yet)",
+      "evidence": []
+    }
+  ]
+}
