@@ -9,8 +9,8 @@
  *   2. Bumps the semver in package.json (default patch; explicit X.Y.Z validated).
  *   3. Generates release notes from `git log <last-tag>..HEAD --oneline`,
  *      grouped by conventional-commit prefix (feat/fix/docs/chore/test/other).
- *   4. Commits ONLY package.json (chore(release): vX.Y.Z), creates annotated
- *      tag vX.Y.Z, pushes the current branch and the tag.
+ *   4. Commits package.json + package-lock.json (chore(release): vX.Y.Z),
+ *      creates annotated tag vX.Y.Z, pushes the current branch and the tag.
  *   5. Creates the GitHub release with the notes.
  *   6. --deploy: runs the production deploy and appends the deployment URL to
  *      the release notes via `gh release edit`.
@@ -19,7 +19,7 @@
  * is executed directly.
  */
 import { execSync, spawnSync } from 'node:child_process'
-import { readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { createInterface } from 'node:readline/promises'
 import { pathToFileURL } from 'node:url'
 
@@ -62,7 +62,9 @@ export function groupCommits(oneline) {
     const hash = space === -1 ? trimmed : trimmed.slice(0, space)
     const subject = space === -1 ? '' : trimmed.slice(space + 1)
     const m = subject.match(CONVENTIONAL_RE)
-    const kind = m && groups[m[1]] ? m[1] : 'other'
+    // Object.hasOwn — NOT truthiness: a subject like "constructor: …" would
+    // otherwise resolve groups.constructor (a function) and crash on .push.
+    const kind = m && Object.hasOwn(groups, m[1]) ? m[1] : 'other'
     const clean = m ? subject.slice(m[0].length) : subject
     groups[kind].push({ hash, subject: clean || subject })
   }
@@ -93,6 +95,21 @@ export function buildReleaseNotes(version, groups, { deployedUrl = null } = {}) 
   if (!any) lines.push('_No commits since the previous tag._', '')
   if (deployedUrl) lines.push(`**Deployed:** ${deployedUrl}`, '')
   return lines.join('\n').trimEnd() + '\n'
+}
+
+/**
+ * Sync the version fields of a parsed package-lock.json to `next` (the root
+ * "version" plus packages[""].version). Returns the same object for chaining;
+ * callers write it back. Keeps the lockfile from drifting when only
+ * package.json is bumped.
+ */
+export function syncLockfileVersion(lock, next) {
+  if (lock && typeof lock === 'object') {
+    if (typeof lock.version === 'string') lock.version = next
+    const root = lock.packages?.['']
+    if (root && typeof root.version === 'string') root.version = next
+  }
+  return lock
 }
 
 // ---------------------------------------------------------------------------
@@ -175,7 +192,7 @@ async function main() {
   console.log(`  notes from      : ${lastTag ? `${lastTag}..HEAD` : `full history (capped at ${FULL_HISTORY_CAP})`}`)
   console.log(`\n--- release notes ---\n${notes}----------------------`)
   console.log(`\n  commands:`)
-  console.log(`    git add package.json && git commit -m "chore(release): ${tag}"`)
+  console.log(`    git add package.json package-lock.json && git commit -m "chore(release): ${tag}"`)
   console.log(`    git tag -a ${tag} -m "Urania 137 ${tag}"`)
   console.log(`    git push origin ${branch} && git push origin ${tag}`)
   console.log(`    gh release create ${tag} --title "${tag}" --notes-file -`)
@@ -196,7 +213,14 @@ async function main() {
   // --- execute --------------------------------------------------------------
   pkg.version = next
   writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
-  runInherited(['git', 'add', 'package.json'])
+  const staged = ['package.json']
+  const lockPath = new URL('../package-lock.json', import.meta.url)
+  if (existsSync(lockPath)) {
+    const lock = syncLockfileVersion(JSON.parse(readFileSync(lockPath, 'utf8')), next)
+    writeFileSync(lockPath, JSON.stringify(lock, null, 2) + '\n')
+    staged.push('package-lock.json')
+  }
+  runInherited(['git', 'add', ...staged])
   runInherited(['git', 'commit', '-m', `chore(release): ${tag}`])
   runInherited(['git', 'tag', '-a', tag, '-m', `Urania 137 ${tag}`])
   runInherited(['git', 'push', 'origin', branch])

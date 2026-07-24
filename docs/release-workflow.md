@@ -35,9 +35,10 @@ node scripts/release.mjs minor --deploy     # confirm, release, deploy
    capped at 50 lines), grouped by conventional-commit prefix
    (feat / fix / docs / chore / test / other). Always includes the production
    URL <https://urania.tryambakam.space>.
-4. **Release** — commits ONLY `package.json` as `chore(release): vX.Y.Z`,
-   creates the annotated tag `vX.Y.Z`, pushes the current branch and the tag,
-   and creates the GitHub release with the notes
+4. **Release** — commits `package.json` **and** `package-lock.json` (both
+   version fields are synced, so the lockfile never drifts) as
+   `chore(release): vX.Y.Z`, creates the annotated tag `vX.Y.Z`, pushes the
+   current branch and the tag, and creates the GitHub release with the notes
    (`gh release create vX.Y.Z --title "vX.Y.Z" --notes-file -`).
 5. **Summary** — prints version, tag, release URL, and the deploy URL when
    `--deploy` was used.

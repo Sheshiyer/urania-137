@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { buildReleaseNotes, computeNextVersion, groupCommits, PROD_URL } from '../../../scripts/release.mjs'
+import {
+  buildReleaseNotes,
+  computeNextVersion,
+  groupCommits,
+  PROD_URL,
+  syncLockfileVersion,
+} from '../../../scripts/release.mjs'
 
 /**
  * Release workflow — the pure helpers behind scripts/release.mjs. The script
@@ -57,6 +63,29 @@ describe('groupCommits', () => {
   it('handles empty input', () => {
     const g = groupCommits('')
     expect(Object.values(g).every((arr) => arr.length === 0)).toBe(true)
+  })
+
+  it('never lets a prefix collide with Object.prototype members', () => {
+    // "constructor:" used to crash: groups.constructor is a function, so the
+    // truthiness check passed and .push exploded. Must fall into 'other'.
+    const g = groupCommits('aaa1111 constructor: sneaky subject\nbbb2222 toString: another one')
+    expect(g.other).toHaveLength(2)
+    expect(g.other[0].subject).toBe('sneaky subject')
+  })
+})
+
+describe('syncLockfileVersion', () => {
+  it('syncs both the root version and packages[""].version', () => {
+    const lock = { version: '0.2.0', packages: { '': { version: '0.2.0' }, 'node_modules/x': { version: '1.0.0' } } }
+    syncLockfileVersion(lock, '0.3.0')
+    expect(lock.version).toBe('0.3.0')
+    expect(lock.packages[''].version).toBe('0.3.0')
+    expect(lock.packages['node_modules/x'].version).toBe('1.0.0') // untouched
+  })
+
+  it('tolerates missing fields and non-objects', () => {
+    expect(syncLockfileVersion({}, '1.0.0')).toEqual({})
+    expect(syncLockfileVersion(null, '1.0.0')).toBeNull()
   })
 })
 

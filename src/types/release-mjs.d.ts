@@ -27,4 +27,5 @@ declare module '*/scripts/release.mjs' {
     groups: CommitGroups,
     opts?: { deployedUrl?: string | null },
   ): string
+  export function syncLockfileVersion<T>(lock: T, next: string): T
 }
