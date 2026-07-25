@@ -417,3 +417,157 @@ describe('handoff close-out + purity', () => {
     expect(state).toEqual(snapshot)
   })
 })
+
+// ---------------------------------------------------------------------------
+// Threshold W0-A — threshold seed + profile prefill
+// ---------------------------------------------------------------------------
+
+const THRESHOLD: StorySeed = { kind: 'threshold' }
+
+/** A complete stored profile, mapped server-side into an intake slot. */
+const SELF: SubjectInput = {
+  role: 'primary',
+  name: 'Asha',
+  birth_date: '1990-12-31',
+  birth_time: '07:30',
+  birth_time_confidence: 'exact',
+  birth_location_query: 'Bengaluru, India',
+  normalized_location: {
+    display_name: 'Bengaluru, India',
+    latitude: 12.9716,
+    longitude: 77.5946,
+    timezone: 'Asia/Kolkata',
+    provider: 'test',
+    confidence: 'high',
+  },
+}
+
+describe('threshold flow (pre-graph profile onboarding)', () => {
+  it('walks awakening → subjects → assembly → handoff and yields the self profile', () => {
+    let state = initialSessionState(THRESHOLD, IDS)
+    expect(state.chapter).toBe('awakening')
+    expect(state.prefilledCount).toBe(0)
+
+    const opened = applyUserInput(state, 'begin')
+    expect(opened.event).toBe('chapter_advanced')
+    // No surface / language_level / mode chapters on the threshold walk.
+    expect(opened.state.chapter).toBe('subjects')
+
+    const filled = fillSubject(opened.state, SUBJECT_A)
+    // Exactly one subject (min = max = 1): straight to assembly.
+    expect(filled.state.chapter).toBe('assembly')
+    const recap = currentQuestion(filled.state).prompt
+    expect(recap).toContain('assembly.confirm')
+    expect(recap).toContain('threshold')
+    expect(recap).toContain('pattern')
+
+    const confirmed = applyUserInput(filled.state, 'yes')
+    expect(confirmed.event).toBe('ready')
+    expect(confirmed.state.chapter).toBe('handoff')
+
+    const payload = toSubmitPayload(confirmed.state)
+    expect('subject' in payload).toBe(true)
+    const subject = (payload as { subject: SubjectInput }).subject
+    expect(subject.name).toBe('Asha')
+    expect(subject.birth_date).toBe('1990-12-31')
+    expect(subject.normalized_location).toBeTruthy()
+
+    const closed = applyUserInput(confirmed.state, 'ok')
+    expect(closed.state.chapter).toBe('complete')
+  })
+
+  it('applies the Gardener rule for an unknown birth time', () => {
+    let state = applyUserInput(initialSessionState(THRESHOLD, IDS), 'begin').state
+    state = applyUserInput(state, SUBJECT_A.name).state
+    state = applyUserInput(state, SUBJECT_A.date).state
+    const unknown = applyUserInput(state, 'unknown')
+    expect(unknown.event).toBe('intake_recorded')
+    const s = (unknown.state.intake.subjects as SubjectInput[])[0]
+    expect(s.birth_time).toBe('12:00') // noon convention, never a warning
+    expect(s.birth_time_confidence).toBe('unknown')
+  })
+})
+
+describe('profile prefill (prefilledSubjects)', () => {
+  it('witness 1..5 with a stored self opens the subjects chapter at add_another', () => {
+    let state = initialSessionState(KUNDALI, IDS, [SELF])
+    expect(state.prefilledCount).toBe(1)
+    expect(state.subjectIndex).toBe(1)
+    expect((state.intake.subjects as SubjectInput[])[0].name).toBe('Asha')
+
+    state = walkOpening(state)
+    expect(state.chapter).toBe('subjects')
+    // Never re-asks the five facts — the gate is the first question.
+    const q = currentQuestion(state).prompt
+    expect(q).toContain('subjects.add_another')
+    expect(q).not.toContain('subjects.name')
+
+    const declined = applyUserInput(state, 'no')
+    expect(declined.event).toBe('chapter_advanced')
+    expect(declined.state.chapter).toBe('language_level')
+    expect(declined.state.intake.relationship_context).toBeNull()
+  })
+
+  it('witness 1..5 accepting add_another appends a fresh partner slot after the profile', () => {
+    let state = walkOpening(initialSessionState(KUNDALI, IDS, [SELF]))
+    const accepted = applyUserInput(state, 'yes')
+    expect(accepted.event).toBe('intake_recorded')
+    expect((accepted.state.intake.subjects as SubjectInput[])[1].role).toBe('partner')
+    expect(accepted.state.subjectIndex).toBe(1)
+    expect(currentQuestion(accepted.state).prompt).toContain('subjects.name')
+  })
+
+  it('witness 2..2 with a stored self still collects the required partner', () => {
+    let state = initialSessionState(DYAD, IDS, [SELF])
+    expect(state.prefilledCount).toBe(1)
+    // One fresh slot under the cursor — the partner is required, not optional.
+    expect(state.intake.subjects).toHaveLength(2)
+    expect(state.subjectIndex).toBe(1)
+
+    state = walkOpening(state)
+    expect(state.chapter).toBe('subjects')
+    expect(currentQuestion(state).prompt).toContain('subjects.name')
+
+    const filled = fillSubject(state, SUBJECT_B)
+    // count (2) >= max (2): loop closes, relationship chapter follows.
+    expect(filled.state.chapter).toBe('relationship')
+  })
+
+  it('witness 2..2 with two stored profiles skips the subjects chapter entirely', () => {
+    const partner: SubjectInput = { ...SELF, role: 'partner', name: 'Rohan' }
+    let state = initialSessionState(DYAD, IDS, [SELF, partner])
+    expect(state.prefilledCount).toBe(2)
+    state = walkOpening(state)
+    // Relationship context is per-reading, never profile data — still asked.
+    expect(state.chapter).toBe('relationship')
+  })
+
+  it('engine doorway with a stored self skips subjects and still produces birthData', () => {
+    let state = initialSessionState(NUMEROLOGY, IDS, [SELF])
+    expect(state.prefilledCount).toBe(1)
+    state = walkOpening(state)
+    // Sequence without subjects: awakening → surface → mode.
+    expect(state.chapter).toBe('mode')
+
+    const confirmed = applyUserInput(state, 'yes')
+    expect(confirmed.state.chapter).toBe('assembly')
+    const ready = applyUserInput(confirmed.state, 'yes')
+    expect(ready.event).toBe('ready')
+
+    const payload = toSubmitPayload(ready.state)
+    expect('birthData' in payload).toBe(true)
+    const birth = (payload as { birthData: { name: string; date: string; timezone: string } }).birthData
+    expect(birth.name).toBe('Asha')
+    expect(birth.date).toBe('1990-12-31')
+    expect(birth.timezone).toBe('Asia/Kolkata')
+  })
+
+  it('incomplete profile rows are dropped, not trusted', () => {
+    const partial = { role: 'primary', name: 'Asha' } as SubjectInput
+    const state = initialSessionState(KUNDALI, IDS, [partial])
+    expect(state.prefilledCount).toBe(0)
+    expect(state.subjectIndex).toBe(0)
+    // A fresh empty slot replaces the untrusted partial row.
+    expect((state.intake.subjects as SubjectInput[])[0].name).toBeUndefined()
+  })
+})

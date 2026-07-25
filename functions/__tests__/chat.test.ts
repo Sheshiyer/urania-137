@@ -65,10 +65,10 @@ function makeFakeChatD1() {
       return ok(1)
     }
     if (sql.startsWith('INSERT INTO chat_sessions')) {
-      const [session_id, user_id, seed, chapter, subject_index, intake, created_at, updated_at] = args as [
-        string, string, string, string, number, string, string, string,
+      const [session_id, user_id, seed, chapter, subject_index, prefilled_count, intake, created_at, updated_at] = args as [
+        string, string, string, string, number, number, string, string, string,
       ]
-      sessions.set(session_id, { session_id, user_id, seed, chapter, subject_index, intake, created_at, updated_at })
+      sessions.set(session_id, { session_id, user_id, seed, chapter, subject_index, prefilled_count, intake, created_at, updated_at })
       return ok(1)
     }
     if (sql.startsWith('UPDATE chat_sessions SET chapter')) {
@@ -694,5 +694,101 @@ describe('POST /api/chat/session/:id/complete (W4 advance-on-consume)', () => {
       session: ChatSessionState
     }
     expect(snap.session.chapter).toBe('handoff')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Threshold W0-A parity — threshold seed + profile prefill (mirrors the
+// canonical suite's Threshold W0-A describes)
+// ---------------------------------------------------------------------------
+
+const THRESHOLD_SEED = { kind: 'threshold' } as const
+
+const SELF_PROFILE = {
+  role: 'primary',
+  name: 'Asha',
+  birth_date: '1990-12-31',
+  birth_time: '07:30',
+  birth_time_confidence: 'exact',
+  birth_location_query: 'Bengaluru, India',
+  normalized_location: {
+    display_name: 'Bengaluru, India',
+    latitude: 12.9716,
+    longitude: 77.5946,
+    timezone: 'Asia/Kolkata',
+    provider: 'test',
+    confidence: 'high',
+  },
+} as import('../lib/chat/types').SubjectInput
+
+describe('threshold + prefill port parity (W0-A)', () => {
+  const IDS = { sessionId: 'sess-th', userId: 'user-th' }
+
+  it('isStorySeed accepts the threshold seed', () => {
+    expect(isStorySeed({ kind: 'threshold' })).toBe(true)
+  })
+
+  it('threshold walk yields the self profile at handoff', () => {
+    let state = initialSessionState(THRESHOLD_SEED, IDS)
+    expect(state.chapter).toBe('awakening')
+    const opened = applyUserInput(state, 'begin')
+    expect(opened.state.chapter).toBe('subjects') // no surface/mode chapters
+
+    const filled = fillSubject(opened.state, SUBJECT_A)
+    expect(filled.state.chapter).toBe('assembly')
+    expect(currentQuestion(filled.state).prompt).toContain('pattern')
+
+    const ready = applyUserInput(filled.state, 'yes')
+    expect(ready.event).toBe('ready')
+    const payload = toSubmitPayload(ready.state) as { subject: { name: string; birth_date: string } }
+    expect(payload.subject.name).toBe('Asha')
+    expect(payload.subject.birth_date).toBe('1990-12-31')
+  })
+
+  it('witness 1..5 with a stored self opens at add_another, never re-asks the five facts', () => {
+    let state = initialSessionState(KUNDALI, IDS, [SELF_PROFILE])
+    expect(state.prefilledCount).toBe(1)
+    expect(state.subjectIndex).toBe(1)
+    state = applyUserInput(state, 'begin').state
+    state = applyUserInput(state, 'yes').state
+    expect(state.chapter).toBe('subjects')
+    const q = currentQuestion(state).prompt
+    expect(q).toContain('subjects.add_another')
+    expect(q).not.toContain('subjects.name')
+
+    const declined = applyUserInput(state, 'no')
+    expect(declined.state.chapter).toBe('language_level')
+    expect(declined.state.intake.relationship_context).toBeNull()
+  })
+
+  it('witness 2..2 with a stored self still collects the required partner', () => {
+    let state = initialSessionState(DYAD, IDS, [SELF_PROFILE])
+    expect(state.intake.subjects).toHaveLength(2) // profile + fresh partner slot
+    expect(state.subjectIndex).toBe(1)
+    state = applyUserInput(state, 'begin').state
+    state = applyUserInput(state, 'yes').state
+    expect(currentQuestion(state).prompt).toContain('subjects.name')
+    const filled = fillSubject(state, SUBJECT_B)
+    expect(filled.state.chapter).toBe('relationship')
+  })
+
+  it('engine doorway with a stored self skips subjects and still produces birthData', () => {
+    let state = initialSessionState(NUMEROLOGY, IDS, [SELF_PROFILE])
+    state = applyUserInput(state, 'begin').state
+    state = applyUserInput(state, 'yes').state
+    expect(state.chapter).toBe('mode') // subjects skipped
+    state = applyUserInput(state, 'yes').state
+    const ready = applyUserInput(state, 'yes')
+    expect(ready.event).toBe('ready')
+    const payload = toSubmitPayload(ready.state) as { birthData: { name: string; timezone: string } }
+    expect(payload.birthData.name).toBe('Asha')
+    expect(payload.birthData.timezone).toBe('Asia/Kolkata')
+  })
+
+  it('incomplete profile rows are dropped, not trusted', () => {
+    const partial = { role: 'primary', name: 'Asha' } as import('../lib/chat/types').SubjectInput
+    const state = initialSessionState(KUNDALI, IDS, [partial])
+    expect(state.prefilledCount).toBe(0)
+    expect(state.subjectIndex).toBe(0)
   })
 })

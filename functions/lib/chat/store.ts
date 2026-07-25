@@ -15,13 +15,15 @@
 import type { D1Database } from '@cloudflare/workers-types'
 import type { ChatEvent, ChatMsg, ChatRole, ChatSessionState, StoryChapter } from './types'
 
-/** Row shape of `chat_sessions` (migration 0002). */
+/** Row shape of `chat_sessions` (migration 0002; `events` on turns by 0003; `prefilled_count` by 0005). */
 export interface ChatSessionRow {
   session_id: string
   user_id: string
   seed: string
   chapter: string
   subject_index: number
+  /** Profile-prefill count (migration 0005). Optional for pre-0005 rows/fakes. */
+  prefilled_count?: number
   intake: string
   created_at: string
   updated_at: string
@@ -50,6 +52,7 @@ export function sessionRowToState(row: ChatSessionRow): ChatSessionState {
     seed: JSON.parse(row.seed) as ChatSessionState['seed'],
     chapter: row.chapter as StoryChapter,
     subjectIndex: row.subject_index,
+    prefilledCount: row.prefilled_count ?? 0,
     intake: JSON.parse(row.intake) as ChatSessionState['intake'],
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -75,8 +78,8 @@ export function turnRowToMsg(row: ChatTurnRow): ChatMsg {
 export async function createChatSession(db: D1Database, state: ChatSessionState): Promise<ChatSessionState> {
   await db
     .prepare(
-      `INSERT INTO chat_sessions (session_id, user_id, seed, chapter, subject_index, intake, created_at, updated_at)
-       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)`,
+      `INSERT INTO chat_sessions (session_id, user_id, seed, chapter, subject_index, prefilled_count, intake, created_at, updated_at)
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)`,
     )
     .bind(
       state.sessionId,
@@ -84,6 +87,7 @@ export async function createChatSession(db: D1Database, state: ChatSessionState)
       JSON.stringify(state.seed),
       state.chapter,
       state.subjectIndex,
+      state.prefilledCount ?? 0,
       JSON.stringify(state.intake),
       state.createdAt,
       state.updatedAt,
@@ -107,9 +111,10 @@ export async function getChatSession(
 
 /**
  * Persist an updated state (chapter cursor, subject cursor, intake,
- * updated_at). Scoped by user_id like every other write; returns false when
- * the session does not exist FOR THIS USER (unknown and cross-user ids are
- * indistinguishable — no existence leak).
+ * updated_at). `prefilled_count` is intentionally NOT updated — it is set
+ * once at session creation and never changes. Scoped by user_id like every
+ * other write; returns false when the session does not exist FOR THIS USER
+ * (unknown and cross-user ids are indistinguishable — no existence leak).
  */
 export async function saveChatSession(db: D1Database, state: ChatSessionState): Promise<boolean> {
   const res = await db

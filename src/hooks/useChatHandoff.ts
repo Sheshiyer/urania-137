@@ -81,6 +81,11 @@ export async function routeHandoff(payload: SubmitPayload, sinks: HandoffSinks):
     sinks.witness(payload)
     return
   }
+  // threshold — { subject }; profile persistence is wired in Phase 1 (W1-B).
+  // Until then a threshold handoff reaching this sink is a programming error.
+  if ('subject' in payload) {
+    throw new Error('threshold handoff is not wired yet — profile persistence lands in Phase 1 (W1-B).')
+  }
   // daily — { locationQuery? }; resolve the place, then fire the reading.
   const location =
     typeof payload.locationQuery === 'string' && payload.locationQuery.trim()

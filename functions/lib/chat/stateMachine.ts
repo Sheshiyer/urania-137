@@ -45,8 +45,13 @@ export interface BirthData {
 // Public types
 // ---------------------------------------------------------------------------
 
-/** Seeds the machine can start from. `info` children carry no `ChildRun`. */
-export type StorySeed = ChildRun | { kind: 'info' }
+/**
+ * Seeds the machine can start from. `info` children carry no `ChildRun`.
+ * `threshold` (W0-A) is the pre-graph onboarding scene: it collects the caller's
+ * own subject profile once and hands off to profile persistence, never to the
+ * report engines.
+ */
+export type StorySeed = ChildRun | { kind: 'info' } | { kind: 'threshold' }
 
 /** Events the reducer can emit (mirrors the SSE `ChatEvent` vocabulary). */
 export type StoryEvent = 'intake_recorded' | 'invalid' | 'chapter_advanced' | 'ready'
@@ -76,6 +81,8 @@ export function isStorySeed(x: unknown): x is StorySeed {
   const o = x as Record<string, unknown>
   switch (o.kind) {
     case 'info':
+      return true
+    case 'threshold':
       return true
     case 'daily':
       return o.needsLocation === true
@@ -207,22 +214,32 @@ function seedKind(state: ChatSessionState): StorySeed['kind'] {
 
 function subjectBounds(seed: StorySeed): { min: number; max: number } {
   if (seed.kind === 'witness') return { min: seed.minSubjects, max: seed.maxSubjects }
-  if (seed.kind === 'workflow' || seed.kind === 'engine') return { min: 1, max: 1 }
+  if (seed.kind === 'workflow' || seed.kind === 'engine' || seed.kind === 'threshold') return { min: 1, max: 1 }
   return { min: 0, max: 0 }
 }
 
-/** Chapter walk per seed kind. `relationship` appears only with 2+ subjects. */
-function chapterSequence(seed: StorySeed, subjectCount: number): readonly StoryChapter[] {
+/**
+ * Chapter walk per seed kind. `relationship` appears only with 2+ subjects.
+ * When the leading `prefilledCount` subjects already satisfy the seed's max
+ * subject count (profile prefill, W0-A), the `subjects` chapter is skipped
+ * entirely; below max it stays and opens at the add_another gate.
+ */
+function chapterSequence(seed: StorySeed, subjectCount: number, prefilledCount = 0): readonly StoryChapter[] {
   switch (seed.kind) {
     case 'info':
       return ['awakening', 'complete']
+    case 'threshold':
+      return ['awakening', 'subjects', 'assembly', 'handoff', 'complete']
     case 'daily':
       return ['awakening', 'surface', 'mode', 'assembly', 'handoff', 'complete']
     case 'workflow':
     case 'engine':
-      return ['awakening', 'surface', 'subjects', 'mode', 'assembly', 'handoff', 'complete']
+      return prefilledCount >= 1
+        ? ['awakening', 'surface', 'mode', 'assembly', 'handoff', 'complete']
+        : ['awakening', 'surface', 'subjects', 'mode', 'assembly', 'handoff', 'complete']
     case 'witness': {
-      const seq: StoryChapter[] = ['awakening', 'surface', 'subjects']
+      const seq: StoryChapter[] = ['awakening', 'surface']
+      if (prefilledCount < seed.maxSubjects) seq.push('subjects')
       if (subjectCount >= 2) seq.push('relationship')
       seq.push('language_level', 'mode', 'assembly', 'handoff', 'complete')
       return seq
@@ -231,7 +248,7 @@ function chapterSequence(seed: StorySeed, subjectCount: number): readonly StoryC
 }
 
 function nextChapter(state: ChatSessionState): StoryChapter {
-  const seq = chapterSequence(state.seed as StorySeed, state.intake.subjects?.length ?? 0)
+  const seq = chapterSequence(state.seed as StorySeed, state.intake.subjects?.length ?? 0, state.prefilledCount ?? 0)
   const i = seq.indexOf(state.chapter)
   return seq[Math.min(Math.max(i, 0) + 1, seq.length - 1)]
 }
@@ -278,22 +295,42 @@ function advance(state: ChatSessionState, field?: string): StoryTurn {
 // initialSessionState
 // ---------------------------------------------------------------------------
 
-export function initialSessionState(seed: StorySeed, ids: { sessionId: string; userId: string }): ChatSessionState {
+export function initialSessionState(
+  seed: StorySeed,
+  ids: { sessionId: string; userId: string },
+  prefilled?: SubjectInput[],
+): ChatSessionState {
   const ts = now()
   const bounds = subjectBounds(seed)
-  // Pre-create the first subject slot (role `primary`) so the
-  // subjects loop always has a slot under the cursor.
-  const subjects = bounds.min > 0 ? ([{ role: 'primary' }] as SubjectInput[]) : []
+  // Profile prefill (W0-A): leading subjects arrive complete from the stored
+  // profile. Only structurally complete entries count — a partial profile row
+  // is dropped rather than trusted. The server maps profiles into intake
+  // slots (self → role `primary`); the machine never fetches them itself.
+  const complete = (prefilled ?? []).filter(
+    (s) => Boolean(s?.name && s.birth_date && s.birth_time && s.normalized_location),
+  )
+  // Prefill is capped at the seed's max subject count; info/daily (max 0)
+  // never carry subjects.
+  let subjects = bounds.max > 0 ? (complete.slice(0, bounds.max) as SubjectInput[]) : []
+  // Ensure exactly one fresh slot under the cursor when more subjects are
+  // still REQUIRED (further slots are appended on demand as each completes).
+  if (subjects.length < bounds.min) {
+    subjects = [...subjects, { role: subjects.length === 0 ? 'primary' : 'partner' } as SubjectInput]
+  }
+  const prefilledCount = Math.min(complete.length, subjects.length)
   const intake: Partial<AssetGenerateRequest> = { subjects }
   if (seed.kind === 'witness') intake.mode = seed.mode
   return {
     sessionId: ids.sessionId,
     userId: ids.userId,
-    // Info children have no ChildRun; the seed is stored for the awakening
-    // beat only and never drives capability derivation. Documented cast.
+    // Info/threshold children have no ChildRun; the seed is stored for the
+    // awakening beat and routing only. Documented cast.
     seed: seed as unknown as ChildRun,
     chapter: 'awakening',
-    subjectIndex: 0,
+    // Cursor sits on the first incomplete slot — past every prefilled subject
+    // (prefilledCount ≤ subjects.length by construction).
+    subjectIndex: prefilledCount,
+    prefilledCount,
     intake,
     createdAt: ts,
     updatedAt: ts,
@@ -310,6 +347,11 @@ function subjectsQuestion(state: ChatSessionState): string {
   const idx = state.subjectIndex
   const s = subjects[idx]
   const n = idx + 1
+  if (!s) {
+    // No slot under the cursor — every present subject is complete (profile
+    // prefill, W0-A). Between min and max this is the add_another gate.
+    return `subjects.add_another :: ${subjects.length}/${bounds.max} subjects witnessed — add another? (yes/no)`
+  }
   if (!s?.name) return `subjects.name :: Subject ${n} — what name should the mirror hold?`
   if (!s.birth_date) return `subjects.birth_date :: ${s.name} — birth date (YYYY-MM-DD)?`
   if (!s.birth_time) return `subjects.birth_time :: ${s.name} — birth time (HH:MM, 24h), or 'unknown'?`
@@ -362,6 +404,10 @@ function assemblyRecap(state: ChatSessionState): string {
     const id = seed.kind === 'workflow' ? seed.workflowId : seed.engineId
     lines.push(`${seed.kind}: ${id} · subject: ${subjects.join(' ; ')}`)
     if (seed.needsIntention) lines.push(`intention: ${String(state.intake.options?.intention ?? '?')}`)
+  } else if (seed.kind === 'threshold') {
+    lines.push(`subject: ${subjects.join(' ; ')}`)
+    lines.push('Confirm to hold this as your pattern — the mirror remembers from here?')
+    return lines.join('\n')
   } else {
     const lq = state.intake.options?.locationQuery
     lines.push(`daily reading · location: ${typeof lq === 'string' ? lq : 'default'}`)
@@ -403,7 +449,15 @@ function subjectsTurn(state: ChatSessionState, input: unknown): StoryTurn {
   const subjects = (state.intake.subjects ?? []) as Partial<SubjectInput>[]
   const idx = state.subjectIndex
   const s = subjects[idx]
-  if (!s) return invalid(state, 'No subject is under the cursor.')
+  if (!s) {
+    // No slot under the cursor — every present subject is complete (profile
+    // prefill, W0-A). At max the loop is already closed; between min and max
+    // this turn is the add_another gate itself.
+    if (subjects.length >= bounds.max) return advance(state)
+    if (isAffirmative(input)) return recorded(appendSubject(state), `subjects[${subjects.length}].role`)
+    if (isNegative(input)) return advance(state)
+    return invalid(state, "Answer 'yes' to witness another subject, or 'no' to continue.")
+  }
 
   if (!s.name) {
     const v = asText(input)
@@ -567,6 +621,7 @@ export type SubmitPayload =
   | AssetGenerateRequest // witness — feeds useReportGenerator.generateReport
   | { birthData: BirthData; intention?: string } // workflow/engine — feeds useDeterministicRun.run
   | { locationQuery?: string } // daily — feeds the useDailyReading location seam via the handoff sink
+  | { subject: SubjectInput } // threshold — persists the caller's `self` profile (W0-A)
 
 /**
  * Produces the handoff payload. Callable only at `handoff`/`complete`;
@@ -577,6 +632,11 @@ export function toSubmitPayload(state: ChatSessionState): SubmitPayload {
   if (seed.kind === 'info') throw new Error('info doorways never reach handoff — there is nothing to submit.')
   if (state.chapter !== 'handoff' && state.chapter !== 'complete') {
     throw new Error(`the story is not ready to hand off — chapter is '${state.chapter}'.`)
+  }
+
+  if (seed.kind === 'threshold') {
+    if (!isCompleteIntake(state.intake)) throw new Error('threshold intake is incomplete — the profile needs name, birth_date, birth_time, and a normalized location.')
+    return { subject: (state.intake.subjects as SubjectInput[])[0] }
   }
 
   if (seed.kind === 'witness') {

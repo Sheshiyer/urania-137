@@ -52,10 +52,10 @@ function makeFakeChatD1() {
       return ok(1)
     }
     if (sql.startsWith('INSERT INTO chat_sessions')) {
-      const [session_id, user_id, seed, chapter, subject_index, intake, created_at, updated_at] = args as [
-        string, string, string, string, number, string, string, string,
+      const [session_id, user_id, seed, chapter, subject_index, prefilled_count, intake, created_at, updated_at] = args as [
+        string, string, string, string, number, number, string, string, string,
       ]
-      sessions.set(session_id, { session_id, user_id, seed, chapter, subject_index, intake, created_at, updated_at })
+      sessions.set(session_id, { session_id, user_id, seed, chapter, subject_index, prefilled_count, intake, created_at, updated_at })
       return ok(1)
     }
     if (sql.startsWith('UPDATE chat_sessions SET chapter')) {

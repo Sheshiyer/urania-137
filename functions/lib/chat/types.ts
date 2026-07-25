@@ -176,8 +176,40 @@ export interface ChatSessionState {
   chapter: StoryChapter
   /** Cursor for the subjects loop (index into `intake.subjects`). */
   subjectIndex: number
+  /**
+   * Count of leading `intake.subjects` that arrived prefilled from the stored
+   * profile (Threshold W0-A) rather than collected in this session. Absent or
+   * 0 for sessions that predate profile prefill. When it reaches the seed's
+   * max subject count the `subjects` chapter is skipped entirely.
+   */
+  prefilledCount?: number
   /** Fills one slot per validated turn; never accepts unvalidated fields. */
   intake: Partial<AssetGenerateRequest>
+  /** ISO 8601 timestamp. */
+  createdAt: string
+  /** ISO 8601 timestamp. */
+  updatedAt: string
+}
+
+/**
+ * A persisted subject — the stored `self` profile written once by the
+ * Threshold, or an opt-in circle member ("hold for next time?"). The intake
+ * fields are exactly `SubjectInput`; the server maps a profile back into an
+ * intake slot (self → role `primary`) when seeding a doorway session.
+ * Persisted in the D1 `subjects` table (migration 0004).
+ */
+export interface SubjectProfile {
+  id: string
+  /** `self` (Threshold profile, unique per user) | `partner` | `family` | … */
+  role: string
+  name: string
+  /** Strict `YYYY-MM-DD`. */
+  birth_date: string
+  /** Strict `HH:MM` 24h (noon convention when unknown). */
+  birth_time: string
+  birth_time_confidence: 'exact' | 'approximate' | 'unknown'
+  birth_location_query: string
+  normalized_location: NormalizedLocation
   /** ISO 8601 timestamp. */
   createdAt: string
   /** ISO 8601 timestamp. */
