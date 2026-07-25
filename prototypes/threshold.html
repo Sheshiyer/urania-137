@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Urania 137 — The Threshold (proof of concept)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=panchang@400;500&f[]=satoshi@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.25/dist/lenis.min.js"></script>
+<style>
+  :root {
+    --void: #070B1D;
+    --surface: #0E1428;
+    --parchment: #F0EDE3;
+    --silver: #8A9BA8;
+    --gold: #C5A017;
+    --font-display: 'Panchang', sans-serif;
+    --font-serif: 'Cinzel', 'Times New Roman', serif;
+    --font-body: 'Satoshi', system-ui, sans-serif;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { overscroll-behavior: none; }
+  body {
+    background: var(--void);
+    color: var(--parchment);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--gold); color: var(--void); }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--void); }
+  ::-webkit-scrollbar-thumb { background: rgba(197,160,23,.25); border-radius: 3px; }
+
+  /* ——— ambient field ——— */
+  #field {
+    position: fixed; inset: 0; width: 100%; height: 100%;
+    z-index: 0; pointer-events: none;
+    will-change: filter, transform;
+  }
+
+  /* ——— header ——— */
+  .header {
+    position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+    z-index: 40; display: flex; align-items: center; gap: 14px;
+    padding: 8px 18px; border-radius: 999px;
+    background: rgba(14, 20, 40, .55); backdrop-filter: blur(18px);
+    border: 1px solid rgba(197,160,23,.12);
+    font-family: var(--font-display); font-size: 10px;
+    letter-spacing: .28em; text-transform: uppercase; color: var(--silver);
+    white-space: nowrap;
+  }
+  .header b { color: var(--gold); font-weight: 500; }
+  .header .dot { color: rgba(197,160,23,.6); }
+
+  /* ——— scroll track & scenes ——— */
+  .track { position: relative; z-index: 10; }
+  .scene {
+    position: relative; width: 100%; height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 0 24px; text-align: center;
+  }
+
+  .eyebrow {
+    font-family: var(--font-display); font-size: 10px; font-weight: 500;
+    letter-spacing: .3em; text-transform: uppercase;
+    color: rgba(138,155,168,.75); margin-bottom: 28px;
+  }
+
+  h1.title {
+    font-family: var(--font-serif); font-weight: 400;
+    font-size: clamp(38px, 6.2vw, 96px);
+    line-height: 1.05; letter-spacing: .01em; color: var(--parchment);
+    display: flex; flex-direction: column;
+  }
+  h1.title .line { display: block; }
+  h1.title em { color: var(--gold); font-style: normal; }
+
+  .char, .word { display: inline-block; will-change: transform, opacity, filter; }
+
+  .sub {
+    margin-top: 30px; max-width: 520px;
+    font-family: var(--font-body); font-size: 15px; line-height: 1.7;
+    color: var(--silver); letter-spacing: .01em;
+  }
+  .sub .wink { color: var(--parchment); }
+
+  .manifesto {
+    max-width: 880px;
+    font-family: var(--font-serif); font-weight: 400;
+    font-size: clamp(21px, 2.9vw, 36px); line-height: 1.45;
+    color: var(--parchment);
+  }
+  .manifesto .gold { color: var(--gold); }
+
+  .fade-block { will-change: opacity, transform; }
+
+  /* ——— form clearings ——— */
+  .ask {
+    font-family: var(--font-serif); font-weight: 400;
+    font-size: clamp(24px, 3.4vw, 44px); line-height: 1.25;
+    color: var(--parchment); max-width: 760px; margin-bottom: 40px;
+  }
+  .ask em { color: var(--gold); font-style: normal; }
+
+  .form-card {
+    width: min(480px, 92vw);
+    display: flex; flex-direction: column; gap: 16px;
+    padding: 28px; border-radius: 14px;
+    background: rgba(14, 20, 40, .6); backdrop-filter: blur(20px);
+    border: 1px solid rgba(197,160,23,.16);
+  }
+  .form-card.nudge { animation: nudge .45s var(--ease-out); }
+  @keyframes nudge {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-7px); }
+    60% { transform: translateX(5px); }
+    85% { transform: translateX(-2px); }
+  }
+
+  .field-label {
+    font-family: var(--font-display); font-size: 9px; font-weight: 500;
+    letter-spacing: .26em; text-transform: uppercase;
+    color: rgba(138,155,168,.8); text-align: left;
+  }
+
+  input.text {
+    width: 100%; background: transparent; border: none; outline: none;
+    border-bottom: 1px solid rgba(138,155,168,.3);
+    padding: 10px 2px; color: var(--parchment);
+    font-family: var(--font-serif); font-size: 22px; letter-spacing: .02em;
+    font-feature-settings: "onum";
+    transition: border-color .3s;
+  }
+  input.text:focus { border-color: var(--gold); }
+  input.text::placeholder { color: rgba(138,155,168,.45); font-size: 18px; }
+
+  .hint {
+    font-family: var(--font-body); font-size: 12px; line-height: 1.6;
+    color: rgba(138,155,168,.7); text-align: left;
+  }
+  .hint .err { color: #C65D3B; }
+
+  .chip-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .chip {
+    font-family: var(--font-display); font-size: 10px; font-weight: 500;
+    letter-spacing: .2em; text-transform: uppercase;
+    padding: 9px 16px; border-radius: 999px; cursor: pointer;
+    border: 1px solid rgba(138,155,168,.3); color: var(--silver);
+    background: transparent; transition: all .25s;
+  }
+  .chip:hover { border-color: rgba(197,160,23,.5); color: var(--parchment); }
+  .chip.on { border-color: var(--gold); color: var(--gold); background: rgba(197,160,23,.08); }
+  .chip:disabled { opacity: .3; cursor: default; }
+
+  .sugg { display: flex; flex-direction: column; gap: 6px; max-height: 168px; overflow: hidden; }
+  .sugg-card {
+    text-align: left; padding: 10px 14px; border-radius: 9px; cursor: pointer;
+    border: 1px solid rgba(138,155,168,.15); background: rgba(7,11,29,.5);
+    color: var(--parchment); font-family: var(--font-body); font-size: 13.5px;
+    transition: all .2s; display: flex; justify-content: space-between; gap: 12px;
+  }
+  .sugg-card small { color: rgba(138,155,168,.7); font-size: 11px; }
+  .sugg-card:hover, .sugg-card.on { border-color: rgba(197,160,23,.55); background: rgba(197,160,23,.07); }
+
+  .btn {
+    align-self: flex-end;
+    font-family: var(--font-display); font-size: 10px; font-weight: 500;
+    letter-spacing: .26em; text-transform: uppercase;
+    padding: 13px 26px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--gold); color: var(--gold); background: transparent;
+    transition: all .25s;
+  }
+  .btn:hover:not(:disabled) { background: var(--gold); color: var(--void); }
+  .btn:disabled { opacity: .25; cursor: default; }
+
+  /* ——— dedication ——— */
+  .dedication {
+    max-width: 720px; font-family: var(--font-serif); font-weight: 400;
+    font-size: clamp(19px, 2.4vw, 30px); line-height: 1.8; color: var(--parchment);
+    font-feature-settings: "onum";
+  }
+  .dedication .fact { color: var(--gold); }
+
+  /* ——— the crossing ——— */
+  #crossing-track { width: 100%; height: 240vh; position: relative; }
+  #crossing {
+    position: fixed; inset: 0; z-index: 30; overflow: hidden;
+    clip-path: inset(50% 50% round 6px);
+    will-change: clip-path;
+    background: var(--surface);
+    pointer-events: none;
+  }
+  #crossing-inner {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 26px; text-align: center; padding: 0 24px;
+  }
+  #constellation { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #crossing h2 {
+    position: relative; font-family: var(--font-serif); font-weight: 400;
+    font-size: clamp(34px, 5vw, 72px); letter-spacing: .06em; color: var(--parchment);
+  }
+  #crossing .cap {
+    position: relative; max-width: 440px;
+    font-family: var(--font-body); font-size: 14px; line-height: 1.7; color: var(--silver);
+  }
+  #crossing .enter {
+    position: relative; margin-top: 8px;
+    font-family: var(--font-display); font-size: 11px; font-weight: 500;
+    letter-spacing: .3em; text-transform: uppercase;
+    padding: 16px 34px; border-radius: 999px;
+    border: 1px solid var(--gold); color: var(--gold); background: transparent;
+  }
+
+  .scroll-hint {
+    position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    font-family: var(--font-display); font-size: 9px; letter-spacing: .3em;
+    text-transform: uppercase; color: rgba(138,155,168,.6);
+  }
+  .scroll-hint .line {
+    width: 1px; height: 42px; background: rgba(197,160,23,.5);
+    transform-origin: top; animation: drip 2.2s var(--ease-out) infinite;
+  }
+  @keyframes drip {
+    0% { transform: scaleY(0); } 55% { transform: scaleY(1); }
+    100% { transform: scaleY(1); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-hint .line { animation: none; }
+    .form-card.nudge { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="field"></canvas>
+
+<header class="header">
+  <b>✳ Urania 137</b><span class="dot">·</span><span>The Threshold</span><span class="dot">·</span><span>prototype</span>
+</header>
+
+<main class="track" id="track">
+
+  <!-- 001 — ARRIVAL -->
+  <section class="scene" id="s1">
+    <div class="eyebrow fade-block" data-fade>001 — Arrival</div>
+    <h1 class="title">
+      <span class="line" data-split="char" data-delay="0">You found</span>
+      <span class="line" data-split="char" data-delay="0.15">the <em>Threshold.</em></span>
+    </h1>
+    <p class="sub fade-block" data-fade>
+      I'm the narrator — <span class="wink">a character, and I know it.</span>
+      Someone had to say it first. Scroll, and let's aim the mirror.
+    </p>
+    <div class="scroll-hint fade-block" data-fade><span>scroll</span><span class="line"></span></div>
+  </section>
+
+  <!-- 002 — THE COMPACT -->
+  <section class="scene" id="s2">
+    <div class="eyebrow fade-block" data-fade>002 — The Compact</div>
+    <p class="manifesto" data-split="word">
+      Before the sky can be read, the mirror must be aimed. Five facts — a name, a date, a time, a place, and your honesty about all four. <span class="gold">No predictions. No diagnoses.</span> You remain the author. I am only the glass.
+    </p>
+  </section>
+
+  <!-- 003 — THE NAME -->
+  <section class="scene" id="s3" data-gate="name">
+    <div class="eyebrow fade-block" data-fade>003 — The Name</div>
+    <p class="ask fade-block" data-fade>What name should <em>the mirror hold?</em></p>
+    <div class="form-card" id="card-name">
+      <label class="field-label" for="in-name">Name</label>
+      <input class="text" id="in-name" type="text" placeholder="As it was given to you" autocomplete="off" />
+      <p class="hint" id="hint-name">The numerology engine rejects nameless subjects — its words, not mine.</p>
+      <button class="btn" id="go-name" disabled>Continue</button>
+    </div>
+  </section>
+
+  <!-- 004 — THE MOMENT -->
+  <section class="scene" id="s4" data-gate="moment">
+    <div class="eyebrow fade-block" data-fade>004 — The Moment</div>
+    <p class="ask fade-block" data-fade>Forgive the clipboard — <em>the stars are sticklers.</em></p>
+    <div class="form-card" id="card-moment">
+      <label class="field-label" for="in-date">Birth date</label>
+      <input class="text" id="in-date" type="text" placeholder="YYYY-MM-DD" autocomplete="off" inputmode="numeric" />
+      <label class="field-label" for="in-time" style="margin-top:6px">Birth time · 24-hour</label>
+      <input class="text" id="in-time" type="text" placeholder="HH:MM" autocomplete="off" inputmode="numeric" />
+      <div class="chip-row">
+        <button class="chip" id="chip-unknown">I don't know the time</button>
+      </div>
+      <label class="field-label" style="margin-top:6px">How well is it known</label>
+      <div class="chip-row" id="conf-row">
+        <button class="chip" data-conf="exact">Exact</button>
+        <button class="chip" data-conf="approximate">Approximate</button>
+        <button class="chip" data-conf="unknown">Unknown</button>
+      </div>
+      <p class="hint" id="hint-moment">A real calendar date, and HH:MM — or honesty. Both are accepted here.</p>
+      <button class="btn" id="go-moment" disabled>Continue</button>
+    </div>
+  </section>
+
+  <!-- 005 — THE PLACE -->
+  <section class="scene" id="s5" data-gate="place">
+    <div class="eyebrow fade-block" data-fade>005 — The Place</div>
+    <p class="ask fade-block" data-fade>And <em>the place</em> that first held you?</p>
+    <div class="form-card" id="card-place">
+      <label class="field-label" for="in-place">Birth location</label>
+      <input class="text" id="in-place" type="text" placeholder="City, country" autocomplete="off" />
+      <div class="sugg" id="sugg"></div>
+      <p class="hint" id="hint-place">The geocoder is a prototype prop — pick a card, or hold what you typed.</p>
+      <button class="btn" id="go-place" disabled>Continue</button>
+    </div>
+  </section>
+
+  <!-- 006 — THE DEDICATION -->
+  <section class="scene" id="s6" data-gate="dedication">
+    <div class="eyebrow fade-block" data-fade>006 — The Dedication</div>
+    <p class="dedication fade-block" data-fade id="dedication-text">
+      Read back, as a dedication:<br />
+      <span class="fact" id="rec-name">—</span>,
+      arrived <span class="fact" id="rec-date">—</span>
+      at <span class="fact" id="rec-time">—</span>,
+      in <span class="fact" id="rec-place">—</span>.<br />
+      The mirror is aimed.
+    </p>
+    <div style="margin-top:42px" class="fade-block" data-fade>
+      <button class="btn" id="go-cross">This is true — open the sky</button>
+    </div>
+  </section>
+
+  <!-- 007 — THE CROSSING (scrub track) -->
+  <section id="crossing-track"></section>
+</main>
+
+<div id="crossing">
+  <div id="crossing-inner">
+    <canvas id="constellation"></canvas>
+    <h2>URANIA 137</h2>
+    <p class="cap">The graph opens around you. Every doorway from here already knows your name — the story remembers.</p>
+    <button class="enter" id="enter-app">Enter — prototype ends here</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function mapRange(v, i0, i1, o0, o1) {
+    if (i1 === i0) return o0;
+    return lerp(o0, o1, clamp((v - i0) / (i1 - i0), 0, 1));
+  }
+  function easeOutExpo(t) { return t >= 1 ? 1 : 1 - Math.pow(2, -10 * t); }
+
+  /* ————— Lenis smooth scroll ————— */
+  var lenis = null;
+  if (!REDUCED && window.Lenis) {
+    lenis = new Lenis({ duration: 1.15 });
+    var rafLenis = function (time) { lenis.raf(time); requestAnimationFrame(rafLenis); };
+    requestAnimationFrame(rafLenis);
+  }
+  function scrollY() { return lenis ? lenis.scroll : window.scrollY; }
+  function scrollToY(y, immediate) {
+    if (lenis) lenis.scrollTo(y, immediate ? { immediate: true, force: true } : { duration: 1.4 });
+    else window.scrollTo({ top: y, behavior: immediate ? 'auto' : 'smooth' });
+  }
+
+  /* ————— text splitting (char / word blur-stagger) ————— */
+  function splitText(el, per) {
+    var text = el.textContent.trim();
+    var frag = document.createDocumentFragment();
+    el.textContent = '';
+    el.setAttribute('aria-label', text);
+    var parts = per === 'char' ? text.split('') : text.split(/(\s+)/);
+    var nodes = [];
+    parts.forEach(function (part) {
+      if (per === 'word' && /^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+      // keep nested <em>/<span> styling by walking text only at top level (POC: flatten)
+      var span = document.createElement('span');
+      span.className = per;
+      span.textContent = part === ' ' ? ' ' : part;
+      span.style.opacity = '0';
+      span.style.filter = 'blur(10px) brightness(0%)';
+      span.style.transform = 'translateY(20px)';
+      frag.appendChild(span);
+      nodes.push(span);
+    });
+    // preserve gold <em> on the arrival title: re-color its chars
+    if (el.querySelector === undefined) return nodes;
+    el.appendChild(frag);
+    return nodes;
+  }
+
+  // For the arrival title, <em> wraps "the Threshold." — split each line,
+  // then re-apply gold to the chars that were inside <em>.
+  var splitGroups = [];
+  document.querySelectorAll('[data-split]').forEach(function (el) {
+    var per = el.getAttribute('data-split');
+    var delay = parseFloat(el.getAttribute('data-delay') || '0');
+    var wasGold = el.querySelector('em') !== null;
+    var nodes = splitText(el, per);
+    if (wasGold) nodes.forEach(function (n) { n.style.color = 'var(--gold)'; });
+    splitGroups.push({ el: el, nodes: nodes, delay: delay });
+  });
+  // gold span inside manifesto
+  var manifestoGold = document.querySelector('.manifesto .gold');
+  if (manifestoGold) {
+    // re-split kept simple: the manifesto was already split as one block;
+    // color the words of the gold sentence by matching text
+    var goldWords = 'No predictions. No diagnoses.'.split(' ');
+    splitGroups.forEach(function (g) {
+      if (!g.el.classList.contains('manifesto')) return;
+      g.nodes.forEach(function (n) {
+        if (goldWords.indexOf(n.textContent) !== -1) n.style.color = 'var(--gold)';
+      });
+    });
+  }
+
+  function animateSegments(nodes, show, stagger, delay) {
+    nodes.forEach(function (node, i) {
+      var t = (delay + i * stagger) * 1000;
+      node.style.transition = (show ? 'opacity .4s' : 'opacity .3s') + ' var(--ease-out), ' +
+        (show ? 'filter .4s' : 'filter .3s') + ' var(--ease-out), ' +
+        (show ? 'transform .4s' : 'transform .3s') + ' var(--ease-out)';
+      node.style.transitionDelay = t + 'ms';
+      if (show) {
+        node.style.opacity = '1'; node.style.filter = 'blur(0px) brightness(100%)'; node.style.transform = 'translateY(0)';
+      } else {
+        node.style.opacity = '0'; node.style.filter = 'blur(10px) brightness(0%)'; node.style.transform = 'translateY(-20px)';
+      }
+    });
+  }
+
+  function animateBlock(el, show) {
+    el.style.transition = (show ? 'opacity .9s' : 'opacity .7s') + ' var(--ease-out), ' +
+      (show ? 'transform .9s' : 'transform .7s') + ' var(--ease-out)';
+    el.style.opacity = show ? '1' : '0';
+    el.style.transform = show ? 'translateY(0)' : 'translateY(-25px)';
+  }
+
+  document.querySelectorAll('[data-fade]').forEach(function (el) {
+    el.style.opacity = '0'; el.style.transform = 'translateY(30px)';
+  });
+
+  var scenes = ['s1', 's2', 's3', 's4', 's5', 's6'].map(function (id) { return document.getElementById(id); });
+  scenes.forEach(function (scene) {
+    var visible = false;
+    var io = new IntersectionObserver(function (entries) {
+      var v = entries[0].intersectionRatio >= 0.15;
+      if (v === visible) return;
+      visible = v;
+      splitGroups.forEach(function (g) {
+        if (scene.contains(g.el)) animateSegments(g.nodes, v, 0.015, g.delay);
+      });
+      scene.querySelectorAll('[data-fade]').forEach(function (el) { animateBlock(el, v); });
+    }, { threshold: [0, 0.15, 1] });
+    io.observe(scene);
+  });
+
+  /* ————— ambient starfield (breathing dust + scroll parallax) ————— */
+  var field = document.getElementById('field');
+  var fctx = field.getContext('2d');
+  var stars = [];
+  var VW = 0, VH = 0;
+  function sizeField() {
+    VW = field.width = window.innerWidth * (window.devicePixelRatio > 1 ? 1.5 : 1);
+    VH = field.height = window.innerHeight * (window.devicePixelRatio > 1 ? 1.5 : 1);
+    stars = [];
+    var N = Math.round((VW * VH) / 9000);
+    for (var i = 0; i < N; i++) {
+      var depth = 0.25 + Math.random() * 0.75; // 0.25 far … 1 near
+      stars.push({
+        x: Math.random() * VW, y: Math.random() * VH,
+        r: (0.4 + Math.random() * 1.3) * depth,
+        depth: depth,
+        phase: Math.random() * Math.PI * 2,
+        amp: 1.5 + Math.random() * 3.5,
+        tint: Math.random()
+      });
+    }
+  }
+  sizeField();
+  window.addEventListener('resize', sizeField);
+
+  function starColor(tint, alpha) {
+    // mostly parchment-white, some silver, a few gold
+    if (tint > 0.93) return 'rgba(197,160,23,' + alpha + ')';
+    if (tint > 0.72) return 'rgba(138,155,168,' + alpha * 0.85 + ')';
+    return 'rgba(240,237,227,' + alpha + ')';
+  }
+
+  var t0 = performance.now();
+  function drawField(now) {
+    var t = (now - t0) / 1000;
+    var sy = scrollY();
+    fctx.clearRect(0, 0, VW, VH);
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      var breathe = REDUCED ? 0 : Math.sin(0.5 * t + s.phase) * s.amp;
+      var jitter = REDUCED ? 0 : Math.sin(1.7 * t + s.phase * 3) * 0.4;
+      var x = s.x + breathe * 0.6 + jitter;
+      var y = (s.y - sy * (1 - s.depth) * 0.35 * (field.height / window.innerHeight)) % VH;
+      if (y < 0) y += VH;
+      var tw = REDUCED ? 0.6 : 0.45 + 0.35 * Math.sin(0.8 * t + s.phase * 2);
+      fctx.beginPath();
+      fctx.arc(x, y + breathe, s.r, 0, Math.PI * 2);
+      fctx.fillStyle = starColor(s.tint, clamp(tw, 0.08, 0.85));
+      fctx.fill();
+    }
+    requestAnimationFrame(drawField);
+  }
+  requestAnimationFrame(drawField);
+
+  /* ————— scene-boundary de-focus (blur + scale like the reference hero video) ————— */
+  function updateFieldFX() {
+    var vh = window.innerHeight;
+    var p = scrollY() / vh;
+    var crossingTop = document.getElementById('crossing-track').offsetTop;
+    if (scrollY() >= crossingTop - vh * 0.5) { field.style.filter = 'blur(0px)'; field.style.transform = 'scale(1)'; return; }
+    var d = Math.abs(p - Math.round(p)); // 0 at a boundary, 0.5 mid-scene
+    var f = clamp(1 - d / 0.24, 0, 1);   // peaks at boundaries
+    if (p < 0.3) f = 0;                  // arrival starts clear
+    field.style.filter = 'blur(' + Math.round(f * 14) + 'px)';
+    field.style.transform = 'scale(' + (1 + f * 0.14) + ')';
+  }
+
+  /* ————— state + gates ————— */
+  var state = { name: '', date: '', time: '', timeUnknown: false, confidence: '', place: '' };
+  var gates = { name: false, moment: false, place: false, dedication: false };
+  var GATE_SCENE = { name: 's3', moment: 's4', place: 's5', dedication: 's6' };
+
+  function gateLimit() {
+    // furthest scroll allowed given current gates
+    if (!gates.name) return document.getElementById('s3').offsetTop;
+    if (!gates.moment) return document.getElementById('s4').offsetTop;
+    if (!gates.place) return document.getElementById('s5').offsetTop;
+    if (!gates.dedication) return document.getElementById('s6').offsetTop;
+    return Infinity;
+  }
+
+  var lastNudge = 0;
+  function enforceGate() {
+    var limit = gateLimit();
+    if (limit === Infinity) return;
+    if (scrollY() > limit + 8) {
+      scrollToY(limit, true);
+      var now = performance.now();
+      if (now - lastNudge > 700) {
+        lastNudge = now;
+        var id = GATE_SCENE[Object.keys(GATE_SCENE).filter(function (k) { return !gates[k]; })[0]];
+        var card = document.querySelector('#' + id + ' .form-card');
+        if (card) { card.classList.remove('nudge'); void card.offsetWidth; card.classList.add('nudge'); }
+      }
+    }
+  }
+
+  /* ————— validators (mirrors of the state machine's rules) ————— */
+  var DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+  var TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+  function isRealDate(v) {
+    if (!DATE_RE.test(v)) return false;
+    var p = v.split('-').map(Number), y = p[0], m = p[1], d = p[2];
+    if (m < 1 || m > 12 || d < 1) return false;
+    var leap = y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0);
+    return d <= [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1];
+  }
+
+  /* ————— scene 003: name ————— */
+  var inName = document.getElementById('in-name');
+  var goName = document.getElementById('go-name');
+  var hintName = document.getElementById('hint-name');
+  inName.addEventListener('input', function () {
+    state.name = inName.value.trim();
+    goName.disabled = state.name.length < 2;
+  });
+  inName.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !goName.disabled) goName.click(); });
+  goName.addEventListener('click', function () {
+    gates.name = true;
+    hintName.innerHTML = 'Held. The mirror learns its first word.';
+    setTimeout(function () { scrollToY(document.getElementById('s4').offsetTop); }, 420);
+  });
+
+  /* ————— scene 004: moment ————— */
+  var inDate = document.getElementById('in-date');
+  var inTime = document.getElementById('in-time');
+  var chipUnknown = document.getElementById('chip-unknown');
+  var confRow = document.getElementById('conf-row');
+  var goMoment = document.getElementById('go-moment');
+  var hintMoment = document.getElementById('hint-moment');
+
+  function refreshMoment() {
+    state.date = inDate.value.trim();
+    state.time = inTime.value.trim();
+    var dateOk = isRealDate(state.date);
+    var timeOk = state.timeUnknown || TIME_RE.test(state.time);
+    var confOk = !!state.confidence;
+    goMoment.disabled = !(dateOk && timeOk && confOk);
+    if (state.date && !dateOk) hintMoment.innerHTML = '<span class="err">That date does not exist on any calendar I serve.</span> YYYY-MM-DD.';
+    else if (state.time && !state.timeUnknown && !TIME_RE.test(state.time)) hintMoment.innerHTML = '<span class="err">HH:MM, 24-hour</span> — or the honesty button below.';
+    else hintMoment.innerHTML = 'A real calendar date, and HH:MM — or honesty. Both are accepted here.';
+  }
+  inDate.addEventListener('input', refreshMoment);
+  inTime.addEventListener('input', refreshMoment);
+  chipUnknown.addEventListener('click', function () {
+    state.timeUnknown = !state.timeUnknown;
+    chipUnknown.classList.toggle('on', state.timeUnknown);
+    inTime.disabled = state.timeUnknown;
+    if (state.timeUnknown) {
+      inTime.value = '';
+      state.confidence = 'unknown';
+      confRow.querySelectorAll('.chip').forEach(function (c) {
+        c.classList.toggle('on', c.getAttribute('data-conf') === 'unknown');
+        c.disabled = true;
+      });
+      hintMoment.innerHTML = 'Noon it is. The stars forgive; the engines average.';
+    } else {
+      state.confidence = '';
+      confRow.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('on'); c.disabled = false; });
+    }
+    refreshMoment();
+  });
+  confRow.querySelectorAll('.chip').forEach(function (c) {
+    c.addEventListener('click', function () {
+      state.confidence = c.getAttribute('data-conf');
+      confRow.querySelectorAll('.chip').forEach(function (x) { x.classList.toggle('on', x === c); });
+      refreshMoment();
+    });
+  });
+  goMoment.addEventListener('click', function () {
+    gates.moment = true;
+    hintMoment.innerHTML = 'Recorded in the family record — plainly, unhurriedly.';
+    setTimeout(function () { scrollToY(document.getElementById('s5').offsetTop); }, 420);
+  });
+
+  /* ————— scene 005: place (dummy geocoder) ————— */
+  var CITIES = [
+    ['Mumbai', 'India', 'IST · UTC+5:30'], ['Pune', 'India', 'IST · UTC+5:30'],
+    ['Varanasi', 'India', 'IST · UTC+5:30'], ['Bengaluru', 'India', 'IST · UTC+5:30'],
+    ['Delhi', 'India', 'IST · UTC+5:30'], ['Kolkata', 'India', 'IST · UTC+5:30'],
+    ['London', 'United Kingdom', 'GMT · UTC+0'], ['New York', 'United States', 'EST · UTC−5'],
+    ['San Francisco', 'United States', 'PST · UTC−8'], ['Singapore', 'Singapore', 'SGT · UTC+8'],
+    ['Dubai', 'UAE', 'GST · UTC+4'], ['Kyoto', 'Japan', 'JST · UTC+9']
+  ];
+  var inPlace = document.getElementById('in-place');
+  var suggBox = document.getElementById('sugg');
+  var goPlace = document.getElementById('go-place');
+  var hintPlace = document.getElementById('hint-place');
+
+  function renderSugg() {
+    var q = inPlace.value.trim().toLowerCase();
+    suggBox.innerHTML = '';
+    if (q.length < 2) { goPlace.disabled = true; return; }
+    var hits = CITIES.filter(function (c) { return (c[0] + ' ' + c[1]).toLowerCase().indexOf(q) !== -1; }).slice(0, 3);
+    hits.forEach(function (c) {
+      var card = document.createElement('div');
+      card.className = 'sugg-card' + (state.place === c[0] + ', ' + c[1] ? ' on' : '');
+      card.innerHTML = '<span>' + c[0] + ', ' + c[1] + '</span><small>' + c[2] + '</small>';
+      card.addEventListener('click', function () {
+        state.place = c[0] + ', ' + c[1];
+        inPlace.value = state.place;
+        goPlace.disabled = false;
+        renderSugg();
+      });
+      suggBox.appendChild(card);
+    });
+    if (hits.length === 0 && q.length >= 3) {
+      var manual = document.createElement('div');
+      manual.className = 'sugg-card';
+      manual.innerHTML = '<span>Hold “' + inPlace.value.trim() + '” as written</span><small>manual entry</small>';
+      manual.addEventListener('click', function () {
+        state.place = inPlace.value.trim();
+        goPlace.disabled = false;
+        renderSugg();
+      });
+      suggBox.appendChild(manual);
+    }
+    if (state.place && inPlace.value.trim() !== state.place) { state.place = ''; goPlace.disabled = true; }
+  }
+  inPlace.addEventListener('input', renderSugg);
+  inPlace.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !goPlace.disabled) goPlace.click(); });
+  goPlace.addEventListener('click', function () {
+    gates.place = true;
+    hintPlace.innerHTML = 'The sky over ' + state.place + ' is now the reference sky.';
+    fillDedication();
+    setTimeout(function () { scrollToY(document.getElementById('s6').offsetTop); }, 420);
+  });
+
+  /* ————— scene 006: dedication ————— */
+  function fillDedication() {
+    document.getElementById('rec-name').textContent = state.name;
+    document.getElementById('rec-date').textContent = state.date;
+    document.getElementById('rec-time').textContent = state.timeUnknown ? 'the noon convention (time unknown)' : state.time + ' (' + state.confidence + ')';
+    document.getElementById('rec-place').textContent = state.place;
+  }
+  document.getElementById('go-cross').addEventListener('click', function () {
+    gates.dedication = true;
+    scrollToY(document.getElementById('crossing-track').offsetTop + window.innerHeight * 0.4);
+  });
+
+  /* ————— scene 007: the crossing (clip-path scrub) ————— */
+  var crossingTrack = document.getElementById('crossing-track');
+  var crossing = document.getElementById('crossing');
+  function updateCrossing() {
+    var vh = window.innerHeight;
+    var top = crossingTrack.offsetTop;
+    var range = crossingTrack.offsetHeight - vh;
+    var p = clamp((scrollY() - top) / range, 0, 1);
+    var e = easeOutExpo(clamp(p / 0.62, 0, 1)); // reveal completes at 62% of the track
+    var inset = lerp(50, 0, e);
+    var radius = lerp(6, 0, e);
+    crossing.style.clipPath = 'inset(' + inset + '% ' + inset + '% round ' + radius + 'px)';
+    crossing.style.pointerEvents = e > 0.85 ? 'auto' : 'none';
+  }
+
+  /* ————— constellation mock (inside the reveal) ————— */
+  var cons = document.getElementById('constellation');
+  var cctx = cons.getContext('2d');
+  function drawConstellation() {
+    cons.width = cons.offsetWidth; cons.height = cons.offsetHeight;
+    var w = cons.width, h = cons.height;
+    cctx.clearRect(0, 0, w, h);
+    var pts = [];
+    var N = 14;
+    var cx = w / 2, cy = h / 2;
+    for (var i = 0; i < N; i++) {
+      var a = (i / N) * Math.PI * 2;
+      var r = Math.min(w, h) * (0.22 + 0.16 * Math.sin(i * 2.7));
+      pts.push([cx + Math.cos(a) * r * 1.4, cy + Math.sin(a) * r * 0.8]);
+    }
+    cctx.strokeStyle = 'rgba(197,160,23,.28)'; cctx.lineWidth = 1;
+    for (var j = 0; j < N; j++) {
+      var p1 = pts[j], p2 = pts[(j + 5) % N];
+      cctx.beginPath(); cctx.moveTo(p1[0], p1[1]); cctx.lineTo(p2[0], p2[1]); cctx.stroke();
+    }
+    pts.forEach(function (p, i) {
+      cctx.beginPath(); cctx.arc(p[0], p[1], i % 4 === 0 ? 3 : 1.6, 0, Math.PI * 2);
+      cctx.fillStyle = i % 4 === 0 ? 'rgba(197,160,23,.9)' : 'rgba(240,237,227,.55)';
+      cctx.fill();
+    });
+  }
+  drawConstellation();
+  window.addEventListener('resize', drawConstellation);
+
+  document.getElementById('enter-app').addEventListener('click', function () {
+    // prototype terminus — in the app this is the graph route
+    scrollToY(0);
+  });
+
+  /* ————— master scroll loop ————— */
+  function onScroll() {
+    updateFieldFX();
+    updateCrossing();
+    enforceGate();
+  }
+  if (lenis) lenis.on('scroll', onScroll);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>
