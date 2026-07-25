@@ -318,13 +318,18 @@ describe('state machine port parity', () => {
     const first = fillSubject(state, SUBJECT_A)
     expect(first.state.chapter).toBe('subjects') // min 2 → straight to subject 2
     const second = fillSubject(first.state, SUBJECT_B)
-    expect(second.event).toBe('chapter_advanced')
-    expect(second.state.chapter).toBe('relationship')
+    // W3-A: the fresh partner is offered circle persistence before advancing.
+    expect(second.event).toBe('intake_recorded')
+    expect(currentQuestion(second.state).prompt).toContain('subjects.persist_offer')
+    const offered = applyUserInput(second.state, 'no')
+    expect(offered.event).toBe('chapter_advanced')
+    expect(offered.state.chapter).toBe('relationship')
+    expect(offered.state.circlePersist).toBeUndefined()
 
-    const romantic = applyUserInput(second.state, 'romantic')
+    const romantic = applyUserInput(offered.state, 'romantic')
     expect(romantic.event).toBe('invalid') // guardrail: taxonomy only
 
-    state = applyUserInput(second.state, 'unmarried-partners').state
+    state = applyUserInput(offered.state, 'unmarried-partners').state
     state = applyUserInput(state, 'map where our patterns meet').state
     const done = applyUserInput(state, 'medium')
     expect(done.event).toBe('chapter_advanced')
@@ -772,7 +777,12 @@ describe('threshold + prefill port parity (W0-A)', () => {
     state = applyUserInput(state, 'yes').state
     expect(currentQuestion(state).prompt).toContain('subjects.name')
     const filled = fillSubject(state, SUBJECT_B)
-    expect(filled.state.chapter).toBe('relationship')
+    // W3-A: the required partner is fresh — persist_offer fires before the
+    // loop closes at max; declining advances to relationship.
+    expect(currentQuestion(filled.state).prompt).toContain('subjects.persist_offer')
+    const offered = applyUserInput(filled.state, 'no')
+    expect(offered.event).toBe('chapter_advanced')
+    expect(offered.state.chapter).toBe('relationship')
   })
 
   it('engine doorway with a stored self skips subjects and still produces birthData', () => {
@@ -793,5 +803,222 @@ describe('threshold + prefill port parity (W0-A)', () => {
     const state = initialSessionState(KUNDALI, IDS, [partial])
     expect(state.prefilledCount).toBe(0)
     expect(state.subjectIndex).toBe(0)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// W3-A parity — wholesale circle picks + the persist_offer beat (mirrors the
+// canonical suite's W3-A describes) + the DAL round-trip for the circle meta
+// ---------------------------------------------------------------------------
+
+/** A stored circle member exactly as the ChatSheet picker sends it (intake fields = SubjectInput). */
+const CIRCLE_ROHAN = {
+  role: 'partner',
+  name: 'Rohan',
+  birth_date: '1988-06-15',
+  birth_time: '18:45',
+  birth_time_confidence: 'approximate',
+  birth_location_query: 'Mumbai, India',
+  normalized_location: {
+    display_name: 'Mumbai, India',
+    latitude: 19.076,
+    longitude: 72.8777,
+    timezone: 'Asia/Kolkata',
+    provider: 'test',
+    confidence: 'high',
+  },
+} as import('../lib/chat/types').SubjectInput
+
+describe('W3-A circle picks + persist_offer port parity', () => {
+  const IDS = { sessionId: 'sess-w3', userId: 'user-w3' }
+  type SubjectInput = import('../lib/chat/types').SubjectInput
+
+  /** Kundali (1..5) with the stored self prefilled, at the name slot of subject 2. */
+  function walkToFreshNameSlot(): ChatSessionState {
+    let state = initialSessionState(KUNDALI, IDS, [SELF_PROFILE])
+    state = applyUserInput(state, 'begin').state
+    state = applyUserInput(state, 'yes').state
+    const accepted = applyUserInput(state, 'yes') // add_another → fresh slot at index 1
+    expect(accepted.event).toBe('intake_recorded')
+    expect(currentQuestion(accepted.state).prompt).toContain('subjects.name')
+    return accepted.state
+  }
+
+  it('a stored circle member can be picked at the add_another gate — the whole subject records in one turn', () => {
+    let state = initialSessionState(KUNDALI, IDS, [SELF_PROFILE])
+    state = applyUserInput(state, 'begin').state
+    state = applyUserInput(state, 'yes').state
+    expect(currentQuestion(state).prompt).toContain('subjects.add_another')
+
+    const picked = applyUserInput(state, CIRCLE_ROHAN)
+    expect(picked.event).toBe('intake_recorded')
+    expect(picked.field).toBe('subjects[1]')
+    const subjects = picked.state.intake.subjects as SubjectInput[]
+    expect(subjects).toHaveLength(2)
+    expect(subjects[0].name).toBe('Asha') // prefilled self untouched
+    expect(subjects[1]).toEqual(CIRCLE_ROHAN)
+    expect(picked.state.subjectIndex).toBe(1)
+    // Cursor advanced as if all five slots had been answered — and a picked
+    // member is already persisted, so NO persist_offer beat.
+    const q = currentQuestion(picked.state).prompt
+    expect(q).toContain('subjects.add_another')
+    expect(q).not.toContain('persist_offer')
+  })
+
+  it('the name slot of subject index >= 1 accepts a wholesale pick; absent/self roles coerce to partner', () => {
+    const { role: _omit, ...withoutRole } = CIRCLE_ROHAN
+    const picked = applyUserInput(walkToFreshNameSlot(), withoutRole)
+    expect(picked.event).toBe('intake_recorded')
+    const s = (picked.state.intake.subjects as SubjectInput[])[1]
+    expect(s.name).toBe('Rohan')
+    expect(s.role).toBe('partner') // absent → forced
+
+    const coerced = applyUserInput(walkToFreshNameSlot(), { ...CIRCLE_ROHAN, role: 'self' })
+    expect((coerced.state.intake.subjects as SubjectInput[])[1].role).toBe('partner') // self → forced
+
+    const kept = applyUserInput(walkToFreshNameSlot(), { ...CIRCLE_ROHAN, role: 'family' })
+    expect((kept.state.intake.subjects as SubjectInput[])[1].role).toBe('family') // valid roles kept
+  })
+
+  it('an invalid wholesale object is an invalid turn with a clear message and no intake write', () => {
+    const state = walkToFreshNameSlot()
+    const bads: unknown[] = [
+      { name: 'Rohan' },
+      { ...CIRCLE_ROHAN, birth_date: '1988-15-99' },
+      { ...CIRCLE_ROHAN, birth_time: '6pm' },
+      { ...CIRCLE_ROHAN, birth_time_confidence: 'maybe' },
+      { ...CIRCLE_ROHAN, normalized_location: null },
+    ]
+    for (const bad of bads) {
+      const r = applyUserInput(state, bad)
+      expect(r.event).toBe('invalid')
+      expect(r.error).toContain('incomplete')
+      expect(r.state.chapter).toBe('subjects')
+      expect((r.state.intake.subjects as SubjectInput[])[1].name).toBeUndefined()
+    }
+  })
+
+  it('the threshold seed and the unprefilled primary slot both reject wholesale picks', () => {
+    const threshold = applyUserInput(initialSessionState(THRESHOLD_SEED, IDS), 'begin').state
+    const r = applyUserInput(threshold, CIRCLE_ROHAN)
+    expect(r.event).toBe('invalid')
+    expect((r.state.intake.subjects as SubjectInput[])[0].name).toBeUndefined()
+
+    let solo = initialSessionState(KUNDALI, IDS)
+    solo = applyUserInput(solo, 'begin').state
+    solo = applyUserInput(solo, 'yes').state
+    expect(currentQuestion(solo).prompt).toContain('subjects.name')
+    const r2 = applyUserInput(solo, CIRCLE_ROHAN)
+    expect(r2.event).toBe('invalid')
+    expect((r2.state.intake.subjects as SubjectInput[])[0].name).toBeUndefined()
+  })
+
+  it('persist_offer fires for a fresh slot-by-slot subject, never for prefilled or picked ones', () => {
+    // Fresh: dyad subject 2 collected by hand (index 0 gets no beat).
+    let state = initialSessionState(DYAD, IDS)
+    state = applyUserInput(state, 'begin').state
+    state = applyUserInput(state, 'yes').state
+    state = fillSubject(state, SUBJECT_A).state
+    expect(currentQuestion(state).prompt).toContain('subjects.name')
+    const s2 = fillSubject(state, SUBJECT_B)
+    expect(currentQuestion(s2.state).prompt).toContain('subjects.persist_offer')
+    expect(currentQuestion(s2.state).prompt).toContain('Rohan')
+
+    // Picked: wholesale circle member — already persisted, no beat.
+    let pre = initialSessionState(KUNDALI, IDS, [SELF_PROFILE])
+    pre = applyUserInput(pre, 'begin').state
+    pre = applyUserInput(pre, 'yes').state
+    const picked = applyUserInput(pre, CIRCLE_ROHAN)
+    expect(currentQuestion(picked.state).prompt).not.toContain('persist_offer')
+
+    // Prefilled: two stored profiles skip the subjects chapter entirely.
+    const partner = { ...SELF_PROFILE, role: 'partner', name: 'Rohan' } as SubjectInput
+    let skipped = initialSessionState(DYAD, IDS, [SELF_PROFILE, partner])
+    skipped = applyUserInput(skipped, 'begin').state
+    skipped = applyUserInput(skipped, 'yes').state
+    expect(skipped.chapter).toBe('relationship')
+  })
+
+  it('an affirmative answer records the index in circlePersist; a decline records nothing and is not re-asked', () => {
+    let dyad = initialSessionState(DYAD, IDS)
+    dyad = applyUserInput(dyad, 'begin').state
+    dyad = applyUserInput(dyad, 'yes').state
+    dyad = fillSubject(dyad, SUBJECT_A).state
+    const s2 = fillSubject(dyad, SUBJECT_B)
+    const held = applyUserInput(s2.state, 'yes')
+    expect(held.state.circlePersist).toEqual([1])
+    expect(held.event).toBe('chapter_advanced') // count == max → relationship
+    expect(held.state.chapter).toBe('relationship')
+    expect(currentQuestion(held.state).prompt).not.toContain('persist_offer')
+
+    let state = initialSessionState(KUNDALI, IDS, [SELF_PROFILE])
+    state = applyUserInput(state, 'begin').state
+    state = applyUserInput(state, 'yes').state
+    state = applyUserInput(state, 'yes').state // add_another → fresh slot
+    const fresh = fillSubject(state, SUBJECT_B)
+    expect(currentQuestion(fresh.state).prompt).toContain('subjects.persist_offer')
+    const unclear = applyUserInput(fresh.state, 'maybe')
+    expect(unclear.event).toBe('invalid')
+    expect(currentQuestion(unclear.state).prompt).toContain('subjects.persist_offer')
+    const declined = applyUserInput(fresh.state, 'no')
+    expect(declined.state.circlePersist).toBeUndefined()
+    expect(currentQuestion(declined.state).prompt).toContain('subjects.add_another')
+    const done = applyUserInput(declined.state, 'no')
+    expect(done.event).toBe('chapter_advanced')
+    expect(done.state.chapter).toBe('relationship')
+  })
+
+  it('the solo walk never sees the beat and still ends with a valid payload; circle meta never leaks', () => {
+    let state = initialSessionState(KUNDALI, IDS)
+    state = applyUserInput(state, 'begin').state
+    state = applyUserInput(state, 'yes').state
+    const s1 = fillSubject(state, SUBJECT_A)
+    // Slot 0 fresh: straight to add_another — persist_offer is never offered.
+    expect(currentQuestion(s1.state).prompt).toContain('subjects.add_another')
+    state = applyUserInput(s1.state, 'no').state
+    state = applyUserInput(state, 'en').state
+    state = applyUserInput(state, 'L0').state
+    state = applyUserInput(state, '2').state
+    state = applyUserInput(state, 'yes').state
+    const ready = applyUserInput(state, 'yes')
+    expect(ready.event).toBe('ready')
+    expect(ready.state.circlePersist).toBeUndefined()
+
+    const payload = toSubmitPayload(ready.state) as {
+      subjects: Record<string, unknown>[]
+      relationship_context: unknown
+      options: unknown
+    }
+    expect(payload.subjects).toHaveLength(1)
+    expect(payload.relationship_context).toBeNull()
+    expect('circlePersist' in payload).toBe(false)
+    expect(payload.options).toEqual({ output_format: 'markdown', include_rubric: true, include_pattern_extraction: true })
+    expect(Object.keys(payload.subjects[0]).sort()).toEqual(
+      ['birth_date', 'birth_location_query', 'birth_time', 'birth_time_confidence', 'name', 'normalized_location', 'role'].sort(),
+    )
+  })
+
+  it('the circle meta rides the intake JSON column through the DAL and rehydrates on machine entry', async () => {
+    let state = initialSessionState(DYAD, { sessionId: 's-circle', userId: A })
+    state = applyUserInput(state, 'begin').state
+    state = applyUserInput(state, 'yes').state
+    state = fillSubject(state, SUBJECT_A).state
+    state = fillSubject(state, SUBJECT_B).state
+    state = applyUserInput(state, 'yes').state // persist_offer → hold index 1
+    expect(state.circlePersist).toEqual([1])
+
+    await createChatSession(db, state)
+    await saveChatSession(db, state)
+    const loaded = await getChatSession(db, A, 's-circle')
+    // The column-based DAL restores the intake document (meta intact) but not
+    // the top-level mirror field…
+    expect(loaded?.circlePersist).toBeUndefined()
+    expect(loaded?.intake.options?.circle).toEqual({ persist: [1] })
+    // …and the machine rehydrates the contract field on entry, so the beat is
+    // never re-asked after a store round-trip.
+    expect(currentQuestion(loaded!).prompt).not.toContain('persist_offer')
+    const turn = applyUserInput(loaded!, 'family')
+    expect(turn.state.circlePersist).toEqual([1])
+    expect(turn.event).toBe('intake_recorded')
   })
 })

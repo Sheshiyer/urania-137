@@ -169,6 +169,204 @@ function parseLocation(input: unknown): LocationInput | null {
 }
 
 // ---------------------------------------------------------------------------
+// Circle persistence (W3-A) — wholesale circle picks + the persist_offer beat
+// ---------------------------------------------------------------------------
+//
+// Two additions to the subjects chapter, both witness-doorway only:
+//
+//  1. WHOLESALE PICK: at the name slot of a fresh subject (or at the
+//     add_another gate) the turn input may be a complete SubjectInput-shaped
+//     object — a stored circle member picked instead of typed. A valid object
+//     records the whole subject in one turn; an invalid one is an `invalid`
+//     turn with a clear message. Never accepted for the primary/self slot
+//     (index 0) and never in threshold/deterministic/daily doorways.
+//
+//  2. PERSIST_OFFER BEAT: when a FRESH subject (collected slot-by-slot in
+//     this session — not prefilled, not wholesale-picked) completes at an
+//     index >= 1, the next question becomes `subjects.persist_offer` instead
+//     of the immediate add_another/advance. Affirmative records the index in
+//     `circlePersist`; either answer then moves on exactly as the machine did
+//     before this feature. Index 0 is never offered: it is the primary/self
+//     slot (and, in practice, arrives prefilled from the Threshold). The
+//     index >= 1 rule also excludes threshold/engine/workflow/daily seeds
+//     wholesale — their bounds never allow a second subject.
+//
+// Fresh-vs-picked is derived, not stored per-subject: prefilled indexes are
+// `< prefilledCount` and picked indexes are recorded in the circle meta when
+// the wholesale turn lands. The meta itself rides the `intake` JSON column
+// (`options.circle`) because the functions DAL persists fixed columns plus
+// the intake document only — a top-level state field would be dropped on the
+// next turn. `options` is provably leak-safe: every toSubmitPayload branch
+// builds the engine payload explicitly (witness: literal options; engine:
+// reads `intention` only; daily: `locationQuery` only; threshold: subject
+// only), so the meta never reaches an engine request.
+
+interface CircleMeta {
+  /** Indexes recorded via a wholesale circle pick (already stored server-side). */
+  picked: number[]
+  /** Indexes the user chose to hold in their circle (persist_offer: yes). */
+  persist: number[]
+  /** Indexes whose persist_offer was declined (beat answered — never re-asked). */
+  declined: number[]
+}
+
+const EMPTY_CIRCLE: CircleMeta = { picked: [], persist: [], declined: [] }
+
+function asIndexList(v: unknown): number[] {
+  return Array.isArray(v) ? v.filter((n): n is number => Number.isInteger(n) && (n as number) >= 0) : []
+}
+
+/** Tolerant read of the intake-carried circle meta (absent for pre-W3 sessions). */
+function circleMeta(state: ChatSessionState): CircleMeta {
+  const raw = state.intake.options?.circle
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return EMPTY_CIRCLE
+  const o = raw as Record<string, unknown>
+  return { picked: asIndexList(o.picked), persist: asIndexList(o.persist), declined: asIndexList(o.declined) }
+}
+
+/**
+ * Write the circle meta into the intake document (its durable home) and
+ * mirror `persist` onto the top-level `circlePersist` contract field. Empty
+ * lists are pruned so untouched sessions carry no `options.circle` key at all.
+ */
+function withCircleMeta(state: ChatSessionState, meta: CircleMeta): ChatSessionState {
+  const pruned: Record<string, number[]> = {}
+  if (meta.picked.length) pruned.picked = meta.picked
+  if (meta.persist.length) pruned.persist = meta.persist
+  if (meta.declined.length) pruned.declined = meta.declined
+  const options = { ...state.intake.options, circle: pruned }
+  const next = withIntake(state, { options })
+  return { ...next, circlePersist: meta.persist.length ? [...meta.persist] : undefined }
+}
+
+/**
+ * Rehydrate the top-level `circlePersist` after a store round-trip (the DAL
+ * restores `intake` but not top-level fields). Idempotent; a present
+ * `circlePersist` always wins.
+ */
+function rehydrateCircle(state: ChatSessionState): ChatSessionState {
+  if (state.circlePersist !== undefined) return state
+  const persist = circleMeta(state).persist
+  return persist.length ? { ...state, circlePersist: persist } : state
+}
+
+/**
+ * A complete subject under the cursor whose persist_offer has not been
+ * answered yet. Index 0 (the primary/self slot), prefilled subjects, and
+ * wholesale-picked subjects are never offered.
+ */
+function persistOfferPending(state: ChatSessionState, idx: number): boolean {
+  if (idx < 1) return false
+  if (idx < (state.prefilledCount ?? 0)) return false
+  const meta = circleMeta(state)
+  if (meta.picked.includes(idx) || meta.persist.includes(idx) || meta.declined.includes(idx)) return false
+  const s = (state.intake.subjects ?? []) as Partial<SubjectInput>[]
+  const cur = s[idx]
+  return Boolean(cur?.name && cur.birth_date && cur.birth_time && cur.birth_time_confidence && cur.birth_location_query)
+}
+
+/**
+ * Wholesale picks are witness-doorway only and never land on the primary/self
+ * slot (index 0). Deterministic/threshold/daily doorways collect by hand.
+ */
+function wholesaleEligible(state: ChatSessionState, idx: number): boolean {
+  return seedKind(state) === 'witness' && idx >= 1
+}
+
+/**
+ * Validate a wholesale circle pick with the same strictness as the
+ * `initialSessionState` prefill filter, strengthened: name present, birth_date
+ * via isValidISODate, birth_time via isValidTime, normalized_location present,
+ * birth_time_confidence in the enum. Role is optional — anything but a
+ * non-empty, non-`self` string coerces to 'partner' (a stored self is a
+ * caller profile, never a doorway circle member).
+ */
+function parseWholesaleSubject(input: unknown): SubjectInput | null {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return null
+  const o = input as Record<string, unknown>
+  const name = typeof o.name === 'string' ? o.name.trim() : ''
+  const birth_date = typeof o.birth_date === 'string' ? o.birth_date : ''
+  const birth_time = typeof o.birth_time === 'string' ? o.birth_time : ''
+  const confidence = typeof o.birth_time_confidence === 'string' ? o.birth_time_confidence : ''
+  const location = o.normalized_location
+  if (!name || !isValidISODate(birth_date) || !isValidTime(birth_time)) return null
+  if (!(TIME_CONFIDENCES as readonly string[]).includes(confidence)) return null
+  if (!location || typeof location !== 'object' || Array.isArray(location)) return null
+  const query =
+    typeof o.birth_location_query === 'string' && o.birth_location_query.trim()
+      ? o.birth_location_query.trim()
+      : typeof (location as NormalizedLocation).display_name === 'string'
+        ? (location as NormalizedLocation).display_name
+        : ''
+  if (!query) return null
+  const role = typeof o.role === 'string' && o.role.trim() && o.role !== 'self' ? o.role.trim() : 'partner'
+  return {
+    role,
+    name,
+    birth_date,
+    birth_time,
+    birth_time_confidence: confidence as SubjectInput['birth_time_confidence'],
+    birth_location_query: query,
+    normalized_location: location as NormalizedLocation,
+  }
+}
+
+/**
+ * Post-completion cursor move shared by the location slot, the wholesale
+ * pick, and the persist_offer answer — exactly what the machine did at
+ * subject completion before W3-A: append the next required slot below min,
+ * advance at max, else hold for the add_another gate.
+ */
+function moveOnAfterSubject(state: ChatSessionState, idx: number, field?: string): StoryTurn {
+  const bounds = subjectBounds(state.seed as StorySeed)
+  const count = idx + 1
+  if (count < bounds.min) return recorded(appendSubject(state), field ?? `subjects[${count}].role`)
+  if (count >= bounds.max) return advance(state, field)
+  return field === undefined ? { state, event: 'intake_recorded' } : recorded(state, field)
+}
+
+/**
+ * Record a wholesale-picked circle member at `idx` (replacing the empty slot
+ * under the cursor, or appended at the gate), mark it picked so the
+ * persist_offer beat never fires for it, and move the cursor on. Returns
+ * null when the input is not an object or the slot is not pick-eligible;
+ * an object that fails validation is an `invalid` turn with a clear message.
+ */
+function pickSubjectTurn(state: ChatSessionState, input: unknown, idx: number): StoryTurn | null {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return null
+  if (!wholesaleEligible(state, idx)) return null
+  const subject = parseWholesaleSubject(input)
+  if (!subject) {
+    return invalid(state, 'That stored profile is incomplete — pick another, or type the five facts by hand.')
+  }
+  const subjects = (state.intake.subjects ?? []) as Partial<SubjectInput>[]
+  const nextSubjects = subjects.slice()
+  nextSubjects[idx] = subject
+  const placed: ChatSessionState = { ...withIntake(state, { subjects: nextSubjects as SubjectInput[] }), subjectIndex: idx }
+  const meta = circleMeta(placed)
+  const marked = withCircleMeta(placed, { ...meta, picked: [...meta.picked, idx] })
+  return moveOnAfterSubject(marked, idx, `subjects[${idx}]`)
+}
+
+/**
+ * Answer the persist_offer beat: affirmative records the index in
+ * `circlePersist`, negative only marks the beat answered; both move on
+ * exactly as the pre-W3-A machine did at subject completion.
+ */
+function persistOfferTurn(state: ChatSessionState, input: unknown, idx: number): StoryTurn {
+  const meta = circleMeta(state)
+  if (isAffirmative(input)) {
+    const next = withCircleMeta(state, { ...meta, persist: [...meta.persist, idx] })
+    return moveOnAfterSubject(next, idx, 'options.circle')
+  }
+  if (isNegative(input)) {
+    const next = withCircleMeta(state, { ...meta, declined: [...meta.declined, idx] })
+    return moveOnAfterSubject(next, idx)
+  }
+  return invalid(state, "Answer 'yes' to hold them in your circle for next time, or 'no' to keep them for this reading only.")
+}
+
+// ---------------------------------------------------------------------------
 // Seed-derived structure
 // ---------------------------------------------------------------------------
 
@@ -321,6 +519,10 @@ function subjectsQuestion(state: ChatSessionState): string {
   if (!s.birth_time) return `subjects.birth_time :: ${s.name} — birth time (HH:MM, 24h), or 'unknown'?`
   if (!s.birth_time_confidence) return `subjects.time_confidence :: ${s.name} — how well is that time known: exact | approximate | unknown?`
   if (!s.birth_location_query) return `subjects.location :: ${s.name} — birth location (city, country)?`
+  if (persistOfferPending(state, idx)) {
+    // W3-A: a fresh slot-by-slot subject is offered circle persistence once.
+    return `subjects.persist_offer :: Hold ${s.name} in your circle for next time? (yes/no)`
+  }
   return `subjects.add_another :: ${subjects.length}/${bounds.max} subjects witnessed — add another? (yes/no)`
 }
 
@@ -381,6 +583,7 @@ function assemblyRecap(state: ChatSessionState): string {
 }
 
 export function currentQuestion(state: ChatSessionState): StoryQuestion {
+  state = rehydrateCircle(state)
   const chapter = state.chapter
   switch (chapter) {
     case 'awakening':
@@ -418,12 +621,22 @@ function subjectsTurn(state: ChatSessionState, input: unknown): StoryTurn {
     // prefill, W0-A). At max the loop is already closed; between min and max
     // this turn is the add_another gate itself.
     if (subjects.length >= bounds.max) return advance(state)
+    // W3-A: at the gate a stored circle member may be PICKED (wholesale
+    // object input) instead of answering yes + typing five facts.
+    const picked = pickSubjectTurn(state, input, subjects.length)
+    if (picked) return picked
     if (isAffirmative(input)) return recorded(appendSubject(state), `subjects[${subjects.length}].role`)
     if (isNegative(input)) return advance(state)
     return invalid(state, "Answer 'yes' to witness another subject, or 'no' to continue.")
   }
 
   if (!s.name) {
+    // W3-A: the first slot of a fresh subject also accepts a wholesale pick.
+    const picked = pickSubjectTurn(state, input, idx)
+    if (picked) return picked
+    if (input !== null && typeof input === 'object') {
+      return invalid(state, 'Stored profiles can only be picked in witness doorways beyond the first subject — type a name to begin.')
+    }
     const v = asText(input)
     if (!v) return invalid(state, 'A name is required — the numerology engine rejects nameless subjects.')
     return recorded(withSubject(state, idx, { name: v }), `subjects[${idx}].name`)
@@ -457,12 +670,18 @@ function subjectsTurn(state: ChatSessionState, input: unknown): StoryTurn {
       normalized_location: loc.normalized ?? manualLocation(loc.query),
     })
     const field = `subjects[${idx}].location`
-    const count = idx + 1
-    if (count < bounds.min) return recorded(appendSubject(next), field) // more subjects required
-    if (count >= bounds.max) return advance(next, field) // loop closed at max
-    return recorded(next, field) // between min and max — ask add_another next
+    // W3-A: a fresh slot-by-slot subject is offered circle persistence before
+    // the loop moves on (prefilled/picked subjects never see the beat).
+    if (persistOfferPending(next, idx)) return recorded(next, field)
+    return moveOnAfterSubject(next, idx, field)
   }
 
+  // Subject complete. W3-A: the persist_offer beat interposes before the
+  // add_another gate for fresh slot-by-slot subjects.
+  if (persistOfferPending(state, idx)) return persistOfferTurn(state, input, idx)
+  // W3-A: the gate also accepts a wholesale pick (implicit 'yes' + subject).
+  const pickedAtGate = pickSubjectTurn(state, input, subjects.length)
+  if (pickedAtGate) return pickedAtGate
   // Subject complete, between min and max: the add_another gate.
   if (isAffirmative(input)) return recorded(appendSubject(state), `subjects[${idx + 1}].role`)
   if (isNegative(input)) return advance(state)
@@ -539,6 +758,7 @@ function modeTurn(state: ChatSessionState, input: unknown): StoryTurn {
 }
 
 export function applyUserInput(state: ChatSessionState, input: unknown): StoryTurn {
+  state = rehydrateCircle(state)
   switch (state.chapter) {
     case 'awakening':
       return advance(state)

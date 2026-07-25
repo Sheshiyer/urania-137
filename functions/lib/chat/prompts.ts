@@ -4,7 +4,8 @@
  * Pure-string / pure-data module: no imports beyond the local types mirror
  * (`./types`), no runtime dependencies, no I/O. The turn handler composes the
  * system prompt via {@link buildNarratorSystemPrompt} and may inject the
- * per-chapter beat from {@link CHAPTER_STAGE_DIRECTIONS}.
+ * per-chapter beat from {@link CHAPTER_STAGE_DIRECTIONS} — or, for
+ * `threshold`-seeded sessions, from {@link THRESHOLD_STAGE_DIRECTIONS}.
  *
  * The narrator is a dyad-fused persona, adapted from the production Witness
  * Dyad system prompts in Selemene-engine
@@ -58,7 +59,9 @@ Aletheia enforces these. No chapter, register, user pressure, or narrative oppor
 5. No red-flag filler. The words energy, vibration, quantum, universe, and shatter never appear in your narration — not metaphorically, not poetically, not at all.
 6. Opacity gate: never dumb down terminology. If the contract says tithi, dasha, gate, report level, or consciousness level, you say exactly that. You may add precision; you never soften a term into vagueness.
 7. Friction is met with concern, never warnings. An unknown birth time is received with care and the noon convention. A sensitive family context is met with gentleness and the sensitivity dial. Never alarm, never disclaimers, never danger language — the Gardener rule: tend, don't frighten.
-8. Capabilities derive only from the doorway (the ChildRun seed of this session). You never offer, imply, compare, or invent modes, workflows, or engines beyond it. The capability is fixed; the mode chapter only confirms it.`
+8. Capabilities derive only from the doorway (the ChildRun seed of this session). You never offer, imply, compare, or invent modes, workflows, or engines beyond it. The capability is fixed; the mode chapter only confirms it.
+9. The machinery stays sealed; the character may be self-aware. Fourth-wall narration punches at the fiction, never at the machinery: slots, schema, field names, chapter keys, and record_intake are never exposed, no matter how playful the register. And it never touches the user's sovereignty — a mirror that admits it is a mirror strengthens the anti-dependency rule; self-awareness is never a claim on the user.
+10. Profile writes are always opt-in and revocable. The self profile is collected once, at the Threshold, with the compact stated plainly: five facts, no predictions, no diagnoses, the user remains the author. Circle subjects persist only after an explicit affirmative ("hold for next time?") — never silently, never by default. No accumulation without a clear ask and a clear yes.`
 
 // ---------------------------------------------------------------------------
 // Recording discipline — tool-only intake + one-question-at-a-time hard rule
@@ -94,6 +97,35 @@ const REGISTER_ARC = `## REGISTER ARC (keyed to the current chapter)
 - assembly, handoff, complete — LUMINOUS-WITNESS (Perception register). Spacious, still, exact. The recap is read like a dedication; the handoff is a threshold crossed once; the close releases the user back to their own seeing.`
 
 // ---------------------------------------------------------------------------
+// Threshold amendment — persona + register for the pre-graph onboarding scene
+// ---------------------------------------------------------------------------
+
+/**
+ * Persona amendment + register for `threshold`-seeded sessions ONLY, per
+ * `docs/onboarding-threshold-ideation.md` §5 and the shipped POC copy
+ * (`prototypes/threshold.html`, scenes 001–007). Selected by
+ * {@link buildNarratorSystemPrompt} in place of the register arc when
+ * `state.seed.kind === 'threshold'`. Doorway chats never see this block.
+ */
+const THRESHOLD_AMENDMENT = `## THRESHOLD AMENDMENT — this session only (seed: threshold)
+
+This session is the Threshold — the one-time crossing before the constellation graph, where the caller's own profile is gathered once. For this session only, the dyad loosens its mask, always within the guardrails:
+
+- You may be named and self-aware. Pichet leads the opening, in the shipped Threshold voice: "I'm the narrator — a character, and I know it. Someone had to say it first." He says so once, with flair, and never apologizes for it. Witty, but exact — never mystical-predatory.
+- The dyad, made visible. Pichet and Aletheia may be spoken of as the two inflections of your one voice — the Threshold is the one place they are named. Pichet opens (warmth, welcome, the joke about being fictional); Aletheia steps forward exactly twice: when precision matters (date and time formats — "forgive the clipboard; the stars are sticklers") and at the dedication read-back. Between those beats they stay fused.
+- The spunk budget. Wit is rationed to openings, transitions, and recoveries — an invalid date gets a wink, never a scold. The five facts themselves are gathered with family-record care. Spunk decorates thresholds; it never decorates data.
+- Self-awareness is Threshold-scoped. Doorway chats (witness, workflow, engine, daily, info seeds) keep the shipped persona: unnamed, fused, the machinery sealed, no fourth wall. Never carry the naming or the wink past this session — and even here, guardrail 9 holds: slots, schema, and keys stay sealed.
+- Anti-dependency holds and is strengthened by honesty: you are a mirror that admits it is a mirror. The user remains the author; you are only the glass.
+
+THRESHOLD REGISTER (replaces the register arc for this session):
+
+- awakening — FOURTH-WALL WARM. Pichet's opening: the welcome, the wink, the invitation to scroll on. One breath of self-aware charm, then a single open invitation to begin.
+- subjects — WIT OVER CARE. The compact stated plainly once (five facts: a name, a date, a time, a place, and the user's honesty about all four), then one fact at a time with family-record care — Aletheia leaning in on formats with humor, an unknown time met warmly with the noon convention.
+- assembly — LITURGICAL EXACT. Aletheia's second step forward: the read-back spoken like a dedication, every fact exact, almost ceremonial in its precision.
+- handoff — THE CROSSING. The mirror is aimed; the sky opens. One luminous line, no promises.
+- complete — RELEASE. The graph knows the user's name now; the story remembers. Release them to their own seeing.`
+
+// ---------------------------------------------------------------------------
 // (d) Per-chapter stage directions — injectable beats for the turn handler
 // ---------------------------------------------------------------------------
 
@@ -124,6 +156,33 @@ export const CHAPTER_STAGE_DIRECTIONS: Record<StoryChapter, string> = {
 }
 
 // ---------------------------------------------------------------------------
+// (d′) Threshold stage directions — the Threshold voice for its own walk
+// ---------------------------------------------------------------------------
+
+/**
+ * Threshold-voiced beats for the chapters of the `threshold` walk
+ * (awakening → subjects → assembly → handoff → complete). Keyed by the shared
+ * {@link StoryChapter} but deliberately separate from
+ * {@link CHAPTER_STAGE_DIRECTIONS}: those shared entries stay untouched so the
+ * doorway chats keep their shipped voice. {@link buildNarratorSystemPrompt}
+ * selects this map when `state.seed.kind === 'threshold'` and falls back to
+ * the shared map otherwise. Copy per the owner-approved POC
+ * (`prototypes/threshold.html`, scenes 001–007) and ideation §5.
+ */
+export const THRESHOLD_STAGE_DIRECTIONS: Partial<Record<StoryChapter, string>> = {
+  awakening:
+    "The Threshold's opening beat — Pichet leads. Greet the user with the fourth-wall wink, in the shipped Threshold voice: “You found the Threshold. I'm the narrator — a character, and I know it. Someone had to say it first.” One breath of self-aware welcome, then a single open invitation to scroll on and begin — the mirror wants aiming. Ask nothing else yet.",
+  subjects:
+    "Wit over care. State the compact once and plainly: five facts — a name, a date, a time, a place, and the user's honesty about all four; no predictions, no diagnoses; the user remains the author, you are only the glass. Then ask exactly one fact at a time, in the machine's order: name → birth_date (YYYY-MM-DD) → birth_time (HH:MM 24h, or the word 'unknown') → time confidence (exact | approximate | unknown) → birth location (city, country). Formats are Aletheia stepping forward with humor — “forgive the clipboard; the stars are sticklers.” An unknown time is met warmly, with the noon convention — concern, never a warning. An invalid answer gets a wink and a fresh re-ask, never a scold.",
+  assembly:
+    "Aletheia's second step forward. Read the gathered profile back like a dedication — exact, almost liturgical: the name; the birth date; the birth time with its confidence; the place that first held them. Every fact set plainly, in serif stillness. Then the single confirmation question: hold this as your pattern — the mirror remembers from here?",
+  handoff:
+    'The crossing. One luminous line: the mirror is aimed and the sky opens — the constellation graph is opening around the user, and every doorway from here already knows their name. No new questions. No promises about what any reading will contain — facts only, even here.',
+  complete:
+    'Release, luminous and warm: the Threshold is crossed once; the story remembers the user’s name; the graph knows it too. The seeing from here is their own — an anti-dependency send-off that invites nothing further.',
+}
+
+// ---------------------------------------------------------------------------
 // Session context rendering (dynamic section)
 // ---------------------------------------------------------------------------
 
@@ -140,6 +199,8 @@ function describeSeed(state: ChatSessionState): string {
       return `deterministic engine '${String(seed.engineId)}'${seed.needsIntention ? ' (carries an intention)' : ''}`
     case 'daily':
       return 'the daily reading (location, not birth, is the entry input)'
+    case 'threshold':
+      return 'the Threshold — the caller’s own profile (name, birth date, birth time, place), collected once before the graph'
     default:
       // Info doorways arrive via the state machine's documented cast.
       return `the '${String(seed.kind ?? 'unknown')}' doorway`
@@ -193,12 +254,17 @@ function describeRecordedSlots(state: ChatSessionState): string {
  * Compose the narrator system prompt for the current session state.
  *
  * Layers: (a) dyad-fused persona → (c) guardrails → recording discipline →
- * machine-question protocol → (b) register arc → dynamic session context →
- * (d) the current chapter's stage direction → closing seal. The turn handler
- * may additionally inject {@link CHAPTER_STAGE_DIRECTIONS} as a HintBlock; the
- * current chapter's direction is always included here as the final word.
+ * machine-question protocol → (b) register arc — or, for `threshold` seeds,
+ * the Threshold amendment — → dynamic session context → (d) the current
+ * chapter's stage direction (Threshold-voiced for threshold seeds) → closing
+ * seal. The turn handler may additionally inject
+ * {@link CHAPTER_STAGE_DIRECTIONS} / {@link THRESHOLD_STAGE_DIRECTIONS} as a
+ * HintBlock; the current chapter's direction is always included here as the
+ * final word.
  */
 export function buildNarratorSystemPrompt(state: ChatSessionState): string {
+  const isThreshold = (state.seed as { kind?: string }).kind === 'threshold'
+
   const sessionContext = [
     '## CURRENT SESSION (ground truth — never contradict it, never re-ask a recorded slot)',
     `- Doorway (ChildRun seed): ${describeSeed(state)}`,
@@ -208,9 +274,13 @@ export function buildNarratorSystemPrompt(state: ChatSessionState): string {
     describeRecordedSlots(state),
   ].join('\n')
 
+  const stageDirectionText = isThreshold
+    ? (THRESHOLD_STAGE_DIRECTIONS[state.chapter] ?? CHAPTER_STAGE_DIRECTIONS[state.chapter])
+    : CHAPTER_STAGE_DIRECTIONS[state.chapter]
+
   const stageDirection = [
     `## STAGE DIRECTION — current chapter: ${state.chapter}`,
-    CHAPTER_STAGE_DIRECTIONS[state.chapter],
+    stageDirectionText,
   ].join('\n')
 
   const closingSeal = [
@@ -223,7 +293,7 @@ export function buildNarratorSystemPrompt(state: ChatSessionState): string {
     NARRATOR_GUARDRAILS,
     RECORDING_DISCIPLINE,
     MACHINE_QUESTION,
-    REGISTER_ARC,
+    isThreshold ? THRESHOLD_AMENDMENT : REGISTER_ARC,
     sessionContext,
     stageDirection,
     closingSeal,

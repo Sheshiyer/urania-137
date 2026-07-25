@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Send, X } from 'lucide-react'
-import type { ChildRun } from '../../types'
+import type { ChildRun, RelationshipContext, SubjectInput } from '../../types'
 import type { ChatBlock, ChatEvent, ChatMsg, ChatSessionState } from '../../types/chat'
 import { toSubmitPayload, type SubmitPayload } from '../../lib/chat/stateMachine'
 import type { ThreadResult } from '../../lib/chat/resultMessages'
 import { createOrResumeSession, completeSession, getSession, replayEvents, streamTurn } from '../../lib/chatApi'
+import { createSubject } from '../../lib/subjectsApi'
+import { CircleBar, circlePersistIndexes, circleRole } from './CircleBar'
 import { ResultThread } from './ResultThread'
 
 /**
@@ -91,6 +93,39 @@ function msgText(msg: ChatMsg): string {
     .trim()
 }
 
+/**
+ * W3-A circle opt-in: POST each subject the caller chose to hold at the
+ * persist_offer beat. Best-effort — returns true when any POST failed; the
+ * caller surfaces a one-line warning and continues the handoff regardless.
+ * Index 0 (the primary/self slot) and prefilled indexes are skipped
+ * defensively; wholesale-picked members are never in circlePersist (the
+ * machine marks them `picked`, not `persist`).
+ */
+async function persistCirclePicks(session: ChatSessionState): Promise<boolean> {
+  const indexes = circlePersistIndexes(session)
+  if (!indexes.length) return false
+  const subjects = (session.intake.subjects ?? []) as Partial<SubjectInput>[]
+  const prefilled = session.prefilledCount ?? 0
+  const role = circleRole((session.intake.relationship_context as RelationshipContext | null | undefined)?.type)
+  const results = await Promise.allSettled(
+    indexes.map(async (idx) => {
+      if (idx < 1 || idx < prefilled) return
+      const s = subjects[idx]
+      if (!s?.name || !s.birth_date || !s.birth_time || !s.birth_time_confidence || !s.birth_location_query || !s.normalized_location) return
+      await createSubject({
+        role,
+        name: s.name,
+        birth_date: s.birth_date,
+        birth_time: s.birth_time,
+        birth_time_confidence: s.birth_time_confidence,
+        birth_location_query: s.birth_location_query,
+        normalized_location: s.normalized_location,
+      })
+    }),
+  )
+  return results.some((r) => r.status === 'rejected')
+}
+
 function BlockView({ block }: { block: ChatBlock }) {
   switch (block.kind) {
     case 'text':
@@ -127,6 +162,8 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
   const [loading, setLoading] = useState(true)
   const [streaming, setStreaming] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  /** One-line in-thread warning for a failed circle persist (W3-A; never blocks). */
+  const [circleNotice, setCircleNotice] = useState<string | null>(null)
 
   const initRef = useRef(false)
   const streamingRef = useRef(false)
@@ -136,6 +173,7 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
   const sessionIdRef = useRef('')
   const shellIdRef = useRef<string | null>(null)
   const threadRef = useRef<HTMLDivElement | null>(null)
+  const composerRef = useRef<HTMLInputElement | null>(null)
 
   // Latest-callback refs so stream handlers never capture stale props/state.
   const onHandoffRef = useRef(onHandoff)
@@ -211,7 +249,7 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
   // -------------------------------------------------------------------------
 
   const sendInput = useCallback(
-    (sess: ChatSessionState, input: string) => {
+    (sess: ChatSessionState, input: unknown, label?: string) => {
       if (streamingRef.current) return
       streamingRef.current = true
       setStreaming(true)
@@ -222,7 +260,9 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
           id: crypto.randomUUID(),
           sessionId: sess.sessionId,
           role: 'user',
-          blocks: [{ kind: 'text', text: input }],
+          // Structured inputs (a picked circle profile, W3-A) echo as their
+          // human label; the protocol carries the object itself server-side.
+          blocks: [{ kind: 'text', text: label ?? (typeof input === 'string' ? input : JSON.stringify(input)) }],
           chapter: sess.chapter,
           createdAt: new Date().toISOString(),
         },
@@ -307,6 +347,16 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
         const fresh = await getSession(session.sessionId)
         onHandoffRef.current(toSubmitPayload(fresh.session))
         consumed = true
+        // W3-A circle opt-in: POST each persist_offer-'yes' subject BEFORE
+        // completion, best-effort — a failure warns in-thread but never
+        // blocks the engine handoff or the session completion.
+        try {
+          if (await persistCirclePicks(fresh.session)) {
+            setCircleNotice('The reading continues, but your circle could not be updated — you can hold them again next time.')
+          }
+        } catch {
+          /* best-effort by contract */
+        }
         // Advance-on-consume (W4): the backend moves the session to
         // 'complete' once the handoff payload has been delivered, so a
         // remounted sheet can never re-fire onHandoff (duplicate engine
@@ -428,6 +478,10 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
             <p className="rounded-lg border border-terracotta/20 bg-terracotta/10 px-3 py-2 text-sm text-terracotta">{error}</p>
           )}
 
+          {circleNotice && (
+            <p className="rounded-lg border border-gold/20 bg-gold/5 px-3 py-2 text-xs text-silver">{circleNotice}</p>
+          )}
+
           {/* Phase 3 — the reading arrives in-thread as narrator chapters
               (composing beat → chapters → Folio closing beat / error+retry).
               Presentation only; the durable copy is the Folio row the hook saved. */}
@@ -442,9 +496,23 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
           )}
         </div>
 
+        {/* W3-A circle affordances: subject picker at the add_another gate /
+            name slot, quick-reply chips at the persist_offer beat. Renders
+            null whenever neither applies. */}
+        {session && !done && (
+          <CircleBar
+            session={session}
+            disabled={inputDisabled}
+            onPick={(input, label) => sendInput(session, input, label)}
+            onReply={(text) => sendInput(session, text)}
+            onSomeoneNew={() => composerRef.current?.focus()}
+          />
+        )}
+
         {/* Composer — sticky footer in the Modal shell's place of the scroll body */}
         <form onSubmit={submit} className="flex shrink-0 items-center gap-2 border-t border-gold/10 px-5 py-4 sm:px-8">
           <input
+            ref={composerRef}
             className={FIELD}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}

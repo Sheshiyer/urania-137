@@ -183,6 +183,20 @@ export interface ChatSessionState {
    * max subject count the `subjects` chapter is skipped entirely.
    */
   prefilledCount?: number
+  /**
+   * Circle opt-in (W3-A): indexes of `intake.subjects` the user chose to hold
+   * in their circle at the `subjects.persist_offer` beat. Machine-maintained;
+   * lives ONLY here (never in `SubjectInput` — that would leak client
+   * semantics into the engine's `AssetGenerateRequest`).
+   *
+   * Persistence note: the functions DAL (`functions/lib/chat/store.ts`)
+   * stores fixed columns + the `intake` JSON document, so across turns this
+   * rides the intake column (`intake.options.circle.persist`) and the machine
+   * rehydrates this field on entry. A state that has not passed through the
+   * machine since load (e.g. a raw route/GET response) may carry the data
+   * only under `intake.options.circle` — read both.
+   */
+  circlePersist?: number[]
   /** Fills one slot per validated turn; never accepts unvalidated fields. */
   intake: Partial<AssetGenerateRequest>
   /** ISO 8601 timestamp. */
