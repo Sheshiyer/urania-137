@@ -4,10 +4,13 @@ import { getNodeById } from '../data/selemeneNodes'
 export type Route =
   | { view: 'home' }
   | { view: 'node'; nodeId: string }
+  | { view: 'threshold' }
 
 /** Parse `window.location.hash` into a validated route. Unknown → home. */
 function parseHash(): Route {
   const hash = typeof window !== 'undefined' ? window.location.hash : ''
+  // The Threshold (W2-A): pre-graph onboarding scene — a third top-level view.
+  if (hash === '#/threshold') return { view: 'threshold' }
   const m = hash.match(/^#\/node\/([^/?#]+)/)
   if (m) {
     const id = decodeURIComponent(m[1])
@@ -17,7 +20,7 @@ function parseHash(): Route {
 }
 
 /** Imperative navigation — updates the hash, which drives the router. */
-export function navigate(to: '/' | `/node/${string}`) {
+export function navigate(to: '/' | '/threshold' | `/node/${string}`) {
   const next = `#${to}`
   if (window.location.hash !== next) window.location.hash = next
   else window.dispatchEvent(new HashChangeEvent('hashchange'))

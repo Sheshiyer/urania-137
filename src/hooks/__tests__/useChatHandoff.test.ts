@@ -132,4 +132,35 @@ describe('routeHandoff — payload-variant routing (W3-B)', () => {
     expect(sinks.daily).toHaveBeenCalledTimes(1)
     expect(sinks.daily).toHaveBeenCalledWith(undefined)
   })
+
+  it('threshold { subject } → optional subject sink (server already persisted the profile); no-op when absent', async () => {
+    const subject = {
+      role: 'primary',
+      name: 'Asha',
+      birth_date: '1990-04-12',
+      birth_time: '12:00',
+      birth_time_confidence: 'unknown',
+      birth_location_query: 'Ujjain, India',
+      normalized_location: {
+        display_name: 'Ujjain, India',
+        latitude: 23.1765,
+        longitude: 75.7885,
+        timezone: 'Asia/Kolkata',
+        provider: 'manual',
+        confidence: 'manual',
+      },
+    } as import('../../types').SubjectInput
+    const sinks = makeSinks()
+    // No subject sink wired: must NOT throw (W1-B made the server authoritative).
+    await expect(routeHandoff({ subject }, sinks)).resolves.toBeUndefined()
+    expect(sinks.witness).not.toHaveBeenCalled()
+    expect(sinks.birth).not.toHaveBeenCalled()
+    expect(sinks.daily).not.toHaveBeenCalled()
+
+    const withSubject = { ...makeSinks(), subject: vi.fn() }
+    await routeHandoff({ subject }, withSubject)
+    expect(withSubject.subject).toHaveBeenCalledTimes(1)
+    expect(withSubject.subject).toHaveBeenCalledWith(subject)
+    expect(withSubject.daily).not.toHaveBeenCalled()
+  })
 })

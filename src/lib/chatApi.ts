@@ -21,8 +21,8 @@
  * line), so parsing `data` alone is sufficient.
  */
 
-import type { ChildRun } from '../types'
 import type { ChatEvent, ChatMsg, ChatSessionState } from '../types/chat'
+import type { StorySeed } from './chat/stateMachine'
 
 const CHAT_BASE = '/api/chat'
 
@@ -46,9 +46,10 @@ async function toError(res: Response, fallback: string): Promise<Error> {
 /**
  * Create a session for `seed`, or resume the latest open one for
  * (user, seed) — the backend decides (201 create / 200 resume); both return
- * the authoritative `ChatSessionState`.
+ * the authoritative `ChatSessionState`. Accepts any `StorySeed` (ChildRun
+ * doorways, `info`, and the Threshold scene's `threshold` seed — W2-A).
  */
-export async function createOrResumeSession(seed: ChildRun): Promise<ChatSessionState> {
+export async function createOrResumeSession(seed: StorySeed): Promise<ChatSessionState> {
   const res = await fetch(`${CHAT_BASE}/session`, {
     method: 'POST',
     credentials: 'include',

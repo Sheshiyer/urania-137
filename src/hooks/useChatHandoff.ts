@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react'
-import type { AssetGenerateRequest, BirthData } from '../types'
+import type { AssetGenerateRequest, BirthData, SubjectInput } from '../types'
 import type { SubmitPayload } from '../lib/chat/stateMachine'
 import type { DailyLocation } from '../lib/daily/source'
 import { rememberLocation, tzFromLongitude } from '../lib/daily/location'
@@ -35,6 +35,14 @@ export interface HandoffSinks {
    * default place" — the sink runs the hook's resolved default location.
    */
   daily: (location?: DailyLocation) => void
+  /**
+   * Threshold — `{ subject }`. The profile itself is persisted SERVER-SIDE at
+   * the advance-on-consume seam (W1-B: POST …/complete writes the `self`
+   * row), so this sink is only a client-side cache/refresh hook — optional,
+   * and a no-op when absent. The Threshold scene (W2-A) drives its own
+   * session and calls `completeSession` directly, never routing through here.
+   */
+  subject?: (subject: SubjectInput) => void
 }
 
 /**
@@ -81,10 +89,11 @@ export async function routeHandoff(payload: SubmitPayload, sinks: HandoffSinks):
     sinks.witness(payload)
     return
   }
-  // threshold — { subject }; profile persistence is wired in Phase 1 (W1-B).
-  // Until then a threshold handoff reaching this sink is a programming error.
+  // threshold — { subject }; the profile row was already written server-side
+  // (W1-B, at /complete), so the client sink is an optional refresh hook.
   if ('subject' in payload) {
-    throw new Error('threshold handoff is not wired yet — profile persistence lands in Phase 1 (W1-B).')
+    sinks.subject?.(payload.subject)
+    return
   }
   // daily — { locationQuery? }; resolve the place, then fire the reading.
   const location =
