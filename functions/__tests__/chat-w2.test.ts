@@ -83,6 +83,9 @@ function makeFakeChatD1() {
       const row = users.get(args[0] as string)
       return row ? { ...row } : null
     }
+    if (sql.includes("FROM subjects WHERE user_id = ?1 AND role = 'self'")) {
+      return null // W1-B prefill probe: these fixtures never cross the Threshold
+    }
     if (sql.includes('FROM chat_sessions WHERE session_id = ?1 AND user_id = ?2')) {
       const row = sessions.get(args[0] as string)
       return row && row.user_id === args[1] ? { ...row } : null

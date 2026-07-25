@@ -4,11 +4,20 @@ import { AccessVerifyError, extractIdentity, verifyAccessJwt, type AccessJwtClai
 import { maybeInjectDevIdentity } from '../lib/dev-identity'
 import { upsertUser, listReadings, createReading, setReadingFavorite, deleteReading, bulkImportReadings } from '../lib/db'
 import { forwardToEngineFromEnv } from '../lib/engine-proxy'
-import { isStorySeed, initialSessionState } from '../lib/chat/stateMachine'
+import { isStorySeed, initialSessionState, toSubmitPayload, type StorySeed } from '../lib/chat/stateMachine'
 import { createChatSession, findLatestOpenSession, getChatSession, listChatTurnEvents, listChatTurns, saveChatSession } from '../lib/chat/store'
 import { createSseStream, encodeEventFrame, numberTurnEvents } from '../lib/chat/sse'
 import { orchestrateTurn } from '../lib/chat/turn'
-import type { ChatEvent, ChatSessionState } from '../lib/chat/types'
+import type { ChatEvent, ChatSessionState, SubjectInput } from '../lib/chat/types'
+import {
+  createSubject,
+  deleteSubject,
+  getSelfSubject,
+  listSubjects,
+  profileToIntakeSubject,
+  updateSubject,
+  validateSubjectBody,
+} from '../lib/subjects'
 
 /**
  * Pages Functions catch-all for /api/*.
@@ -261,6 +270,65 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
   }
 
   // -----------------------------------------------------------------------
+  // Subject profiles (Threshold W1-A) — persistent birth-data profiles from
+  // migration 0004. Ownership scoping mirrors /api/folio: every read/write
+  // binds the caller's user id, and unknown vs cross-user ids are
+  // indistinguishable 404s. The Threshold itself writes the caller's `self`
+  // row at /api/chat/session/:id/complete (W1-B); these routes are the direct
+  // manage surface (list/create/patch/delete) with the state machine's own
+  // validation rules.
+  // -----------------------------------------------------------------------
+
+  // GET /api/subjects — list the caller's profiles, oldest first.
+  if (pathname === '/api/subjects' && method === 'GET') {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    const subjects = await listSubjects(ctx.env.DB, u.user.id)
+    return json({ subjects })
+  }
+
+  // POST /api/subjects — create a profile. `role: 'self'` upserts the
+  // caller's single Threshold row (re-crossing updates, never duplicates);
+  // any other role slug inserts a new row. 201 + the stored profile.
+  if (pathname === '/api/subjects' && method === 'POST') {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    const body = await readJson(ctx.request)
+    const v = validateSubjectBody(body)
+    if (!v.ok) return badRequest(`POST /api/subjects: ${v.error}`)
+    const profile = await createSubject(ctx.env.DB, u.user.id, v.value)
+    return json(profile, 201)
+  }
+
+  // PATCH /api/subjects/:id — field-wise update with the same validation as a
+  // full body (role/id immutable). DELETE /api/subjects/:id. Both 404 for
+  // unknown AND cross-user ids — existence of another user's profile is never
+  // leaked.
+  const subjectId = /^\/api\/subjects\/([^/]+)$/.exec(pathname)?.[1]
+  if (subjectId && (method === 'PATCH' || method === 'DELETE')) {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    let id: string
+    try {
+      id = decodeURIComponent(subjectId)
+    } catch {
+      return badRequest('malformed subject id')
+    }
+    if (method === 'PATCH') {
+      const body = await readJson(ctx.request)
+      if (typeof body !== 'object' || body === null) {
+        return badRequest('PATCH /api/subjects/:id expects a JSON object body')
+      }
+      const updated = await updateSubject(ctx.env.DB, u.user.id, id, body as Record<string, unknown>)
+      if (!updated) return notFound('subject not found')
+      return json(updated)
+    }
+    const deleted = await deleteSubject(ctx.env.DB, u.user.id, id)
+    if (!deleted) return notFound('subject not found')
+    return json({})
+  }
+
+  // -----------------------------------------------------------------------
   // Chat onboarding (Phase 1, W1-A) — narrative chat session backend.
   // Ownership scoping mirrors /api/folio: every read/write binds the caller's
   // user id, and unknown vs cross-user session ids are indistinguishable 404s.
@@ -269,17 +337,30 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
   // POST /api/chat/session — create or resume the latest open session for
   // (user, seed). Body: { seed: StorySeed }. 201 on create (resumed:false),
   // 200 on resume (resumed:true).
+  //
+  // W1-B profile prefill: for the subject-collecting doorway seeds (engine/
+  // workflow/witness), a caller who has crossed the Threshold gets their
+  // stored `self` profile injected SERVER-SIDE as the leading intake slot —
+  // the machine then skips the subjects chapter (single-subject seeds) or
+  // opens at the add_another gate (witness). The client never supplies
+  // prefill data; the DB is the only source. `threshold` itself never
+  // prefills — collecting the self profile is its entire purpose.
   if (pathname === '/api/chat/session' && method === 'POST') {
     const u = await requireUser(ctx.env, auth.claims)
     if (!u.ok) return u.response
     const body = await readJson(ctx.request)
     const seed = typeof body === 'object' && body !== null ? (body as Record<string, unknown>).seed : undefined
     if (!isStorySeed(seed)) {
-      return badRequest('POST /api/chat/session expects a JSON body { seed } with a valid ChildRun/info seed')
+      return badRequest('POST /api/chat/session expects a JSON body { seed } with a valid ChildRun/info/threshold seed')
     }
     const existing = await findLatestOpenSession(ctx.env.DB, u.user.id, seed)
     if (existing) return json({ session: existing, resumed: true })
-    const state = initialSessionState(seed, { sessionId: crypto.randomUUID(), userId: u.user.id })
+    let prefilled: SubjectInput[] | undefined
+    if (seed.kind === 'engine' || seed.kind === 'workflow' || seed.kind === 'witness') {
+      const self = await getSelfSubject(ctx.env.DB, u.user.id)
+      if (self) prefilled = [profileToIntakeSubject(self)]
+    }
+    const state = initialSessionState(seed, { sessionId: crypto.randomUUID(), userId: u.user.id }, prefilled)
     await createChatSession(ctx.env.DB, state)
     return json({ session: state, resumed: false }, 201)
   }
@@ -352,6 +433,12 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
   // remounted client can never re-fire the handoff (duplicate engine submit +
   // duplicate Folio save). Idempotent on 'complete'; 400 on any earlier
   // chapter (no handoff was ever delivered). Ownership-guarded as above.
+  //
+  // W1-B: completing a THRESHOLD session also persists the caller's `self`
+  // subject profile — here, at the advance-on-consume seam, never in the
+  // turn handler, so a delivered-but-unconsumed handoff stays retryable
+  // without having written anything. The DAL's self-upsert makes repeats
+  // idempotent (one self row per user, updated in place).
   const chatCompleteId = /^\/api\/chat\/session\/([^/]+)\/complete$/.exec(pathname)?.[1]
   if (chatCompleteId && method === 'POST') {
     const u = await requireUser(ctx.env, auth.claims)
@@ -368,6 +455,17 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
       return badRequest(`cannot complete a session in chapter '${session.chapter}' — complete is only valid after handoff`)
     }
     if (session.chapter === 'handoff') {
+      if ((session.seed as unknown as StorySeed).kind === 'threshold') {
+        let subject: SubjectInput
+        try {
+          const payload = toSubmitPayload(session)
+          if (!('subject' in payload)) throw new Error('threshold handoff did not produce a subject payload')
+          subject = payload.subject
+        } catch (err) {
+          return badRequest(`cannot persist threshold profile: ${(err as Error)?.message || err}`)
+        }
+        await createSubject(ctx.env.DB, u.user.id, { ...subject, role: 'self' })
+      }
       const completed: ChatSessionState = { ...session, chapter: 'complete', updatedAt: new Date().toISOString() }
       const saved = await saveChatSession(ctx.env.DB, completed)
       if (!saved) return notFound('chat session not found')
