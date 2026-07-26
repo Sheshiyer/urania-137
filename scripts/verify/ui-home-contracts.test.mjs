@@ -7,6 +7,8 @@ const read = (path) => readFileSync(new URL(`../../${path}`, import.meta.url), '
 const sources = {
   home: read('src/pages/HomePage.tsx'),
   node: read('src/pages/NodePage.tsx'),
+  nodePresentation: read('src/lib/nodePresentation.ts'),
+  engineStatus: read('src/components/panels/EngineStatusPanel.tsx'),
   topNav: read('src/components/chrome/TopNav.tsx'),
   pageTabs: read('src/components/chrome/PageTabs.tsx'),
   statFooter: read('src/components/chrome/StatFooter.tsx'),
@@ -34,6 +36,22 @@ test('Folio is the only saved-reading navigation noun and both entries converge'
   assert.doesNotMatch(sources.topNav, /\b(?:Archive|Library)\b/)
   assert.match(sources.topNav, /label:\s*['"]Folio['"][\s\S]*navigate\(['"]\/readings['"]\)/)
   assert.doesNotMatch(sources.node, /FolioPanel/)
+  assert.match(sources.node, /navigate\(['"]\/readings['"]\)/)
+})
+
+test('node pages preserve equivalent graph, list, info, and run doorways', () => {
+  assert.match(sources.node, /<ConstellationGraph/)
+  assert.match(sources.node, /<InstrumentDialog/)
+  assert.match(sources.node, /<ChatSheet/)
+  assert.match(sources.nodePresentation, /buildGraphEntries/)
+  assert.doesNotMatch(sources.node, /from ['"][^'"]*\/Modal['"]|<Modal(?:\s|>)/)
+})
+
+test('Engine Status is endpoint-backed operator evidence without email authority inference', () => {
+  assert.match(sources.engineStatus, /<OperatorField/)
+  assert.match(sources.engineStatus, /health\.version/)
+  assert.match(sources.engineStatus, /latency_ms/)
+  assert.doesNotMatch(`${sources.node}\n${sources.engineStatus}`, /me\.email|@.*admin/i)
 })
 
 test('runtime surfaces do not import generated image assets directly', () => {

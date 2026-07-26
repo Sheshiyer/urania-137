@@ -53,8 +53,15 @@ export function PageHeader({ title, epithet, subtitle, showBack = true, onBack }
         <span className="h-px w-6 bg-gold/10" />
       </div>
 
-      {/* Description kept for screen readers; the references show a title-only header. */}
-      {subtitle && <p className="sr-only">{subtitle}</p>}
+      {/* Keep the purpose readable in the wide composition without crowding
+          the compact constellation. Compact layouts receive the same text
+          through the ordered list lens and this screen-reader copy. */}
+      {subtitle && (
+        <p className="mt-3 max-w-xl text-sm leading-6 text-silver">
+          <span className="hidden lg:inline">{subtitle}</span>
+          <span className="sr-only lg:hidden">{subtitle}</span>
+        </p>
+      )}
     </div>
   )
 }

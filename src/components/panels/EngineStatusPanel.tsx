@@ -1,16 +1,6 @@
 import { EngineStatus, SelemeneChild } from '../../types'
+import { OperatorField } from '../readings/OperatorField'
 import { Collapsible } from '../ui/Collapsible'
-
-/** child.id → real Selemene engine_id where a 1:1 mapping exists. */
-const ENGINE_ALIAS: Record<string, string> = {
-  'vedic-clock': 'vedic-clock',
-  panchanga: 'panchanga',
-  'i-ching': 'i-ching',
-  astro: 'transits',
-  'human-design': 'human-design',
-  enneagram: 'enneagram',
-  'gene-keys': 'gene-keys',
-}
 
 function fmtUptime(s: number): string {
   const d = Math.floor(s / 86400)
@@ -19,8 +9,27 @@ function fmtUptime(s: number): string {
   return d > 0 ? `${d}d ${h}h` : h > 0 ? `${h}h ${m}m` : `${m}m`
 }
 
-function Dot({ ok }: { ok: boolean }) {
-  return <span className={`h-1.5 w-1.5 rounded-full ${ok ? 'bg-emerald' : 'bg-terracotta'}`} />
+function Dot({ state }: { state: 'available' | 'unavailable' | 'unknown' }) {
+  return (
+    <span
+      className={[
+        'h-1.5 w-1.5 rounded-full',
+        state === 'available'
+          ? 'bg-emerald'
+          : state === 'unavailable'
+            ? 'bg-terracotta'
+            : 'bg-silver/40',
+      ].join(' ')}
+      role="img"
+      aria-label={state}
+    />
+  )
+}
+
+function availability(value: string): 'available' | 'unavailable' {
+  return value === 'ok' || value === 'ready' || value === 'available'
+    ? 'available'
+    : 'unavailable'
 }
 
 /**
@@ -30,73 +39,126 @@ function Dot({ ok }: { ok: boolean }) {
  */
 export function EngineStatusPanel({ child, status }: { child: SelemeneChild | null; status: EngineStatus }) {
   const { health, ready, engines, loading, error } = status
-  const highlight = child ? ENGINE_ALIAS[child.id] : undefined
+  const highlight = child?.run?.kind === 'engine' ? child.run.engineId : undefined
   const healthById = new Map((ready?.bridge_engines ?? []).map((e) => [e.engine_id, e]))
 
-  if (loading) return <p className="py-6 text-center text-sm text-silver">Contacting the Selemene engines…</p>
-  if (error && !health) return <p className="py-6 text-center text-sm text-evidence-copy-unresolved">{error}</p>
-
   return (
-    <div className="space-y-4">
-      {/* Overall */}
-      {health && (
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 rounded-sm border border-gold/15 bg-void/50 px-4 py-3 text-sm">
-          <span className="flex items-center gap-2 text-parchment">
-            <Dot ok={health.status === 'ok'} />
-            <span className="font-display uppercase tracking-widest text-gold">v{health.version}</span>
-          </span>
-          <span className="text-silver">up {fmtUptime(health.uptime_seconds)}</span>
-          <span className="text-silver">{health.engines_loaded} engines</span>
-          <span className="text-silver">{health.workflows_loaded} workflows</span>
-        </div>
-      )}
+    <OperatorField title="Selemene engine status">
+      <div className="space-y-4">
+        {loading && (
+          <p className="py-6 text-center text-sm text-silver">
+            Contacting the Selemene endpoints…
+          </p>
+        )}
 
-      {/* Infra */}
-      {ready && (
-        <Collapsible title="Infrastructure" defaultOpen badge={ready.overall_status}>
-          <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
-            {([
-              ['redis', ready.redis],
-              ['postgres', ready.postgres],
-              ['orchestrator', ready.orchestrator],
-              ['bridge', ready.bridge_status],
-            ] as const).map(([k, v]) => (
-              <div key={k} className="flex items-center gap-2 rounded-sm border border-gold/10 bg-void/40 px-2.5 py-2">
-                <Dot ok={v === 'ok' || v === 'ready' || v === 'available'} />
-                <div className="min-w-0">
-                  <div className="font-display uppercase tracking-wider text-silver/70 text-[9px]">{k}</div>
-                  <div className="truncate text-parchment">{v}</div>
+        {error && (
+          <p className="rounded-sm border border-terracotta/25 bg-terracotta/5 px-3 py-2 text-sm text-evidence-copy-unresolved">
+            {error}
+          </p>
+        )}
+
+        {/* Overall fields are rendered only when GET /health returned them. */}
+        {health && (
+          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-sm border border-reading-rule bg-reading-rule text-sm sm:grid-cols-4">
+            <div className="bg-reading-paper/95 px-3 py-2">
+              <dt className="console-eyebrow">Availability</dt>
+              <dd className="mt-1 flex items-center gap-2 text-reading-ink">
+                <Dot state={availability(health.status)} />
+                {health.status}
+              </dd>
+            </div>
+            <div className="bg-reading-paper/95 px-3 py-2">
+              <dt className="console-eyebrow">Version</dt>
+              <dd className="mt-1 font-mono text-reading-ink">{health.version}</dd>
+            </div>
+            <div className="bg-reading-paper/95 px-3 py-2">
+              <dt className="console-eyebrow">Uptime</dt>
+              <dd className="mt-1 font-mono text-reading-ink">{fmtUptime(health.uptime_seconds)}</dd>
+            </div>
+            <div className="bg-reading-paper/95 px-3 py-2">
+              <dt className="console-eyebrow">Loaded</dt>
+              <dd className="mt-1 font-mono text-reading-ink">
+                {health.engines_loaded} engines · {health.workflows_loaded} workflows
+              </dd>
+            </div>
+          </dl>
+        )}
+
+        {/* Infrastructure values come verbatim from GET /health/ready. */}
+        {ready && (
+          <Collapsible title="Infrastructure" defaultOpen badge={ready.overall_status}>
+            <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
+              {([
+                ['redis', ready.redis],
+                ['postgres', ready.postgres],
+                ['orchestrator', ready.orchestrator],
+                ['bridge', ready.bridge_status],
+              ] as const).map(([key, value]) => (
+                <div key={key} className="flex items-center gap-2 rounded-sm border border-reading-rule bg-reading-paper/70 px-2.5 py-2">
+                  <Dot state={availability(value)} />
+                  <div className="min-w-0">
+                    <div className="console-eyebrow">{key}</div>
+                    <div className="truncate font-mono text-reading-ink">{value}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </Collapsible>
-      )}
+              ))}
+            </div>
+          </Collapsible>
+        )}
 
-      {/* Engine roster */}
-      {engines.length > 0 && (
-        <Collapsible title="Engine roster" defaultOpen={Boolean(highlight)} badge={`${engines.length} engines`}>
-          <ul className="grid grid-cols-2 gap-x-4 gap-y-1.5 sm:grid-cols-3">
-            {engines.map((id) => {
-              const h = healthById.get(id)
-              const ok = h ? h.healthy : true
-              const isSel = id === highlight
-              return (
-                <li
-                  key={id}
-                  className={`flex items-center gap-2 rounded px-1.5 py-0.5 text-xs ${isSel ? 'bg-gold/15 text-parchment' : 'text-silver'}`}
-                  title={h ? `${h.detail} · ${h.latency_ms}ms` : 'loaded'}
-                >
-                  <Dot ok={ok} />
-                  <span className="truncate">{id}</span>
-                  {h && <span className="ml-auto shrink-0 text-[10px] text-silver/50">{h.latency_ms}ms</span>}
-                </li>
-              )
-            })}
-          </ul>
-        </Collapsible>
-      )}
-      <p className="text-[11px] text-silver/60">Live from the Selemene engine bridge · {ready?.overall_status ?? health?.status}.</p>
-    </div>
+        {/* A roster id alone proves loading, not health. Unknown stays neutral. */}
+        {engines.length > 0 && (
+          <Collapsible title="Engine roster" defaultOpen={Boolean(highlight)} badge={`${engines.length} engines`}>
+            <ul className="grid gap-1.5 sm:grid-cols-2">
+              {engines.map((id) => {
+                const evidence = healthById.get(id)
+                const state = evidence
+                  ? evidence.healthy
+                    ? 'available'
+                    : 'unavailable'
+                  : 'unknown'
+                const selected = id === highlight
+                return (
+                  <li
+                    key={id}
+                    className={[
+                      'rounded border px-2.5 py-2 text-xs',
+                      selected
+                        ? 'border-gold/45 bg-gold/10'
+                        : 'border-reading-rule bg-reading-paper/60',
+                    ].join(' ')}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Dot state={state} />
+                      <span className="truncate font-mono text-reading-ink">{id}</span>
+                      {evidence && Number.isFinite(evidence.latency_ms) && (
+                        <span className="ml-auto shrink-0 font-mono text-reading-muted">
+                          {evidence.latency_ms}ms
+                        </span>
+                      )}
+                    </div>
+                    {evidence?.detail && (
+                      <p className="mt-1 pl-3.5 text-reading-muted">{evidence.detail}</p>
+                    )}
+                  </li>
+                )
+              })}
+            </ul>
+          </Collapsible>
+        )}
+
+        {!loading && !health && !ready && engines.length === 0 && !error && (
+          <p className="py-4 text-sm text-reading-muted">
+            No operator evidence was returned by the configured endpoints.
+          </p>
+        )}
+
+        {(ready || health) && (
+          <p className="font-mono text-[11px] text-reading-muted">
+            Endpoint evidence · {ready?.overall_status ?? health?.status}
+          </p>
+        )}
+      </div>
+    </OperatorField>
   )
 }
