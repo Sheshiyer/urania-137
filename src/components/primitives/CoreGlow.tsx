@@ -7,6 +7,8 @@ interface CoreGlowProps {
   label: string
   /** When set, the hub becomes an interactive "return to home" gesture. */
   onClick?: () => void
+  /** Semantic activation callback; `onClick` remains the graph compatibility alias. */
+  onActivate?: () => void
   /** Ornate parent-page hub (dense rings + guilloché). Home hub stays simple. */
   ornate?: boolean
   /** Hub scale in px (ornate). Outer ring radius roughly = size. */
@@ -15,33 +17,64 @@ interface CoreGlowProps {
   className?: string
 }
 
-/** Home hub: layered gradient glow + drifting ring + NOESIS label. Unchanged baseline. */
-function SimpleCore({ centerX, centerY, label, onClick, className }: CoreGlowProps) {
-  const interactive = Boolean(onClick)
+const MINIMUM_TARGET_PX = 44
+
+interface CoreActionProps {
+  centerX: number
+  centerY: number
+  label: string
+  onActivate: () => void
+}
+
+/**
+ * An HTML button inside the SVG gives the hub native Enter/Space activation.
+ * Its transparent 44px box leaves the existing center artwork untouched.
+ */
+function CoreAction({ centerX, centerY, label, onActivate }: CoreActionProps) {
   return (
-    <g
-      onClick={onClick}
-      className={[interactive ? 'cursor-pointer' : '', className ?? ''].join(' ').trim() || undefined}
-      role={interactive ? 'button' : undefined}
-      aria-label={interactive ? `Return to home from ${label}` : label}
+    <foreignObject
+      x={centerX - MINIMUM_TARGET_PX / 2}
+      y={centerY - MINIMUM_TARGET_PX / 2}
+      width={MINIMUM_TARGET_PX}
+      height={MINIMUM_TARGET_PX}
+      overflow="visible"
     >
-      <g className="animate-pulse-slow">
-        <circle cx={centerX} cy={centerY} r={80} fill="url(#coreGradient)" opacity={0.35} />
-        <circle cx={centerX} cy={centerY} r={60} fill="none" stroke={COLORS.gold} strokeWidth={1} strokeOpacity={0.4} />
-        <circle cx={centerX} cy={centerY} r={44} fill="none" stroke={COLORS.gold} strokeWidth={0.5} strokeOpacity={0.25} strokeDasharray="3 4" style={{ transformOrigin: `${centerX}px ${centerY}px` }} className="animate-drift" />
-        <circle cx={centerX} cy={centerY} r={18} fill={COLORS.gold} fillOpacity={0.9} filter="url(#glow)" />
-        <circle cx={centerX} cy={centerY} r={8} fill="#fff" fillOpacity={0.9} />
+      <button
+        type="button"
+        onClick={onActivate}
+        aria-label={`Return to home from ${label}`}
+        data-hit-target={MINIMUM_TARGET_PX}
+        className="min-h-11 min-w-11 cursor-pointer rounded-full bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
+      />
+    </foreignObject>
+  )
+}
+
+/** Home hub: layered gradient glow + drifting ring + NOESIS label. Unchanged baseline. */
+function SimpleCore({ centerX, centerY, label, onClick, onActivate, className }: CoreGlowProps) {
+  const activate = onActivate ?? onClick
+  return (
+    <g className={className}>
+      <g aria-hidden="true" pointerEvents="none" className="pointer-events-none">
+        <g className="animate-pulse-slow">
+          <circle cx={centerX} cy={centerY} r={80} fill="url(#coreGradient)" opacity={0.35} />
+          <circle cx={centerX} cy={centerY} r={60} fill="none" stroke={COLORS.gold} strokeWidth={1} strokeOpacity={0.4} />
+          <circle cx={centerX} cy={centerY} r={44} fill="none" stroke={COLORS.gold} strokeWidth={0.5} strokeOpacity={0.25} strokeDasharray="3 4" style={{ transformOrigin: `${centerX}px ${centerY}px` }} className="animate-drift" />
+          <circle cx={centerX} cy={centerY} r={18} fill={COLORS.gold} fillOpacity={0.9} filter="url(#glow)" />
+          <circle cx={centerX} cy={centerY} r={8} fill="#fff" fillOpacity={0.9} />
+        </g>
+        <text x={centerX} y={centerY + 6} textAnchor="middle" fill={COLORS.gold} fontSize={12} fontWeight={800} letterSpacing="0.16em" className="uppercase font-display">
+          {label}
+        </text>
       </g>
-      <text x={centerX} y={centerY + 6} textAnchor="middle" fill={COLORS.gold} fontSize={12} fontWeight={800} letterSpacing="0.16em" className="uppercase pointer-events-none font-display">
-        {label}
-      </text>
+      {activate ? <CoreAction centerX={centerX} centerY={centerY} label={label} onActivate={activate} /> : null}
     </g>
   )
 }
 
 /** Ornate parent hub: a luminous golden disc of concentric rings + guilloché. */
-function OrnateCore({ centerX, centerY, label, onClick, size = 96, className }: CoreGlowProps) {
-  const interactive = Boolean(onClick)
+function OrnateCore({ centerX, centerY, label, onClick, onActivate, size = 96, className }: CoreGlowProps) {
+  const activate = onActivate ?? onClick
   const lines = wrapLabel(label, 12, 2)
   const lineHeight = 15
   const startY = centerY - ((lines.length - 1) * lineHeight) / 2 + 5
@@ -85,12 +118,8 @@ function OrnateCore({ centerX, centerY, label, onClick, size = 96, className }: 
   }
 
   return (
-    <g
-      onClick={onClick}
-      className={[interactive ? 'cursor-pointer' : '', className ?? ''].join(' ').trim() || undefined}
-      role={interactive ? 'button' : undefined}
-      aria-label={interactive ? `Return to home from ${label}` : label}
-    >
+    <g className={className}>
+      <g aria-hidden="true" pointerEvents="none" className="pointer-events-none">
       {/* bloom band */}
       <circle cx={centerX} cy={centerY} r={size * 1.5} fill="url(#hubBloom)" />
 
@@ -136,6 +165,8 @@ function OrnateCore({ centerX, centerY, label, onClick, size = 96, className }: 
           </tspan>
         ))}
       </text>
+      </g>
+      {activate ? <CoreAction centerX={centerX} centerY={centerY} label={label} onActivate={activate} /> : null}
     </g>
   )
 }

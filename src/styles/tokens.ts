@@ -56,6 +56,11 @@ export const INTERACTION = {
   focus: '#A9B9FF',
 } as const
 
+/** Pointer and keyboard targets share this WCAG-aligned minimum. */
+export const INTERACTION_TARGET = {
+  minimumPx: 44,
+} as const
+
 /** Sustained-reading material uses dark ink on Parchment. */
 export const READING = {
   surface: COLORS.parchment,

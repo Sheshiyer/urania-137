@@ -15,6 +15,7 @@ const overviewOrbitals: GraphOrbital[] = SELEMENE_NODES.map((node) => ({
   color: node.color,
   glyph: node.glyph,
   epithet: node.epithet,
+  description: node.description,
 }))
 
 const childCount = SELEMENE_NODES.reduce((n, node) => n + (node.children?.length ?? 0), 0)

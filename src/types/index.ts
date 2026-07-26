@@ -164,6 +164,22 @@ export interface GraphOrbital {
   glyph?: string
   /** Gold epithet sublabel (home planets — the moodboard's two-line labels). */
   epithet?: string
+  /** Optional plain-language purpose used by the ordered relation lens. */
+  description?: string
+  /** Optional relationship copy; defaults to the current center lens. */
+  relation?: string
+}
+
+/** One canonical, ordered destination shared by the graph and list lenses. */
+export interface GraphEntry {
+  id: string
+  label: string
+  /** Epithet or short description identifying the destination. */
+  description: string
+  /** Plain-language purpose when the orbital provides one. */
+  purpose?: string
+  /** How this destination relates to the graph's center. */
+  relation: string
 }
 
 export interface ReportGenerationRequest {
