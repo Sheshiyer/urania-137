@@ -4,11 +4,11 @@ slug: 20260726-urania-living-readings-ecosystem
 project: Urania 137
 effort: advanced
 effort_source: classifier
-phase: plan
-progress: 0/32
+phase: execute
+progress: 14/32
 mode: interactive
 started: 2026-07-14T16:00:00Z
-updated: 2026-07-27T12:10:00+05:30
+updated: 2026-07-27T13:20:00+05:30
 iteration: 10
 ---
 
@@ -2047,20 +2047,20 @@ branded ecosystem without weakening existing data or authorization contracts.
 
 ### Criteria
 
-- [ ] ISC-314: Recoverable binary-diff and untracked-file backups exist before runtime edits.
-- [ ] ISC-315: The implementation runs on the dedicated `codex/urania-graph-first-ui-realignment` branch.
-- [ ] ISC-316: The baseline checkpoint contains exactly the reviewed intentional path allowlist.
-- [ ] ISC-317: The baseline harness records known violations and a non-zero production bundle size.
-- [ ] ISC-318: Semantic text tokens meet WCAG contrast on Void and instrument surfaces.
-- [ ] ISC-319: Evidence colors and interaction colors are structurally distinct.
-- [ ] ISC-320: Parchment reading ink and muted text meet WCAG contrast.
-- [ ] ISC-321: Typography roles declare readable minimums and sustained-reading measure.
-- [ ] ISC-322: Centralized UI copy passes the prohibited-vocabulary gate.
-- [ ] ISC-323: Runtime source imports no generated moodboard or page-reference asset.
-- [ ] ISC-324: Default instrument panels use structural rules without generic SaaS blur.
-- [ ] ISC-325: Meaningful motion collapses under reduced motion and data marks stay static.
-- [ ] ISC-326: AsyncBoundary renders ready content without a status shell.
-- [ ] ISC-327: AsyncBoundary renders exactly one loading, empty, partial, stale, denied, or error state.
+- [x] ISC-314: Recoverable binary-diff and untracked-file backups exist before runtime edits.
+- [x] ISC-315: The implementation runs on the dedicated `codex/urania-graph-first-ui-realignment` branch.
+- [x] ISC-316: The baseline checkpoint contains exactly the reviewed intentional path allowlist.
+- [x] ISC-317: The baseline harness records known violations and a non-zero production bundle size.
+- [x] ISC-318: Semantic text tokens meet WCAG contrast on Void and instrument surfaces.
+- [x] ISC-319: Evidence colors and interaction colors are structurally distinct.
+- [x] ISC-320: Parchment reading ink and muted text meet WCAG contrast.
+- [x] ISC-321: Typography roles declare readable minimums and sustained-reading measure.
+- [x] ISC-322: Centralized UI copy passes the prohibited-vocabulary gate.
+- [x] ISC-323: Runtime source imports no generated moodboard or page-reference asset.
+- [x] ISC-324: Default instrument panels use structural rules without generic SaaS blur.
+- [x] ISC-325: Meaningful motion collapses under reduced motion and data marks stay static.
+- [x] ISC-326: AsyncBoundary renders ready content without a status shell.
+- [x] ISC-327: AsyncBoundary renders exactly one loading, empty, partial, stale, denied, or error state.
 - [ ] ISC-328: InstrumentDialog provides one accessible focus-managed overlay contract.
 - [ ] ISC-329: Chat and informational overlays use InstrumentDialog without duplicate shells.
 - [ ] ISC-330: Every graph relationship has a named non-visual equivalent.
@@ -2109,3 +2109,79 @@ branded ecosystem without weakening existing data or authorization contracts.
   primary rail.
 - 2026-07-27: A reviewed allowlist is required before the integrated baseline
   commit because the starting worktree intentionally contains broad prior work.
+- 2026-07-27: The external Temperance rail emitted only two plan descriptors
+  and no terminal index, so the documented fail-open path used three independent
+  read-only Codex audits. Those lanes reported no workspace writes; primary-rail
+  staging remained limited to the named task files.
+- 2026-07-27: The first executing-plans checkpoint stops after Tasks 0–2. Mobile
+  SVG label density and Folio map overlap are carried into the already-planned
+  SemanticGraph and Folio tasks rather than hidden inside the token task.
+
+### Verification
+
+- ISC-314: `stat` reported a 183,180-byte tracked patch and a 13,297,526-byte
+  untracked archive before runtime edits.
+- ISC-315: `git branch --show-current` returned
+  `codex/urania-graph-first-ui-realignment`.
+- ISC-316: staged-path equality was silent for all 128 reviewed paths;
+  `git diff --cached --check` passed and the staged secret scan returned zero.
+  Baseline commit: `f8ea4c145b621fa8520eb8aafb09ba77c6b0a0d8`.
+- ISC-317: `npm run verify:ui-baseline` passed after transforming 1,619 modules
+  and recorded three known violation groups plus `516660` bundle bytes.
+- ISC-326: server-render verification passes ready children through without a
+  `data-async-state` shell.
+- ISC-327: eight focused tests verify exclusive non-ready states, distinct
+  labels/icons, status/alert live regions, loading-only busy state, and a
+  single recoverable retry callback; independent read-only audit returned PASS.
+- ISC-318–321: five semantic-token tests verify Void/Surface copy, separate
+  evidence and interaction hues, contrast-safe evidence copy, Parchment ink,
+  six typography roles, 12px metadata, and 70ch reading measure.
+- ISC-322: vocabulary tests pass for both daily lexicons and centralized
+  interface copy with no prohibited Folio synonyms.
+- ISC-323: the Node asset-boundary test recursively scanned runtime TypeScript
+  and found no generated or page-reference asset dependency.
+- ISC-324: browser QA found zero visible default backdrop filters across home,
+  Birth Witness, Folio, and Settings at 1440×1000 and 390×844.
+- ISC-325: browser QA found zero running animations under reduced motion across
+  eight route/viewport cases; brand audit returned PASS after motion timing and
+  ambient-animation corrections.
+- Task 1 coverage is explicit rather than inferred from the aggregate count:
+  `semanticTokens.test.ts` maps to ISC-318–321,
+  `vocabulary.test.ts` and `quickReplies.test.ts` map to ISC-322, and
+  `ui-asset-boundaries.test.mjs` maps to ISC-323. Browser evidence maps default
+  materials and reduced motion to ISC-324–325.
+- Task 2 adds eight `AsyncBoundary.test.ts` cases for ISC-326–327; ready,
+  loading, empty, partial, stale, denied, and error states are mutually
+  exclusive, and retry exists only for recoverable error.
+- `npm test` passed 56 files and 543 tests. The standalone generated-asset
+  boundary passed, the production build transformed 1,619 modules, and the
+  current JS+CSS bundle measured 515,753 bytes versus the recorded 516,660-byte
+  starting baseline.
+- Browser QA is reproducible from machine-readable reports and screenshots
+  under the task visualization directory. The first matrix exercised home,
+  Birth Witness, Folio, and Settings at 1440×1000 and 390×844 with console,
+  page, request, response, overflow, blur, metadata, and reduced-motion probes;
+  the final Settings report records the corrected 12px, 9.96:1 labels and zero
+  browser diagnostics.
+- The committed production bundle was then exercised through the actual
+  Cloudflare Pages runtime at `http://127.0.0.1:8794`, not a Vite-only server.
+  `task1-pages-runtime-report.json` records both Settings viewports and six
+  home/Birth Witness/Folio smoke cases at HTTP 200 with zero console, page,
+  request, bad-response, or horizontal-overflow findings. The graph exposes
+  seven home nodes and eight Birth Witness nodes; all Settings APIs returned
+  200 and the four metadata labels remained 12px at 9.96:1.
+
+### Learn
+
+- Passing source-token assertions did not guarantee computed browser contrast;
+  browser inspection caught translucent metadata combinations that required a
+  second correction.
+- A non-terminal Temperance rail must fail open into explicitly read-only
+  equivalent audits, while preserving path ownership and recording that the
+  external index never arrived.
+- The characterization command intentionally rewrites its JSON measurement.
+  Post-task verification must restore the immutable starting measurement before
+  the working tree is considered clean.
+- Vite preview is not a valid integrated QA target for this Pages application:
+  it omits `/api/*` Functions and can create false UI failures. Browser gates
+  must use `wrangler pages dev dist` or a deployed Pages environment.
