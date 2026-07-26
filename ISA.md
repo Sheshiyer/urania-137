@@ -5,10 +5,10 @@ project: Urania 137
 effort: advanced
 effort_source: classifier
 phase: execute
-progress: 14/32
+progress: 19/32
 mode: interactive
 started: 2026-07-14T16:00:00Z
-updated: 2026-07-27T13:20:00+05:30
+updated: 2026-07-27T13:57:00+05:30
 iteration: 10
 ---
 
@@ -2061,11 +2061,11 @@ branded ecosystem without weakening existing data or authorization contracts.
 - [x] ISC-325: Meaningful motion collapses under reduced motion and data marks stay static.
 - [x] ISC-326: AsyncBoundary renders ready content without a status shell.
 - [x] ISC-327: AsyncBoundary renders exactly one loading, empty, partial, stale, denied, or error state.
-- [ ] ISC-328: InstrumentDialog provides one accessible focus-managed overlay contract.
-- [ ] ISC-329: Chat and informational overlays use InstrumentDialog without duplicate shells.
-- [ ] ISC-330: Every graph relationship has a named non-visual equivalent.
-- [ ] ISC-331: Graph interaction remains keyboard reachable at narrow and wide viewports.
-- [ ] ISC-332: Canonical readings render separate Reading, Evidence, and privacy-filtered Source layers.
+- [x] ISC-328: InstrumentDialog provides one accessible focus-managed overlay contract.
+- [x] ISC-329: Chat and informational overlays use InstrumentDialog without duplicate shells.
+- [x] ISC-330: Every graph relationship has a named non-visual equivalent.
+- [x] ISC-331: Graph interaction remains keyboard reachable at narrow and wide viewports.
+- [x] ISC-332: Canonical readings render separate Reading, Evidence, and privacy-filtered Source layers.
 - [ ] ISC-333: Chat transitions explicitly into the canonical reading without a mutating long-form live region.
 - [ ] ISC-334: Home retains exactly seven parent nodes and offers a direct reading doorway.
 - [ ] ISC-335: Folio browsing, filtering, grouping, and reading detail use one coherent surface.
@@ -2116,6 +2116,40 @@ branded ecosystem without weakening existing data or authorization contracts.
 - 2026-07-27: The first executing-plans checkpoint stops after Tasks 0–2. Mobile
   SVG label density and Folio map overlap are carried into the already-planned
   SemanticGraph and Folio tasks rather than hidden inside the token task.
+- 2026-07-27: The user explicitly resumed Tasks 3–12 to finish the plan.
+  Execution continues in dependency-safe batches: shared primitives 3–5;
+  home/chat/Folio/engine surfaces 6–9; node/settings integration 10–11; then
+  the non-parallel full exit gate 12.
+- 2026-07-27: Tasks 3–5 use non-overlapping Codex write lanes while Temperance
+  external lanes audit their accessibility, graph, and reading-privacy
+  contracts. External failures fail open to read-only Codex review; no external
+  mutation is applied directly to the shared worktree.
+- 2026-07-27: Advisor initially blocked Batch A until exact ownership was
+  proven. Parsed manifests contain 6 Task-3 paths, 8 Task-4 paths, and 14
+  Task-5 paths with pairwise-empty intersections. The dependency graph has no
+  reverse edge from Tasks 6–12 into Tasks 3–5.
+- 2026-07-27: Task 4 may only add to `tokens.ts` and `types/index.ts`; it must
+  not remove or rename `STATE.goldWarm`, `ChildRun`, `RelationshipContext`,
+  `SubjectInput`, or any symbol read by Tasks 3/5. Every lane's actual write
+  list is compared exactly with its manifest before integration.
+- 2026-07-27: Root-cause-at-ingestion: interface drift enters when Modal,
+  constellation, and reading surfaces each encode behavior downstream.
+  Repairing the shared primitives makes their later home/chat/Folio/settings
+  consumers converge; display-down patches would repeat the defect.
+- 2026-07-27: Task-4 read-only audit expanded ownership to `HomePage.tsx` and
+  `CoreGlow.tsx`: the home adapter dropped source purpose before graph entry
+  construction, and the interactive central hub remained mouse-only. Both are
+  repaired test-first before accepting the graph commit.
+- 2026-07-27: Task-5 read-only audit blocked acceptance after focused tests
+  passed: raw-only flat records could bypass Source filtering through Reading,
+  nested capture objects reset the default-deny policy, contextual Markdown
+  headings could duplicate the section heading level, and portable Evidence
+  lacked explicit access-reason/checksum slots. Adversarial tests now own these
+  boundaries before the reading commit.
+- 2026-07-27: Batch-A acceptance is evidence-based: the shared dialog, graph,
+  and reading commits remain atomic; the full browser matrix is read-only and
+  exercises the built Cloudflare Pages runtime at wide, effective-reflow, and
+  mobile widths before Tasks 6–9 are allowed to begin.
 
 ### Verification
 
@@ -2170,6 +2204,24 @@ branded ecosystem without weakening existing data or authorization contracts.
   request, bad-response, or horizontal-overflow findings. The graph exposes
   seven home nodes and eight Birth Witness nodes; all Settings APIs returned
   200 and the four metadata labels remained 12px at 9.96:1.
+- ISC-328–329: `InstrumentDialog.test.ts` and 37 focused chat/dialog tests pass;
+  the real Pages runtime verifies the focus-managed overlay at 1440×1000 and
+  390×844. Commit: `c578660`.
+- ISC-330–331: six graph-entry tests pass. Browser QA verifies every home and
+  Birth Witness relation has the same named list path, every graph target is at
+  least 44px, Tab reaches each destination in order with visible focus, and the
+  semantic CoreGlow control owns its 44px center hit target. Commit: `3c4ce74`.
+- ISC-332: 18 focused reading tests prove Reading/Evidence/Source separation,
+  70ch measure, raw-only suppression, heading offset, honest Evidence fallback,
+  and schema-aware nested capture redaction. Commit: `9599272`.
+- Batch-A browser gate: 105/105 Playwright assertions pass across 1440×1000,
+  720×1000, and 390×844, including reduced motion. It records zero console,
+  page, request, or response diagnostics, zero overflow, zero workspace writes,
+  and zero D1 mutations in
+  `batch-a-visual-gate/report-all.md`.
+- Fresh primary verification after both audit repairs passed 24/24 focused
+  tests and a production build of 1,626 modules; CSS is 48.51 kB and JS is
+  488.45 kB before gzip.
 
 ### Learn
 
