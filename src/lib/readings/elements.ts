@@ -639,10 +639,11 @@ function extractTarot(result: RecordValue, sourcePath: string): ReadingElement[]
 }
 
 function extractIChing(result: RecordValue, sourcePath: string): ReadingElement[] {
-  const positions: ReadingSpreadPosition[] = [
-    ['primary_hexagram', 'Primary hexagram'],
-    ['relating_hexagram', 'Relating hexagram'],
-  ].flatMap(([key, label], index): ReadingSpreadPosition[] => {
+  const hexagramPosition = (
+    key: 'primary_hexagram' | 'relating_hexagram',
+    label: string,
+    index: number,
+  ): ReadingSpreadPosition[] => {
     const hexagram = result[key]
     if (!isRecord(hexagram)) return []
     const number = asString(hexagram.number)
@@ -656,7 +657,37 @@ function extractIChing(result: RecordValue, sourcePath: string): ReadingElement[
         ...(asString(hexagram.meaning) ? { detail: asString(hexagram.meaning)! } : {}),
       },
     ]
-  })
+  }
+  const changingLines: ReadingSpreadPosition[] = Array.isArray(result.changing_lines)
+    ? result.changing_lines.flatMap((value, index): ReadingSpreadPosition[] => {
+        const casting = isRecord(result.casting) ? result.casting : null
+        const sourceLineValues = casting && Array.isArray(casting.line_values) ? casting.line_values : []
+        const line = isRecord(value)
+          ? asString(value.line) ?? asString(value.number)
+          : asString(value)
+        if (!line) return []
+        const lineIndex = Number(line) - 1
+        const sourceLineValue = Number.isInteger(lineIndex) && lineIndex >= 0
+          ? asString(sourceLineValues[lineIndex])
+          : null
+        const lineValue = isRecord(value)
+          ? asString(value.value) ?? asString(value.type) ?? asString(value.state)
+          : sourceLineValue
+        return [{
+          id: `changing-line-${line}-${index}`,
+          label: `Changing line ${line}`,
+          value: lineValue ? `Line value ${lineValue}` : 'Changing',
+          ...(isRecord(value) && (asString(value.text) || asString(value.meaning))
+            ? { detail: asString(value.text) ?? asString(value.meaning)! }
+            : {}),
+        }]
+      })
+    : []
+  const positions = [
+    ...hexagramPosition('primary_hexagram', 'Primary hexagram', 0),
+    ...changingLines,
+    ...hexagramPosition('relating_hexagram', 'Relating hexagram', 1),
+  ]
   return positions.length
     ? [
         {
@@ -941,6 +972,7 @@ function captureObservation(
   sourcePath: string,
   unverified: boolean,
   detail?: string,
+  category?: ReadingCaptureObservation['category'],
 ): ReadingCaptureObservation | null {
   const text = asString(value)
   return text === null
@@ -950,6 +982,7 @@ function captureObservation(
         label,
         value: text,
         ...(detail ? { detail } : {}),
+        ...(category ? { category } : {}),
         sourcePath,
         status: unverified ? 'unverified' : 'recorded',
       }
@@ -961,7 +994,7 @@ function collectMetricObservations(
   unverified: boolean,
 ): ReadingCaptureObservation[] {
   const observations = BIOFIELD_METRICS.flatMap(([key, label]): ReadingCaptureObservation[] => {
-    const item = captureObservation(key, label, metrics[key], sourceAt(sourcePath, key), unverified)
+    const item = captureObservation(key, label, metrics[key], sourceAt(sourcePath, key), unverified, undefined, 'metric')
     return item ? [item] : []
   })
   const energy = isRecord(metrics.energy_analysis) ? metrics.energy_analysis : null
@@ -973,6 +1006,8 @@ function collectMetricObservations(
         energy[key],
         sourceAt(sourcePath, `energy_analysis.${key}`),
         unverified,
+        undefined,
+        'metric',
       )
       if (item) observations.push(item)
     }
@@ -992,7 +1027,7 @@ function extractCaptureDerived(engineId: string, result: RecordValue, sourcePath
     ['analysis_version', 'Analysis version'],
     ['computation_mode', 'Computation mode'],
   ] as const) {
-    const item = captureObservation(key, label, result[key], sourceAt(sourcePath, key), mock)
+    const item = captureObservation(key, label, result[key], sourceAt(sourcePath, key), mock, undefined, 'metadata')
     if (item) observations.push(item)
   }
 
@@ -1023,7 +1058,7 @@ function extractCaptureDerived(engineId: string, result: RecordValue, sourcePath
         ? sourceAt(sourcePath, 'analysis.quality_assessment')
         : sourceAt(sourcePath, 'quality')
     for (const [key, label] of QUALITY_METRICS) {
-      const item = captureObservation(`quality-${key}`, label, quality[key], sourceAt(qualityPath, key), mock)
+      const item = captureObservation(`quality-${key}`, label, quality[key], sourceAt(qualityPath, key), mock, undefined, 'quality')
       if (item) observations.push(item)
     }
   }
@@ -1074,6 +1109,7 @@ function extractCaptureDerived(engineId: string, result: RecordValue, sourcePath
         label: chakra,
         value: `Activity ${activity}`,
         ...(details.length ? { detail: details.join(' · ') } : {}),
+        category: 'chakra',
         sourcePath: `${sourceAt(sourcePath, 'chakra_readings')}[${index}]`,
         status: mock ? 'unverified' : 'recorded',
       })
@@ -1084,6 +1120,12 @@ function extractCaptureDerived(engineId: string, result: RecordValue, sourcePath
   const error = asString(result.error)
   const failed = Boolean(error) || ['failed', 'error', 'rejected'].includes(statusValue)
   const hasCaptureIdentity = asString(result.reading_id) !== null || asString(result.session_id) !== null
+  const evidenceObservations = hasCaptureIdentity && !mock
+    ? observations
+    : observations.map((observation) => ({
+        ...observation,
+        status: 'unverified' as const,
+      }))
   const captureState: ReadingCaptureElement['captureState'] = failed
     ? 'failed'
     : observations.length
@@ -1097,6 +1139,8 @@ function extractCaptureDerived(engineId: string, result: RecordValue, sourcePath
       ? 'No capture or analysis fields were supplied. This engine requires consented acquisition in its capture-capable surface.'
       : mock
         ? 'The source marks these observations as mock data. Values are preserved as unverified source evidence.'
+        : !hasCaptureIdentity
+          ? 'Analysis fields were supplied without a persisted reading or session identity. They remain unverified until a consented capture record is available.'
         : 'Only source-supplied observations are shown; no additional score or interpretation has been inferred.'
 
   const capture: ReadingCaptureElement = {
@@ -1105,12 +1149,16 @@ function extractCaptureDerived(engineId: string, result: RecordValue, sourcePath
       'capture-summary',
       engineId === 'face-reading' ? 'Face-reading source summary' : 'Biofield capture summary',
       sourcePath,
-      mock ? 'unverified' : observations.length ? 'derived' : 'observed',
+      mock || (observations.length > 0 && !hasCaptureIdentity)
+        ? 'unverified'
+        : observations.length
+          ? 'derived'
+          : 'observed',
     ),
     kind: 'capture',
     captureState,
     body,
-    observations,
+    observations: evidenceObservations,
   }
   const elements: ReadingElement[] = []
   if (mock) {

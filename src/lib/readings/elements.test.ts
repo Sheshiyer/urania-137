@@ -135,6 +135,29 @@ describe('extractEngineElements', () => {
     expect(elements[0].kind).toBe('sequence')
     if (elements[0].kind !== 'sequence') throw new Error('Expected sequence')
     expect(elements[0].steps.map((step) => step.label)).toEqual(["Life's work", 'Evolution', 'Radiance', 'Purpose'])
+    expect(elements[0].sequenceType).toBe('activation')
+  })
+
+  it('preserves source-ordered I Ching changing lines between supplied hexagrams', () => {
+    const elements = extractEngineElements('i-ching', {
+      primary_hexagram: { number: 1, name: 'The Creative' },
+      casting: { line_values: [7, 8, 7, 8, 9, 7] },
+      changing_lines: [2, 5],
+      relating_hexagram: { number: 14, name: 'Great Possession' },
+    })
+
+    expect(elements[0].kind).toBe('spread')
+    if (elements[0].kind !== 'spread') throw new Error('Expected I Ching spread')
+    expect(elements[0].positions.map(({ label }) => label)).toEqual([
+      'Primary hexagram',
+      'Changing line 2',
+      'Changing line 5',
+      'Relating hexagram',
+    ])
+    expect(elements[0].positions.slice(1, 3).map(({ value }) => value)).toEqual([
+      'Line value 8',
+      'Line value 9',
+    ])
   })
 
   it('renders mock capture-derived output as unresolved source evidence', () => {
@@ -240,6 +263,21 @@ describe('extractEngineElements', () => {
       label: 'Sufficient quality',
       value: 'Yes',
     }))
+  })
+
+  it('keeps capture analysis unverified until a persisted reading or session identity exists', () => {
+    const elements = extractEngineElements('biofield-capture', {
+      metrics: { body_symmetry: 0.81 },
+      quality_assessment: { sufficient_quality: true },
+    })
+
+    expect(elements[0]).toMatchObject({
+      kind: 'capture',
+      captureState: 'analyzed',
+    })
+    if (elements[0].kind !== 'capture') throw new Error('Expected capture')
+    expect(elements[0].observations).not.toHaveLength(0)
+    expect(elements[0].observations.every(({ status }) => status === 'unverified')).toBe(true)
   })
 
   it('makes absent or unsafe generated media explicit', () => {

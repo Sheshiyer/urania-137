@@ -46,7 +46,7 @@ export function EngineReading({
   const elements = extractReadingElements(envelope).filter((element) => element.kind !== 'raw')
   const hasVerifiedCapture = elements.some((element) =>
     element.kind === 'capture'
-    && (element.captureState === 'recorded' || element.captureState === 'analyzed')
+    && element.captureState === 'recorded'
     && element.observations.length > 0
     && element.observations.every((observation) => observation.status === 'recorded'))
   const runState = state

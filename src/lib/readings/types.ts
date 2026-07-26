@@ -253,6 +253,8 @@ export interface ReadingCaptureObservation {
   label: string
   value: string
   detail?: string
+  /** Source-shaped family used only to select a renderer; never inferred from value magnitude. */
+  category?: 'metadata' | 'metric' | 'chakra' | 'quality' | 'consent'
   sourcePath: string
   status: Extract<ReadingItemStatus, 'recorded' | 'unverified'>
 }
