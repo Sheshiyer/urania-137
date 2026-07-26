@@ -25,7 +25,7 @@ export const VARA_LEXICON: Record<number, VaraEntry> = {
   2: {
     ruler: 'Mars',
     field: 'drive, courage, and decisive effort',
-    keynote: 'An edge of heat sharpens the will, and energy gathers toward action.',
+    keynote: 'An edge of heat sharpens the will, and momentum gathers toward action.',
     invitation: 'You might notice where courage rises in you, and where friction rises to meet it.',
   },
   3: {

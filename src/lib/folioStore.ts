@@ -127,6 +127,10 @@ export function setFolioFavoritesOnly(on: boolean): void {
 export async function saveReport(e: SaveReadingRequest): Promise<FolioEntry> {
   const saved = await api<FolioEntry>('/api/folio', { method: 'POST', body: JSON.stringify(e) })
   if (!favoritesOnly && !query.trim()) {
+    // Invalidate any GET that began before this write. Otherwise its stale
+    // response can arrive after the POST and erase the just-created row from
+    // the client snapshot, leaving chat unable to bind its canonical record.
+    refreshSeq += 1
     setState({ ...state, entries: [saved, ...state.entries] })
   } else {
     void refreshFolio()

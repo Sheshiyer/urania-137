@@ -1,4 +1,6 @@
 import type { ThreadResult } from '../../lib/chat/resultMessages'
+import { threadResultToReadingDocument, type ThreadReadingContext } from '../../lib/readings'
+import { ChatCanonicalReadingReference, ReadingFolio } from '../readings'
 
 /**
  * ResultThread (Phase 3) — the in-thread narrative result surface. After the
@@ -39,7 +41,15 @@ function ComposingBeat({ kind }: { kind: ThreadResult['kind'] }) {
   )
 }
 
-export function ResultThread({ result, onRetry }: { result: ThreadResult; onRetry?: () => void }) {
+export function ResultThread({
+  result,
+  readingContext,
+  onRetry,
+}: {
+  result: ThreadResult
+  readingContext: ThreadReadingContext
+  onRetry?: () => void
+}) {
   if (result.status === 'composing') return <ComposingBeat kind={result.kind} />
 
   // Engine/save failure — the exact text the modal era surfaced, with a retry
@@ -61,14 +71,20 @@ export function ResultThread({ result, onRetry }: { result: ThreadResult; onRetr
     )
   }
 
+  const document = threadResultToReadingDocument(result, readingContext)
+
   return (
     <div className="space-y-4">
-      {result.chapters.map((ch) => (
-        <section key={ch.id} className="mr-auto max-w-[92%] space-y-1.5 text-sm text-parchment/90">
-          <h3 className="font-display text-[11px] uppercase tracking-[0.22em] text-gold">{ch.title}</h3>
-          <p className="whitespace-pre-wrap break-words leading-relaxed">{ch.body}</p>
-        </section>
-      ))}
+      {document && <ReadingFolio document={document} variant="thread" />}
+
+      {document && result.archiveContent && (
+        <ChatCanonicalReadingReference
+          result={result}
+          nodeId={readingContext.nodeId}
+          mode={readingContext.mode}
+          title={readingContext.title}
+        />
+      )}
 
       {result.footer && <p className="pt-1 text-[10px] uppercase tracking-[0.2em] text-silver/45">{result.footer}</p>}
 

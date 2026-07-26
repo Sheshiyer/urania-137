@@ -3,6 +3,10 @@ import { Star, Download, Trash2, FileText, RefreshCw, AlertTriangle } from 'luci
 import { SelemeneChild } from '../../types'
 import { useFolioState } from '../../hooks/useFolio'
 import { toggleFavorite, removeEntry, exportEntry, refreshFolio, setFolioSearch, setFolioFavoritesOnly } from '../../lib/folioStore'
+import type { User } from '../../lib/api/contract'
+import type { FolioEntry } from '../../lib/folioStore'
+import { folioEntryToReadingDocument } from '../../lib/readings'
+import { ReadingFolio } from '../readings'
 
 const FORMATS = ['markdown', 'docx', 'pdf'] as const
 
@@ -13,7 +17,7 @@ function fmtDate(ts: number): string {
 /** Placeholder rows shown while the D1-backed list is loading. */
 function LoadingSkeleton() {
   return (
-    <ul className="space-y-2" aria-label="Loading saved reports">
+    <ul className="space-y-2" aria-label="Loading saved readings">
       {[0, 1, 2].map((i) => (
         <li key={i} className="animate-pulse rounded-sm border border-gold/10 bg-void/50 px-3 py-2">
           <div className="h-3.5 w-2/3 rounded bg-gold/10" />
@@ -24,6 +28,21 @@ function LoadingSkeleton() {
   )
 }
 
+function ArchivedReading({ entry, owner }: { entry: FolioEntry; owner: User | null }) {
+  const document = folioEntryToReadingDocument(entry, {
+    owner: {
+      id: owner?.id ?? null,
+      email: owner?.email ?? null,
+      label: owner?.email ?? 'Authenticated account',
+    },
+  })
+  return (
+    <div className="mx-3 mb-3 max-h-[68vh] overflow-auto border border-gold/10 bg-void/70 p-3 sm:p-5">
+      <ReadingFolio document={document} />
+    </div>
+  )
+}
+
 /**
  * The Folio Archive surface — saved reports served per-user from D1 via
  * /api/folio, with server-side search + favorites, per-entry export
@@ -31,7 +50,7 @@ function LoadingSkeleton() {
  * (Search focuses the box, Favorites filters, an export child preselects that
  * format). Renders loading / empty / error states for the async data source.
  */
-export function FolioPanel({ child }: { child: SelemeneChild | null }) {
+export function FolioPanel({ child, owner }: { child: SelemeneChild | null; owner: User | null }) {
   const { entries, status, error } = useFolioState()
   const onlyFavorites = child?.id === 'favorites'
   const defaultFormat = (child?.format ?? (child?.id === 'docx' ? 'docx' : child?.id === 'pdf' ? 'pdf' : child?.id === 'markdown' ? 'markdown' : undefined)) as
@@ -54,7 +73,7 @@ export function FolioPanel({ child }: { child: SelemeneChild | null }) {
         autoFocus={child?.id === 'search'}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search saved reports…"
+        placeholder="Search saved readings…"
         className="w-full rounded-sm border border-gold/20 bg-void/50 px-3 py-2 text-sm text-parchment placeholder:text-silver/50 focus:border-gold/50 focus:outline-none"
         aria-label="Search saved reports"
       />
@@ -70,7 +89,7 @@ export function FolioPanel({ child }: { child: SelemeneChild | null }) {
       ) : showError ? (
         <div className="py-8 text-center">
           <p className="flex items-center justify-center gap-1.5 text-sm text-terracotta">
-            <AlertTriangle className="h-4 w-4" /> Could not load your saved reports.
+            <AlertTriangle className="h-4 w-4" /> Could not load your saved readings.
           </p>
           <p className="mt-1 text-[11px] text-silver/70">{error}</p>
           <button
@@ -86,7 +105,7 @@ export function FolioPanel({ child }: { child: SelemeneChild | null }) {
             ? 'No matches.'
             : onlyFavorites
               ? 'No favorites yet — star a saved report and it lands here.'
-              : 'No saved reports yet — generate a report from any node and it lands here.'}
+              : 'No saved readings yet — open any reading doorway and its completed record lands here.'}
         </p>
       ) : (
         <ul className={`max-h-[46vh] space-y-2 overflow-auto pr-1 ${loading ? 'opacity-60' : ''}`}>
@@ -122,9 +141,7 @@ export function FolioPanel({ child }: { child: SelemeneChild | null }) {
                 </button>
               </div>
               {openId === e.id && (
-                <pre className="mx-3 mb-3 max-h-52 overflow-auto whitespace-pre-wrap rounded-sm border border-gold/10 bg-void/70 p-3 font-mono text-[11px] leading-relaxed text-parchment/90">
-                  {e.content}
-                </pre>
+                <ArchivedReading entry={e} owner={owner} />
               )}
             </li>
           ))}

@@ -1,0 +1,15 @@
+Edit the attached Urania 137 engine-surface reference board while preserving its
+title, six group frames, all eighteen engine tiles, exact engine names, exact
+component labels, exact status labels, exact provenance labels, palette,
+typography, layout, and bottom legend.
+
+Remove every connector arrow, connector line, and relationship label between
+neighboring engine tiles, including words such as FEEDS, REFINES, SUPPORTS,
+INFORMS, DRIVES, TUNES, INFLUENCES, INTERPRETS, INTEGRATES, EXPRESSES, SOURCES,
+and VALIDATES. Leave clean negative space between the tiles. These engines are
+grouped in a library; no causal, sequential, or semantic relationship between
+them should be implied.
+
+Do not add or change any other text, values, diagrams, tiles, ornament, metrics,
+statistics, or relationships. The final result must remain a generated design
+reference rather than a screenshot or telemetry display.

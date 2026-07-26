@@ -49,7 +49,7 @@ export const TITHI_LEXICON: Record<number, TithiEntry> = {
     category: 'Rikta',
     deity: 'Ganesha',
     motion: 'the crescent thickening toward the half',
-    keynote: 'An obstacle loosens and falls away, clearing the path ahead.',
+    keynote: 'An obstacle loosens and falls away, leaving movement possible.',
     invitation: 'You might notice a weight easing, a little more room where an obstacle had been.',
   },
   4: {
@@ -68,7 +68,7 @@ export const TITHI_LEXICON: Record<number, TithiEntry> = {
     deity: 'Kartikeya (Skanda)',
     motion: 'the bright crescent nearly half-filled',
     keynote: 'A bright valor delights in itself, keen and full of play.',
-    invitation: 'You might notice a bright, playful energy that enjoys its own keenness.',
+    invitation: 'You might notice a bright, playful aliveness that enjoys its own keenness.',
   },
   6: {
     name: 'Saptami (Shukla)',

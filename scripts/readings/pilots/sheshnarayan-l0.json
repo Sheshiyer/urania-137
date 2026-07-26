@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "pilotId": "pilot-sheshnarayan-cumbipuram-nateshan-l0-v1",
+  "ownerEmail": "sheshnarayan.iyer@gmail.com",
+  "corpusRelativeRoot": "Solos/sheshnarayan-cumbipuram-nateshan/new-l0-source-pack",
+  "consent": {
+    "basis": "principal-requested-one-reading-pilot",
+    "recordedAt": "2026-07-26"
+  },
+  "subject": {
+    "subjectKey": "sheshnarayan-cumbipuram-nateshan",
+    "canonicalName": "Sheshnarayan Cumbipuram Nateshan",
+    "aliases": [
+      "sheshnarayan-cumbipuram-nateshan"
+    ],
+    "reconciliationState": "verified"
+  },
+  "reading": {
+    "stableReadingId": "sheshnarayan-cumbipuram-nateshan-l0-2026-07-09",
+    "title": "Sheshnarayan — Integrated L0 Reading",
+    "readingType": "integrated-l0",
+    "languageTag": "en",
+    "producerKind": "workflow",
+    "producerRef": "noesis-writer-l0",
+    "capturedAt": "2026-07-09T01:40:44.081Z",
+    "summary": "A five-system integrated solo reading imported as the reversible living-archive pilot."
+  },
+  "editorial": {
+    "state": "needs_review",
+    "visibility": "owner_only",
+    "rationale": "Reversible one-reading pilot; publication requires separate editorial review."
+  },
+  "artifacts": [
+    {
+      "artifactKey": "source-manifest",
+      "relativePath": "manifest.json",
+      "artifactRole": "source_document",
+      "mediaType": "application/json",
+      "bytes": 608,
+      "sha256": "ae56f1db501f4e3a17aacd2db883f21f11ec470d28089e72f5d454f82000c989"
+    },
+    {
+      "artifactKey": "reading-markdown",
+      "relativePath": "reading.md",
+      "artifactRole": "rendered_reading",
+      "mediaType": "text/markdown",
+      "bytes": 147658,
+      "sha256": "d1bdff93459bed25bcf3400720d08e2dae64ed4dac13076d460f0f4583e38f18"
+    }
+  ]
+}

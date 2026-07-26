@@ -119,6 +119,12 @@ export class DeterministicInterpreter implements DailyReadingSource {
     }
 
     const ctx: ReadingContext = { date: input.date, location: input.location.display, hasBirthData: !!input.birth }
-    return interpret({ panchanga, transits }, ctx, this.lexicon)
+    return {
+      ...interpret({ panchanga, transits }, ctx, this.lexicon),
+      sourcePayloads: [
+        { engine_id: 'panchanga', result: panchanga as unknown as Record<string, unknown> },
+        ...(transits ? [{ engine_id: 'transits', result: transits as unknown as Record<string, unknown> }] : []),
+      ],
+    }
   }
 }

@@ -118,6 +118,10 @@ export function ConstellationGraph({
   // Concentric orbit rings between the hub and the orbit, plus faint outer rings.
   const innerRings = [0.5, 0.66, 0.82].map((f) => orbitRadius * f)
   const outerRings = [1.28, 1.7].map((f) => orbitRadius * f)
+  // The astrolabe plate — large dashed rings reaching past the orbit toward the
+  // frame, so the instrument fills a wide viewport the way the page references
+  // do (their radial grid runs to the filigree corners).
+  const plateRings = [1.14, 1.42, 1.86, 2.4].map((f) => orbitRadius * f)
 
   // Beaded lattice — a bright dot where each primary/secondary spoke crosses a ring.
   const spokeAngles = positions.flatMap((p, i) => {
@@ -176,6 +180,15 @@ export function ConstellationGraph({
             <stop offset="60%" stopColor={COLORS.gold} stopOpacity="0.12" />
             <stop offset="100%" stopColor={COLORS.gold} stopOpacity="0" />
           </radialGradient>
+          {/* Sun heart — the page references' orbs are glowing suns, not
+              outline circles: a bright warm heart falling off fast, so the
+              in-orb label zone stays dark enough to read. */}
+          <radialGradient id="sunCore" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#FFF3D6" stopOpacity="0.9" />
+            <stop offset="30%" stopColor={WARM} stopOpacity="0.55" />
+            <stop offset="65%" stopColor={COLORS.gold} stopOpacity="0.16" />
+            <stop offset="100%" stopColor={COLORS.gold} stopOpacity="0" />
+          </radialGradient>
           <radialGradient id="pageVignette" cx="50%" cy="50%" r="75%">
             <stop offset="52%" stopColor="#000" stopOpacity="0" />
             <stop offset="100%" stopColor="#000" stopOpacity="0.72" />
@@ -230,6 +243,11 @@ export function ConstellationGraph({
 
         {/* Mandala (near parallax + camera zoom layer) */}
         <g className="cn-mandala">
+        {/* Astrolabe plate — the wide-field radial grid behind everything */}
+        {plateRings.map((r, i) => (
+          <circle key={`plate-${i}`} cx={centerX} cy={centerY} r={r} fill="none" stroke={COLORS.gold} strokeOpacity={0.09 - i * 0.015} strokeWidth={0.6} strokeDasharray={i % 2 === 0 ? '1 6' : '3 9'} />
+        ))}
+
         {/* Outer + inner orbit rings */}
         {outerRings.map((r, i) => (
           <circle key={`outer-${i}`} cx={centerX} cy={centerY} r={r} fill="none" stroke={COLORS.gold} strokeOpacity={0.05} strokeWidth={1} strokeDasharray={i === 0 ? '2 10' : undefined} />

@@ -4,6 +4,8 @@ import type { ChildRun, RelationshipContext, SubjectInput } from '../../types'
 import type { ChatBlock, ChatEvent, ChatMsg, ChatSessionState } from '../../types/chat'
 import { toSubmitPayload, type SubmitPayload } from '../../lib/chat/stateMachine'
 import type { ThreadResult } from '../../lib/chat/resultMessages'
+import type { User } from '../../lib/api/contract'
+import type { ReadingSubjectKind } from '../../lib/readings'
 import { createOrResumeSession, completeSession, getSession, replayEvents, streamTurn } from '../../lib/chatApi'
 import { createSubject } from '../../lib/subjectsApi'
 import { CircleBar, circlePersistIndexes, circleRole } from './CircleBar'
@@ -45,6 +47,7 @@ export interface ChatSheetProps {
   childLabel: string
   nodeId: string
   nodeLabel: string
+  owner: User | null
   onClose: () => void
   /** Fired once when the session chapter reaches 'handoff'. */
   onHandoff: (payload: SubmitPayload) => void
@@ -55,6 +58,26 @@ export interface ChatSheetProps {
   result?: ThreadResult | null
   /** Re-fires the same submit call after an in-thread result error. */
   onRetryResult?: () => void
+}
+
+function seedMode(seed: ChildRun): string {
+  if (seed.kind === 'witness') return seed.mode
+  if (seed.kind === 'workflow') return seed.workflowId
+  if (seed.kind === 'engine') return seed.engineId
+  return 'daily-panchanga'
+}
+
+function readingSubject(session: ChatSessionState | null): { id: null; label: string; kind: ReadingSubjectKind } {
+  const subjects = (session?.intake.subjects ?? []) as Partial<SubjectInput>[]
+  const names = subjects.map((subject) => subject.name?.trim()).filter((name): name is string => Boolean(name))
+  const relationship = session?.intake.relationship_context as RelationshipContext | null | undefined
+  const kind: ReadingSubjectKind =
+    names.length > 2 ? 'collective' : names.length === 2 ? 'dyad' : subjects[0]?.role === 'self' ? 'self' : names.length === 1 ? 'person' : 'unknown'
+  return {
+    id: null,
+    label: names.length ? names.join(' + ') : relationship?.mapping_goal || 'Subject not recorded',
+    kind,
+  }
 }
 
 const SEED_KIND_LABEL: Record<ChildRun['kind'], string> = {
@@ -156,7 +179,7 @@ function BlockView({ block }: { block: ChatBlock }) {
   }
 }
 
-export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHandoff, result, onRetryResult }: ChatSheetProps) {
+export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, owner, onClose, onHandoff, result, onRetryResult }: ChatSheetProps) {
   const [session, setSession] = useState<ChatSessionState | null>(null)
   const [msgs, setMsgs] = useState<ChatMsg[]>([])
   const [draft, setDraft] = useState('')
@@ -491,7 +514,24 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
           {/* Phase 3 — the reading arrives in-thread as narrator chapters
               (composing beat → chapters → Folio closing beat / error+retry).
               Presentation only; the durable copy is the Folio row the hook saved. */}
-          {result && <ResultThread result={result} onRetry={onRetryResult} />}
+          {result && (
+            <ResultThread
+              result={result}
+              onRetry={onRetryResult}
+              readingContext={{
+                title: `${nodeLabel} — ${childLabel}`,
+                mode: seedMode(seed),
+                nodeId,
+                nodeLabel,
+                owner: {
+                  id: owner?.id ?? null,
+                  email: owner?.email ?? null,
+                  label: owner?.email ?? 'Authenticated account',
+                },
+                subject: readingSubject(session),
+              }}
+            />
+          )}
 
           {/* Fallback beat only when a handoff left no result feed (e.g. a
               crash between handoff and completion on a remount). */}

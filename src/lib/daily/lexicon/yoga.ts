@@ -31,7 +31,7 @@ export const YOGA_LEXICON: Record<number, YogaEntry> = {
     quality:
       'An auspicious yoga; the name means "long-lived," traditionally ascribed vitality, endurance, and the slow strength of health.',
     keynote: 'A long, unhurried vitality breathes through the hours.',
-    invitation: 'You might notice a steadiness in your energy that asks for nothing quick.',
+    invitation: 'You might notice a bodily steadiness that asks for nothing quick.',
   },
   3: {
     quality:
@@ -126,7 +126,7 @@ export const YOGA_LEXICON: Record<number, YogaEntry> = {
   18: {
     quality:
       'An inauspicious yoga; the name means "an iron bar that bars a gate," traditionally ascribed obstruction, barriers, and blocked passage.',
-    keynote: "A barred gate stands somewhere across the day's path.",
+    keynote: 'A barred gate interrupts part of the day.',
     invitation: 'There may be a threshold that does not yet open, however it is approached.',
   },
   19: {

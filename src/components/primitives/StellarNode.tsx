@@ -238,7 +238,7 @@ function OrbNode({ x, y, label, selected, onClick, onHoverChange, ariaLabel, rad
       {onClick && <circle cx={x} cy={y} r={r + 6} fill="transparent" />}
 
       {/* soft outer bloom */}
-      <circle cx={x} cy={y} r={r + 12} fill="url(#orbGlow)" opacity={selected ? 1 : 0.55} className="transition-opacity duration-300 group-hover:opacity-90" />
+      <circle cx={x} cy={y} r={r + 12} fill="url(#orbGlow)" opacity={selected ? 1 : 0.7} className="transition-opacity duration-300 group-hover:opacity-95" />
 
       {/* satellites */}
       {sats.map((s, i) => (
@@ -249,23 +249,28 @@ function OrbNode({ x, y, label, selected, onClick, onHoverChange, ariaLabel, rad
       <circle cx={x} cy={y} r={r} fill={COLORS.void} fillOpacity={0.78} />
       <circle cx={x} cy={y} r={r - 1} fill="url(#orbGlow)" opacity={selected ? 0.45 : 0.22} />
 
+      {/* sun heart — the reference orbs are small suns; the glow concentrates
+          center-upper so the label zone in the lower half stays legible */}
+      <circle cx={x} cy={y - r * 0.12} r={r * 0.6} fill="url(#sunCore)" opacity={selected ? 1 : 0.85} className="transition-opacity duration-300 group-hover:opacity-100" />
+
       {/* SELECTED state — the luminous violet outer ring from the moodboard */}
       {selected && <circle cx={x} cy={y} r={r + 7} fill="none" stroke={STATE.selected} strokeOpacity={0.7} strokeWidth={0.9} filter="url(#glow)" />}
 
       {/* faint outer + bright main + faint inner ring (the reference's clean double ring).
           Hover flips the main ring emerald (ACTIVE); keyboard focus flips indigo (FOCUS). */}
-      <circle cx={x} cy={y} r={r + 3.5} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 0.4 : 0.16} strokeWidth={0.6} />
-      <circle cx={x} cy={y} r={r} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 1 : 0.92} strokeWidth={selected ? 2.2 : 1.5} filter="url(#glow)" className="transition-all duration-300 group-hover:stroke-emerald group-focus-visible:stroke-indigo" />
-      <circle cx={x} cy={y} r={r - 4.5} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 0.5 : 0.3} strokeWidth={0.6} />
+      <circle cx={x} cy={y} r={r + 3.5} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 0.45 : 0.22} strokeWidth={0.6} />
+      <circle cx={x} cy={y} r={r} fill="none" stroke={COLORS.gold} strokeOpacity={1} strokeWidth={selected ? 2.2 : 1.7} filter="url(#glow)" className="transition-all duration-300 group-hover:stroke-emerald group-focus-visible:stroke-indigo" />
+      <circle cx={x} cy={y} r={r - 4.5} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 0.55 : 0.38} strokeWidth={0.6} />
 
       {/* glyph in the upper half */}
       {hasGlyph && <Glyph id={glyph} cx={x} cy={y - r * 0.32} size={r * 0.3} opacity={selected ? 1 : 0.85} />}
 
-      {/* label */}
+      {/* label — the references set orb names bright against the dark lower half */}
       <text
         textAnchor="middle"
         className="uppercase font-display pointer-events-none"
         fill={selected ? '#fff' : COLORS.parchment}
+        fillOpacity={selected ? 1 : 0.92}
         fontSize={fontSize}
         fontWeight={600}
         letterSpacing="0.12em"

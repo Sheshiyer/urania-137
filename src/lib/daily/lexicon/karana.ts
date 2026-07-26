@@ -19,7 +19,7 @@ export const KARANA_LEXICON: Record<string, KaranaEntry> = {
   Balava: {
     type: 'movable',
     keynote: 'A youthful, Brahma-blessed strength moves through the hours, buoyant and devotional.',
-    invitation: 'There may be an upwelling of energy that leans toward the sacred and the freshly made.',
+    invitation: 'There may be an upwelling of creative force that leans toward the sacred and the freshly made.',
   },
   Bava: {
     type: 'movable',

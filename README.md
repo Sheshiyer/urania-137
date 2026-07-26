@@ -27,6 +27,25 @@
 
 Both doors are **nodes, not menu items**: Folio Archive → Noesis Mirror, Engine Status → Sankalpa Desktop. See **[`docs/integrated-product-map.md`](./docs/integrated-product-map.md)** for who owns which engine, where the consent boundary sits, and the two gates a witness mode must pass before it's exposed.
 
+### One reading, two views
+
+Chat is the threshold and the Folio is the durable reading surface. Both now
+render the same canonical `ReadingDocument`: source-supplied passes remain real
+sections, while older flat archive rows remain visibly unstructured rather than
+receiving invented hierarchy. The architecture, 723 corpus map, identity model,
+semantic visual grammar, vocabulary law, and staged learning loop are documented
+in **[`docs/living-readings-ecosystem.md`](./docs/living-readings-ecosystem.md)**.
+Deterministic readings now project their real panchanga, number, position,
+relation, period, cycle, spread, and question structures through the typed
+**[`reading element library`](./docs/reading-element-library.md)** while keeping
+the exact source payload inspectable.
+
+Grounded post-reading conversation now has a separate, ownership-scoped
+interpretation kernel and `POST /api/chat/interpret` contract. Its named agent
+postures, evidence lineage, honest fallback, relationship to Selemene's Witness
+Dyad, and staged path toward durable agents are documented in
+**[`docs/chat-interpretation-architecture.md`](./docs/chat-interpretation-architecture.md)**.
+
 ## The idea
 
 Everything is the graph. A central **NOESIS** core is ringed by seven parent nodes; each node is a doorway into its own page of sub-criteria, drawn as a dense golden sacred-geometry mandala in the **Tryambakam Noesis** visual identity (void-black canvas, sacred-gold wireframe, glowing radial edges, nebula, art-deco frames). The taxonomy is the "137 jobs across 7 departments / second brain" concept from the source reel by [@alassafi.ai](https://instagram.com/alassafi.ai).
@@ -36,7 +55,7 @@ Everything is the graph. A central **NOESIS** core is ringed by seven parent nod
 - **One node, one URL** → hash routing with zero router dependency; every page is deep-linkable.
 - **The narrative chat is the leaf** → clicking a sub-node opens a story-driven onboarding chat (one question at a time, a narrator persona, every answer landing as an exact intake slot) that hands off to the **live public API**; the reading then arrives **in the thread** as narrator chapters and is saved to the Folio.
 - **Engine Status is live** → real `/health`, `/health/ready`, and engine roster telemetry (no mock data).
-- **Folio Archive is real** → every generated report persists to a **per-user Cloudflare D1 store** behind a login identity, with search, favorites, and Markdown/DOCX/PDF export.
+- **Folio Archive is real** → every completed reading persists to a **per-user Cloudflare D1 store** behind a login identity, with a structured reader, search, favorites, and Markdown/DOCX/PDF export.
 - **The graph is the interface** — the top nav is an additive convenience; every destination is also a node you can click.
 - **`prefers-reduced-motion`** skips the entrance bloom and renders the static console.
 
@@ -83,6 +102,16 @@ The multi-page architecture — overview, a parent cluster, and the narrative ch
 </div>
 
 The full set of per-node design references lives in [`.assets/page-references/`](./.assets/page-references/).
+
+The living-reading component family and full folio composition are anchored by:
+
+<div align="center">
+
+![Living reading component atlas](./.assets/generated/readings-ecosystem/component-atlas.png)
+
+![Complete reading folio](./.assets/generated/readings-ecosystem/reading-folio.png)
+
+</div>
 
 ## Quick start
 

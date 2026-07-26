@@ -27,6 +27,7 @@ import {
   witnessThreadResult,
   type ThreadResult,
 } from '../lib/chat/resultMessages'
+import type { User } from '../lib/api/contract'
 
 /** Phase 3: only the INFO modal remains — run children go through the chat. */
 type ModalView = 'info' | null
@@ -57,7 +58,7 @@ function childOrbitals(kids: SelemeneChild[], color: string): GraphOrbital[] {
  * reading renders in-thread as narrator chapters (Phase 3) while the Folio
  * save happens inside the hooks, unchanged.
  */
-export function NodePage({ nodeId }: { nodeId: string }) {
+export function NodePage({ nodeId, me }: { nodeId: string; me: User | null }) {
   const node = getNodeById(nodeId)!
   const [selectedChild, setSelectedChild] = useState<SelemeneChild | null>(null)
   const [modalView, setModalView] = useState<ModalView>(null)
@@ -192,6 +193,7 @@ export function NodePage({ nodeId }: { nodeId: string }) {
           childLabel={chatChild.label}
           nodeId={node.id}
           nodeLabel={node.label}
+          owner={me}
           onClose={closeChat}
           onHandoff={handleChatHandoff}
           result={result}
@@ -208,7 +210,7 @@ export function NodePage({ nodeId }: { nodeId: string }) {
         ) : node.id === 'engine' ? (
           <EngineStatusPanel child={selectedChild} status={engineStatus} />
         ) : node.id === 'folio' ? (
-          <FolioPanel child={selectedChild} />
+          <FolioPanel child={selectedChild} owner={me} />
         ) : (
           <p className="leading-relaxed text-silver">{node.description}</p>
         )}

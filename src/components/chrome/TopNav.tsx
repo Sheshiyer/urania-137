@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Search, Compass, Share2 } from 'lucide-react'
+import { BookOpen, Search, Settings2 } from 'lucide-react'
 import { SELEMENE_NODES } from '../../data/selemeneNodes'
 import { Route, navigate } from '../../hooks/useHashRoute'
 import type { User } from '../../lib/api/contract'
@@ -7,21 +7,20 @@ import { IdentityChip } from './IdentityChip'
 
 /**
  * The console top bar from the reference moodboard: the two-tier URANIA 137 /
- * NOESIS wordmark lockup, a MAP · NODES · PATHS · ARCHIVE nav with diamond
+ * NOESIS wordmark lockup, a MAP · ARCHIVE · LIBRARY · SETTINGS nav with diamond
  * separators and a live node search, and the gold hairline with a center
- * diamond that rules the bar off from the field. MAP → home, ARCHIVE → Folio,
- * and search → jump to a node are wired; NODES/PATHS + icons are presentational
- * dressing. Every destination is also reachable by clicking the graph, so the
- * graph stays the interface (ISA ISC-10).
+ * diamond that rules the bar off from the field. MAP → home and ARCHIVE →
+ * the Folio constellation preserve the graph-first path; LIBRARY is the
+ * fallback/recovery reader and SETTINGS is additive account chrome.
  */
 export function TopNav({ route, me }: { route: Route; me: User | null }) {
   const activeId = route.view === 'node' ? route.nodeId : null
 
   const items: { key: string; label: string; onClick?: () => void; active?: boolean }[] = [
     { key: 'map', label: 'Map', onClick: () => navigate('/'), active: route.view === 'home' },
-    { key: 'nodes', label: 'Nodes' },
-    { key: 'paths', label: 'Paths' },
     { key: 'archive', label: 'Archive', onClick: () => navigate('/node/folio'), active: activeId === 'folio' },
+    { key: 'library', label: 'Library', onClick: () => navigate('/readings'), active: route.view === 'readings' },
+    { key: 'settings', label: 'Settings', onClick: () => navigate('/settings'), active: route.view === 'settings' },
   ]
 
   return (
@@ -50,9 +49,14 @@ export function TopNav({ route, me }: { route: Route; me: User | null }) {
                 <button
                   onClick={it.onClick}
                   disabled={!it.onClick}
+                  title={it.onClick ? undefined : 'Not yet charted'}
                   className={[
                     'relative font-display text-[11px] uppercase tracking-[0.24em] transition-colors',
-                    it.active ? 'text-gold' : it.onClick ? 'text-silver hover:text-parchment' : 'cursor-default text-silver/45',
+                    it.active
+                      ? 'text-gold'
+                      : it.onClick
+                        ? 'text-silver hover:text-parchment'
+                        : 'cursor-not-allowed text-silver/35',
                   ].join(' ')}
                 >
                   {it.label}
@@ -61,11 +65,35 @@ export function TopNav({ route, me }: { route: Route; me: User | null }) {
               </span>
             ))}
           </nav>
+          <nav className="flex items-center gap-2 md:hidden" aria-label="Library and settings">
+            <button
+              type="button"
+              onClick={() => navigate('/readings')}
+              aria-label="Open reading library"
+              aria-current={route.view === 'readings' ? 'page' : undefined}
+              className={`cursor-pointer rounded-full border p-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
+                route.view === 'readings'
+                  ? 'border-gold/60 bg-gold/10 text-gold'
+                  : 'border-gold/20 text-silver hover:border-gold/50 hover:text-parchment'
+              }`}
+            >
+              <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/settings')}
+              aria-label="Open settings"
+              aria-current={route.view === 'settings' ? 'page' : undefined}
+              className={`cursor-pointer rounded-full border p-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
+                route.view === 'settings'
+                  ? 'border-gold/60 bg-gold/10 text-gold'
+                  : 'border-gold/20 text-silver hover:border-gold/50 hover:text-parchment'
+              }`}
+            >
+              <Settings2 className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+          </nav>
           <NodeSearch activeId={activeId} />
-          <div className="hidden items-center gap-3 text-silver/50 sm:flex" aria-hidden="true">
-            <Compass className="h-4 w-4" />
-            <Share2 className="h-4 w-4" />
-          </div>
           <IdentityChip me={me} />
         </div>
       </div>

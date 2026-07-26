@@ -61,12 +61,15 @@ describe('witnessThreadResult', () => {
       { id: 'part-i', title: 'Part I — Structural Field', body: 'A structured witness.' },
     ])
     expect(r?.footer).toBe('Engines: jyotish, numerology · register l0')
+    expect(r?.structureSource).toBe('native')
+    expect(r?.systems).toEqual(['jyotish', 'numerology'])
     expect(r?.saveError).toBeNull()
   })
 
   it('complete without a pass list → single assembled chapter (the modal-era fallback)', () => {
     const r = witnessThreadResult(witnessReport({ status: 'complete', content: '## Reading\n\nWhole cloth.' }), null)
     expect(r?.chapters).toEqual([{ id: 'assembled', title: 'Noesis Reading — integrated-kundali-l0', body: '## Reading\n\nWhole cloth.' }])
+    expect(r?.structureSource).toBe('flat')
     expect(r?.footer).toBeUndefined()
   })
 
@@ -87,6 +90,18 @@ const dailyReading: DailyReading = {
   assembled: 'Tithi 7…',
   engines_used: ['panchanga', 'transit-overlay'],
   meta: { date: '2026-07-24', location: 'Ujjain, India', hasOverlay: true, source: 'deterministic' },
+  sourcePayloads: [
+    {
+      engine_id: 'panchanga',
+      result: {
+        vara_name: 'Somavara',
+        tithi_name: 'Saptami',
+        nakshatra_name: 'Hasta',
+        yoga_name: 'Siddhi',
+        karana_name: 'Bava',
+      },
+    },
+  ],
 }
 
 describe('dailyThreadResult', () => {
@@ -111,6 +126,9 @@ describe('dailyThreadResult', () => {
       { id: 'native', title: 'How Today Meets Your Pattern', body: 'The transit touches the natal Moon.' },
     ])
     expect(r?.footer).toBe('deterministic · panchanga + transit-overlay')
+    expect(r?.structureSource).toBe('native')
+    expect(r?.systems).toEqual(['panchanga', 'transit-overlay'])
+    expect(r?.sourcePayload).toEqual(dailyReading.sourcePayloads)
   })
 })
 
@@ -139,7 +157,10 @@ describe('deterministicThreadResult', () => {
     expect(r?.chapters[0].id).toBe('numerology')
     expect(r?.chapters[0].title).toBe('Birth Blueprint')
     expect(r?.chapters[0].body).toBe('```json\n' + JSON.stringify(engine, null, 2) + '\n```')
+    expect(r?.structureSource).toBe('flat')
+    expect(r?.systems).toEqual(['numerology'])
     expect(r?.warning).toBeUndefined()
+    expect(r?.sourcePayload).toEqual(engine)
   })
 
   it('workflow result → single chapter + dropped-engine honesty warning', () => {

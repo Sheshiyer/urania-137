@@ -1,0 +1,60 @@
+Create a polished 1536×1024 product-design reference board titled exactly:
+“URANIA 137 — EIGHTEEN ENGINE READING SURFACES”.
+
+Use the attached Urania 137 references as strict visual direction: Void Black,
+Sacred Gold architectural framing, Parchment reading material, Coherence
+Emerald computation, Witness Violet interpretation, Terracotta unresolved
+state, restrained celestial geometry, engraved editorial headings, thin rules,
+precise instrumentation. The graph is the interface: engine surfaces should
+feel like nodes opening into instruments.
+
+This is a generated design reference, not a screenshot and not real engine
+data. Put “GENERATED DESIGN REFERENCE” visibly in the header. Do not invent
+statistics, percentages, resonance, frequency, health, dates, IDs, people, or
+payload values. Use neutral placeholder marks and words like VALUE, UNIT,
+SOURCE, ORDER, AVAILABLE, CAPTURE REQUIRED.
+
+Create six grouped constellations, three engine tiles per group, with exact
+engine names and a concise component label:
+
+FOUNDATION
+- NUMEROLOGY — NUMBER CODE MATRIX — IMPLEMENTED — PROVENANCE: OBSERVED DATA
+- HUMAN DESIGN — FACTS AND COLLECTIONS — PARTIAL — PROVENANCE: OBSERVED DATA
+- GENE KEYS — FACTS AND COLLECTIONS — PARTIAL — PROVENANCE: OBSERVED DATA
+
+TIME
+- VIMSHOTTARI — PERIOD TIMELINE — IMPLEMENTED — PROVENANCE: OBSERVED DATA
+- PANCHANGA — FIVE-LIMB FACTS — IMPLEMENTED — PROVENANCE: OBSERVED DATA
+- VEDIC CLOCK — CURRENT WINDOW AND TRANSITIONS — IMPLEMENTED — PROVENANCE: OBSERVED DATA
+
+MOTION
+- BIORHYTHM — CYCLE BANDS — PARTIAL — PROVENANCE: OBSERVED DATA
+- TRANSITS — POSITION AND ASPECT FIELD — IMPLEMENTED — PROVENANCE: OBSERVED DATA
+- NADABRAHMAN — RAGA RECOMMENDATION LIST — IMPLEMENTED — PROVENANCE: OBSERVED DATA
+
+SYMBOL
+- TAROT — SOURCE SPREAD — IMPLEMENTED — PROVENANCE: OBSERVED DATA
+- I CHING — SOURCE SPREAD — PARTIAL — PROVENANCE: OBSERVED DATA
+- ENNEAGRAM — INQUIRY DECK — PARTIAL — PROVENANCE: OBSERVED DATA
+
+CREATION
+- SACRED GEOMETRY — SAFE FORM FACTS — PARTIAL — PROVENANCE: OBSERVED DATA
+- RAAGA — FACTS AND PLAYER — PARTIAL — PROVENANCE: SOURCE CONTRACT
+- SIGIL FORGE — INTENTION AND ARTIFACT — PARTIAL — PROVENANCE: SOURCE CONTRACT
+
+CAPTURE
+- BIOFIELD — CAPTURE BOUNDARY — CAPTURE-GATED — PROVENANCE: OBSERVED DATA
+- BIOFIELD CAPTURE — QUALITY AND PROVENANCE PANEL — CAPTURE-GATED — PROVENANCE: SOURCE CONTRACT
+- FACE READING — CAPTURE BOUNDARY — CAPTURE-GATED — PROVENANCE: OBSERVED DATA
+
+Every tile must print its exact status and provenance line above. The three
+capture tiles must use Terracotta and explicit “CAPTURE REQUIRED”, not fake
+metrics. Media tiles must show play/preview affordances without fictional
+content. Panchanga must be a labeled fact composition, never a wheel, mandala,
+orbit, or cyclic sector. Include a bottom legend stating “RAW JSON LIVES ONLY
+IN COLLAPSED TECHNICAL SOURCE”.
+
+The composition should feel like a serious scientific-esoteric instrument
+library, not a generic dashboard. Do not use mystical portraits, stock zodiac
+icons, glassmorphism, bright neon gradients, rounded SaaS cards, fake charts,
+or decorative relationships without labels.

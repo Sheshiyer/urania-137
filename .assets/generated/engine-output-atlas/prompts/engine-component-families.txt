@@ -1,0 +1,44 @@
+Create a polished 1536×1024 product-design reference board titled exactly:
+“URANIA 137 — ENGINE OUTPUT COMPONENT FAMILIES”.
+
+Use the attached Urania 137 references as strict visual direction. Preserve the
+Void Black field, hairline Sacred Gold architectural frames, restrained
+Coherence Emerald for computed material, Witness Violet for interpretation,
+Terracotta for unresolved/capture-gated states, and Parchment for legible
+reading surfaces. The aesthetic is “bioluminescent consciousness”: light from
+within organic structure, precise celestial instrumentation, sacred geometry
+as data visualization. Architectural, not decorative.
+
+This is a generated design-reference board, not a screenshot and not real
+telemetry. Put a small visible label “GENERATED DESIGN REFERENCE” in the header.
+Do not invent counts, percentages, resonance, frequencies, user names, IDs,
+dates, status uptime, or source values. Use small neutral placeholders such as
+“VALUE”, “UNIT”, “SOURCE PATH”, “STATE”, or short geometric marks.
+
+Compose a disciplined 4×3 atlas of twelve component families. Give each tile a
+number, exact title, a small “NON-VISUAL: …” line, and one representative
+diagram:
+
+1 FACT CONSTELLATION — NON-VISUAL: DEFINITION LIST
+2 NUMBER CODE MATRIX — NON-VISUAL: ORDERED VALUES
+3 POSITION WHEEL — NON-VISUAL: SORTABLE TABLE
+4 RELATION FIELD — NON-VISUAL: EDGE LIST
+5 TEMPORAL SPINE — NON-VISUAL: ORDERED TIMELINE
+6 CYCLE WAVEFIELD — NON-VISUAL: VALUE TABLE
+7 SPREAD FIELD — NON-VISUAL: ORDERED SLOTS
+8 COLLECTION ORBIT — NON-VISUAL: GROUPED LISTS
+9 QUESTION DECK — NON-VISUAL: ORDERED QUESTIONS
+10 MEDIA ARTIFACT — NON-VISUAL: MEDIA METADATA
+11 CAPTURE PANEL — NON-VISUAL: CONSENT AND QUALITY STATUS
+12 TECHNICAL SOURCE — NON-VISUAL: COLLAPSED DISCLOSURE
+
+Add a compact legend across the top:
+GOLD = STRUCTURE · EMERALD = COMPUTED · VIOLET = WITNESS · TERRACOTTA =
+UNRESOLVED. Add text labels so color is never the only cue.
+
+Each diagram must visibly encode its stated relationship. Edges must be named,
+scales must show units, positions must show coordinates, ordered structures
+must show order, media must show play/preview state, capture must show consent
+and quality state. Keep everything calm, exact, editorial, dense but readable.
+No mystical portraits, crystals, zodiac clip art, gradients without structure,
+watermarks, logos beyond the Urania wordmark, or generic SaaS dashboard cards.
