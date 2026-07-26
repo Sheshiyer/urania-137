@@ -1,0 +1,17 @@
+{
+  "bundleBytes": 516660,
+  "knownViolations": [
+    {
+      "pattern": "/1,337|12,851|Frequency/",
+      "observed": true
+    },
+    {
+      "pattern": "/Resonance|Live Paths/",
+      "observed": true
+    },
+    {
+      "pattern": "/label: 'Archive'|label: 'Library'/",
+      "observed": true
+    }
+  ]
+}
