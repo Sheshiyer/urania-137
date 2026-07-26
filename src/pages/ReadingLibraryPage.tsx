@@ -87,7 +87,7 @@ export function ReadingLibraryPage({
             <h1 className="mt-3 font-display text-3xl font-light tracking-[0.12em] text-parchment sm:text-5xl">
               Reading Library
             </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-silver/75">
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-secondary">
               Begin through conversation. Return here when you need to browse, verify, or recover the exact canonical record.
             </p>
           </div>
@@ -129,7 +129,7 @@ export function ReadingLibraryPage({
               }}
               aria-pressed={favoritesOnly}
               className={[
-                'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border px-4 py-2 font-display text-[9px] uppercase tracking-[0.18em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold',
+                'inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border px-4 py-2 font-display text-xs uppercase tracking-[0.18em] transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold',
                 favoritesOnly
                   ? 'border-gold bg-gold/10 text-gold'
                   : 'border-gold/25 text-silver hover:border-gold/60 hover:text-parchment',
@@ -142,7 +142,7 @@ export function ReadingLibraryPage({
         </section>
 
         {error && (
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border border-terracotta/35 bg-terracotta/10 px-4 py-3 text-sm text-terracotta">
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border border-terracotta/35 bg-terracotta/10 px-4 py-3 text-sm text-evidence-copy-unresolved">
             <span className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" aria-hidden="true" />
               {error}
@@ -150,7 +150,7 @@ export function ReadingLibraryPage({
             <button
               type="button"
               onClick={() => void refreshFolio()}
-              className="inline-flex cursor-pointer items-center gap-1.5 font-display text-[9px] uppercase tracking-[0.18em] transition-colors hover:text-parchment"
+              className="inline-flex cursor-pointer items-center gap-1.5 font-display text-xs uppercase tracking-[0.18em] transition-colors duration-300 hover:text-parchment"
             >
               <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
               Retry
@@ -160,7 +160,7 @@ export function ReadingLibraryPage({
 
         {status === 'loading' && entries.length === 0 ? (
           <div className="mt-7 grid min-h-[28rem] place-items-center border border-gold/10 bg-surface/40">
-            <p className="font-display text-[10px] uppercase tracking-[0.24em] text-gold/65">Charting your Folio…</p>
+            <p className="font-display text-xs uppercase tracking-[0.24em] text-gold">Charting your Folio…</p>
           </div>
         ) : entries.length === 0 ? (
           <div className="mt-7 grid min-h-[28rem] place-items-center border border-gold/15 bg-surface/40 px-6 text-center">
@@ -168,7 +168,7 @@ export function ReadingLibraryPage({
               <p className="font-serif text-xl uppercase tracking-[0.16em] text-parchment">
                 {query || favoritesOnly ? 'No readings match this lens' : 'Your Folio is still quiet'}
               </p>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-silver/70">
+              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-secondary">
                 {query || favoritesOnly
                   ? 'Clear the search or favorites filter to restore the full constellation.'
                   : 'Open a reading doorway in the graph. The conversation will save its durable record here.'}
@@ -190,7 +190,7 @@ export function ReadingLibraryPage({
                       {selected ? 'Opened reading' : 'Recent readings'}
                     </h2>
                   </div>
-                  <span className="font-mono text-[10px] text-silver/55">{entries.length} visible</span>
+                  <span className="font-mono text-xs text-metadata">{entries.length} visible</span>
                 </div>
 
                 {selected && document ? (
@@ -198,7 +198,7 @@ export function ReadingLibraryPage({
                     <button
                       type="button"
                       onClick={() => navigate('/readings')}
-                      className="mb-5 inline-flex cursor-pointer items-center gap-2 font-display text-[9px] uppercase tracking-[0.18em] text-silver transition-colors hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                      className="mb-5 inline-flex cursor-pointer items-center gap-2 font-display text-xs uppercase tracking-[0.18em] text-secondary transition-colors duration-300 hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
                     >
                       <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
                       All records
@@ -208,7 +208,7 @@ export function ReadingLibraryPage({
                 ) : readingId && status !== 'loading' ? (
                   <div className="console-card p-8 text-center">
                     <p className="font-serif text-lg uppercase tracking-[0.14em] text-parchment">Record unavailable</p>
-                    <p className="mt-2 text-sm text-silver/70">
+                    <p className="mt-2 text-sm text-secondary">
                       It may have been removed, or this signed-in account may not own it.
                     </p>
                   </div>
@@ -222,7 +222,7 @@ export function ReadingLibraryPage({
                             onClick={() => openReading(entry.id)}
                             className="min-w-0 flex-1 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
                           >
-                            <span className="font-display text-[8px] uppercase tracking-[0.18em] text-gold/65">{entry.nodeLabel}</span>
+                            <span className="font-display text-xs uppercase tracking-[0.18em] text-gold">{entry.nodeLabel}</span>
                             <span className="mt-3 block font-serif text-sm uppercase leading-relaxed tracking-[0.12em] text-parchment">
                               {entry.title}
                             </span>
@@ -239,7 +239,7 @@ export function ReadingLibraryPage({
                         <button
                           type="button"
                           onClick={() => openReading(entry.id)}
-                          className="mt-auto cursor-pointer px-4 pb-4 pt-3 text-left font-mono text-[9px] text-silver/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                          className="mt-auto cursor-pointer px-4 pb-4 pt-3 text-left font-mono text-xs text-metadata focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
                         >
                           {dateLabel(entry.createdAt)} · {entry.id.slice(0, 12)}
                         </button>
@@ -256,7 +256,7 @@ export function ReadingLibraryPage({
                   <aside className="console-card sticky top-24 p-5">
                     <p className="console-eyebrow">How this library behaves</p>
                     <h2 className="mt-2 font-serif text-base uppercase tracking-[0.14em] text-parchment">One record, many doorways</h2>
-                    <ul className="mt-4 space-y-3 text-xs leading-relaxed text-silver/75">
+                    <ul className="mt-4 space-y-3 text-xs leading-relaxed text-secondary">
                       <li className="border-l border-gold/25 pl-3">Chat composes the reading and writes one owner-scoped Folio row.</li>
                       <li className="border-l border-gold/25 pl-3">This library reopens that same ID and body; it never saves a display copy.</li>
                       <li className="border-l border-gold/25 pl-3">Every opened record shows its checksum and why this account can see it.</li>

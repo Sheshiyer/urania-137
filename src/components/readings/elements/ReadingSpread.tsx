@@ -16,7 +16,7 @@ export function ReadingSpread({ element }: { element: ReadingSpreadElement }) {
             </div>
             <p className="mt-3 font-serif text-base text-parchment">{position.value}</p>
             {position.status && (
-              <p className="mt-1 font-display text-[8px] uppercase tracking-[0.16em] text-violetglow">
+              <p className="mt-1 font-display text-[8px] uppercase tracking-[0.16em] text-evidence-copy-witness">
                 {position.status}
               </p>
             )}

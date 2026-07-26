@@ -100,9 +100,19 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .reveal-node,
   .reveal-spoke,
-  .reveal-field {
+  .reveal-field,
+  .meaningful-reveal,
+  .animate-pulse-slow,
+  .animate-drift {
     animation: none;
+    transition-duration: 0.01ms;
   }
+}
+
+/* Infinite movement belongs only to explicitly hidden ambient ornament. */
+.animate-pulse-slow:not([aria-hidden='true']),
+.animate-drift:not([aria-hidden='true']) {
+  animation: none;
 }
 
 /* ---------------------------------------------------------------------------
@@ -114,12 +124,55 @@ body {
 @layer components {
   /* Framed translucent surface — the reference's thin gold-rule card. */
   .console-card {
-    @apply border border-gold/20 bg-surface/85 backdrop-blur-md;
+    @apply border border-gold/20 bg-surface/90;
+  }
+
+  /* Structural instrument frame: clipped corners, nested rule, one junction. */
+  .instrument-frame {
+    @apply relative border border-gold/35 bg-surface/90 shadow-[inset_0_0_0_1px] shadow-gold/10;
+    clip-path: polygon(
+      0.75rem 0,
+      calc(100% - 0.75rem) 0,
+      100% 0.75rem,
+      100% calc(100% - 0.75rem),
+      calc(100% - 0.75rem) 100%,
+      0.75rem 100%,
+      0 calc(100% - 0.75rem),
+      0 0.75rem
+    );
+  }
+
+  .instrument-frame::after {
+    content: '';
+    position: absolute;
+    width: 0.4rem;
+    height: 0.4rem;
+    top: 0.2rem;
+    left: 50%;
+    @apply border border-gold/65 bg-surface;
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  .instrument-panel {
+    @apply border border-gold/20 bg-void/35 p-4 sm:p-5;
+  }
+
+  .instrument-chip {
+    @apply inline-flex items-center gap-2 rounded-sm border border-gold/25 bg-void/45 px-3 py-1.5 text-xs text-secondary;
+  }
+
+  .reading-canvas {
+    @apply bg-reading-surface text-reading-ink;
+    max-width: 70ch;
+  }
+
+  .semantic-metadata {
+    @apply text-xs leading-6 text-metadata;
   }
 
   /* Eyebrow header inside a card: small gold overline with flanking rules. */
   .console-eyebrow {
-    @apply font-display text-[9px] uppercase tracking-[0.28em] text-gold/70;
+    @apply font-display text-xs uppercase tracking-[0.28em] text-gold/80;
   }
 
   /* Hairline divider with a center diamond, from the reference panels. */
@@ -129,23 +182,23 @@ body {
 
   /* Primary action — the gold-filled pill from the moodboard's button states. */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-gold bg-gold px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-void transition-[filter,opacity] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-gold bg-gold px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-void transition-[filter,opacity] duration-300 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40;
   }
 
-  /* Secondary action — the emerald outline from the moodboard's CREATE NODE. */
+  /* Secondary action — interaction color, never computed-evidence emerald. */
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-emerald/60 px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-emerald transition-colors hover:bg-emerald/10 disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-interaction-focus/60 px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-interaction-focus transition-colors duration-300 hover:border-interaction-active hover:bg-interaction-flow/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   /* Ghost action — quiet gold outline (CANCEL in the reference modal). */
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-gold/30 px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-silver transition-colors hover:border-gold/60 hover:text-parchment disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-gold/30 px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-silver transition-colors duration-300 hover:border-gold/60 hover:text-parchment disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   /* Glass pill — brand-kit utility: frosted chip surface for quick replies,
      pickers, and inline tags (brand: rgba white 10% + 14px blur). */
   .glass-pill {
-    @apply rounded-full border border-parchment/15 bg-parchment/10 backdrop-blur-[14px];
+    @apply rounded-full border border-parchment/15 bg-parchment/10;
   }
 
   /* Dot grid — brand-kit backdrop texture, faint gold points for large

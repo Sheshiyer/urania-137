@@ -20,15 +20,17 @@ export interface QuickRepliesProps {
 }
 
 const BASE =
-  'rounded-full border px-3 py-1.5 font-display text-[10px] uppercase tracking-[0.2em] backdrop-blur transition-all disabled:cursor-not-allowed disabled:opacity-40'
+  'rounded-full border px-3 py-1.5 font-display text-[10px] uppercase tracking-[0.2em] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-40'
 
 const TONE_STYLES: Record<QuickReplyTone, string> = {
   // Gold filled — doorway confirmations (matches btn-primary).
   primary: 'border-gold bg-gold text-void hover:brightness-110',
-  // Growth green filled — the FINAL assembly confirm; the validation moment.
-  growth: 'border-growth bg-growth text-void hover:brightness-110',
-  // Growth outline — 'yes' at gates.
-  affirm: 'border-growth/40 bg-growth/5 text-growth hover:border-growth/70 hover:bg-growth/10',
+  // Selected interaction filled — the final assembly commitment.
+  commit:
+    'border-interaction-selected bg-interaction-selected text-void hover:brightness-110',
+  // Focus interaction outline — affirmative navigation, never evidence.
+  affirm:
+    'border-interaction-focus/45 bg-interaction-flow/5 text-interaction-focus hover:border-interaction-active hover:bg-interaction-flow/10',
   // Parchment outline — 'no' / skip / use-default escapes.
   ghost: 'border-parchment/20 bg-parchment/5 text-parchment/70 hover:border-parchment/40 hover:text-parchment',
   // Gold-tinted pill — closed-enum options (matches CircleBar chips).

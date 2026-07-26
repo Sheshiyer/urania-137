@@ -34,7 +34,7 @@ export function EngineStatusPanel({ child, status }: { child: SelemeneChild | nu
   const healthById = new Map((ready?.bridge_engines ?? []).map((e) => [e.engine_id, e]))
 
   if (loading) return <p className="py-6 text-center text-sm text-silver">Contacting the Selemene engines…</p>
-  if (error && !health) return <p className="py-6 text-center text-sm text-terracotta">{error}</p>
+  if (error && !health) return <p className="py-6 text-center text-sm text-evidence-copy-unresolved">{error}</p>
 
   return (
     <div className="space-y-4">

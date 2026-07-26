@@ -41,7 +41,7 @@ export function ReadingLibraryMap({
             Reading constellation
           </h2>
         </div>
-        <p className="max-w-52 text-right text-[10px] leading-relaxed text-silver/60">
+        <p className="max-w-52 text-right text-xs leading-relaxed text-secondary">
           Chat remains the primary doorway. This map reopens canonical Folio records.
         </p>
       </div>
@@ -65,7 +65,7 @@ export function ReadingLibraryMap({
 
       <div className="pointer-events-none absolute left-1/2 top-1/2 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-gold/35 bg-void/90 text-center shadow-[0_0_48px_rgba(197,160,23,0.12)]">
         <span className="font-serif text-xs uppercase tracking-[0.2em] text-parchment">Folio</span>
-        <span className="mt-1 font-mono text-[9px] text-gold/75">{readings.length} records</span>
+        <span className="mt-1 font-mono text-xs text-gold">{readings.length} records</span>
       </div>
 
       {positions.map(({ reading, x, y }, index) => {
@@ -98,16 +98,16 @@ export function ReadingLibraryMap({
               />
               {reading.favorite && <Star className="h-2.5 w-2.5 fill-gold text-gold" aria-hidden="true" />}
             </span>
-            <span className="mt-1 block truncate font-display text-[7px] uppercase tracking-[0.12em]" title={reading.title}>
+            <span className="mt-1 block truncate font-display text-xs uppercase tracking-[0.12em]" title={reading.title}>
               {compact(reading.title)}
             </span>
-            <span className="mt-0.5 block truncate text-[8px] text-silver/55">{reading.nodeLabel}</span>
+            <span className="mt-0.5 block truncate text-xs text-metadata">{reading.nodeLabel}</span>
           </button>
         )
       })}
 
       {readings.length > visible.length && (
-        <figcaption className="absolute bottom-3 left-4 text-[9px] text-silver/55">
+        <figcaption className="absolute bottom-3 left-4 text-xs text-metadata">
           Showing the {visible.length} most recent records · search reveals the rest.
         </figcaption>
       )}

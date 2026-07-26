@@ -439,7 +439,7 @@ export function ThresholdPage() {
       )}
 
       {error && (
-        <p className="fixed bottom-6 right-6 z-40 max-w-sm rounded-lg border border-terracotta/25 bg-terracotta/10 px-3 py-2 text-right text-xs text-terracotta">
+        <p className="fixed bottom-6 right-6 z-40 max-w-sm rounded-lg border border-terracotta/25 bg-terracotta/10 px-3 py-2 text-right text-xs text-evidence-copy-unresolved">
           {error}
         </p>
       )}
@@ -588,9 +588,9 @@ export function ThresholdPage() {
                   {gates.moment ? (
                     'Recorded in the family record — plainly, unhurriedly.'
                   ) : date.trim() && !dateOk ? (
-                    <><span className="text-terracotta">That date does not exist on any calendar I serve.</span> YYYY-MM-DD.</>
+                    <><span className="text-evidence-copy-unresolved">That date does not exist on any calendar I serve.</span> YYYY-MM-DD.</>
                   ) : time.trim() && !timeUnknown && !isValidTime(time.trim()) ? (
-                    <><span className="text-terracotta">HH:MM, 24-hour</span> — or the honesty button above.</>
+                    <><span className="text-evidence-copy-unresolved">HH:MM, 24-hour</span> — or the honesty button above.</>
                   ) : timeUnknown ? (
                     'Noon it is. The stars forgive; the engines average.'
                   ) : (

@@ -27,7 +27,7 @@ export function SettingsPanel({ isOpen, onClose }: { isOpen: boolean; onClose: (
 export function Row({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
   return (
     <div className="flex items-center justify-between gap-4 px-4 py-2.5">
-      <span className="font-display text-[9px] uppercase tracking-[0.22em] text-silver/70">{label}</span>
+      <span className="font-display text-xs uppercase tracking-[0.22em] text-metadata">{label}</span>
       <span className={`truncate text-sm text-parchment ${mono ? 'font-mono text-xs' : 'font-serif'}`}>{value}</span>
     </div>
   )
@@ -52,7 +52,7 @@ function SettingsBody({ onClose }: { onClose: () => void }) {
       {/* Identity + logout */}
       <div className="flex items-center justify-between gap-4 rounded-sm border border-gold/15 bg-void/50 px-4 py-3">
         <div className="min-w-0">
-          <div className="font-display text-[9px] uppercase tracking-[0.22em] text-silver/70">Signed in</div>
+          <div className="font-display text-xs uppercase tracking-[0.22em] text-metadata">Signed in</div>
           <div className="truncate text-sm text-parchment" title={me?.email}>
             {loading ? 'Loading identity…' : error ? error : (me?.email ?? '—')}
           </div>
@@ -67,7 +67,7 @@ function SettingsBody({ onClose }: { onClose: () => void }) {
         </a>
       </div>
 
-      <p className="text-[11px] text-silver/60">
+      <p className="text-xs text-secondary">
         App build — the Selemene engine reports its own version in Engine Status.
       </p>
     </div>

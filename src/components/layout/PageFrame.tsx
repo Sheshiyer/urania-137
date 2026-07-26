@@ -2,7 +2,8 @@
  * The ornate frame that surrounds every page: an inset double border, art-deco
  * filigree corner brackets with a corner rosette, and mid-edge diamonds on all
  * four edges — reproducing the framing seen in every generated page reference
- * (.assets/page-references). Rendered as a fixed, non-interactive overlay so it
+ * in the approved composition references. Rendered as a fixed,
+ * non-interactive overlay so it
  * stays put as the camera dives. One frame on every page is what makes the
  * console read as ONE instrument, not a set of stitched mockups.
  */

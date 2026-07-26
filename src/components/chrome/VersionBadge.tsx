@@ -13,7 +13,7 @@ export function VersionBadge({ onOpen }: { onOpen: () => void }) {
   return (
     <button
       onClick={onOpen}
-      className="pointer-events-auto flex items-center gap-1.5 rounded-full border border-gold/15 bg-void/45 px-2.5 py-1 font-display text-[9px] uppercase tracking-[0.18em] text-silver/50 backdrop-blur-sm transition-colors hover:border-gold/40 hover:text-gold"
+      className="pointer-events-auto flex items-center gap-1.5 rounded-full border border-gold/15 bg-void/85 px-2.5 py-1 font-display text-xs uppercase tracking-[0.18em] text-metadata transition-colors duration-300 hover:border-gold/40 hover:text-gold"
       aria-label={`Open settings — app ${label}`}
       title={`Urania 137 ${label}`}
     >

@@ -14,7 +14,7 @@ interface GlyphProps {
 
 /**
  * Sacred-geometry line-art icons drawn inside/above the child orbs, echoing the
- * per-node glyphs in `.assets/page-references/engine-status-page.png` and kin.
+ * per-node glyphs in the approved parent-page compositions.
  * Each renderer draws in a unit box [-1,1] and is scaled to `size`. Unknown ids
  * fall back to a compass star so every orb still reads as intentional.
  */

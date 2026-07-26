@@ -1,4 +1,4 @@
-import { COLORS, STATE } from '../../styles/tokens'
+import { COLORS, EVIDENCE, STATE } from '../../styles/tokens'
 import type { ReadingDocument } from '../../lib/readings'
 
 function compactLabel(label: string): string {
@@ -67,7 +67,7 @@ export function ReadingAtlas({ document }: { document: ReadingDocument }) {
               <g key={section.id}>
                 <line x1={center.x} y1={center.y} x2={x} y2={y} stroke={COLORS.gold} strokeOpacity="0.24" />
                 <circle cx={x} cy={y} r="15" fill={COLORS.void} stroke={STATE.goldWarm} strokeOpacity="0.75" />
-                <circle cx={x} cy={y} r="4" fill={section.evidenceKind === 'witness' ? STATE.selected : COLORS.emerald} />
+                <circle cx={x} cy={y} r="4" fill={section.evidenceKind === 'witness' ? EVIDENCE.witness : EVIDENCE.computed} />
                 <text x={labelX} y={labelY} textAnchor={anchor} fill={COLORS.parchment} fillOpacity="0.78" fontSize="9" letterSpacing="0.7">
                   {compactLabel(section.title).toUpperCase()}
                 </text>
@@ -83,7 +83,7 @@ export function ReadingAtlas({ document }: { document: ReadingDocument }) {
               <i className="h-2 w-2 rounded-full bg-emerald" aria-hidden="true" /> Computed or system section
             </span>
             <span className="flex items-center gap-1.5">
-              <i className="h-2 w-2 rounded-full" style={{ backgroundColor: STATE.selected }} aria-hidden="true" /> Witness section
+              <i className="h-2 w-2 rounded-full" style={{ backgroundColor: EVIDENCE.witness }} aria-hidden="true" /> Witness section
             </span>
             <span>{sections.length} source-supplied sections</span>
           </>

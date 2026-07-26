@@ -56,7 +56,7 @@ export function ResultThread({
   // that re-fires the same hook call. Never silent.
   if (result.status === 'error') {
     return (
-      <div className="space-y-2 rounded-lg border border-terracotta/20 bg-terracotta/10 p-3 text-sm text-terracotta">
+      <div className="space-y-2 rounded-lg border border-terracotta/20 bg-terracotta/10 p-3 text-sm text-evidence-copy-unresolved">
         <p>{result.error ?? 'The engines did not answer.'}</p>
         {onRetry && (
           <button
@@ -89,11 +89,11 @@ export function ResultThread({
       {result.footer && <p className="pt-1 text-[10px] uppercase tracking-[0.2em] text-silver/45">{result.footer}</p>}
 
       {result.warning && (
-        <p className="rounded-lg border border-terracotta/25 bg-terracotta/10 px-3 py-2 text-xs text-terracotta">{result.warning}</p>
+        <p className="rounded-lg border border-terracotta/25 bg-terracotta/10 px-3 py-2 text-xs text-evidence-copy-unresolved">{result.warning}</p>
       )}
 
       {result.saveError && (
-        <p className="rounded-lg border border-terracotta/25 bg-terracotta/10 px-3 py-2 text-xs text-terracotta">
+        <p className="rounded-lg border border-terracotta/25 bg-terracotta/10 px-3 py-2 text-xs text-evidence-copy-unresolved">
           The reading is whole, but the Folio could not hold it: {result.saveError}
         </p>
       )}

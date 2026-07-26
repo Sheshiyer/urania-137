@@ -35,7 +35,7 @@ function MediaItem({ item }: { item: ReadingMediaItem }) {
       )}
 
       <p className="mt-3 text-[10px] leading-relaxed text-silver/70">{item.textEquivalent}</p>
-      {item.detail && <p className="mt-1 text-[10px] leading-relaxed text-terracotta/85">{item.detail}</p>}
+      {item.detail && <p className="mt-1 text-[10px] leading-relaxed text-evidence-copy-unresolved/85">{item.detail}</p>}
       <p className="mt-2 break-all font-mono text-[8px] text-silver/45">{item.sourcePath}</p>
 
       {item.status === 'available' && item.url && (

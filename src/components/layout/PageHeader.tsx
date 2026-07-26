@@ -8,7 +8,7 @@ interface PageHeaderProps {
 }
 
 /**
- * The instrument-page title from the page references (.assets/page-references):
+ * The instrument-page title from the approved composition references:
  * a LARGE, light Panchang title in the geometric display face — "Sky Weather",
  * "Folio Archive" — not the small engraved serif lockup the parent-page
  * moodboard uses for its chrome. The references set the name in title case
@@ -20,7 +20,7 @@ export function PageHeader({ title, epithet, subtitle, showBack = true, onBack }
     <div className="pointer-events-none fixed left-8 right-6 top-[84px] z-10 sm:left-14 sm:right-auto sm:top-[96px]">
       {/* Breadcrumb eyebrow — HOME is the way back; the hub + MAP also return. */}
       {showBack && (
-        <p className="mb-3 flex items-center gap-2 font-display text-[9px] uppercase tracking-[0.28em] text-silver/50">
+        <p className="mb-3 flex items-center gap-2 font-display text-xs uppercase tracking-[0.28em] text-metadata">
           <button
             onClick={onBack}
             className="pointer-events-auto transition-colors hover:text-gold"
@@ -29,7 +29,7 @@ export function PageHeader({ title, epithet, subtitle, showBack = true, onBack }
             Home
           </button>
           <span className="h-1 w-1 rotate-45 border border-gold/40" aria-hidden="true" />
-          <span className="text-silver/40">{title}</span>
+          <span className="text-metadata">{title}</span>
         </p>
       )}
 
@@ -39,7 +39,7 @@ export function PageHeader({ title, epithet, subtitle, showBack = true, onBack }
       </h1>
 
       {epithet && (
-        <p className="mt-3 font-display text-[9px] uppercase tracking-[0.42em] text-gold/80 sm:text-[10px]">
+        <p className="mt-3 font-display text-xs uppercase tracking-[0.42em] text-gold/80">
           {epithet}
         </p>
       )}

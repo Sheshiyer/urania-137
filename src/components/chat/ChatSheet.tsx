@@ -172,7 +172,7 @@ function BlockView({ block }: { block: ChatBlock }) {
       )
     case 'tool_result':
       return (
-        <p className={`text-xs ${block.ok ? 'text-emerald' : 'text-terracotta'}`}>
+        <p className={`text-xs ${block.ok ? 'text-emerald' : 'text-evidence-copy-unresolved'}`}>
           {block.ok ? (block.message ?? 'Recorded.') : (block.message ?? 'That did not validate — the narrator will re-ask.')}
         </p>
       )
@@ -504,7 +504,7 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, owner, onClose,
           )}
 
           {error && (
-            <p className="rounded-lg border border-terracotta/20 bg-terracotta/10 px-3 py-2 text-sm text-terracotta">{error}</p>
+            <p className="rounded-lg border border-terracotta/20 bg-terracotta/10 px-3 py-2 text-sm text-evidence-copy-unresolved">{error}</p>
           )}
 
           {circleNotice && (

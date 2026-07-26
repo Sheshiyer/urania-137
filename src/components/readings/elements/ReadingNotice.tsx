@@ -3,8 +3,8 @@ import { ElementFrame } from './ElementFrame'
 
 const TONE: Record<ReadingNoticeElement['tone'], string> = {
   source: 'border-gold/25 text-gold',
-  warning: 'border-terracotta/30 text-terracotta',
-  unresolved: 'border-violetglow/30 text-violetglow',
+  warning: 'border-terracotta/30 text-evidence-copy-unresolved',
+  unresolved: 'border-violetglow/30 text-evidence-copy-witness',
 }
 
 export function ReadingNotice({ element }: { element: ReadingNoticeElement }) {

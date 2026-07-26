@@ -56,8 +56,8 @@ export function PatternSection({ onClose }: { onClose: () => void }) {
   if (status === 'loading') {
     return (
       <div className="rounded-lg border border-gold/15 bg-void/50 px-4 py-3">
-        <div className="font-display text-[9px] uppercase tracking-[0.22em] text-silver/70">Your pattern</div>
-        <div className="mt-1 text-sm text-silver/50">Reading your pattern…</div>
+        <div className="font-display text-xs uppercase tracking-[0.22em] text-metadata">Your pattern</div>
+        <div className="mt-1 text-sm text-secondary">Reading your pattern…</div>
       </div>
     )
   }
@@ -66,11 +66,11 @@ export function PatternSection({ onClose }: { onClose: () => void }) {
   if (!profile) {
     return (
       <div className="rounded-lg border border-gold/15 bg-void/50 px-4 py-4 text-center">
-        <p className="text-sm text-silver/70">You haven't crossed the Threshold yet.</p>
+        <p className="text-sm text-secondary">You haven't crossed the Threshold yet.</p>
         <button
           type="button"
           onClick={crossThreshold}
-          className="mt-3 rounded-full border border-gold px-5 py-2 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-gold transition-all hover:bg-gold hover:text-void"
+          className="mt-3 rounded-full border border-gold px-5 py-2 font-display text-xs font-medium uppercase tracking-[0.24em] text-gold transition-all duration-300 hover:bg-gold hover:text-void"
         >
           Cross the Threshold
         </button>
@@ -138,7 +138,7 @@ export function PatternSection({ onClose }: { onClose: () => void }) {
 
     const field = 'w-full border-b border-silver/30 bg-transparent py-1.5 font-serif text-sm text-parchment transition-colors placeholder:text-silver/40 focus:border-gold focus:outline-none disabled:opacity-40'
     const chip = (on: boolean) =>
-      `rounded-full border px-3 py-1 font-display text-[9px] font-medium uppercase tracking-[0.18em] transition-all disabled:cursor-default disabled:opacity-40 ${
+      `rounded-full border px-3 py-1 font-display text-xs font-medium uppercase tracking-[0.18em] transition-all duration-300 disabled:cursor-default disabled:opacity-40 ${
         on ? 'border-gold bg-gold/10 text-gold' : 'border-silver/30 text-silver hover:border-gold/50 hover:text-parchment'
       }`
 
@@ -148,15 +148,15 @@ export function PatternSection({ onClose }: { onClose: () => void }) {
         onKeyDown={onKeyDown}
         className="space-y-3 rounded-lg border border-gold/15 bg-void/50 px-4 py-3.5"
       >
-        <div className="font-display text-[9px] uppercase tracking-[0.22em] text-silver/70">Your pattern</div>
+        <div className="font-display text-xs uppercase tracking-[0.22em] text-metadata">Your pattern</div>
 
         <label className="block">
-          <span className="font-display text-[9px] uppercase tracking-[0.22em] text-silver/50">Name</span>
+          <span className="font-display text-xs uppercase tracking-[0.22em] text-metadata">Name</span>
           <input className={field} value={draft.name} onChange={set('name')} autoFocus disabled={saving} />
         </label>
 
         <label className="block">
-          <span className="font-display text-[9px] uppercase tracking-[0.22em] text-silver/50">Birth date</span>
+          <span className="font-display text-xs uppercase tracking-[0.22em] text-metadata">Birth date</span>
           <input
             className={field}
             value={draft.birth_date}
@@ -168,7 +168,7 @@ export function PatternSection({ onClose }: { onClose: () => void }) {
         </label>
 
         <div>
-          <span className="font-display text-[9px] uppercase tracking-[0.22em] text-silver/50">Birth time</span>
+          <span className="font-display text-xs uppercase tracking-[0.22em] text-metadata">Birth time</span>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {TIME_CONFIDENCES.map((c) => (
               <button
@@ -184,7 +184,7 @@ export function PatternSection({ onClose }: { onClose: () => void }) {
             ))}
           </div>
           {draft.birth_time_confidence === 'unknown' ? (
-            <p className="mt-1.5 text-xs text-silver/60">12:00 — the noon convention.</p>
+            <p className="mt-1.5 text-xs text-secondary">12:00 — the noon convention.</p>
           ) : (
             <input
               className={`${field} mt-1`}
@@ -199,7 +199,7 @@ export function PatternSection({ onClose }: { onClose: () => void }) {
         </div>
 
         <label className="block">
-          <span className="font-display text-[9px] uppercase tracking-[0.22em] text-silver/50">Birth place</span>
+          <span className="font-display text-xs uppercase tracking-[0.22em] text-metadata">Birth place</span>
           <input
             className={field}
             value={draft.birth_location_query}
@@ -209,21 +209,21 @@ export function PatternSection({ onClose }: { onClose: () => void }) {
           />
         </label>
 
-        {formError ? <p className="text-xs text-terracotta">{formError}</p> : null}
+        {formError ? <p className="text-xs text-evidence-copy-unresolved">{formError}</p> : null}
 
         <div className="flex items-center justify-end gap-3 pt-1">
           <button
             type="button"
             onClick={cancelEdit}
             disabled={saving}
-            className="font-display text-[10px] uppercase tracking-[0.22em] text-silver/60 transition-colors hover:text-parchment disabled:opacity-40"
+            className="font-display text-xs uppercase tracking-[0.22em] text-secondary transition-colors duration-300 hover:text-parchment disabled:opacity-40"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="rounded-full border border-gold px-4 py-1.5 font-display text-[10px] font-medium uppercase tracking-[0.22em] text-gold transition-all hover:bg-gold hover:text-void disabled:cursor-default disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-gold"
+            className="rounded-full border border-gold px-4 py-1.5 font-display text-xs font-medium uppercase tracking-[0.22em] text-gold transition-all duration-300 hover:bg-gold hover:text-void disabled:cursor-default disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-gold"
           >
             {saving ? 'Saving…' : 'Save'}
           </button>
@@ -243,11 +243,11 @@ export function PatternSection({ onClose }: { onClose: () => void }) {
     <div className="space-y-2">
       <div className="divide-y divide-gold/10 rounded-lg border border-gold/15 bg-void/50">
         <div className="flex items-center justify-between gap-4 px-4 py-2.5">
-          <span className="font-display text-[9px] uppercase tracking-[0.22em] text-silver/70">Your pattern</span>
+          <span className="font-display text-xs uppercase tracking-[0.22em] text-metadata">Your pattern</span>
           <button
             type="button"
             onClick={startEdit}
-            className="font-display text-[10px] uppercase tracking-[0.22em] text-silver/50 transition-colors hover:text-gold"
+            className="font-display text-xs uppercase tracking-[0.22em] text-metadata transition-colors duration-300 hover:text-gold"
             aria-label="Edit your pattern"
           >
             edit
@@ -263,7 +263,7 @@ export function PatternSection({ onClose }: { onClose: () => void }) {
         <button
           type="button"
           onClick={crossThreshold}
-          className="font-display text-[9px] uppercase tracking-[0.24em] text-silver/45 transition-colors hover:text-gold"
+          className="font-display text-xs uppercase tracking-[0.24em] text-metadata transition-colors duration-300 hover:text-gold"
         >
           re-cross the Threshold
         </button>

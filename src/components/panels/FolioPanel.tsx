@@ -79,7 +79,7 @@ export function FolioPanel({ child, owner }: { child: SelemeneChild | null; owne
       />
 
       {error && !showError && (
-        <p className="flex items-center gap-1.5 rounded-sm border border-terracotta/30 bg-terracotta/10 px-3 py-2 text-[11px] text-terracotta">
+        <p className="flex items-center gap-1.5 rounded-sm border border-terracotta/30 bg-terracotta/10 px-3 py-2 text-[11px] text-evidence-copy-unresolved">
           <AlertTriangle className="h-3 w-3 shrink-0" /> {error}
         </p>
       )}
@@ -88,7 +88,7 @@ export function FolioPanel({ child, owner }: { child: SelemeneChild | null; owne
         <LoadingSkeleton />
       ) : showError ? (
         <div className="py-8 text-center">
-          <p className="flex items-center justify-center gap-1.5 text-sm text-terracotta">
+          <p className="flex items-center justify-center gap-1.5 text-sm text-evidence-copy-unresolved">
             <AlertTriangle className="h-4 w-4" /> Could not load your saved readings.
           </p>
           <p className="mt-1 text-[11px] text-silver/70">{error}</p>
@@ -136,7 +136,7 @@ export function FolioPanel({ child, owner }: { child: SelemeneChild | null; owne
                 <button onClick={() => exportEntry(e, defaultFormat ?? 'markdown')} title="Download" className="shrink-0 text-silver hover:text-parchment sm:hidden">
                   <Download className="h-4 w-4" />
                 </button>
-                <button onClick={() => removeEntry(e.id)} title="Delete" className="shrink-0 text-silver hover:text-terracotta">
+                <button onClick={() => removeEntry(e.id)} title="Delete" className="shrink-0 text-silver hover:text-evidence-copy-unresolved">
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>

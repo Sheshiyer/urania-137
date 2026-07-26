@@ -15,7 +15,7 @@ export function ReadingCapture({ element }: { element: ReadingCaptureElement }) 
       encoding="Every value is printed with its source path and verification state; no diagnostic or interpretive score is added."
     >
       <div className="border-l-2 border-violetglow/35 px-3">
-        <p className="font-display text-[8px] uppercase tracking-[0.16em] text-violetglow">
+        <p className="font-display text-[8px] uppercase tracking-[0.16em] text-evidence-copy-witness">
           {STATE_LABEL[element.captureState]}
         </p>
         <p className="mt-1 text-[11px] leading-relaxed text-silver/75">{element.body}</p>
