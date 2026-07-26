@@ -14,6 +14,7 @@ import {
 
 const CLI = fileURLToPath(new URL('./build-engine-output-atlas.mjs', import.meta.url))
 const MANIFEST = fileURLToPath(new URL('../../docs/engine-output-atlas.json', import.meta.url))
+const VISUAL_REGISTRY = fileURLToPath(new URL('../../src/lib/readings/engineVisualRegistry.ts', import.meta.url))
 
 const EXPECTED_WORKFLOW_MEMBERS = Object.freeze({
   'birth-blueprint': ['numerology', 'human-design', 'vimshottari', 'biofield', 'face-reading'],
@@ -144,6 +145,32 @@ test('atlas contains exactly eighteen unique engines and six current workflows',
 
   for (const workflow of manifest.workflows) {
     assert.deepEqual(workflow.engineIds, EXPECTED_WORKFLOW_MEMBERS[workflow.id])
+  }
+})
+
+test('runtime visual registry reconciles atlas states, provenance, components, and alternatives', async () => {
+  const manifest = JSON.parse(await readFile(MANIFEST, 'utf8'))
+  const registry = await readFile(VISUAL_REGISTRY, 'utf8')
+  const lines = registry.split('\n')
+
+  for (const engine of manifest.engines) {
+    const prefix = engine.id.includes('-') ? `'${engine.id}': engine(` : `${engine.id}: engine(`
+    const line = lines.find((candidate) => candidate.trimStart().startsWith(prefix))
+    assert.ok(line, `runtime visual contract missing for ${engine.id}`)
+    assert.ok(line.includes(`'${engine.status}'`), `${engine.id} status drifted`)
+    assert.ok(line.includes(`'${engine.provenance}'`), `${engine.id} provenance drifted`)
+    assert.ok(line.includes(engine.presentation.primaryComponent), `${engine.id} primary component drifted`)
+    assert.ok(line.includes(engine.presentation.secondaryComponent), `${engine.id} secondary component drifted`)
+    assert.ok(line.includes(engine.presentation.fallbackComponent), `${engine.id} fallback component drifted`)
+    assert.ok(line.includes(engine.presentation.nonVisualEquivalent), `${engine.id} non-visual alternative drifted`)
+  }
+
+  for (const workflow of manifest.workflows) {
+    const prefix = `'${workflow.id}': workflow(`
+    const line = lines.find((candidate) => candidate.trimStart().startsWith(prefix))
+    assert.ok(line, `runtime workflow contract missing for ${workflow.id}`)
+    assert.ok(line.includes(workflow.presentation.primaryComponent), `${workflow.id} primary component drifted`)
+    assert.ok(line.includes(workflow.presentation.nonVisualEquivalent), `${workflow.id} non-visual alternative drifted`)
   }
 })
 
