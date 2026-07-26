@@ -23,6 +23,6 @@ describe('CanonicalReadingReference', () => {
     expect(html).toContain('Canonical Folio record')
     expect(html).toContain('reading/one')
     expect(html).toContain('href="#/readings/reading%2Fone"')
-    expect(html).toContain('Open record')
+    expect(html).toContain('Open reading')
   })
 })

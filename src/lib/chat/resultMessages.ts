@@ -40,6 +40,8 @@ export interface ThreadResult {
   error: string | null
   /** Folio save failure AFTER a complete reading (witness saveError) — the reading stays whole. */
   saveError: string | null
+  /** Recovery re-fires the exact submit request; it never creates a new intent. */
+  retryScope?: 'same-request'
   /** Small provenance line (engines used / daily source), mirroring the modal-era footers. */
   footer?: string
   /** Dropped-engine honesty line (workflows omit failing engines silently). */
@@ -72,6 +74,7 @@ const failed = (kind: ThreadResult['kind'], error: string): ThreadResult => ({
   systems: [],
   error,
   saveError: null,
+  retryScope: 'same-request',
   sourcePayload: null,
 })
 
@@ -99,6 +102,7 @@ export function witnessThreadResult(report: GeneratedReport | null, saveError: s
     systems: raw?.engines_used ?? [],
     error: null,
     saveError,
+    retryScope: saveError ? 'same-request' : undefined,
     footer,
     sourcePayload: null,
     archiveContent: report.content,
@@ -115,6 +119,7 @@ export interface DailyRunState {
   status: 'idle' | 'loading' | 'complete' | 'error'
   reading: DailyReading | null
   error: string | null
+  saveError?: string | null
 }
 
 export function dailyThreadResult(state: DailyRunState): ThreadResult | null {
@@ -130,7 +135,8 @@ export function dailyThreadResult(state: DailyRunState): ThreadResult | null {
     chapters: reading.passes.map((p) => ({ id: p.id, title: p.title, body: p.output })),
     systems: reading.engines_used,
     error: null,
-    saveError: null,
+    saveError: state.saveError ?? null,
+    retryScope: state.saveError ? 'same-request' : undefined,
     footer: `${reading.meta.source} · ${reading.engines_used.join(' + ')}`,
     sourcePayload: reading.sourcePayloads ?? null,
     archiveContent: reading.assembled,
@@ -153,11 +159,12 @@ export interface DeterministicRunState {
 
 export function deterministicThreadResult(state: DeterministicRunState, label: string): ThreadResult | null {
   if (state.busy) return composing('deterministic')
-  // The modal era showed the error INSTEAD of the result (a save failure
-  // folds into `error`); preserve that — the retry re-fires the same run.
-  if (state.error) return failed('deterministic', state.error)
-
   const payload = state.workflow ?? state.engine
+  // The modal era showed the error INSTEAD of the result (a save failure
+  // folds into `error`). When the computed payload survived, the error is
+  // specifically the Folio write and the reading must remain available.
+  if (state.error && !payload) return failed('deterministic', state.error)
+
   if (!payload) return null
   const id = state.workflow ? state.workflow.workflow_id : (state.engine as EngineResult).engine_id
 
@@ -179,7 +186,8 @@ export function deterministicThreadResult(state: DeterministicRunState, label: s
     chapters: [{ id, title: label, body: deterministicMarkdown(payload) }],
     systems: state.workflow ? Object.keys(state.workflow.engine_outputs ?? {}) : [id],
     error: null,
-    saveError: null,
+    saveError: state.error,
+    retryScope: state.error ? 'same-request' : undefined,
     warning,
     sourcePayload: payload,
     archiveContent: `## ${label} (${id})\n\n${deterministicMarkdown(payload)}\n`,

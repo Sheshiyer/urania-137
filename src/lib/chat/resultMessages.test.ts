@@ -50,7 +50,13 @@ describe('witnessThreadResult', () => {
 
   it('error → retryable error state carrying the engine message', () => {
     const r = witnessThreadResult(witnessReport({ status: 'error', content: 'engine unreachable' }), null)
-    expect(r).toMatchObject({ kind: 'witness', status: 'error', error: 'engine unreachable', chapters: [] })
+    expect(r).toMatchObject({
+      kind: 'witness',
+      status: 'error',
+      error: 'engine unreachable',
+      chapters: [],
+      retryScope: 'same-request',
+    })
   })
 
   it('complete with passes → ONE chapter per pass (title heading, output body) + engines footer', () => {
@@ -78,6 +84,7 @@ describe('witnessThreadResult', () => {
     expect(r?.status).toBe('complete')
     expect(r?.chapters).toHaveLength(2)
     expect(r?.saveError).toBe('D1 unavailable')
+    expect(r?.retryScope).toBe('same-request')
   })
 })
 
@@ -130,6 +137,21 @@ describe('dailyThreadResult', () => {
     expect(r?.systems).toEqual(['panchanga', 'transit-overlay'])
     expect(r?.sourcePayload).toEqual(dailyReading.sourcePayloads)
   })
+
+  it('a Folio save failure keeps the computed daily reading available as fallback', () => {
+    const r = dailyThreadResult({
+      status: 'complete',
+      reading: dailyReading,
+      error: null,
+      saveError: 'D1 unavailable',
+    })
+    expect(r).toMatchObject({
+      status: 'complete',
+      saveError: 'D1 unavailable',
+      retryScope: 'same-request',
+    })
+    expect(r?.chapters).toHaveLength(2)
+  })
 })
 
 describe('deterministicThreadResult', () => {
@@ -178,6 +200,20 @@ describe('deterministicThreadResult', () => {
     expect(r?.chapters[0].id).toBe('birth-blueprint')
     expect(r?.warning).toContain('numerology')
     expect(r?.warning).toContain('drops it silently')
+  })
+
+  it('a Folio save failure keeps the computed deterministic result available as fallback', () => {
+    const engine = { engine_id: 'numerology', result: { life_path: 7 } }
+    const r = deterministicThreadResult(
+      { ...detBase, engine, error: 'D1 unavailable' },
+      'Numerology',
+    )
+    expect(r).toMatchObject({
+      status: 'complete',
+      saveError: 'D1 unavailable',
+      retryScope: 'same-request',
+    })
+    expect(r?.chapters).toHaveLength(1)
   })
 
   it('workflow with every declared engine present → no warning', () => {

@@ -8,6 +8,7 @@ import type { User } from '../../lib/api/contract'
 import type { ReadingSubjectKind } from '../../lib/readings'
 import { createOrResumeSession, completeSession, getSession, replayEvents, streamTurn } from '../../lib/chatApi'
 import { createSubject } from '../../lib/subjectsApi'
+import { useThreadScroll } from '../../hooks/useThreadScroll'
 import { CircleBar, circlePersistIndexes, circleRole } from './CircleBar'
 import { QuickReplies } from './QuickReplies'
 import { ResultThread } from './ResultThread'
@@ -188,6 +189,16 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, owner, onClose,
   const [error, setError] = useState<string | null>(null)
   /** One-line in-thread warning for a failed circle persist (W3-A; never blocks). */
   const [circleNotice, setCircleNotice] = useState<string | null>(null)
+  const latestMessage = msgs[msgs.length - 1]
+  const threadRevision = [
+    msgs.length,
+    latestMessage ? msgText(latestMessage).length : 0,
+    streaming ? 'streaming' : 'settled',
+    result?.status ?? 'no-result',
+    result?.chapters.length ?? 0,
+    result?.saveError ?? '',
+  ].join(':')
+  const threadScroll = useThreadScroll({ revision: threadRevision })
 
   const initRef = useRef(false)
   const streamingRef = useRef(false)
@@ -196,7 +207,6 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, owner, onClose,
   const lastEventIdRef = useRef(0)
   const sessionIdRef = useRef('')
   const shellIdRef = useRef<string | null>(null)
-  const threadRef = useRef<HTMLDivElement | null>(null)
   const composerRef = useRef<HTMLInputElement | null>(null)
 
   // Latest-callback refs so stream handlers never capture stale props/state.
@@ -401,17 +411,6 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, owner, onClose,
   }, [session])
 
   // -------------------------------------------------------------------------
-  // Auto-scroll (honors prefers-reduced-motion)
-  // -------------------------------------------------------------------------
-
-  useEffect(() => {
-    const el = threadRef.current
-    if (!el) return
-    const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-    el.scrollTo({ top: el.scrollHeight, behavior: reduce ? 'auto' : 'smooth' })
-  }, [msgs, streaming, result])
-
-  // -------------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------------
 
@@ -447,7 +446,12 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, owner, onClose,
     >
 
         {/* Message thread */}
-        <div ref={threadRef} role="log" aria-live="polite" className="dot-grid min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-5 py-5 sm:px-8">
+        <div
+          ref={threadScroll.threadRef}
+          onScroll={threadScroll.onScroll}
+          aria-label="Conversation"
+          className="dot-grid min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-5 py-5 sm:px-8"
+        >
           {loading && <p className="py-8 text-center text-sm text-silver">Opening the doorway…</p>}
 
           {!loading && msgs.length === 0 && !streaming && (
@@ -521,11 +525,23 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, owner, onClose,
           {/* Fallback beat only when a handoff left no result feed (e.g. a
               crash between handoff and completion on a remount). */}
           {done && !result && (
-            <p className="py-2 text-center font-display text-[10px] uppercase tracking-[0.25em] text-gold/60">
+            <p role="status" className="py-2 text-center font-display text-[10px] uppercase tracking-[0.25em] text-gold/60">
               ✦ The story has been handed off to the engines ✦
             </p>
           )}
         </div>
+
+        {!threadScroll.following && (
+          <div className="flex shrink-0 justify-center border-t border-gold/10 bg-void px-4 py-2">
+            <button
+              type="button"
+              onClick={threadScroll.returnToLatest}
+              className="min-h-11 border border-gold/30 px-4 font-display text-[9px] uppercase tracking-[0.18em] text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+            >
+              Return to latest{threadScroll.unread ? ' · new' : ''}
+            </button>
+          </div>
+        )}
 
         {/* W3-A circle affordances: subject picker at the add_another gate /
             name slot, quick-reply chips at the persist_offer beat. Renders
