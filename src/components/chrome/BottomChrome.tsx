@@ -1,26 +1,30 @@
-import { ReactNode, useState } from 'react'
+import { Children, ReactNode, useState } from 'react'
 import { VersionBadge } from './VersionBadge'
 import { SettingsPanel } from './SettingsPanel'
 
 /**
- * The fixed bottom rail — the tab strip stacked above the stat strip.
+ * The fixed bottom rail, split the way the architecture moodboard frames a
+ * parent page: the stat strip floats at the lower LEFT as open cells on the
+ * field, the tab rail + build badge hold the lower RIGHT.
  *
- * Owning the stacking here (rather than each piece pinning itself with its own
- * `bottom-[…]` offset) means the tabs and the stat strip can never overlap when
- * either changes size. The graph reserves this whole band via `CHROME`.
- *
- * The app VersionBadge pins to the rail's right edge (outside the centered
- * console strip, so it never collides with the per-page stats) and opens the
- * Settings card. Both live here so every page that renders the rail gets the
- * app version with no per-page wiring.
+ * Slot contract: the FIRST child is pinned left (the page's StatFooter); every
+ * remaining child is grouped right (the PageTabs), followed by the build
+ * badge, which opens the Settings card. Edges own their slots, so the strip
+ * and the tabs can never overlap when either changes size. On small screens
+ * the row collapses to a centered stack (the tabs hide themselves below sm,
+ * as before). The graph reserves this whole band via `CHROME`.
  */
 export function BottomChrome({ children }: { children: ReactNode }) {
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [left, ...rest] = Children.toArray(children)
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-20 flex flex-col items-center gap-2.5 px-3 pb-4 sm:px-6 sm:pb-5">
-      {children}
-      <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-5">
-        <VersionBadge onOpen={() => setSettingsOpen(true)} />
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-20">
+      <div className="flex flex-col items-center gap-2.5 px-4 pb-4 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-12 sm:pb-6">
+        <div className="pointer-events-auto">{left}</div>
+        <div className="flex items-center gap-4">
+          {rest}
+          <VersionBadge onOpen={() => setSettingsOpen(true)} />
+        </div>
       </div>
       <SettingsPanel isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>

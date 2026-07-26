@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { GraphOrbital } from '../types'
-import { COLORS } from '../styles/tokens'
+import { COLORS, NODE_ACCENTS, STATE } from '../styles/tokens'
 import { useNodeGraph } from '../hooks/useNodeGraph'
 import { toRad, noise } from '../lib/graphUtils'
 import { StellarNode } from './primitives/StellarNode'
@@ -50,6 +51,9 @@ export function ConstellationGraph({
   const isHome = variant === 'home'
   const small = width < 640
   const labelScale = small ? 0.8 : 1
+  /** Hovered orbital — lifts the "active path" (moodboard §04) into the graph
+   *  so the spoke to a hovered orb lights emerald before the click lands. */
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
 
   // Chrome-aware layout: the mandala is centred in — and sized to fill — the
   // band between the top chrome (nav / page title) and the bottom chrome (tabs +
@@ -80,7 +84,7 @@ export function ConstellationGraph({
     Math.max(orbitRadius - orbR - 8, 40),
   )
   // A warmer, brighter gold for glows/blooms than the flat token gold.
-  const WARM = '#E6B84D'
+  const WARM = STATE.goldWarm
 
   const positions = orbitals.map((orbital) => {
     const a = toRad(orbital.angle - 90)
@@ -173,8 +177,15 @@ export function ConstellationGraph({
             <stop offset="100%" stopColor={COLORS.gold} stopOpacity="0" />
           </radialGradient>
           <radialGradient id="pageVignette" cx="50%" cy="50%" r="75%">
-            <stop offset="55%" stopColor="#000" stopOpacity="0" />
-            <stop offset="100%" stopColor="#000" stopOpacity="0.55" />
+            <stop offset="52%" stopColor="#000" stopOpacity="0" />
+            <stop offset="100%" stopColor="#000" stopOpacity="0.72" />
+          </radialGradient>
+          {/* Per-planet accent halo — stop colors follow the referencing
+              element's `color`, so one gradient serves every node accent. */}
+          <radialGradient id="accentHalo" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="currentColor" stopOpacity="0.42" />
+            <stop offset="55%" stopColor="currentColor" stopOpacity="0.12" />
+            <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
           </radialGradient>
           <radialGradient id="nebulaViolet" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor={COLORS.violet} stopOpacity="0.5" />
@@ -197,17 +208,18 @@ export function ConstellationGraph({
 
         <rect width={width} height={height} fill={COLORS.void} />
 
-        {/* Nebula clouds (deep background) */}
-        <g className="cn-nebula" pointerEvents="none">
-          <ellipse cx={width * 0.2} cy={height * 0.24} rx={width * 0.34} ry={height * 0.3} fill="url(#nebulaViolet)" opacity={0.7} />
-          <ellipse cx={width * 0.82} cy={height * 0.7} rx={width * 0.3} ry={height * 0.32} fill="url(#nebulaIndigo)" opacity={0.7} />
-          <ellipse cx={width * 0.7} cy={height * 0.16} rx={width * 0.22} ry={height * 0.2} fill="url(#nebulaViolet)" opacity={0.4} />
+        {/* Nebula clouds (deep background) — a whisper, not a wash: the
+            reference field is near-black and the mandala is its only light. */}
+        <g className="cn-nebula reveal-field" pointerEvents="none">
+          <ellipse cx={width * 0.2} cy={height * 0.24} rx={width * 0.34} ry={height * 0.3} fill="url(#nebulaViolet)" opacity={0.22} />
+          <ellipse cx={width * 0.82} cy={height * 0.7} rx={width * 0.3} ry={height * 0.32} fill="url(#nebulaIndigo)" opacity={0.2} />
+          <ellipse cx={width * 0.7} cy={height * 0.16} rx={width * 0.22} ry={height * 0.2} fill="url(#nebulaViolet)" opacity={0.12} />
         </g>
 
         <rect width={width} height={height} fill="url(#pageBloom)" />
 
-        {/* Starfield (far parallax layer) */}
-        <g className="cn-stars">
+        {/* Starfield (far parallax layer) — fine dust, never a blanket */}
+        <g className="cn-stars reveal-field">
           {scatter.map((s, i) => (
             <circle key={`star-${i}`} cx={s.x} cy={s.y} r={s.r} fill={s.warm ? COLORS.gold : COLORS.parchment} fillOpacity={s.o} />
           ))}
@@ -248,15 +260,30 @@ export function ConstellationGraph({
           <circle key={`lat-${i}`} cx={d.x} cy={d.y} r={d.r + 0.3} fill={COLORS.gold} fillOpacity={Math.max(d.o + 0.1, 0.2)} />
         ))}
 
-        {/* Primary beaded spokes */}
-        {positions.map(({ x, y, orbital }) => {
+        {/* Primary beaded spokes — the moodboard's connection states:
+            hovered = emerald ACTIVE PATH, selected = luminous gold, else quiet.
+            Each spoke draws itself out of the hub on mount (pathLength=1). */}
+        {positions.map(({ x, y, orbital }, i) => {
           const isSel = selectedId === orbital.id
+          const isHot = hoveredId === orbital.id
+          const stroke = isHot ? STATE.active : COLORS.gold
           const beads = [0.34, 0.52, 0.7].map((f) => ({ bx: centerX + (x - centerX) * f, by: centerY + (y - centerY) * f }))
           return (
             <g key={`spoke-${orbital.id}`}>
-              <line x1={centerX} y1={centerY} x2={x} y2={y} stroke={COLORS.gold} strokeOpacity={isSel ? 0.85 : 0.42} strokeWidth={isSel ? 1.6 : 1} className="cn-spoke transition-all duration-500" pathLength={1} />
-              {beads.map((b, i) => (
-                <circle key={`bead-${orbital.id}-${i}`} cx={b.bx} cy={b.by} r={isSel ? 2.2 : 1.7} fill={COLORS.gold} fillOpacity={isSel ? 0.95 : 0.75} filter="url(#glow)" />
+              <line
+                x1={centerX}
+                y1={centerY}
+                x2={x}
+                y2={y}
+                stroke={stroke}
+                strokeOpacity={isSel ? 0.9 : isHot ? 0.8 : 0.42}
+                strokeWidth={isSel || isHot ? 1.6 : 1}
+                className="cn-spoke reveal-spoke transition-all duration-500"
+                style={{ animationDelay: `${0.25 + i * 0.07}s` }}
+                pathLength={1}
+              />
+              {beads.map((b, bi) => (
+                <circle key={`bead-${orbital.id}-${bi}`} cx={b.bx} cy={b.by} r={isSel || isHot ? 2.2 : 1.7} fill={stroke} fillOpacity={isSel || isHot ? 0.95 : 0.75} filter="url(#glow)" className="transition-all duration-500" />
               ))}
             </g>
           )
@@ -270,25 +297,30 @@ export function ConstellationGraph({
           return <CompassStar key={`glyph-${i}`} cx={centerX + rr * Math.cos(mid)} cy={centerY + rr * Math.sin(mid)} size={7} opacity={0.45} />
         })}
 
-        {/* Child orbs (node) / parent planets (home) */}
-        {positions.map(({ orbital, x, y, angle }) => (
-          <StellarNode
-            key={orbital.id}
-            className={isHome ? 'cn-node' : 'cn-orb'}
-            variant={isHome ? 'planet' : 'orb'}
-            x={x}
-            y={y}
-            centerY={centerY}
-            label={orbital.label}
-            radius={orbR}
-            outwardAngle={angle}
-            glyph={orbital.glyph}
-            subCount={orbital.subCount}
-            labelScale={labelScale}
-            boundsWidth={width}
-            selected={selectedId === orbital.id}
-            onClick={() => onSelect(orbital.id)}
-          />
+        {/* Child orbs (node) / parent planets (home) — each condenses out of
+            the hub with a stagger, after its spoke has begun to draw. */}
+        {positions.map(({ orbital, x, y, angle }, i) => (
+          <g key={orbital.id} className="reveal-node" style={{ animationDelay: `${0.45 + i * 0.08}s` }}>
+            <StellarNode
+              className={isHome ? 'cn-node' : 'cn-orb'}
+              variant={isHome ? 'planet' : 'orb'}
+              x={x}
+              y={y}
+              centerY={centerY}
+              label={orbital.label}
+              epithet={isHome ? orbital.epithet : undefined}
+              accent={isHome && orbital.color ? NODE_ACCENTS[orbital.color] : undefined}
+              radius={orbR}
+              outwardAngle={angle}
+              glyph={orbital.glyph}
+              subCount={orbital.subCount}
+              labelScale={labelScale}
+              boundsWidth={width}
+              selected={selectedId === orbital.id}
+              onClick={() => onSelect(orbital.id)}
+              onHoverChange={(h) => setHoveredId(h ? orbital.id : null)}
+            />
+          </g>
         ))}
 
         {/* Ornate central hub */}

@@ -40,7 +40,7 @@ function SettingsBody({ onClose }: { onClose: () => void }) {
   return (
     <div className="space-y-4">
       {/* App build */}
-      <div className="divide-y divide-gold/10 rounded-lg border border-gold/15 bg-void/50">
+      <div className="divide-y divide-gold/10 rounded-sm border border-gold/15 bg-void/50">
         <Row label="App version" value={`v${info.version}`} mono />
         <Row label="Built" value={formatBuildTime(info.buildTime)} mono />
         <Row label="Commit" value={info.sha} mono />
@@ -50,7 +50,7 @@ function SettingsBody({ onClose }: { onClose: () => void }) {
       <PatternSection onClose={onClose} />
 
       {/* Identity + logout */}
-      <div className="flex items-center justify-between gap-4 rounded-lg border border-gold/15 bg-void/50 px-4 py-3">
+      <div className="flex items-center justify-between gap-4 rounded-sm border border-gold/15 bg-void/50 px-4 py-3">
         <div className="min-w-0">
           <div className="font-display text-[9px] uppercase tracking-[0.22em] text-silver/70">Signed in</div>
           <div className="truncate text-sm text-parchment" title={me?.email}>

@@ -7,13 +7,12 @@
  * PageHeader, PageTabs and StatFooter if their sizing changes.
  */
 export const CHROME = {
-  /** TopNav: py-3 + wordmark/nav row. */
-  nav: 56,
-  /** Node page: nav + the ornament, display title and rule from PageHeader. */
-  navAndTitle: 128,
+  /** TopNav: pt-4 + two-tier wordmark + the gold hairline rule. */
+  nav: 68,
+  /** Node page: nav + the top-left title block (breadcrumb, title, epithet, rule). */
+  navAndTitle: 172,
   /** Home: StatFooter only. */
   footer: 88,
-  /** Node page: PageTabs (>=sm) sitting above StatFooter. Reserved on mobile
-   *  too, where the tabs hide — it simply centres the mandala a little higher. */
+  /** Node page: PageTabs (>=sm) beside the StatFooter on the split rail. */
   tabsAndFooter: 112,
 } as const

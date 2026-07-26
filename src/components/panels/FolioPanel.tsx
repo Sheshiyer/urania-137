@@ -15,7 +15,7 @@ function LoadingSkeleton() {
   return (
     <ul className="space-y-2" aria-label="Loading saved reports">
       {[0, 1, 2].map((i) => (
-        <li key={i} className="animate-pulse rounded-lg border border-gold/10 bg-void/50 px-3 py-2">
+        <li key={i} className="animate-pulse rounded-sm border border-gold/10 bg-void/50 px-3 py-2">
           <div className="h-3.5 w-2/3 rounded bg-gold/10" />
           <div className="mt-2 h-2.5 w-1/3 rounded bg-gold/5" />
         </li>
@@ -55,12 +55,12 @@ export function FolioPanel({ child }: { child: SelemeneChild | null }) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search saved reports…"
-        className="w-full rounded-lg border border-gold/20 bg-void/50 px-3 py-2 text-sm text-parchment placeholder:text-silver/50 focus:border-gold/50 focus:outline-none"
+        className="w-full rounded-sm border border-gold/20 bg-void/50 px-3 py-2 text-sm text-parchment placeholder:text-silver/50 focus:border-gold/50 focus:outline-none"
         aria-label="Search saved reports"
       />
 
       {error && !showError && (
-        <p className="flex items-center gap-1.5 rounded-lg border border-terracotta/30 bg-terracotta/10 px-3 py-2 text-[11px] text-terracotta">
+        <p className="flex items-center gap-1.5 rounded-sm border border-terracotta/30 bg-terracotta/10 px-3 py-2 text-[11px] text-terracotta">
           <AlertTriangle className="h-3 w-3 shrink-0" /> {error}
         </p>
       )}
@@ -75,7 +75,7 @@ export function FolioPanel({ child }: { child: SelemeneChild | null }) {
           <p className="mt-1 text-[11px] text-silver/70">{error}</p>
           <button
             onClick={() => void refreshFolio()}
-            className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-gold/20 px-3 py-1.5 text-xs text-parchment hover:border-gold/50"
+            className="mt-3 inline-flex items-center gap-1.5 rounded-sm border border-gold/20 px-3 py-1.5 text-xs text-parchment hover:border-gold/50"
           >
             <RefreshCw className="h-3 w-3" /> Retry
           </button>
@@ -91,7 +91,7 @@ export function FolioPanel({ child }: { child: SelemeneChild | null }) {
       ) : (
         <ul className={`max-h-[46vh] space-y-2 overflow-auto pr-1 ${loading ? 'opacity-60' : ''}`}>
           {entries.map((e) => (
-            <li key={e.id} className="rounded-lg border border-gold/10 bg-void/50">
+            <li key={e.id} className="rounded-sm border border-gold/10 bg-void/50">
               <div className="flex items-center gap-2 px-3 py-2">
                 <button onClick={() => toggleFavorite(e.id)} aria-label={e.favorite ? 'Unfavorite' : 'Favorite'} className="shrink-0">
                   <Star className={`h-4 w-4 ${e.favorite ? 'fill-gold text-gold' : 'text-silver hover:text-parchment'}`} />
@@ -122,7 +122,7 @@ export function FolioPanel({ child }: { child: SelemeneChild | null }) {
                 </button>
               </div>
               {openId === e.id && (
-                <pre className="mx-3 mb-3 max-h-52 overflow-auto whitespace-pre-wrap rounded border border-gold/10 bg-void/70 p-3 font-mono text-[11px] leading-relaxed text-parchment/90">
+                <pre className="mx-3 mb-3 max-h-52 overflow-auto whitespace-pre-wrap rounded-sm border border-gold/10 bg-void/70 p-3 font-mono text-[11px] leading-relaxed text-parchment/90">
                   {e.content}
                 </pre>
               )}

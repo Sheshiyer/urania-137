@@ -24,12 +24,12 @@ export function MirrorPanel() {
       </p>
 
       <div className="space-y-2">
-        <label className="font-display text-[10px] uppercase tracking-[0.2em] text-silver/70">Person</label>
+        <label className="console-eyebrow">Person</label>
         <input
           value={personId}
           onChange={(e) => setPersonId(e.target.value)}
           placeholder="personId — e.g. harshita"
-          className="w-full rounded-lg border border-gold/20 bg-void/50 px-3 py-2 text-parchment placeholder:text-silver/50 focus:border-gold/50 focus:outline-none"
+          className="w-full rounded-sm border border-gold/20 bg-void/50 px-3 py-2 text-parchment placeholder:text-silver/50 focus:border-gold/50 focus:outline-none"
           aria-label="Person id"
         />
       </div>
@@ -40,9 +40,7 @@ export function MirrorPanel() {
         rel="noopener noreferrer"
         aria-disabled={!url}
         onClick={(e) => !url && e.preventDefault()}
-        className={`flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold transition-all ${
-          url ? 'bg-gradient-to-r from-emerald to-gold text-void hover:brightness-110' : 'cursor-not-allowed bg-silver/10 text-silver/50'
-        }`}
+        className={`btn-primary w-full ${url ? '' : 'pointer-events-none opacity-40'}`}
       >
         <Compass className="h-4 w-4" />
         Enter the field
@@ -51,7 +49,7 @@ export function MirrorPanel() {
 
       {url && <p className="break-all text-[11px] text-silver/60">{url}</p>}
 
-      <p className="rounded-lg border border-gold/10 bg-void/50 px-3 py-2 text-[11px] leading-relaxed text-silver/70">
+      <p className="rounded-sm border border-gold/10 bg-void/50 px-3 py-2 text-[11px] leading-relaxed text-silver/70">
         Fields are granted per person — without a grant the Mirror asks you to sign in. This console can&rsquo;t verify a
         grant from here, so the link opens the field rather than promising one exists.
       </p>

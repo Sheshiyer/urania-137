@@ -7,6 +7,7 @@ import type { ThreadResult } from '../../lib/chat/resultMessages'
 import { createOrResumeSession, completeSession, getSession, replayEvents, streamTurn } from '../../lib/chatApi'
 import { createSubject } from '../../lib/subjectsApi'
 import { CircleBar, circlePersistIndexes, circleRole } from './CircleBar'
+import { QuickReplies } from './QuickReplies'
 import { ResultThread } from './ResultThread'
 
 /**
@@ -65,7 +66,7 @@ const SEED_KIND_LABEL: Record<ChildRun['kind'], string> = {
 
 /** The composer speaks the same visual language the retired form era used. */
 const FIELD =
-  'w-full rounded-lg border border-gold/10 bg-surface px-3 py-2 text-parchment placeholder-silver/50 focus:border-gold focus:outline-none'
+  'w-full rounded-sm border border-gold/15 bg-void/60 px-3 py-2 text-parchment placeholder-silver/50 focus:border-gold focus:outline-none'
 
 function emptyBlock(kind: ChatBlock['kind']): ChatBlock {
   switch (kind) {
@@ -304,12 +305,15 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
   useEffect(() => {
     if (initRef.current) return // StrictMode double-invoke guard
     initRef.current = true
-    let cancelled = false
+    // NOTE: no `cancelled` flag — under StrictMode's dev double-mount the
+    // first run's cleanup would cancel the only fetch ever started (the
+    // second run returns early above), wedging the sheet on "Opening the
+    // doorway…" forever. setState after a real unmount is a harmless no-op;
+    // the in-flight stream is aborted by the unmount effect below.
     void (async () => {
       try {
         const created = await createOrResumeSession(seed)
         const { session: loaded, turns } = await getSession(created.sessionId)
-        if (cancelled) return
         sessionIdRef.current = loaded.sessionId
         setSession(loaded)
         setMsgs(turns)
@@ -318,15 +322,10 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
           sendInput(loaded, '') // narrator speaks first (see kickoff note above)
         }
       } catch (err) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : 'The doorway could not be opened.')
-          setLoading(false)
-        }
+        setError(err instanceof Error ? err.message : 'The doorway could not be opened.')
+        setLoading(false)
       }
     })()
-    return () => {
-      cancelled = true
-    }
   }, [seed, sendInput])
 
   // Abort any in-flight stream when the sheet unmounts.
@@ -408,20 +407,27 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4" data-node-id={nodeId}>
-      <div className="absolute inset-0 bg-void/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-void/85 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative flex max-h-[92vh] w-full max-w-xl flex-col rounded-t-3xl border border-gold/20 bg-surface/95 shadow-2xl shadow-gold/10 sm:max-h-[88vh] sm:rounded-3xl">
+      <div className="console-card relative flex max-h-[92vh] w-full max-w-xl flex-col rounded-t-md shadow-2xl shadow-void sm:max-h-[88vh] sm:rounded-sm">
+        {/* Double frame + corner diamonds — the Modal shell's reference card */}
+        <div className="pointer-events-none absolute inset-1.5 border border-gold/10" aria-hidden="true" />
+        <span className="pointer-events-none absolute left-3 top-3 h-1.5 w-1.5 rotate-45 border border-gold/60" aria-hidden="true" />
+        <span className="pointer-events-none absolute right-3 top-3 h-1.5 w-1.5 rotate-45 border border-gold/60" aria-hidden="true" />
+        <span className="pointer-events-none absolute bottom-3 left-3 h-1.5 w-1.5 rotate-45 border border-gold/60" aria-hidden="true" />
+        <span className="pointer-events-none absolute bottom-3 right-3 h-1.5 w-1.5 rotate-45 border border-gold/60" aria-hidden="true" />
+
         {/* Grab handle (mobile bottom-sheet affordance) */}
         <div className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-silver/30 sm:hidden" aria-hidden="true" />
 
         {/* Sticky header — same chrome as Modal, plus the chapter cursor */}
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-gold/10 px-5 py-3.5 sm:px-8 sm:py-5">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-gold/15 px-5 py-3.5 sm:px-8 sm:py-5">
           <div className="min-w-0">
-            <p className="text-[10px] uppercase tracking-[0.2em] font-display text-silver">
+            <p className="console-eyebrow">
               {nodeLabel} · {SEED_KIND_LABEL[seed.kind]}
-              {chapter && <span className="text-gold/70"> · {chapter.replace('_', ' ')}</span>}
+              {chapter && <span className="text-gold/50"> · {chapter.replace('_', ' ')}</span>}
             </p>
-            <h2 className="truncate font-display text-lg font-semibold tracking-wide text-parchment sm:text-2xl">{childLabel}</h2>
+            <h2 className="truncate font-serif text-lg uppercase tracking-[0.14em] text-parchment sm:text-xl">{childLabel}</h2>
           </div>
           <button
             onClick={onClose}
@@ -433,7 +439,7 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
         </div>
 
         {/* Message thread */}
-        <div ref={threadRef} role="log" aria-live="polite" className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-5 py-5 sm:px-8">
+        <div ref={threadRef} role="log" aria-live="polite" className="dot-grid min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-5 py-5 sm:px-8">
           {loading && <p className="py-8 text-center text-sm text-silver">Opening the doorway…</p>}
 
           {!loading && msgs.length === 0 && !streaming && (
@@ -509,6 +515,16 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
           />
         )}
 
+        {/* W4-A quick replies: one-tap chips for the closed-vocabulary beats
+            (confirm / yes-no / enum picks) so those beats never need the
+            keyboard. Renders null on free-text beats and at beats CircleBar
+            owns (persist_offer); may sit beneath the circle picker at the
+            add_another gate — the picker offers stored members, the chips
+            resolve the gate itself. */}
+        {session && !done && (
+          <QuickReplies session={session} disabled={inputDisabled} onReply={(input, echo) => sendInput(session, input, echo)} />
+        )}
+
         {/* Composer — sticky footer in the Modal shell's place of the scroll body */}
         <form onSubmit={submit} className="flex shrink-0 items-center gap-2 border-t border-gold/10 px-5 py-4 sm:px-8">
           <input
@@ -523,7 +539,7 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
           <button
             type="submit"
             disabled={inputDisabled || !draft.trim()}
-            className="shrink-0 rounded-full bg-gradient-to-r from-emerald to-gold p-2.5 text-void transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+            className="shrink-0 rounded-full border border-gold bg-gold p-2.5 text-void transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
             aria-label="Send reply"
           >
             <Send className="h-4 w-4" />

@@ -1,4 +1,5 @@
-import { COLORS } from '../../styles/tokens'
+import { KeyboardEvent } from 'react'
+import { COLORS, STATE } from '../../styles/tokens'
 import { wrapLabel } from '../../lib/graphUtils'
 import { Glyph } from './Glyph'
 
@@ -8,8 +9,14 @@ interface StellarNodeProps {
   /** Graph centerY — decides whether a label sits above or below the node. */
   centerY: number
   label: string
+  /** Gold epithet sublabel (home planets — the moodboard's two-line labels). */
+  epithet?: string
+  /** Per-node accent hex (home planets) — tints the halo + satellites. */
+  accent?: string
   selected?: boolean
   onClick?: () => void
+  /** Hover lift — the graph lights the spoke's ACTIVE PATH on hover. */
+  onHoverChange?: (hovered: boolean) => void
   ariaLabel?: string
   /** 'plain' = legacy home node. 'orb' = node-page child (label inside). 'planet' = home parent (label outside + mini-system). */
   variant?: 'plain' | 'orb' | 'planet'
@@ -27,6 +34,29 @@ interface StellarNodeProps {
   boundsWidth?: number
   /** Extra class (motion targeting, e.g. cn-node / cn-orb). */
   className?: string
+}
+
+/**
+ * Shared interaction wiring for the clickable variants: hover lift, keyboard
+ * activation (Enter/Space), and an indigo FOCUS ring — the moodboard's state
+ * matrix (ACTIVE hover / SELECTED / FOCUS) applied to every node.
+ */
+function interactionProps(onClick?: () => void, onHoverChange?: (h: boolean) => void) {
+  if (!onClick) return {}
+  return {
+    tabIndex: 0,
+    onKeyDown: (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        onClick()
+      }
+    },
+    onMouseEnter: () => onHoverChange?.(true),
+    onMouseLeave: () => onHoverChange?.(false),
+    onFocus: () => onHoverChange?.(true),
+    onBlur: () => onHoverChange?.(false),
+    className: 'outline-none',
+  }
 }
 
 /**
@@ -74,11 +104,14 @@ function PlainNode({ x, y, centerY, label, selected, onClick, ariaLabel, classNa
 
 /**
  * Home parent: a luminous ringed "planet" with its own small orbital system and
- * the label set outside — matching the galactic home view in the moodboard.
+ * the label set outside — matching the galactic home view in the moodboard,
+ * including the two-line NAME / EPITHET lockup and the per-planet accent halo
+ * from the architecture board's colored node states.
  */
-function PlanetNode({ x, y, centerY, label, selected, onClick, ariaLabel, radius = 30, outwardAngle = 0, subCount = 3, labelScale = 1, boundsWidth, className }: StellarNodeProps) {
+function PlanetNode({ x, y, centerY, label, epithet, accent, selected, onClick, onHoverChange, ariaLabel, radius = 30, outwardAngle = 0, subCount = 3, labelScale = 1, boundsWidth, className }: StellarNodeProps) {
   const r = selected ? radius * 1.08 : radius
   const below = y > centerY
+  const tint = accent ?? COLORS.gold
   const sats = Array.from({ length: Math.min(Math.max(subCount, 2), 5) }).map((_, i, arr) => {
     const spread = 0.7
     const a = outwardAngle + (i - (arr.length - 1) / 2) * spread
@@ -96,31 +129,43 @@ function PlanetNode({ x, y, centerY, label, selected, onClick, ariaLabel, radius
   const lineHeight = fontSize + 3
   const firstLineY = below ? y + r + 20 : y - (r + 12) - (lines.length - 1) * lineHeight
 
+  // The epithet rides the label's outer edge — an eyebrow over the name when
+  // the label sits above the planet, a subline under it when below (desktop
+  // only; small viewports keep the single-line name).
+  const showEpithet = Boolean(epithet) && labelScale === 1
+  const epithetY = below ? firstLineY + (lines.length - 1) * lineHeight + 13 : firstLineY - 14
+
   return (
     <g
       className={['group', onClick ? 'cursor-pointer' : '', className ?? ''].join(' ').trim() || undefined}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       aria-label={ariaLabel ?? label}
+      {...interactionProps(onClick, onHoverChange)}
     >
       {/* hit target */}
       {onClick && <circle cx={x} cy={y} r={r + 16} fill="transparent" />}
 
-      {/* soft bloom */}
+      {/* per-planet accent halo (the architecture board's colored planets) */}
+      <circle cx={x} cy={y} r={r + 22} fill="url(#accentHalo)" style={{ color: tint }} opacity={selected ? 0.9 : 0.55} className="transition-opacity duration-300 group-hover:opacity-90" />
+
+      {/* soft gold bloom */}
       <circle cx={x} cy={y} r={r + 10} fill="url(#orbGlow)" opacity={selected ? 0.95 : 0.5} className="transition-opacity duration-300 group-hover:opacity-90" />
 
-      {/* mini orbital system */}
-      <circle cx={x} cy={y} r={r + 7} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 0.4 : 0.2} strokeWidth={0.5} strokeDasharray="2 5" />
+      {/* mini orbital system — satellites tinted by the planet's accent */}
+      <circle cx={x} cy={y} r={r + 7} fill="none" stroke={tint} strokeOpacity={selected ? 0.45 : 0.25} strokeWidth={0.5} strokeDasharray="2 5" />
       {sats.map((s, i) => (
-        <circle key={`psat-${i}`} cx={s.cx} cy={s.cy} r={1.5} fill={COLORS.gold} fillOpacity={0.7} />
+        <circle key={`psat-${i}`} cx={s.cx} cy={s.cy} r={1.5} fill={tint} fillOpacity={0.75} />
       ))}
 
       {/* planet body */}
       <circle cx={x} cy={y} r={r} fill={COLORS.void} fillOpacity={0.7} />
       <circle cx={x} cy={y} r={r} fill="url(#orbGlow)" opacity={selected ? 0.4 : 0.18} />
-      <circle cx={x} cy={y} r={r} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 1 : 0.85} strokeWidth={selected ? 2 : 1.3} filter="url(#glow)" className="transition-all duration-300" />
+      {/* SELECTED state — the luminous violet outer ring from the moodboard */}
+      {selected && <circle cx={x} cy={y} r={r + 4} fill="none" stroke={STATE.selected} strokeOpacity={0.75} strokeWidth={1} filter="url(#glow)" />}
+      <circle cx={x} cy={y} r={r} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 1 : 0.85} strokeWidth={selected ? 2 : 1.3} filter="url(#glow)" className="transition-all duration-300 group-hover:stroke-emerald group-focus-visible:stroke-indigo" />
       <circle cx={x} cy={y} r={r - 4} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 0.55 : 0.32} strokeWidth={0.6} />
-      <circle cx={x} cy={y} r={selected ? 5 : 3.5} fill={COLORS.gold} fillOpacity={0.95} filter="url(#glow)" />
+      <circle cx={x} cy={y} r={selected ? 5 : 3.5} fill={COLORS.gold} fillOpacity={0.95} filter="url(#glow)" className="group-hover:fill-emerald" />
 
       {/* label outside */}
       <text
@@ -137,12 +182,27 @@ function PlanetNode({ x, y, centerY, label, selected, onClick, ariaLabel, radius
           </tspan>
         ))}
       </text>
+      {showEpithet && (
+        <text
+          x={labelX}
+          y={epithetY}
+          textAnchor="middle"
+          fill={COLORS.gold}
+          fillOpacity={0.75}
+          fontSize={8}
+          fontWeight={500}
+          letterSpacing="0.32em"
+          className="uppercase font-display pointer-events-none"
+        >
+          {epithet}
+        </text>
+      )}
     </g>
   )
 }
 
 /** Node-page child: a luminous ringed orb with an optional glyph + label inside. */
-function OrbNode({ x, y, label, selected, onClick, ariaLabel, radius = 46, outwardAngle = 0, glyph, labelScale = 1, className }: StellarNodeProps) {
+function OrbNode({ x, y, label, selected, onClick, onHoverChange, ariaLabel, radius = 46, outwardAngle = 0, glyph, labelScale = 1, className }: StellarNodeProps) {
   const r = selected ? radius * 1.07 : radius
   const hasGlyph = Boolean(glyph)
   // Wrap to the orb's usable chord (not a fixed char count, which overflowed a
@@ -172,6 +232,7 @@ function OrbNode({ x, y, label, selected, onClick, ariaLabel, radius = 46, outwa
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       aria-label={ariaLabel ?? label}
+      {...interactionProps(onClick, onHoverChange)}
     >
       {/* hit target */}
       {onClick && <circle cx={x} cy={y} r={r + 6} fill="transparent" />}
@@ -188,9 +249,13 @@ function OrbNode({ x, y, label, selected, onClick, ariaLabel, radius = 46, outwa
       <circle cx={x} cy={y} r={r} fill={COLORS.void} fillOpacity={0.78} />
       <circle cx={x} cy={y} r={r - 1} fill="url(#orbGlow)" opacity={selected ? 0.45 : 0.22} />
 
-      {/* faint outer + bright main + faint inner ring (the reference's clean double ring) */}
+      {/* SELECTED state — the luminous violet outer ring from the moodboard */}
+      {selected && <circle cx={x} cy={y} r={r + 7} fill="none" stroke={STATE.selected} strokeOpacity={0.7} strokeWidth={0.9} filter="url(#glow)" />}
+
+      {/* faint outer + bright main + faint inner ring (the reference's clean double ring).
+          Hover flips the main ring emerald (ACTIVE); keyboard focus flips indigo (FOCUS). */}
       <circle cx={x} cy={y} r={r + 3.5} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 0.4 : 0.16} strokeWidth={0.6} />
-      <circle cx={x} cy={y} r={r} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 1 : 0.92} strokeWidth={selected ? 2.2 : 1.5} filter="url(#glow)" className="transition-all duration-300" />
+      <circle cx={x} cy={y} r={r} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 1 : 0.92} strokeWidth={selected ? 2.2 : 1.5} filter="url(#glow)" className="transition-all duration-300 group-hover:stroke-emerald group-focus-visible:stroke-indigo" />
       <circle cx={x} cy={y} r={r - 4.5} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 0.5 : 0.3} strokeWidth={0.6} />
 
       {/* glyph in the upper half */}

@@ -195,12 +195,15 @@ export function ThresholdPage() {
   useEffect(() => {
     if (initRef.current) return // StrictMode double-invoke guard
     initRef.current = true
-    let cancelled = false
+    // NOTE: no `cancelled` flag — under StrictMode's dev double-mount the
+    // first run's cleanup would cancel the only fetch ever started (the
+    // second run returns early above), wedging the page on its loading beat
+    // forever. setState after a real unmount is a harmless no-op; the
+    // in-flight stream is aborted by the unmount effect below.
     void (async () => {
       try {
         const created = await createOrResumeSession({ kind: 'threshold' })
         const { session: loaded, turns } = await getSession(created.sessionId)
-        if (cancelled) return
         sessionRef.current = loaded
         const g = deriveGates(loaded)
         gatesRef.current = g
@@ -228,15 +231,10 @@ export function ThresholdPage() {
           requestAnimationFrame(() => scrollToScene(target, true))
         }
       } catch (err) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : 'The Threshold could not be opened.')
-          setLoading(false)
-        }
+        setError(err instanceof Error ? err.message : 'The Threshold could not be opened.')
+        setLoading(false)
       }
     })()
-    return () => {
-      cancelled = true
-    }
   }, [send])
 
   // Abort any in-flight stream on unmount.

@@ -40,7 +40,7 @@ export function EngineStatusPanel({ child, status }: { child: SelemeneChild | nu
     <div className="space-y-4">
       {/* Overall */}
       {health && (
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 rounded-lg border border-gold/15 bg-void/50 px-4 py-3 text-sm">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 rounded-sm border border-gold/15 bg-void/50 px-4 py-3 text-sm">
           <span className="flex items-center gap-2 text-parchment">
             <Dot ok={health.status === 'ok'} />
             <span className="font-display uppercase tracking-widest text-gold">v{health.version}</span>
@@ -61,7 +61,7 @@ export function EngineStatusPanel({ child, status }: { child: SelemeneChild | nu
               ['orchestrator', ready.orchestrator],
               ['bridge', ready.bridge_status],
             ] as const).map(([k, v]) => (
-              <div key={k} className="flex items-center gap-2 rounded-md border border-gold/10 bg-void/40 px-2.5 py-2">
+              <div key={k} className="flex items-center gap-2 rounded-sm border border-gold/10 bg-void/40 px-2.5 py-2">
                 <Dot ok={v === 'ok' || v === 'ready' || v === 'available'} />
                 <div className="min-w-0">
                   <div className="font-display uppercase tracking-wider text-silver/70 text-[9px]">{k}</div>

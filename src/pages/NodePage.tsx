@@ -176,11 +176,11 @@ export function NodePage({ nodeId }: { nodeId: string }) {
         topInset={CHROME.navAndTitle}
         bottomInset={CHROME.tabsAndFooter}
       />
-      <PageHeader title={node.label} subtitle={node.description} onBack={() => navigate('/')} />
+      <PageHeader title={node.label} epithet={node.epithet} subtitle={node.description} onBack={() => navigate('/')} />
       <PageFrame />
       <BottomChrome>
-        <PageTabs />
         <StatFooter stats={nodeStats} />
+        <PageTabs />
       </BottomChrome>
 
       {/* Narrative chat onboarding — every run child. The reading renders

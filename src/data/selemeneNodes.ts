@@ -20,6 +20,7 @@ export const SELEMENE_NODES: StellarNode[] = [
   {
     id: 'birth',
     label: 'Birth Witness',
+    epithet: 'The Arrival',
     description: 'Natal imprint, moment-of-arrival pattern, and incarnation signature.',
     angle: 0,
     distance: 1,
@@ -38,6 +39,7 @@ export const SELEMENE_NODES: StellarNode[] = [
   {
     id: 'compat',
     label: 'Union Mirror',
+    epithet: 'The Union',
     description: 'Relational resonance field between two or more birth patterns.',
     angle: 51.4,
     distance: 1,
@@ -51,6 +53,7 @@ export const SELEMENE_NODES: StellarNode[] = [
   {
     id: 'transit',
     label: 'Sky Weather',
+    epithet: 'The Passage',
     description: 'Current celestial weather and its invitation to the native pattern.',
     angle: 102.8,
     distance: 1,
@@ -70,6 +73,7 @@ export const SELEMENE_NODES: StellarNode[] = [
   {
     id: 'witness',
     label: 'Noesis Reading',
+    epithet: 'The Reading',
     description: 'Narrative witness-pipeline reading from the Selemene engines.',
     angle: 154.2,
     distance: 1,
@@ -87,6 +91,7 @@ export const SELEMENE_NODES: StellarNode[] = [
   {
     id: 'engine',
     label: 'Engine Status',
+    epithet: 'The Machine',
     description: 'Diagnostic view of the consciousness engines and workflows.',
     angle: 205.6,
     distance: 1,
@@ -111,6 +116,7 @@ export const SELEMENE_NODES: StellarNode[] = [
   {
     id: 'folio',
     label: 'Folio Archive',
+    epithet: 'The Record',
     description: 'Previously generated readings, saved witnesses, and exports.',
     angle: 257,
     distance: 1,
@@ -132,6 +138,7 @@ export const SELEMENE_NODES: StellarNode[] = [
   {
     id: 'bridge',
     label: 'Bridge Query',
+    epithet: 'The Inquiry',
     description: 'Direct inquiry into the Selemene Bridge and its engines.',
     angle: 308.4,
     distance: 1,

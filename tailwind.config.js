@@ -16,6 +16,11 @@ export default {
         gold: '#C5A017',
         emerald: '#10B5A7',
         terracotta: '#C65D3B',
+        growth: '#B8E986',
+        // State tints (mirror STATE in src/styles/tokens.ts — keep in sync):
+        // Witness Violet (brand accent2) for SELECTED, warm gold for glows.
+        violetglow: '#7B68EE',
+        goldwarm: '#E6B84D',
       },
       fontFamily: {
         display: ['Panchang', 'sans-serif'],

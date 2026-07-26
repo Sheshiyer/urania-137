@@ -18,14 +18,17 @@ interface CollapsibleProps {
 export function Collapsible({ title, children, defaultOpen = false, badge }: CollapsibleProps) {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <div className="overflow-hidden rounded-2xl border border-gold/10 bg-void/60">
+    <div className="overflow-hidden rounded-sm border border-gold/15 bg-void/60">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-gold/5"
       >
-        <span className="font-display text-xs uppercase tracking-widest text-gold">{title}</span>
+        <span className="flex items-center gap-2.5 font-display text-[10px] uppercase tracking-[0.26em] text-gold">
+          <span className="h-1 w-1 rotate-45 border border-gold/60" aria-hidden="true" />
+          {title}
+        </span>
         <span className="flex items-center gap-2 text-silver">
           {badge && <span className="text-[11px] normal-case tracking-normal text-silver/70">{badge}</span>}
           <ChevronDown className={`h-4 w-4 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />

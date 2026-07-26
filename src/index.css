@@ -38,3 +38,120 @@ body {
     text-wrap: balance;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Console motion grammar — the Threshold's cinematic beat carried into the
+ * logged-in flow. CSS-only, transform/opacity, and collapses to a static
+ * console under prefers-reduced-motion.
+ * ------------------------------------------------------------------------- */
+
+/* A planet / orb condenses out of the hub: fade + settle from a slight
+   contraction. Applied to an SVG <g> with an inline animation-delay stagger. */
+@keyframes node-reveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* A spoke draws itself outward from the hub (pathLength=1 contract). */
+@keyframes spoke-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* The field itself: starfield/nebula breathe in once on mount. */
+@keyframes field-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.reveal-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  /* Brand motion spec (tryambakam-noesis kit): 1000ms reveal, brand easing. */
+  animation: node-reveal 1s cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.reveal-spoke {
+  stroke-dasharray: 1;
+  animation: spoke-draw 1.1s cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.reveal-field {
+  animation: field-in 1.4s cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-node,
+  .reveal-spoke,
+  .reveal-field {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Console component grammar (moodboard §04 + the CREATE NEW NODE reference):
+ * squared gold double-frames, corner diamonds, eyebrow headers, hairline
+ * dividers; primary actions are gold pills, secondary are emerald outlines.
+ * Shared so Modal, ChatSheet, and every panel speak one dialect.
+ * ------------------------------------------------------------------------- */
+@layer components {
+  /* Framed translucent surface — the reference's thin gold-rule card. */
+  .console-card {
+    @apply border border-gold/20 bg-surface/85 backdrop-blur-md;
+  }
+
+  /* Eyebrow header inside a card: small gold overline with flanking rules. */
+  .console-eyebrow {
+    @apply font-display text-[9px] uppercase tracking-[0.28em] text-gold/70;
+  }
+
+  /* Hairline divider with a center diamond, from the reference panels. */
+  .console-rule {
+    @apply relative h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent;
+  }
+
+  /* Primary action — the gold-filled pill from the moodboard's button states. */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-gold bg-gold px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-void transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  /* Secondary action — the emerald outline from the moodboard's CREATE NODE. */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-emerald/60 px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-emerald transition-all hover:bg-emerald/10 disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  /* Ghost action — quiet gold outline (CANCEL in the reference modal). */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-gold/30 px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-silver transition-all hover:border-gold/60 hover:text-parchment disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  /* Glass pill — brand-kit utility: frosted chip surface for quick replies,
+     pickers, and inline tags (brand: rgba white 10% + 14px blur). */
+  .glass-pill {
+    @apply rounded-full border border-parchment/15 bg-parchment/10 backdrop-blur-[14px];
+  }
+
+  /* Dot grid — brand-kit backdrop texture, faint gold points for large
+     surfaces (chat thread, modal bodies). Applied at low opacity only. */
+  .dot-grid {
+    background-image: radial-gradient(circle, rgb(197 160 23 / 0.08) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+}

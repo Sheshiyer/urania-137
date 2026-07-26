@@ -135,6 +135,8 @@ export interface StellarNode {
   id: string
   label: string
   description: string
+  /** The gold epithet under the title ("THE RADIANCE" — moodboard parent pages). */
+  epithet: string
   angle: number
   distance: number
   color: 'gold' | 'cyan' | 'violet' | 'amber'
@@ -160,6 +162,8 @@ export interface GraphOrbital {
   color?: StellarNode['color']
   /** Optional sacred-geometry glyph id drawn in the orb. */
   glyph?: string
+  /** Gold epithet sublabel (home planets — the moodboard's two-line labels). */
+  epithet?: string
 }
 
 export interface ReportGenerationRequest {

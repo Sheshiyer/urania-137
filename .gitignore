@@ -36,3 +36,6 @@ dist-ssr
 
 # CodeGraph local index
 .codegraph/
+
+# Visual-verification screenshots (scripts/shots*.mjs output)
+.shots/

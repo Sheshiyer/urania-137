@@ -1,49 +1,58 @@
-import { ChevronLeft } from 'lucide-react'
-
 interface PageHeaderProps {
   title: string
+  /** Gold epithet under the title ("THE RADIANCE" — moodboard parent pages). */
+  epithet?: string
   subtitle?: string
   showBack?: boolean
   onBack?: () => void
 }
 
 /**
- * Overlay header for a parent-node page: a top-left back-to-home breadcrumb
- * and a centered display title with the rule-and-diamond ornament seen in the
- * generated page references.
+ * The parent-page title block from the architecture moodboard: a top-left
+ * lockup under the nav — the HOME · {NODE} breadcrumb eyebrow (HOME returns to
+ * the galactic view), the engraved Cinzel title, the gold epithet, and the
+ * rule-and-diamond ornament. Left-aligned like the reference parent pages; the
+ * description stays available to screen readers.
  */
-export function PageHeader({ title, subtitle, showBack = true, onBack }: PageHeaderProps) {
+export function PageHeader({ title, epithet, subtitle, showBack = true, onBack }: PageHeaderProps) {
   return (
-    <>
-      {/* Below sm the nav wordmark owns the top-left, so the breadcrumb hides —
-          MAP and the central hub both still return home. */}
+    <div className="pointer-events-none fixed left-6 right-6 top-[76px] z-10 sm:left-12 sm:right-auto sm:top-[84px]">
+      {/* Breadcrumb eyebrow — HOME is the way back; the hub + MAP also return. */}
       {showBack && (
-        <button
-          onClick={onBack}
-          className="fixed top-6 left-6 z-20 hidden items-center gap-1.5 rounded-full border border-gold/20 bg-void/40 px-4 py-2 text-xs uppercase tracking-[0.2em] font-display text-silver backdrop-blur-sm transition-colors hover:border-gold/50 hover:text-parchment sm:flex"
-          aria-label="Return to home constellation"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          Noesis
-        </button>
+        <p className="mb-2.5 flex items-center gap-2 font-display text-[10px] uppercase tracking-[0.26em] text-silver/70">
+          <button
+            onClick={onBack}
+            className="pointer-events-auto transition-colors hover:text-gold"
+            aria-label="Return to home constellation"
+          >
+            Home
+          </button>
+          <span className="h-1 w-1 rotate-45 border border-gold/50" aria-hidden="true" />
+          <span className="text-silver/50">{title}</span>
+        </p>
       )}
 
-      <div className="pointer-events-none fixed top-14 left-0 right-0 z-10 flex flex-col items-center px-6 sm:top-5 sm:px-16">
-        <span className="mb-2 h-1.5 w-1.5 rotate-45 border border-gold/60" aria-hidden="true" />
-        <h1 className="text-center text-xl font-serif font-light uppercase tracking-[0.32em] text-parchment sm:text-4xl sm:tracking-[0.42em] md:text-5xl">
-          {title}
-        </h1>
-        {/* Wide rule + center diamond, echoing the reference's full-width divider. */}
-        <div className="mt-3 flex w-full max-w-3xl items-center gap-4" aria-hidden="true">
-          <span className="h-px flex-1 bg-gradient-to-r from-transparent via-gold/30 to-gold/70" />
-          <span className="relative flex h-2.5 w-2.5 rotate-45 items-center justify-center border border-gold/80">
-            <span className="h-0.5 w-0.5 bg-gold" />
-          </span>
-          <span className="h-px flex-1 bg-gradient-to-l from-transparent via-gold/30 to-gold/70" />
-        </div>
-        {/* Description kept for screen readers; the references show a title-only header. */}
-        {subtitle && <p className="sr-only">{subtitle}</p>}
+      <h1 className="font-serif text-2xl font-light uppercase leading-none tracking-[0.3em] text-parchment sm:text-4xl sm:tracking-[0.36em]">
+        {title}
+      </h1>
+
+      {epithet && (
+        <p className="mt-2.5 font-display text-[9px] uppercase tracking-[0.4em] text-gold/80 sm:text-[10px]">
+          {epithet}
+        </p>
+      )}
+
+      {/* Rule + center diamond, echoing the reference's divider. */}
+      <div className="mt-3.5 flex w-48 items-center gap-2.5 sm:w-64" aria-hidden="true">
+        <span className="h-px flex-1 bg-gradient-to-r from-gold/60 to-gold/10" />
+        <span className="relative flex h-2 w-2 rotate-45 items-center justify-center border border-gold/80">
+          <span className="h-0.5 w-0.5 bg-gold" />
+        </span>
+        <span className="h-px w-6 bg-gold/10" />
       </div>
-    </>
+
+      {/* Description kept for screen readers; the references show a title-only header. */}
+      {subtitle && <p className="sr-only">{subtitle}</p>}
+    </div>
   )
 }
