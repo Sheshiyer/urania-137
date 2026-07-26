@@ -1,4 +1,4 @@
-import { Eye, Fingerprint, ScrollText, Sparkles, UserRound, UsersRound } from 'lucide-react'
+import { Eye, Fingerprint, Hash, ScrollText, Sparkles, UserRound, UsersRound } from 'lucide-react'
 import type { User } from '../../lib/api/contract'
 import type { ReadingDTO } from '../../lib/api/contract'
 import { CanonicalReadingReference } from './CanonicalReadingReference'
@@ -9,6 +9,7 @@ const facts = [
   { key: 'source', label: 'Source', icon: ScrollText },
   { key: 'producer', label: 'Producer', icon: Sparkles },
   { key: 'access', label: 'Why you can see this', icon: Eye },
+  { key: 'checksum', label: 'Checksum', icon: Hash },
 ] as const
 
 /**
@@ -19,19 +20,26 @@ export function ReadingTrustPanel({
   entry,
   owner,
   subjectLabel,
+  accessReason,
+  checksum,
 }: {
   entry: ReadingDTO
   owner: User | null
   subjectLabel?: string | null
+  accessReason?: string | null
+  checksum?: string | null
 }) {
   const values: Record<(typeof facts)[number]['key'], string> = {
     owner: owner?.email ?? 'Authenticated Folio owner',
     subject: subjectLabel?.trim() || 'Not recorded in the current Folio contract',
     source: `Urania D1 · Folio record ${entry.id}`,
     producer: `Selemene · ${entry.mode}`,
-    access: owner?.email
-      ? `Signed in as the owner (${owner.email})`
-      : 'Owner-scoped authenticated Folio access',
+    access: accessReason ?? (
+      owner?.email
+        ? `Signed in as the owner (${owner.email})`
+        : 'Owner-scoped authenticated Folio access'
+    ),
+    checksum: checksum ? `sha256:${checksum}` : 'Calculating canonical checksum…',
   }
 
   return (

@@ -235,4 +235,27 @@ describe('ReadingFolio element integration', () => {
     expect(unavailableHtml).toContain('Checksum unavailable')
     expect(unavailableHtml).not.toContain('checksum in Folio reference')
   })
+
+  it('keeps the selected canonical Reading, Evidence, and Source layers singular', () => {
+    const document: ReadingDocument = {
+      ...base,
+      id: 'selected-canonical',
+      archive: { entryId: 'folio-selected', favorite: true },
+      sourcePayload: { engine_id: 'numerology', result: { life_path: 7 } },
+    }
+    const html = renderToStaticMarkup(createElement(ReadingFolio, {
+      document,
+      evidenceContext: {
+        accessReason: 'Owner-scoped authenticated Folio access',
+        checksum: 'sha256:canonical',
+      },
+    }))
+
+    expect(html.match(/data-reading-layer="reading"/g)).toHaveLength(1)
+    expect(html.match(/data-reading-layer="evidence"/g)).toHaveLength(1)
+    expect(html.match(/data-reading-layer="source"/g)).toHaveLength(1)
+    expect(html).toContain('Owner-scoped authenticated Folio access')
+    expect(html).toContain('sha256:canonical')
+    expect(html).not.toContain('<details open')
+  })
 })
