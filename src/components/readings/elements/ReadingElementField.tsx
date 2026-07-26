@@ -54,15 +54,15 @@ function ReadingElementView({ element }: { element: ReadingElement }) {
 export function ReadingElementField({ elements }: { elements: ReadingElement[] }) {
   if (elements.length === 0) return null
   return (
-    <section aria-labelledby="reading-element-field-title" className="space-y-3">
+    <section aria-labelledby="reading-element-field-title" className="min-w-0 space-y-3">
       <header className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <p className="console-eyebrow">Reading field</p>
-          <h2 id="reading-element-field-title" className="mt-1 font-serif text-sm uppercase tracking-[0.16em] text-parchment">
+          <p className="font-display text-[9px] uppercase tracking-[0.2em] text-reading-muted">Reading field</p>
+          <h2 id="reading-element-field-title" className="mt-1 font-serif text-lg leading-tight text-reading-ink">
             Source-shaped elements
           </h2>
         </div>
-        <p className="max-w-sm text-[10px] leading-relaxed text-silver/60">
+        <p className="max-w-sm text-[10px] leading-relaxed text-reading-muted">
           Each element is derived from explicit engine structure; the source remains available below.
         </p>
       </header>
@@ -71,7 +71,15 @@ export function ReadingElementField({ elements }: { elements: ReadingElement[] }
         style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 28rem), 1fr))' }}
       >
         {elements.map((element) => (
-          <ReadingElementView key={element.id} element={element} />
+          <div
+            key={element.id}
+            className="min-w-0 max-w-full overflow-x-auto"
+            role="region"
+            aria-label={`${element.title} source-shaped element`}
+            tabIndex={0}
+          >
+            <ReadingElementView element={element} />
+          </div>
         ))}
       </div>
     </section>

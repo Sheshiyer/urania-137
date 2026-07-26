@@ -35,6 +35,48 @@ const CAPTURE_RESULT_KEYS = new Set([
   'computation_mode',
   'is_mock_data',
 ])
+const CAPTURE_ANALYSIS_KEYS = new Set([
+  'summary',
+  'interpretation',
+  'observations',
+  'areas_of_attention',
+  'notice',
+  'disclaimer',
+  'traditions',
+  'future_capabilities',
+])
+const CAPTURE_METRIC_KEYS = new Set([
+  'coherence',
+  'entropy',
+  'fractal_dimension',
+])
+const CAPTURE_QUALITY_KEYS = new Set([
+  'score',
+  'status',
+  'quality',
+  'confidence',
+  'warnings',
+])
+const CAPTURE_CHAKRA_KEYS = new Set([
+  'activity_level',
+  'balance',
+  'chakra',
+  'chakra_name',
+  'color_intensity',
+  'element',
+  'location',
+])
+const CAPTURE_METADATA_KEYS = new Set([
+  'analysis_version',
+  'calculated_at',
+  'contract_version',
+  'created_at',
+  'engine_id',
+  'processing_time_ms',
+  'reading_id',
+  'session_id',
+  'status',
+])
 
 const SENSITIVE_KEYS = new Set([
   'authorization',
@@ -90,7 +132,12 @@ function normalizedKey(key: string): string {
 
 function isSensitiveKey(key: string): boolean {
   const normalized = normalizedKey(key)
+  const keySegments = normalized.split('_')
   return SENSITIVE_KEYS.has(normalized)
+    || keySegments.includes('private')
+    || normalized.endsWith('_private_key')
+    || normalized.endsWith('_client_secret')
+    || normalized.endsWith('_credential')
     || normalized.endsWith('_password')
     || normalized.endsWith('_passphrase')
     || normalized.endsWith('_secret')
@@ -139,7 +186,43 @@ function isImagePayload(value: unknown): boolean {
     || value.trim().startsWith('/')
 }
 
-type SourcePolicy = 'normal' | 'capture-envelope' | 'capture-result'
+type SourcePolicy =
+  | 'normal'
+  | 'capture-envelope'
+  | 'capture-result'
+  | 'capture-analysis'
+  | 'capture-metrics'
+  | 'capture-quality'
+  | 'capture-chakra'
+  | 'capture-metadata'
+
+function allowedCaptureKeys(policy: SourcePolicy): ReadonlySet<string> | null {
+  if (policy === 'capture-envelope') return CAPTURE_ENVELOPE_KEYS
+  if (policy === 'capture-result') return CAPTURE_RESULT_KEYS
+  if (policy === 'capture-analysis') return CAPTURE_ANALYSIS_KEYS
+  if (policy === 'capture-metrics') return CAPTURE_METRIC_KEYS
+  if (policy === 'capture-quality') return CAPTURE_QUALITY_KEYS
+  if (policy === 'capture-chakra') return CAPTURE_CHAKRA_KEYS
+  if (policy === 'capture-metadata') return CAPTURE_METADATA_KEYS
+  return null
+}
+
+function captureChildPolicy(policy: SourcePolicy, key: string): SourcePolicy {
+  if (policy === 'capture-envelope') {
+    if (key === 'result') return 'capture-result'
+    if (key === 'metadata') return 'capture-metadata'
+    return 'normal'
+  }
+  if (policy === 'capture-result') {
+    if (key === 'analysis') return 'capture-analysis'
+    if (key === 'metrics') return 'capture-metrics'
+    if (key === 'quality_assessment') return 'capture-quality'
+    if (key === 'chakra_readings') return 'capture-chakra'
+    if (key === 'metadata') return 'capture-metadata'
+    return 'normal'
+  }
+  return policy
+}
 
 function privacySafeSource(
   value: unknown,
@@ -167,11 +250,7 @@ function privacySafeSource(
   const effectivePolicy = policy === 'normal' && engineId && CAPTURE_ENGINE_IDS.has(engineId)
     ? 'capture-envelope'
     : policy
-  const allowedKeys = effectivePolicy === 'capture-envelope'
-    ? CAPTURE_ENVELOPE_KEYS
-    : effectivePolicy === 'capture-result'
-      ? CAPTURE_RESULT_KEYS
-      : null
+  const allowedKeys = allowedCaptureKeys(effectivePolicy)
 
   return Object.fromEntries(
     Object.entries(record).map(([key, item]) => [
@@ -180,13 +259,7 @@ function privacySafeSource(
         || (normalizedKey(key) === 'image' && isImagePayload(item))
         || (allowedKeys !== null && !allowedKeys.has(key))
         ? REDACTED
-        : privacySafeSource(
-            item,
-            seen,
-            effectivePolicy === 'capture-envelope' && key === 'result'
-              ? 'capture-result'
-              : 'normal',
-          ),
+        : privacySafeSource(item, seen, captureChildPolicy(effectivePolicy, key)),
     ]),
   )
 }
@@ -201,16 +274,26 @@ export function privacySafeSourceJson(value: unknown): string {
 
 export function ReadingSourcePayload({ payload }: { payload: unknown }) {
   return (
-    <details className="border-y border-gold/15 py-3">
-      <summary className="min-h-10 cursor-pointer py-2 font-display text-[9px] uppercase tracking-[0.2em] text-gold marker:text-gold">
+    <details
+      className="min-w-0 border-y border-gold/20 py-3"
+      data-reading-source="privacy-filtered"
+    >
+      <summary className="min-h-11 cursor-pointer py-2 font-display text-[9px] uppercase tracking-[0.2em] text-gold marker:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold">
         Technical source
       </summary>
       <p className="mb-3 max-w-2xl text-[10px] leading-relaxed text-silver/65">
         This collapsed, privacy-filtered record shows the local engine response used by the visual elements. It is provenance, not an additional interpretation.
       </p>
-      <pre className="max-h-[34rem] overflow-auto border border-gold/10 bg-void/80 p-3 font-mono text-[10px] leading-relaxed text-parchment/75">
-        <code>{privacySafeSourceJson(payload)}</code>
-      </pre>
+      <div
+        className="max-w-full overflow-auto"
+        role="region"
+        aria-label="Privacy-filtered technical source"
+        tabIndex={0}
+      >
+        <pre className="max-h-[34rem] min-w-max border border-gold/10 bg-void/80 p-3 font-mono text-[10px] leading-relaxed text-parchment/75">
+          <code>{privacySafeSourceJson(payload)}</code>
+        </pre>
+      </div>
     </details>
   )
 }

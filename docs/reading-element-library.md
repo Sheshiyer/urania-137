@@ -17,7 +17,8 @@ The element layer follows four invariants:
 1. Engine adapters read named allowlisted fields.
 2. Every element names its system, source path, evidence treatment, and
    confidence.
-3. The complete locally available source payload remains inspectable.
+3. Durable storage may remain loss-preserving, while browser Source is always
+   a privacy-filtered projection.
 4. Unknown, null, mock, and incomplete results are shown without inferred
    meaning.
 
@@ -65,7 +66,7 @@ explicit unavailable state rather than disappearing from the reading.
 | `collections` | named set → source members | `ReadingCollections` |
 | `questions` | ordered source prompts | `ReadingQuestions` |
 | `notice` | source status → visible boundary | `ReadingNotice` |
-| `raw` | unknown source → exact payload | `ReadingRaw` |
+| `raw` | unknown source → privacy-filtered projection | `ReadingRaw` |
 
 The exhaustive registry is `ReadingElementField`. Adding a union member without
 adding a renderer fails TypeScript compilation.
@@ -110,8 +111,8 @@ flowchart LR
 ### Live deterministic results
 
 `ThreadResult.sourcePayload` carries the existing engine or workflow object to
-`threadResultToReadingDocument`. The adapter produces elements; the raw payload
-is collapsed under “Exact source payload.”
+`threadResultToReadingDocument`. The adapter produces elements; a
+privacy-filtered browser projection is collapsed under “Technical source.”
 
 ### Daily readings
 
@@ -122,11 +123,32 @@ remain prose-only because the frozen D1 row did not archive the engine bundle.
 
 ### Stored deterministic Folio rows
 
-The existing archive already contains one exact fenced JSON payload emitted by
+The existing archive already contains one loss-preserving fenced JSON payload emitted by
 `deterministicMarkdown`. `folioEntryToReadingDocument` parses only that strict
 shape and reuses the same extractor. The record remains
 `structureSource: flat`, with zero inferred sections. Invalid JSON, prose, or
 non-JSON fences remain ordinary flat reading bodies.
+
+When a flat document contains only a `raw` element, its fenced body is technical
+source rather than narrative. `ReadingFolio` therefore keeps that body out of
+the Reading layer and exposes only the collapsed, privacy-filtered projection in
+Source. Native section Markdown keeps its source levels, but `ReadingSection`
+adds one contextual heading level so a body `##`/`###` sits below the section
+title as `h3`/`h4`.
+
+### Portable Evidence context
+
+`ReadingFolioEvidenceContext` is the explicit handoff for request-local
+provenance that does not belong in the durable `ReadingDocument`:
+
+- `accessReason: string | null` states why this caller may show the reading.
+- `checksum: string | null` carries a checksum only when a trusted caller
+  actually supplies one.
+
+The prop itself is optional so portable and historical readers still render.
+Missing or null values are written as “Access reason unavailable” and “Checksum
+unavailable.” An archive entry ID never implies a checksum, and neither
+ownership nor an entry ID is treated as proof of administrator authority.
 
 ## Accessibility and visual law
 
@@ -135,6 +157,10 @@ non-JSON fences remain ordinary flat reading bodies.
 - Sequences use ordered lists and print every available date.
 - Cycle values and phases are written in text; color is redundant.
 - Raw source uses a native collapsed `details` element.
+- Browser Source is a privacy-filtered projection, never a promise that every
+  stored value will be exposed.
+- Binary media, credentials, capture input, and unknown private keys are
+  default-denied before serialization.
 - Source text and JSON render through React text nodes; embedded markup cannot
   execute.
 - Layout falls from a two-column field to one column without removing data.

@@ -35,8 +35,8 @@ export function ReadingTrustPanel({
   }
 
   return (
-    <aside className="space-y-4" aria-labelledby={`trust-title-${entry.id}`}>
-      <div className="console-card p-4 sm:p-5">
+    <aside className="instrument-frame min-w-0 space-y-4 p-1" aria-labelledby={`trust-title-${entry.id}`}>
+      <div className="instrument-panel">
         <div className="flex items-center gap-2">
           <Fingerprint className="h-4 w-4 text-gold" aria-hidden="true" />
           <h2 id={`trust-title-${entry.id}`} className="font-serif text-sm uppercase tracking-[0.16em] text-parchment">
@@ -53,7 +53,7 @@ export function ReadingTrustPanel({
                 <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                 {label}
               </dt>
-              <dd className="text-xs leading-relaxed text-parchment/85">{values[key]}</dd>
+              <dd className="min-w-0 break-words text-xs leading-relaxed text-parchment/85">{values[key]}</dd>
             </div>
           ))}
         </dl>

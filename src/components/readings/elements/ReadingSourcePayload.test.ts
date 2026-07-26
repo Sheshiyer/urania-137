@@ -13,7 +13,21 @@ describe('ReadingSourcePayload', () => {
           nested: { image_data: 'private-image-body' },
         },
         result: {
-          metrics: { coherence: 0.72 },
+          metrics: {
+            coherence: 0.72,
+            nested: {
+              future_private_capture_field: 'nested-metrics-secret',
+              future_unreviewed_field: 'unnamed-metrics-secret',
+            },
+          },
+          analysis: {
+            summary: 'Visible analysis',
+            nested: {
+              future_private_capture_field: 'nested-analysis-secret',
+              future_unreviewed_field: 'unnamed-analysis-secret',
+            },
+          },
+          quality_assessment: { score: 0.91 },
           future_unreviewed_field: 'must-not-leak',
           captures: [{
             capture_input: { pixels: 'must-not-leak' },
@@ -31,8 +45,15 @@ describe('ReadingSourcePayload', () => {
 
     expect(html).toContain('&quot;engine_id&quot;: &quot;biofield-capture&quot;')
     expect(html).toContain('&quot;coherence&quot;: 0.72')
+    expect(html).toContain('&quot;summary&quot;: &quot;Visible analysis&quot;')
+    expect(html).toContain('&quot;score&quot;: 0.91')
     expect(html).toContain('[REDACTED]')
     expect(html).not.toContain('must-not-leak')
+    expect(html).not.toContain('nested-metrics-secret')
+    expect(html).not.toContain('nested-analysis-secret')
+    expect(html).not.toContain('unnamed-metrics-secret')
+    expect(html).not.toContain('unnamed-analysis-secret')
+    expect(html.match(/&quot;nested&quot;: &quot;\[REDACTED\]&quot;/g)).toHaveLength(2)
     expect(html).not.toContain('data:image/png;base64')
     expect(html).not.toContain('&quot;pixels&quot;')
     expect(html).not.toContain('&quot;api_key&quot;')
