@@ -4,13 +4,8 @@ export interface Stat {
 }
 
 /**
- * The console stat strip from the reference pages (NODES / CONNECTIONS / PATHS /
- * FREQUENCY on home; SUB-NODES / ACTIVE PATHS / RESONANCE on a node page).
- * Presentational console dressing — not report data.
- *
- * The architecture moodboard sets the stats as open cells directly on the
- * field — no containing pill — with hairline dividers, engraved serif values,
- * and small-caps silver labels. Renders at the lower left via BottomChrome.
+ * Compact runtime taxonomy counts. Callers provide values derived from the
+ * current Selemene node registry; this component never invents telemetry.
  */
 export function StatFooter({ stats }: { stats: Stat[] }) {
   return (

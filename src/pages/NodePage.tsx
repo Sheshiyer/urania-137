@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getNodeById } from '../data/selemeneNodes'
 import { GraphOrbital, SelemeneChild, AssetGenerateRequest, BirthData } from '../types'
 import { useReportGenerator } from '../hooks/useReportGenerator'
@@ -8,7 +8,6 @@ import { useDailyReading } from '../hooks/useDailyReading'
 import { ConstellationGraph } from '../components/ConstellationGraph'
 import { Modal } from '../components/Modal'
 import { EngineStatusPanel } from '../components/panels/EngineStatusPanel'
-import { FolioPanel } from '../components/panels/FolioPanel'
 import { MirrorPanel } from '../components/panels/MirrorPanel'
 import { SankalpaPanel } from '../components/panels/SankalpaPanel'
 import { PageHeader } from '../components/layout/PageHeader'
@@ -58,7 +57,15 @@ function childOrbitals(kids: SelemeneChild[], color: string): GraphOrbital[] {
  * reading renders in-thread as narrator chapters (Phase 3) while the Folio
  * save happens inside the hooks, unchanged.
  */
-export function NodePage({ nodeId, me }: { nodeId: string; me: User | null }) {
+export function NodePage({
+  nodeId,
+  initialChildId,
+  me,
+}: {
+  nodeId: string
+  initialChildId?: string
+  me: User | null
+}) {
   const node = getNodeById(nodeId)!
   const [selectedChild, setSelectedChild] = useState<SelemeneChild | null>(null)
   const [modalView, setModalView] = useState<ModalView>(null)
@@ -71,6 +78,7 @@ export function NodePage({ nodeId, me }: { nodeId: string; me: User | null }) {
   const engineStatus = useEngineStatus(node.id === 'engine')
   const det = useDeterministicRun()
   const daily = useDailyReading()
+  const initialChildOpenedRef = useRef<string | null>(null)
 
   const openChild = (childId: string) => {
     const child = node.children?.find((c) => c.id === childId)
@@ -93,6 +101,12 @@ export function NodePage({ nodeId, me }: { nodeId: string; me: User | null }) {
     lastSubmitRef.current = null
     setChatChild(child)
   }
+
+  useEffect(() => {
+    if (!initialChildId || initialChildOpenedRef.current === initialChildId) return
+    initialChildOpenedRef.current = initialChildId
+    openChild(initialChildId)
+  }, [initialChildId])
 
   const closeModal = () => {
     setModalView(null)
@@ -159,9 +173,8 @@ export function NodePage({ nodeId, me }: { nodeId: string; me: User | null }) {
   const kids = node.children ?? []
   const runnable = kids.filter((c) => c.run).length
   const nodeStats = [
-    { label: 'Sub-Nodes', value: String(kids.length) },
-    { label: 'Live Paths', value: String(runnable || kids.length) },
-    { label: 'Resonance', value: `${62 + ((node.label.length * 7) % 34)}.${(kids.length * 3) % 10}%` },
+    { label: 'Doorways', value: String(kids.length) },
+    { label: 'Runnable', value: String(runnable) },
   ]
 
   return (
@@ -209,8 +222,6 @@ export function NodePage({ nodeId, me }: { nodeId: string; me: User | null }) {
           <SankalpaPanel />
         ) : node.id === 'engine' ? (
           <EngineStatusPanel child={selectedChild} status={engineStatus} />
-        ) : node.id === 'folio' ? (
-          <FolioPanel child={selectedChild} owner={me} />
         ) : (
           <p className="leading-relaxed text-silver">{node.description}</p>
         )}

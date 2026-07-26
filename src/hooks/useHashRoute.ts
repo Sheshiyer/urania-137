@@ -3,7 +3,7 @@ import { getNodeById } from '../data/selemeneNodes'
 
 export type Route =
   | { view: 'home' }
-  | { view: 'node'; nodeId: string }
+  | { view: 'node'; nodeId: string; childId?: string }
   | { view: 'threshold' }
   | { view: 'readings'; readingId: string | null }
   | { view: 'settings' }
@@ -22,11 +22,19 @@ export function parseHash(hash = typeof window !== 'undefined' ? window.location
       return { view: 'home' }
     }
   }
-  const m = hash.match(/^#\/node\/([^/?#]+)/)
+  const m = hash.match(/^#\/node\/([^/?#]+)(?:\/([^/?#]+))?\/?$/)
   if (m) {
     try {
       const id = decodeURIComponent(m[1])
-      if (getNodeById(id)) return { view: 'node', nodeId: id }
+      const node = getNodeById(id)
+      if (node) {
+        if (!m[2]) return { view: 'node', nodeId: id }
+        const childId = decodeURIComponent(m[2])
+        if (node.children?.some((child) => child.id === childId)) {
+          return { view: 'node', nodeId: id, childId }
+        }
+        return { view: 'node', nodeId: id }
+      }
     } catch {
       return { view: 'home' }
     }
@@ -42,6 +50,7 @@ export type AppPath =
   | '/readings'
   | `/readings/${string}`
   | `/node/${string}`
+  | `/node/${string}/${string}`
 
 export function navigate(to: AppPath) {
   const next = `#${to}`

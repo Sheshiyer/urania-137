@@ -8,6 +8,18 @@ describe('hash route parsing', () => {
     expect(parseHash('#/node/not-charted')).toEqual({ view: 'home' })
   })
 
+  it('validates and preserves an addressable child doorway', () => {
+    expect(parseHash('#/node/witness/integrated-reading')).toEqual({
+      view: 'node',
+      nodeId: 'witness',
+      childId: 'integrated-reading',
+    })
+    expect(parseHash('#/node/witness/not-charted')).toEqual({
+      view: 'node',
+      nodeId: 'witness',
+    })
+  })
+
   it('addresses the library, one canonical record, and settings', () => {
     expect(parseHash('#/readings')).toEqual({ view: 'readings', readingId: null })
     expect(parseHash('#/readings/reading%2Fone')).toEqual({

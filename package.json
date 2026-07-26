@@ -22,7 +22,8 @@
     "verify:cf-contracts": "node scripts/verify/cf-contracts.mjs",
     "verify:delink": "node scripts/verify/delink-check.mjs",
     "verify:ui-baseline": "npm run build && node scripts/verify/ui-realignment-baseline.mjs",
-    "verify:ui-dialog": "node scripts/verify/ui-dialog.mjs"
+    "verify:ui-dialog": "node scripts/verify/ui-dialog.mjs",
+    "verify:ui-home": "node --test scripts/verify/ui-home-contracts.test.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

@@ -60,7 +60,14 @@ export default function App() {
     <>
       {route.view !== 'threshold' && <TopNav route={route} me={me} />}
       {route.view === 'home' && <HomePage />}
-      {route.view === 'node' && <NodePage key={route.nodeId} nodeId={route.nodeId} me={me} />}
+      {route.view === 'node' && (
+        <NodePage
+          key={`${route.nodeId}:${route.childId ?? ''}`}
+          nodeId={route.nodeId}
+          initialChildId={route.childId}
+          me={me}
+        />
+      )}
       {route.view === 'threshold' && <ThresholdPage />}
       {route.view === 'readings' && <ReadingLibraryPage me={me} readingId={route.readingId} />}
       {route.view === 'settings' && <SettingsPage me={me} />}

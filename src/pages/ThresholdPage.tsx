@@ -6,6 +6,7 @@ import { geocodePlace, type GeocodeHit } from '../lib/geocode'
 import { navigate } from '../hooks/useHashRoute'
 import { Starfield } from '../components/threshold/Starfield'
 import { Fade, Scene, SplitText, REDUCED_MOTION } from '../components/threshold/sceneKit'
+import { UI_COPY } from '../content/uiCopy'
 import { HomePage } from './HomePage'
 
 /**
@@ -484,6 +485,9 @@ export function ThresholdPage() {
                   ]}
                 />
               </p>
+              <Fade show={show} className="mt-8 max-w-[620px] text-sm leading-relaxed text-silver">
+                <p>{UI_COPY.thresholdGrounding}</p>
+              </Fade>
             </>
           )}
         </Scene>
