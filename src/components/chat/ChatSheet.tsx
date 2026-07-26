@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Send, X } from 'lucide-react'
+import { Send } from 'lucide-react'
 import type { ChildRun, RelationshipContext, SubjectInput } from '../../types'
 import type { ChatBlock, ChatEvent, ChatMsg, ChatSessionState } from '../../types/chat'
 import { toSubmitPayload, type SubmitPayload } from '../../lib/chat/stateMachine'
@@ -11,6 +11,7 @@ import { createSubject } from '../../lib/subjectsApi'
 import { CircleBar, circlePersistIndexes, circleRole } from './CircleBar'
 import { QuickReplies } from './QuickReplies'
 import { ResultThread } from './ResultThread'
+import { InstrumentDialog } from '../ui/InstrumentDialog'
 
 /**
  * ChatSheet (Phase 2 W3-A; Phase 3 in-thread results) — the narrative
@@ -27,9 +28,8 @@ import { ResultThread } from './ResultThread'
  * in-thread error + retry path. Result chapters are presentation only, never
  * persisted as chat turns; the Folio row the hook saved is the durable copy.
  *
- * Shell styling is copied 1:1 from `Modal.tsx` (void backdrop, gold-bordered
- * bottom sheet on mobile / centered panel on ≥sm, sticky header) so the chat
- * reads as the same chrome, not a new surface. No new palette, no new deps.
+ * InstrumentDialog owns the shared modal lifecycle and responsive instrument
+ * chrome; the session, stream, circle, handoff, and retry logic remain local.
  *
  * Stream discipline (docs/chat-protocol.md): deltas accumulate into ONE
  * in-progress narrator message (keyed by `reply_start.msgId`); `reply_end`
@@ -429,37 +429,22 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, owner, onClose,
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4" data-node-id={nodeId}>
-      <div className="absolute inset-0 bg-void/85 backdrop-blur-sm" onClick={onClose} />
-
-      <div className="console-card relative flex max-h-[92vh] w-full max-w-xl flex-col rounded-t-md shadow-2xl shadow-void sm:max-h-[88vh] sm:rounded-sm">
-        {/* Double frame + corner diamonds — the Modal shell's reference card */}
-        <div className="pointer-events-none absolute inset-1.5 border border-gold/10" aria-hidden="true" />
-        <span className="pointer-events-none absolute left-3 top-3 h-1.5 w-1.5 rotate-45 border border-gold/60" aria-hidden="true" />
-        <span className="pointer-events-none absolute right-3 top-3 h-1.5 w-1.5 rotate-45 border border-gold/60" aria-hidden="true" />
-        <span className="pointer-events-none absolute bottom-3 left-3 h-1.5 w-1.5 rotate-45 border border-gold/60" aria-hidden="true" />
-        <span className="pointer-events-none absolute bottom-3 right-3 h-1.5 w-1.5 rotate-45 border border-gold/60" aria-hidden="true" />
-
-        {/* Grab handle (mobile bottom-sheet affordance) */}
-        <div className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-silver/30 sm:hidden" aria-hidden="true" />
-
-        {/* Sticky header — same chrome as Modal, plus the chapter cursor */}
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-gold/15 px-5 py-3.5 sm:px-8 sm:py-5">
-          <div className="min-w-0">
-            <p className="console-eyebrow">
-              {nodeLabel} · {SEED_KIND_LABEL[seed.kind]}
-              {chapter && <span className="text-gold/50"> · {chapter.replace('_', ' ')}</span>}
-            </p>
-            <h2 className="truncate font-serif text-lg uppercase tracking-[0.14em] text-parchment sm:text-xl">{childLabel}</h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="-mr-1 shrink-0 rounded-full p-2 text-silver transition-colors hover:bg-parchment/5 hover:text-parchment"
-            aria-label="Close chat"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+    <InstrumentDialog
+      open
+      title={childLabel}
+      eyebrow={
+        <>
+          {nodeLabel} · {SEED_KIND_LABEL[seed.kind]}
+          {chapter && <span className="text-gold/50"> · {chapter.replace('_', ' ')}</span>}
+        </>
+      }
+      onClose={onClose}
+      closeOnOutsideClick
+      closeLabel="Close chat"
+      headerAlign="start"
+      bodyClassName="flex flex-1 flex-col"
+      dataNodeId={nodeId}
+    >
 
         {/* Message thread */}
         <div ref={threadRef} role="log" aria-live="polite" className="dot-grid min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-5 py-5 sm:px-8">
@@ -585,7 +570,6 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, owner, onClose,
             <Send className="h-4 w-4" />
           </button>
         </form>
-      </div>
-    </div>
+    </InstrumentDialog>
   )
 }
