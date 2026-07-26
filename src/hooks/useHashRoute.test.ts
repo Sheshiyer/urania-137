@@ -27,9 +27,15 @@ describe('hash route parsing', () => {
       readingId: 'reading/one',
     })
     expect(parseHash('#/settings')).toEqual({ view: 'settings' })
+    expect(parseHash('#/relationships/relationship%2Fone/readings/generation%2F137')).toEqual({
+      view: 'relationship-reading',
+      relationshipId: 'relationship/one',
+      generationId: 'generation/137',
+    })
   })
 
   it('fails malformed encoded record ids closed to home', () => {
     expect(parseHash('#/readings/%E0%A4%A')).toEqual({ view: 'home' })
+    expect(parseHash('#/relationships/rel/readings/%E0%A4%A')).toEqual({ view: 'home' })
   })
 })

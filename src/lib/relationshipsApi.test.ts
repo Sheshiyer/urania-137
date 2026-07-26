@@ -32,12 +32,17 @@ function json(body: unknown, status = 200): Response {
 
 describe('relationships API client', () => {
   it('lists the relationship envelope with same-origin credentials', async () => {
-    const fetcher = vi.fn(async () => json({ relationships: [relationship] }))
+    const fetcher = vi.fn(async (_input: string, _init?: RequestInit) =>
+      json({ relationships: [relationship] }),
+    )
     await expect(listRelationships(fetcher)).resolves.toEqual([relationship])
     expect(fetcher).toHaveBeenCalledWith(
       '/api/relationships',
       expect.objectContaining({ credentials: 'include' }),
     )
+    const headers = new Headers(fetcher.mock.calls[0][1]?.headers)
+    expect(headers.has('x-admin-role')).toBe(false)
+    expect(headers.has('x-user-email')).toBe(false)
   })
 
   it('uses the approved create, accept, decline, revoke, and optional generation routes', async () => {

@@ -75,7 +75,7 @@ export class RelationshipApiError extends Error {
   }
 }
 
-type FetchLike = (input: string, init?: RequestInit) => Promise<Response>
+export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>
 
 async function requestJson<T>(
   path: string,

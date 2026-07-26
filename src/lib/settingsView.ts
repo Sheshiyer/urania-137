@@ -1,5 +1,8 @@
 import type { Relationship, RelationshipStatus } from './relationshipsApi'
 import type { SubjectProfile } from '../types/chat'
+import type { AsyncViewState } from '../components/ui/AsyncBoundary'
+
+export type SettingsLoadState = 'loading' | 'ready' | 'error'
 
 export interface RelationshipStatusPresentation {
   label: string
@@ -60,4 +63,25 @@ export function relationshipPeerLabel(
   )
   if (peer) return peer.role === 'invitee' ? relationship.inviteeEmail : 'Inviting participant'
   return relationship.inviteeEmail
+}
+
+export function loadStateToBoundary(
+  state: SettingsLoadState,
+  itemCount: number,
+  error: string | null,
+): AsyncViewState {
+  if (state === 'loading') {
+    return { status: 'loading', message: 'Reading consent records…' }
+  }
+  if (state === 'error') {
+    return { status: 'error', message: error ?? 'Consent records could not be read.' }
+  }
+  if (itemCount === 0) {
+    return { status: 'empty', message: 'No shared relationships are recorded.' }
+  }
+  return { status: 'ready' }
+}
+
+export function consentActionFor(status: RelationshipStatus): 'revoke' | 'none' {
+  return status === 'pending' || status === 'active' ? 'revoke' : 'none'
 }

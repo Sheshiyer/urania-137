@@ -3,10 +3,12 @@ import type { ReadingDTO } from '../api/contract'
 import type { ThreadResult } from '../chat/resultMessages'
 import {
   folioEntryToReadingDocument,
+  grantedSynastryToReadingDocument,
   readingDocumentToFolioEntry,
   readingDocumentToSaveRequest,
   threadResultToReadingDocument,
 } from './adapters'
+import type { GrantedSynastryReading } from './relationshipReadings'
 
 const owner = { id: 'owner-1', email: 'owner@example.test', label: 'Owner' }
 const subject = { id: 'subject-7', kind: 'person' as const, label: 'Subject Seven' }
@@ -134,5 +136,44 @@ describe('canonical reading adapters', () => {
         nodeLabel: 'Sky Weather',
       }),
     ).toBeNull()
+  })
+
+  it('adapts only an explicit participant grant into a checksum-bound dyad', () => {
+    const granted: GrantedSynastryReading = {
+      generationId: 'generation-one',
+      relationshipId: 'relationship-one',
+      mode: 'synastry',
+      responseSha256: 'c'.repeat(64),
+      result: {
+        assembled: 'A shared field.',
+        engines_used: ['synastry', 'jyotish'],
+        relations: [{ from: 'Asha', to: 'Bela', relation: 'trine' }],
+        secret: 'kept behind privacy filtering',
+      },
+      visibility: 'participant',
+      createdAt: '2026-07-27T00:00:00.000Z',
+      grantedAt: '2026-07-27T00:00:01.000Z',
+    }
+    const document = grantedSynastryToReadingDocument(granted, {
+      relationshipStatus: 'revoked',
+      owner,
+      participants: [
+        { id: 'subject-a', label: 'Asha', role: 'inviter' },
+        { id: 'subject-b', label: 'Bela', role: 'invitee' },
+      ],
+    })
+
+    expect(document.subject.kind).toBe('dyad')
+    expect(document.subject.participants).toHaveLength(2)
+    expect(document.body).toBe('A shared field.')
+    expect(document.access).toEqual({
+      reason: 'participant-grant',
+      state: 'historical',
+      visibility: 'participant',
+      relationshipId: 'relationship-one',
+      grantedAt: granted.grantedAt,
+      checksum: granted.responseSha256,
+    })
+    expect(document.elements.some((element) => element.kind === 'relations')).toBe(true)
   })
 })

@@ -7,7 +7,7 @@
  * patterns in separate fields.
  */
 
-export type ReadingOrigin = 'live-chat' | 'folio' | 'corpus-723'
+export type ReadingOrigin = 'live-chat' | 'folio' | 'relationship-grant' | 'corpus-723'
 export type ReadingStructureSource = 'native' | 'flat'
 export type ReadingSubjectKind = 'self' | 'person' | 'dyad' | 'family' | 'collective' | 'unknown'
 export type ReadingEvidenceKind = 'deterministic' | 'witness' | 'retrieval' | 'historical' | 'system'
@@ -26,7 +26,31 @@ export interface ReadingSubjectRef {
   kind: ReadingSubjectKind
   label: string
   relationshipLabel?: string
+  participants?: readonly [ReadingParticipantRef, ReadingParticipantRef]
 }
+
+export interface ReadingParticipantRef {
+  id: string | null
+  label: string
+  role: 'inviter' | 'invitee'
+}
+
+export interface ReadingParticipantGrant {
+  reason: 'participant-grant'
+  state: 'current' | 'historical'
+  visibility: 'participant'
+  relationshipId: string
+  grantedAt: string
+  checksum: string
+}
+
+export interface ReadingOwnerAccess {
+  reason: 'owner'
+  state: 'current'
+  visibility: 'owner'
+}
+
+export type ReadingAccess = ReadingParticipantGrant | ReadingOwnerAccess
 
 export interface ReadingSection {
   id: string
@@ -303,6 +327,8 @@ export interface ReadingDocument {
 
   owner: ReadingOwnerRef
   subject: ReadingSubjectRef
+  /** Explicit grant provenance. Absence never implies authorization. */
+  access?: ReadingAccess
 
   /**
    * `native` means the source supplied real sections.

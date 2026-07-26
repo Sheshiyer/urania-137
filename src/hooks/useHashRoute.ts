@@ -6,6 +6,7 @@ export type Route =
   | { view: 'node'; nodeId: string; childId?: string }
   | { view: 'threshold' }
   | { view: 'readings'; readingId: string | null }
+  | { view: 'relationship-reading'; relationshipId: string; generationId: string }
   | { view: 'settings' }
 
 /** Parse `window.location.hash` into a validated route. Unknown → home. */
@@ -13,6 +14,20 @@ export function parseHash(hash = typeof window !== 'undefined' ? window.location
   // The Threshold (W2-A): pre-graph onboarding scene — a third top-level view.
   if (hash === '#/threshold') return { view: 'threshold' }
   if (hash === '#/settings') return { view: 'settings' }
+  const relationshipReading = hash.match(
+    /^#\/relationships\/([^/?#]+)\/readings\/([^/?#]+)\/?$/,
+  )
+  if (relationshipReading) {
+    try {
+      return {
+        view: 'relationship-reading',
+        relationshipId: decodeURIComponent(relationshipReading[1]),
+        generationId: decodeURIComponent(relationshipReading[2]),
+      }
+    } catch {
+      return { view: 'home' }
+    }
+  }
   if (hash === '#/readings' || hash === '#/readings/') return { view: 'readings', readingId: null }
   const reading = hash.match(/^#\/readings\/([^/?#]+)/)
   if (reading) {
@@ -49,6 +64,7 @@ export type AppPath =
   | '/settings'
   | '/readings'
   | `/readings/${string}`
+  | `/relationships/${string}/readings/${string}`
   | `/node/${string}`
   | `/node/${string}/${string}`
 

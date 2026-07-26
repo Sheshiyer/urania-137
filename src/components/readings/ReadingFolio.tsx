@@ -10,6 +10,7 @@ import { SystemStack } from './SystemStack'
 import { TimingSpine } from './TimingSpine'
 import { ReadingBody } from './ReadingBody'
 import { ReadingElementField, ReadingSourcePayload } from './elements'
+import { CompareField } from './CompareField'
 
 export interface ReadingFolioEvidenceContext {
   accessReason: string | null
@@ -39,7 +40,11 @@ export function ReadingFolio({
   const thread = variant === 'thread'
   if (thread) return <ReadingPreview document={document} />
 
-  const visualElements = document.elements.filter((element) => element.kind !== 'raw')
+  const participantGrantedDyad = document.subject.kind === 'dyad'
+    && document.access?.reason === 'participant-grant'
+  const visualElements = document.elements.filter(
+    (element) => element.kind !== 'raw' && !(participantGrantedDyad && element.kind === 'relations'),
+  )
   const rawElements = document.elements.filter((element) => element.kind === 'raw')
   const hasVisualElements = visualElements.length > 0
   const rawOnlyFlatDocument = document.structureSource === 'flat'
@@ -87,6 +92,7 @@ export function ReadingFolio({
           </header>
 
           <ReadingAtlas document={document} />
+          {participantGrantedDyad && <CompareField document={document} />}
           {hasVisualElements && <ReadingElementField elements={visualElements} />}
 
           {document.structureSource === 'native' ? (
@@ -185,7 +191,10 @@ export function ReadingFolio({
                 Access reason
               </dt>
               <dd className="mt-1 break-words text-parchment">
-                {evidenceContext?.accessReason ?? 'Access reason unavailable'}
+                {evidenceContext?.accessReason
+                  ?? (document.access?.reason === 'participant-grant'
+                    ? `${document.access.state} participant-grant`
+                    : 'Access reason unavailable')}
               </dd>
             </div>
             <div className="min-w-0 border-l border-gold/30 pl-3">
@@ -193,9 +202,28 @@ export function ReadingFolio({
                 Checksum
               </dt>
               <dd className="mt-1 break-words text-parchment">
-                {evidenceContext?.checksum ?? 'Checksum unavailable'}
+                {evidenceContext?.checksum
+                  ?? (document.access?.reason === 'participant-grant'
+                    ? `sha256:${document.access.checksum}`
+                    : 'Checksum unavailable')}
               </dd>
             </div>
+            {document.access?.reason === 'participant-grant' && (
+              <>
+                <div className="min-w-0 border-l border-gold/30 pl-3">
+                  <dt className="font-display text-[9px] uppercase tracking-[0.16em] text-gold">
+                    Grant time
+                  </dt>
+                  <dd className="mt-1 break-words text-parchment">{document.access.grantedAt}</dd>
+                </div>
+                <div className="min-w-0 border-l border-gold/30 pl-3">
+                  <dt className="font-display text-[9px] uppercase tracking-[0.16em] text-gold">
+                    Relationship
+                  </dt>
+                  <dd className="mt-1 break-words text-parchment">{document.access.relationshipId}</dd>
+                </div>
+              </>
+            )}
           </dl>
 
           <div className="grid min-w-0 gap-4 lg:grid-cols-2">

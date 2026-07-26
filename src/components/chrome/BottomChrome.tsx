@@ -1,6 +1,5 @@
-import { Children, ReactNode, useState } from 'react'
+import { Children, ReactNode } from 'react'
 import { VersionBadge } from './VersionBadge'
-import { SettingsPanel } from './SettingsPanel'
 
 /**
  * The fixed bottom rail, split the way the architecture moodboard frames a
@@ -19,7 +18,6 @@ import { SettingsPanel } from './SettingsPanel'
  * as before). The graph reserves this whole band via `CHROME`.
  */
 export function BottomChrome({ children }: { children: ReactNode }) {
-  const [settingsOpen, setSettingsOpen] = useState(false)
   const [left, ...rest] = Children.toArray(children)
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-20">
@@ -35,10 +33,9 @@ export function BottomChrome({ children }: { children: ReactNode }) {
         <div className="pointer-events-auto">{left}</div>
         <div className="flex items-center gap-4">
           {rest}
-          <VersionBadge onOpen={() => setSettingsOpen(true)} />
+          <VersionBadge />
         </div>
       </div>
-      <SettingsPanel isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   )
 }

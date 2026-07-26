@@ -1,21 +1,15 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   AlertTriangle,
-  ArrowRight,
-  Check,
-  CircleOff,
-  Clock3,
   Copy,
-  Eye,
   Link2,
-  LoaderCircle,
   LockKeyhole,
+  LogOut,
   RefreshCw,
   ShieldCheck,
   Trash2,
   UserRound,
   UsersRound,
-  X,
 } from 'lucide-react'
 import type { User } from '../lib/api/contract'
 import {
@@ -25,98 +19,34 @@ import {
   listRelationships,
   revokeRelationship,
   type Relationship,
-  type RelationshipStatus,
 } from '../lib/relationshipsApi'
+import {
+  listRelationshipReadings,
+  type GrantedSynastryReading,
+} from '../lib/readings/relationshipReadings'
 import { deleteSubject, listSubjects } from '../lib/subjectsApi'
 import {
-  relationshipPeerLabel,
-  relationshipStatusPresentation,
+  loadStateToBoundary,
   splitSubjects,
 } from '../lib/settingsView'
 import type { SubjectProfile } from '../types/chat'
 import { PageFrame } from '../components/layout/PageFrame'
 import { PatternSection } from '../components/chrome/PatternSection'
-import { navigate } from '../hooks/useHashRoute'
+import { AsyncBoundary, type AsyncViewState } from '../components/ui/AsyncBoundary'
+import { ConsentConstellation } from '../components/settings/ConsentConstellation'
+import { DefinitionRow } from '../components/ui/DefinitionRow'
+import { appBuildInfo, formatBuildTime } from '../lib/appVersion'
 
 type LoadState = 'loading' | 'ready' | 'error'
-
-const STATUS_STYLE: Record<RelationshipStatus, string> = {
-  pending: 'border-gold/45 bg-gold/10 text-gold',
-  active: 'border-emerald/45 bg-emerald/10 text-emerald',
-  declined: 'border-terracotta/45 bg-terracotta/10 text-evidence-copy-unresolved',
-  revoked: 'border-evidence-unresolved/45 bg-evidence-unresolved/10 text-evidence-copy-unresolved',
-  expired: 'border-silver/30 bg-silver/5 text-silver',
-}
-
-function StatusMark({ status }: { status: RelationshipStatus }) {
-  const copy = relationshipStatusPresentation(status)
-  const Icon =
-    status === 'active'
-      ? Check
-      : status === 'pending'
-        ? Clock3
-        : status === 'declined'
-          ? X
-          : status === 'revoked'
-            ? CircleOff
-            : Clock3
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-display text-xs uppercase tracking-[0.16em] ${STATUS_STYLE[status]}`}
-      title={copy.description}
-    >
-      <Icon className="h-3 w-3" aria-hidden="true" />
-      {copy.label}
-    </span>
-  )
-}
-
-function SettingsConstellation({
-  self,
-  circleCount,
-  relationships,
-}: {
-  self: SubjectProfile | null
-  circleCount: number
-  relationships: readonly Relationship[]
-}) {
-  const active = relationships.filter((relationship) => relationship.status === 'active').length
-  return (
-    <div className="console-card relative min-h-64 overflow-hidden" aria-label="Your settings constellation">
-      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 720 260" aria-hidden="true">
-        <circle cx="360" cy="130" r="62" fill="none" className="stroke-gold/20" />
-        <circle cx="360" cy="130" r="105" fill="none" className="stroke-gold/10" strokeDasharray="3 8" />
-        <line x1="360" y1="130" x2="180" y2="70" className="stroke-gold/25" />
-        <line x1="360" y1="130" x2="540" y2="70" className="stroke-gold/25" />
-        <line x1="360" y1="130" x2="360" y2="232" className="stroke-gold/25" />
-      </svg>
-      <div className="absolute left-1/2 top-1/2 flex h-28 w-28 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-gold/40 bg-void/95 text-center shadow-[0_0_50px_rgba(197,160,23,0.13)]">
-        <UserRound className="h-5 w-5 text-gold" aria-hidden="true" />
-        <span className="mt-2 max-w-20 truncate font-serif text-xs uppercase tracking-[0.14em] text-parchment">
-          {self?.name ?? 'Your pattern'}
-        </span>
-      </div>
-      <div className="absolute left-[25%] top-[27%] -translate-x-1/2 rounded-sm border border-gold/25 bg-void/90 px-3 py-2 text-center">
-        <UsersRound className="mx-auto h-4 w-4 text-silver" aria-hidden="true" />
-        <span className="mt-1 block font-mono text-xs text-parchment">{circleCount} circle</span>
-      </div>
-      <div className="absolute left-[75%] top-[27%] -translate-x-1/2 rounded-sm border border-emerald/25 bg-void/90 px-3 py-2 text-center">
-        <Link2 className="mx-auto h-4 w-4 text-emerald" aria-hidden="true" />
-        <span className="mt-1 block font-mono text-xs text-parchment">{active} active</span>
-      </div>
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-sm border border-gold/20 bg-void/90 px-3 py-2 text-center">
-        <Eye className="mx-auto h-4 w-4 text-gold" aria-hidden="true" />
-        <span className="mt-1 block font-mono text-xs text-parchment">owner-only readings</span>
-      </div>
-    </div>
-  )
-}
 
 export function SettingsPage({ me }: { me: User | null }) {
   const [subjects, setSubjects] = useState<SubjectProfile[]>([])
   const [subjectState, setSubjectState] = useState<LoadState>('loading')
   const [subjectError, setSubjectError] = useState<string | null>(null)
   const [relationships, setRelationships] = useState<Relationship[]>([])
+  const [readingsByRelationship, setReadingsByRelationship] = useState<
+    Record<string, GrantedSynastryReading[]>
+  >({})
   const [relationshipState, setRelationshipState] = useState<LoadState>('loading')
   const [relationshipError, setRelationshipError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
@@ -144,7 +74,15 @@ export function SettingsPage({ me }: { me: User | null }) {
     setRelationshipState('loading')
     setRelationshipError(null)
     try {
-      setRelationships(await listRelationships())
+      const next = await listRelationships()
+      const readingEntries = await Promise.all(
+        next.map(async (relationship) => [
+          relationship.id,
+          await listRelationshipReadings(relationship.id),
+        ] as const),
+      )
+      setRelationships(next)
+      setReadingsByRelationship(Object.fromEntries(readingEntries))
       setRelationshipState('ready')
     } catch (error) {
       setRelationshipState('error')
@@ -162,6 +100,22 @@ export function SettingsPage({ me }: { me: User | null }) {
   }, [loadRelationships, loadSubjects])
 
   const { self, circle } = useMemo(() => splitSubjects(subjects), [subjects])
+  const info = appBuildInfo()
+  const subjectBoundary: AsyncViewState = subjectState === 'loading'
+    ? { status: 'loading', message: 'Reading your circle…' }
+    : subjectState === 'error'
+      ? { status: 'error', message: subjectError ?? 'Your subjects could not be read.' }
+      : circle.length === 0
+        ? {
+            status: 'empty',
+            message: 'No circle subjects yet. Hold a completed subject explicitly in chat to add one.',
+          }
+        : { status: 'ready' }
+  const relationshipBoundary = loadStateToBoundary(
+    relationshipState,
+    relationships.length,
+    relationshipError,
+  )
   const subjectOptions = subjects
   useEffect(() => {
     const defaultId = self?.id ?? subjectOptions[0]?.id ?? ''
@@ -240,10 +194,6 @@ export function SettingsPage({ me }: { me: User | null }) {
           </a>
         </header>
 
-        <div className="mt-7">
-          <SettingsConstellation self={self} circleCount={circle.length} relationships={relationships} />
-        </div>
-
         <div className="mt-7 grid gap-7 lg:grid-cols-2">
           <section className="space-y-4" aria-labelledby="identity-settings-title">
             <div>
@@ -254,6 +204,30 @@ export function SettingsPage({ me }: { me: User | null }) {
             </div>
 
             <PatternSection onClose={() => undefined} />
+
+            <div className="console-card overflow-hidden">
+              <dl className="divide-y divide-gold/10">
+                <DefinitionRow label="App version" value={`v${info.version}`} mono />
+                <DefinitionRow label="Built" value={formatBuildTime(info.buildTime)} mono />
+                <DefinitionRow label="Commit" value={info.sha} mono />
+              </dl>
+              <div className="flex items-center justify-between gap-4 border-t border-gold/10 px-4 py-3">
+                <div className="min-w-0">
+                  <p className="font-display text-xs uppercase tracking-[0.22em] text-metadata">Signed in</p>
+                  <p className="truncate text-sm text-parchment" title={me?.email}>
+                    {me?.email ?? 'Authenticated account'}
+                  </p>
+                </div>
+                <a
+                  href="/api/logout"
+                  className="inline-flex min-h-11 shrink-0 items-center gap-1.5 font-display text-[11px] uppercase tracking-[0.22em] text-silver transition-colors hover:text-gold"
+                  aria-label={me ? `Log out ${me.email}` : 'Log out'}
+                >
+                  <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
+                  Logout
+                </a>
+              </div>
+            </div>
 
             <div className="console-card p-4 sm:p-5">
               <div className="flex items-start justify-between gap-3">
@@ -266,16 +240,8 @@ export function SettingsPage({ me }: { me: User | null }) {
                 <UsersRound className="h-5 w-5 shrink-0 text-gold" aria-hidden="true" />
               </div>
 
-              {subjectState === 'loading' ? (
-                <p className="mt-4 flex items-center gap-2 text-xs text-silver">
-                  <LoaderCircle className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none" aria-hidden="true" />
-                  Reading your circle…
-                </p>
-              ) : circle.length === 0 ? (
-                <p className="mt-4 border-l border-gold/25 pl-3 text-xs leading-relaxed text-secondary">
-                  No circle subjects yet. Begin a reading in chat and explicitly choose to hold a completed subject.
-                </p>
-              ) : (
+              <div className="mt-4">
+                <AsyncBoundary state={subjectBoundary}>
                 <ul className="mt-4 divide-y divide-gold/10 border-y border-gold/10">
                   {circle.map((subject) => (
                     <li key={subject.id} className="flex items-center gap-3 py-3">
@@ -300,14 +266,8 @@ export function SettingsPage({ me }: { me: User | null }) {
                     </li>
                   ))}
                 </ul>
-              )}
-
-              {subjectError && (
-                <p className="mt-3 flex items-center gap-2 text-xs text-evidence-copy-unresolved">
-                  <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
-                  {subjectError}
-                </p>
-              )}
+                </AsyncBoundary>
+              </div>
             </div>
 
             <div className="console-card p-4 sm:p-5">
@@ -353,71 +313,21 @@ export function SettingsPage({ me }: { me: User | null }) {
               </button>
             </div>
 
-            {relationshipError && (
-              <div className="border border-gold/25 bg-gold/5 p-4">
-                <p className="flex items-center gap-2 text-sm text-parchment">
-                  <ShieldCheck className="h-4 w-4 text-gold" aria-hidden="true" />
-                  Consent service not yet available
-                </p>
-                <p className="mt-2 text-xs leading-relaxed text-secondary">{relationshipError}</p>
-                <p className="mt-2 text-xs text-metadata">
-                  Your existing same-owner Union Mirror path remains unchanged.
-                </p>
-              </div>
-            )}
-
-            {relationships.length > 0 && (
-              <ul className="space-y-3">
-                {relationships.map((relationship) => {
-                  const status = relationshipStatusPresentation(relationship.status)
-                  const canRevoke = relationship.status === 'pending' || relationship.status === 'active'
-                  return (
-                    <li key={relationship.id} className="console-card p-4">
-                      <div className="flex flex-wrap items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="truncate font-serif text-sm text-parchment">
-                            {relationshipPeerLabel(relationship, me?.id ?? null)}
-                          </p>
-                          <p className="mt-1 font-mono text-xs text-metadata">{relationship.id}</p>
-                        </div>
-                        <StatusMark status={relationship.status} />
-                      </div>
-                      <p className="mt-3 border-l border-gold/20 pl-3 text-xs leading-relaxed text-secondary">{status.description}</p>
-                      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-gold/10 pt-3">
-                        <span className="text-xs text-metadata">
-                          {relationship.participants.length} bound participant{relationship.participants.length === 1 ? '' : 's'}
-                        </span>
-                        <div className="flex items-center gap-3">
-                          {relationship.status === 'active' && (
-                            <button
-                              type="button"
-                              onClick={() => navigate('/node/compat')}
-                              className="inline-flex cursor-pointer items-center gap-1.5 font-display text-xs uppercase tracking-[0.16em] text-emerald transition-colors duration-300 hover:text-parchment focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald"
-                            >
-                              Enter Union Mirror
-                              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                            </button>
-                          )}
-                          {canRevoke && (
-                            <button
-                              type="button"
-                              disabled={busy === `revoke:${relationship.id}`}
-                              onClick={() => {
-                                if (!window.confirm('Revoke future shared generation for this relationship?')) return
-                                void runAction(`revoke:${relationship.id}`, () => revokeRelationship(relationship.id))
-                              }}
-                              className="cursor-pointer font-display text-xs uppercase tracking-[0.16em] text-secondary transition-colors duration-300 hover:text-evidence-copy-unresolved focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta disabled:cursor-wait disabled:opacity-50"
-                            >
-                              Revoke
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </li>
+            <AsyncBoundary state={relationshipBoundary}>
+              <ConsentConstellation
+                relationships={relationships}
+                currentUserId={me?.id ?? null}
+                readingsByRelationship={readingsByRelationship}
+                busyRelationshipId={busy?.startsWith('revoke:') ? busy.slice('revoke:'.length) : null}
+                onRevoke={(relationshipId) => {
+                  if (!window.confirm('Revoke future shared generation for this relationship?')) return
+                  void runAction(
+                    `revoke:${relationshipId}`,
+                    () => revokeRelationship(relationshipId),
                   )
-                })}
-              </ul>
-            )}
+                }}
+              />
+            </AsyncBoundary>
 
             <form onSubmit={createInvite} className="console-card p-4 sm:p-5">
               <div className="flex items-start gap-3">

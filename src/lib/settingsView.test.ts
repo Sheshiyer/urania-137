@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import type { Relationship } from './relationshipsApi'
 import {
+  consentActionFor,
+  loadStateToBoundary,
   relationshipPeerLabel,
   relationshipStatusPresentation,
   splitSubjects,
@@ -72,5 +74,29 @@ describe('settings view helpers', () => {
       ],
     }
     expect(relationshipPeerLabel(relationship, 'user-a')).toBe('mira@example.test')
+  })
+
+  it('maps one exclusive async boundary state at a time', () => {
+    expect(loadStateToBoundary('loading', 0, null)).toEqual({
+      status: 'loading',
+      message: 'Reading consent records…',
+    })
+    expect(loadStateToBoundary('error', 0, 'Consent failed')).toEqual({
+      status: 'error',
+      message: 'Consent failed',
+    })
+    expect(loadStateToBoundary('ready', 0, null)).toEqual({
+      status: 'empty',
+      message: 'No shared relationships are recorded.',
+    })
+    expect(loadStateToBoundary('ready', 2, null)).toEqual({ status: 'ready' })
+  })
+
+  it('gives every relationship a finite consent action', () => {
+    expect(consentActionFor('pending')).toBe('revoke')
+    expect(consentActionFor('active')).toBe('revoke')
+    expect(consentActionFor('declined')).toBe('none')
+    expect(consentActionFor('revoked')).toBe('none')
+    expect(consentActionFor('expired')).toBe('none')
   })
 })

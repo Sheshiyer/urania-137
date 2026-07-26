@@ -2,7 +2,7 @@ import { FormEvent, KeyboardEvent, useEffect, useState } from 'react'
 import { navigate } from '../../hooks/useHashRoute'
 import { getSelfSubject, updateSubject } from '../../lib/subjectsApi'
 import type { SubjectProfile } from '../../types/chat'
-import { Row } from './SettingsPanel'
+import { DefinitionRow } from '../ui/DefinitionRow'
 import {
   NOON_CONVENTION,
   PatternDraft,
@@ -241,7 +241,7 @@ export function PatternSection({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="space-y-2">
-      <div className="divide-y divide-gold/10 rounded-lg border border-gold/15 bg-void/50">
+      <div className="rounded-lg border border-gold/15 bg-void/50">
         <div className="flex items-center justify-between gap-4 px-4 py-2.5">
           <span className="font-display text-xs uppercase tracking-[0.22em] text-metadata">Your pattern</span>
           <button
@@ -253,10 +253,12 @@ export function PatternSection({ onClose }: { onClose: () => void }) {
             edit
           </button>
         </div>
-        <Row label="Name" value={profile.name} />
-        <Row label="Birth date" value={profile.birth_date} />
-        <Row label="Birth time" value={timeDisplay} />
-        <Row label="Place" value={profile.normalized_location?.display_name || profile.birth_location_query || '—'} />
+        <dl className="divide-y divide-gold/10 border-t border-gold/10">
+          <DefinitionRow label="Name" value={profile.name} />
+          <DefinitionRow label="Birth date" value={profile.birth_date} />
+          <DefinitionRow label="Birth time" value={timeDisplay} />
+          <DefinitionRow label="Place" value={profile.normalized_location?.display_name || profile.birth_location_query || '—'} />
+        </dl>
       </div>
 
       <div className="flex justify-center">

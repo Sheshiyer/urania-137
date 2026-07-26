@@ -2,6 +2,7 @@ import { Eye, Fingerprint, Hash, ScrollText, Sparkles, UserRound, UsersRound } f
 import type { User } from '../../lib/api/contract'
 import type { ReadingDTO } from '../../lib/api/contract'
 import { CanonicalReadingReference } from './CanonicalReadingReference'
+import type { ReadingParticipantGrant } from '../../lib/readings'
 
 const facts = [
   { key: 'owner', label: 'Owner', icon: UserRound },
@@ -22,24 +23,32 @@ export function ReadingTrustPanel({
   subjectLabel,
   accessReason,
   checksum,
+  participantGrant,
 }: {
   entry: ReadingDTO
   owner: User | null
   subjectLabel?: string | null
   accessReason?: string | null
   checksum?: string | null
+  participantGrant?: ReadingParticipantGrant | null
 }) {
   const values: Record<(typeof facts)[number]['key'], string> = {
     owner: owner?.email ?? 'Authenticated Folio owner',
     subject: subjectLabel?.trim() || 'Not recorded in the current Folio contract',
     source: `Urania D1 · Folio record ${entry.id}`,
     producer: `Selemene · ${entry.mode}`,
-    access: accessReason ?? (
+    access: accessReason ?? (participantGrant
+      ? `${participantGrant.state} participant-grant · ${participantGrant.visibility}`
+      : (
       owner?.email
         ? `Signed in as the owner (${owner.email})`
         : 'Owner-scoped authenticated Folio access'
-    ),
-    checksum: checksum ? `sha256:${checksum}` : 'Calculating canonical checksum…',
+      )),
+    checksum: checksum
+      ? `sha256:${checksum}`
+      : participantGrant
+        ? `sha256:${participantGrant.checksum}`
+        : 'Calculating canonical checksum…',
   }
 
   return (
@@ -65,6 +74,11 @@ export function ReadingTrustPanel({
             </div>
           ))}
         </dl>
+        {participantGrant && (
+          <p className="mt-3 text-xs leading-relaxed text-silver/70">
+            Relationship {participantGrant.relationshipId} · granted {participantGrant.grantedAt}
+          </p>
+        )}
       </div>
       <CanonicalReadingReference entry={entry} />
     </aside>
