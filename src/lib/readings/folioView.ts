@@ -4,6 +4,12 @@ import type { ReadingDTO } from '../api/contract'
 
 export type FolioAccess = 'owner-scoped' | 'denied'
 
+export function folioAccessFromStatus(
+  status: number | null,
+): FolioAccess | undefined {
+  return status === 401 || status === 403 ? 'denied' : undefined
+}
+
 export interface FolioViewInput {
   status: FolioStatus
   entries: readonly ReadingDTO[]

@@ -21,7 +21,9 @@ test('Folio remains the one reader-facing product noun', () => {
 
 test('the page derives one async state and delegates it to AsyncBoundary', () => {
   assert.match(page, /deriveFolioView/)
+  assert.match(page, /folioAccessFromStatus\(httpStatus\)/)
   assert.match(page, /<AsyncBoundary\s+state=/)
+  assert.match(page, /aria-label="Search canonical readings"/)
   assert.doesNotMatch(page, /\{error\s*&&/)
   assert.doesNotMatch(page, /status\s*===\s*['"]loading['"]/)
 })

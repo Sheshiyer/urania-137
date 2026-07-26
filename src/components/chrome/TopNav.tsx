@@ -36,7 +36,7 @@ export function TopNav({ route, me }: { route: Route; me: User | null }) {
         <button
           type="button"
           onClick={() => navigate('/')}
-          className="pointer-events-auto group flex shrink-0 flex-col items-start text-left"
+          className="pointer-events-auto group flex min-h-11 min-w-11 shrink-0 flex-col items-start justify-center text-left"
           aria-label="Urania 137 — home"
         >
           <span className="font-serif text-xs font-semibold uppercase tracking-[0.16em] text-parchment transition-colors group-hover:text-gold sm:text-base sm:tracking-[0.24em]">
@@ -59,7 +59,7 @@ export function TopNav({ route, me }: { route: Route; me: User | null }) {
                   type="button"
                   onClick={it.onClick}
                   aria-current={it.active ? 'page' : undefined}
-                  className={`relative min-h-11 font-display text-[10px] uppercase tracking-[0.18em] transition-colors ${
+                  className={`relative min-h-11 min-w-11 font-display text-[10px] uppercase tracking-[0.18em] transition-colors ${
                     it.active ? 'text-gold' : 'text-silver hover:text-parchment'
                   }`}
                 >
@@ -81,7 +81,7 @@ export function TopNav({ route, me }: { route: Route; me: User | null }) {
                 type="button"
                 onClick={it.onClick}
                 aria-current={it.active ? 'page' : undefined}
-                className={`min-h-11 px-0.5 font-display text-[8px] uppercase tracking-[0.08em] transition-colors ${
+                className={`min-h-11 min-w-11 px-0.5 font-display text-[8px] uppercase tracking-[0.08em] transition-colors ${
                   it.active ? 'text-gold' : 'text-silver hover:text-parchment'
                 }`}
               >
@@ -141,7 +141,7 @@ function NodeSearch({ activeId }: { activeId: string | null }) {
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 120)}
           placeholder="Search nodes…"
-          className="w-24 bg-transparent font-display text-[11px] uppercase tracking-[0.14em] text-parchment placeholder:text-silver/50 focus:outline-none sm:w-32"
+          className="min-h-11 min-w-11 w-24 bg-transparent font-display text-[11px] uppercase tracking-[0.14em] text-parchment placeholder:text-silver/50 focus:outline-none sm:w-32"
           aria-label="Search stellar nodes"
         />
       </div>

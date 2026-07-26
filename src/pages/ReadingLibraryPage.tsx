@@ -18,6 +18,7 @@ import {
 import { canonicalReadingChecksum } from '../lib/readings/canonical'
 import {
   deriveFolioView,
+  folioAccessFromStatus,
   folioBoundaryState,
   type FolioView,
 } from '../lib/readings/folioView'
@@ -155,7 +156,7 @@ export function ReadingLibraryPage({
   me: User | null
   readingId: string | null
 }) {
-  const { entries, status, error } = useFolioState()
+  const { entries, status, error, httpStatus } = useFolioState()
   const [query, setQuery] = useState('')
   const [favoritesOnly, setFavoritesOnly] = useState(false)
 
@@ -180,8 +181,9 @@ export function ReadingLibraryPage({
       error,
       readingId,
       filtered: Boolean(query.trim()) || favoritesOnly,
+      access: folioAccessFromStatus(httpStatus),
     }),
-    [entries, error, favoritesOnly, query, readingId, status],
+    [entries, error, favoritesOnly, httpStatus, query, readingId, status],
   )
   const selected = view.status === 'ready' ? view.selected : null
   const checksum = useCanonicalChecksum(selected)
@@ -229,14 +231,15 @@ export function ReadingLibraryPage({
 
         <section className="mt-7" aria-label="Browse Folio controls">
           <div className="console-card flex flex-col gap-3 p-3 sm:flex-row sm:items-center">
-            <label className="flex min-w-0 flex-1 items-center gap-2 border-b border-gold/25 px-2 py-2 focus-within:border-interaction-focus">
+            <label className="flex min-h-11 min-w-0 flex-1 items-center gap-2 border-b border-gold/25 px-2 py-2 focus-within:border-interaction-focus">
               <Search className="h-4 w-4 shrink-0 text-silver" aria-hidden="true" />
               <span className="sr-only">Search canonical readings</span>
               <input
+                aria-label="Search canonical readings"
                 value={query}
                 onChange={(event) => startSearch(event.target.value)}
                 placeholder="Search titles, nodes, and stored reading text…"
-                className="w-full bg-transparent text-sm text-parchment placeholder:text-silver/45 focus:outline-none"
+                className="min-h-11 w-full bg-transparent text-sm text-parchment placeholder:text-silver/45 focus:outline-none"
               />
             </label>
             <button

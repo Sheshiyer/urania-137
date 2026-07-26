@@ -29,9 +29,15 @@ export interface FolioState {
   entries: FolioEntry[]
   status: FolioStatus
   error: string | null
+  httpStatus: number | null
 }
 
-let state: FolioState = { entries: [], status: 'idle', error: null }
+let state: FolioState = {
+  entries: [],
+  status: 'idle',
+  error: null,
+  httpStatus: null,
+}
 const listeners = new Set<() => void>()
 
 // Server-side filter inputs — changing them triggers a refetch; they are not
@@ -44,6 +50,16 @@ let searchTimer: ReturnType<typeof setTimeout> | null = null
 function setState(next: FolioState) {
   state = next
   listeners.forEach((l) => l())
+}
+
+class FolioRequestError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message)
+    this.name = 'FolioRequestError'
+  }
 }
 
 /** Minimal typed fetch against the frozen /api/folio contract + ApiError envelope. */
@@ -60,7 +76,7 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
     } catch {
       /* non-JSON error body — keep the status message */
     }
-    throw new Error(message)
+    throw new FolioRequestError(message, res.status)
   }
   return (await res.json()) as T
 }
@@ -93,14 +109,25 @@ export async function refreshFolio(): Promise<void> {
   if (query.trim()) params.set('search', query.trim())
   if (favoritesOnly) params.set('favorites', 'true')
   const qs = params.toString()
-  setState({ ...state, status: 'loading', error: null })
+  setState({ ...state, status: 'loading', error: null, httpStatus: null })
   try {
     const data = await api<FolioListResponse>(`/api/folio${qs ? `?${qs}` : ''}`)
     if (seq !== refreshSeq) return
-    setState({ ...state, entries: data.readings, status: 'ready', error: null })
+    setState({
+      ...state,
+      entries: data.readings,
+      status: 'ready',
+      error: null,
+      httpStatus: null,
+    })
   } catch (e) {
     if (seq !== refreshSeq) return
-    setState({ ...state, status: 'error', error: e instanceof Error ? e.message : 'Could not load the Folio.' })
+    setState({
+      ...state,
+      status: 'error',
+      error: e instanceof Error ? e.message : 'Could not load the Folio.',
+      httpStatus: e instanceof FolioRequestError ? e.status : null,
+    })
   }
 }
 

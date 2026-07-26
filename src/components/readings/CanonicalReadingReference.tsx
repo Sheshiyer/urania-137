@@ -144,8 +144,8 @@ export function CanonicalReadingReference({
         href={`#/readings/${encodeURIComponent(entry.id)}`}
         className={
           compact
-            ? 'mt-2 inline-flex cursor-pointer items-center gap-2 font-display text-[9px] uppercase tracking-[0.2em] text-gold underline decoration-gold/35 underline-offset-4 transition-colors hover:text-parchment focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold'
-            : 'inline-flex cursor-pointer items-center gap-2 justify-self-start rounded-full border border-gold/30 px-4 py-2 font-display text-[9px] uppercase tracking-[0.2em] text-gold transition-colors hover:border-gold hover:bg-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold sm:justify-self-end'
+            ? 'mt-2 inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 font-display text-[9px] uppercase tracking-[0.2em] text-gold underline decoration-gold/35 underline-offset-4 transition-colors hover:text-parchment focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold'
+            : 'inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 justify-self-start rounded-full border border-gold/30 px-4 py-2 font-display text-[9px] uppercase tracking-[0.2em] text-gold transition-colors hover:border-gold hover:bg-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold sm:justify-self-end'
         }
       >
         <Archive className="h-3.5 w-3.5" aria-hidden="true" />

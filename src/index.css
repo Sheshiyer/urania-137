@@ -182,17 +182,17 @@ body {
 
   /* Primary action — the gold-filled pill from the moodboard's button states. */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-gold bg-gold px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-void transition-[filter,opacity] duration-300 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full border border-gold bg-gold px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-void transition-[filter,opacity] duration-300 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   /* Secondary action — interaction color, never computed-evidence emerald. */
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-interaction-focus/60 px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-interaction-focus transition-colors duration-300 hover:border-interaction-active hover:bg-interaction-flow/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full border border-interaction-focus/60 px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-interaction-focus transition-colors duration-300 hover:border-interaction-active hover:bg-interaction-flow/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   /* Ghost action — quiet gold outline (CANCEL in the reference modal). */
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-gold/30 px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-silver transition-colors duration-300 hover:border-gold/60 hover:text-parchment disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full border border-gold/30 px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-silver transition-colors duration-300 hover:border-gold/60 hover:text-parchment disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   /* Glass pill — brand-kit utility: frosted chip surface for quick replies,

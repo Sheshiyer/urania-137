@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ReadingDTO } from '../api/contract'
-import { deriveFolioView } from './folioView'
+import { deriveFolioView, folioAccessFromStatus } from './folioView'
 
 const entry: ReadingDTO = {
   id: 'known',
@@ -14,6 +14,16 @@ const entry: ReadingDTO = {
 }
 
 describe('deriveFolioView', () => {
+  it.each([
+    [401, 'denied'],
+    [403, 'denied'],
+    [404, undefined],
+    [500, undefined],
+    [null, undefined],
+  ] as const)('maps HTTP status %s to the honest Folio access state', (status, expected) => {
+    expect(folioAccessFromStatus(status)).toBe(expected)
+  })
+
   it.each([
     [
       'loading',

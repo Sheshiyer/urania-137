@@ -231,8 +231,8 @@ export function InstrumentDialog({
             onClick={requestClose}
             className={
               centered
-                ? 'absolute right-4 top-4 shrink-0 rounded-full p-2 text-silver transition-colors motion-reduce:transition-none hover:bg-parchment/5 hover:text-parchment sm:right-5 sm:top-5'
-                : '-mr-1 shrink-0 rounded-full p-2 text-silver transition-colors motion-reduce:transition-none hover:bg-parchment/5 hover:text-parchment'
+                ? 'absolute right-4 top-4 inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full p-2 text-silver transition-colors motion-reduce:transition-none hover:bg-parchment/5 hover:text-parchment sm:right-5 sm:top-5'
+                : '-mr-1 inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full p-2 text-silver transition-colors motion-reduce:transition-none hover:bg-parchment/5 hover:text-parchment'
             }
             aria-label={closeLabel}
           >

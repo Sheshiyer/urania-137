@@ -47,7 +47,13 @@ describe('InstrumentDialog', () => {
       }),
     )
 
-    expect(openHtml).toMatch(/<button[^>]*type="button"[^>]*aria-label="Close Reading"/)
+    const closeButton = openHtml.match(
+      /<button[^>]*type="button"[^>]*aria-label="Close Reading"[^>]*>/,
+    )?.[0]
+
+    expect(closeButton).toBeTruthy()
+    expect(closeButton).toContain('min-h-11')
+    expect(closeButton).toContain('min-w-11')
     expect(closedHtml).toBe('')
   })
 })

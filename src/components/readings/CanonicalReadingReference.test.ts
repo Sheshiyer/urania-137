@@ -22,7 +22,13 @@ describe('CanonicalReadingReference', () => {
 
     expect(html).toContain('Canonical Folio record')
     expect(html).toContain('reading/one')
-    expect(html).toContain('href="#/readings/reading%2Fone"')
+    const openReading = html.match(
+      /<a[^>]*href="#\/readings\/reading%2Fone"[^>]*>/,
+    )?.[0]
+
+    expect(openReading).toBeTruthy()
+    expect(openReading).toContain('min-h-11')
+    expect(openReading).toContain('min-w-11')
     expect(html).toContain('Open reading')
   })
 })
