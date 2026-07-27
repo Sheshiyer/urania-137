@@ -12,7 +12,7 @@ function MediaItem({ item }: { item: ReadingMediaItem }) {
     <article className="border border-gold/15 bg-void/70 p-3" data-media-status={item.status}>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h4 className="text-xs text-parchment/90">{item.label}</h4>
-        <span className="font-display text-[8px] uppercase tracking-[0.15em] text-silver/60">
+        <span className="font-display text-xs uppercase tracking-[0.15em] text-silver/60">
           {STATUS_LABEL[item.status]}
         </span>
       </div>
@@ -34,13 +34,13 @@ function MediaItem({ item }: { item: ReadingMediaItem }) {
         />
       )}
 
-      <p className="mt-3 text-[10px] leading-relaxed text-silver/70">{item.textEquivalent}</p>
-      {item.detail && <p className="mt-1 text-[10px] leading-relaxed text-evidence-copy-unresolved/85">{item.detail}</p>}
-      <p className="mt-2 break-all font-mono text-[8px] text-silver/45">{item.sourcePath}</p>
+      <p className="mt-3 text-xs leading-relaxed text-silver/70">{item.textEquivalent}</p>
+      {item.detail && <p className="mt-1 text-xs leading-relaxed text-evidence-copy-unresolved/85">{item.detail}</p>}
+      <p className="mt-2 break-all font-mono text-xs text-silver/45">{item.sourcePath}</p>
 
       {item.status === 'available' && item.url && (
         <a
-          className="mt-3 inline-flex min-h-10 items-center border border-gold/25 px-3 font-display text-[8px] uppercase tracking-[0.16em] text-gold"
+          className="mt-3 inline-flex min-h-10 items-center border border-gold/25 px-3 font-display text-xs uppercase tracking-[0.16em] text-gold"
           href={item.url}
           download
           rel="noreferrer"

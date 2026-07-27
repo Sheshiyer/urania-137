@@ -1,4 +1,6 @@
 import { createElement } from 'react'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import type { ReadingDocument } from '../../lib/readings'
@@ -76,6 +78,15 @@ describe('ReadingCanvas', () => {
       expect(html).toContain('--reading-measure:70ch')
     },
   )
+
+  it('keeps structured composition fluid while prose owns the 70ch measure', () => {
+    const css = readFileSync(resolve(import.meta.dirname, '../../index.css'), 'utf8')
+    const block = css.match(/\.reading-canvas\s*\{[^}]+\}/)?.[0] ?? ''
+
+    expect(block).toContain('container-type: inline-size')
+    expect(block).toContain('container-name: reading')
+    expect(block).not.toContain('max-width: 70ch')
+  })
 
   it('names all three document layers without relying on color', () => {
     const html = renderToStaticMarkup(

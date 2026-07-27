@@ -13,10 +13,10 @@ export function HexagramTransition({ element }: { element: ReadingSpreadElement 
     >
       <div data-engine-artifact="hexagram-transition">
         {complete ? (
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3" aria-hidden="true">
-            <div className="border border-gold/25 p-3 text-center text-sm text-reading-ink">{primary?.value}</div>
-            <div className="text-reading-muted">→</div>
-            <div className="border border-gold/25 p-3 text-center text-sm text-reading-ink">{relating?.value}</div>
+          <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 sm:gap-3" aria-hidden="true">
+            <div className="min-w-0 [overflow-wrap:anywhere] border border-gold/25 p-2 text-center text-sm text-parchment sm:p-3">{primary?.value}</div>
+            <div className="text-metadata">→</div>
+            <div className="min-w-0 [overflow-wrap:anywhere] border border-gold/25 p-2 text-center text-sm text-parchment sm:p-3">{relating?.value}</div>
           </div>
         ) : (
           <p className="border border-amber-300/25 p-3 text-xs text-amber-100/80">

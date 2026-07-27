@@ -8,10 +8,41 @@ function degree(value: number | undefined): string {
 export function ReadingPositions({ element }: { element: ReadingPositionsElement }) {
   return (
     <ElementFrame element={element}>
-      <div className="overflow-x-auto">
+      <div className="grid gap-2 sm:hidden">
+        {element.positions.map((position) => (
+          <section
+            key={position.id}
+            className="min-w-0 border border-gold/15 bg-void/80 p-3"
+            aria-label={`${position.label} source position`}
+          >
+            <h4 className="[overflow-wrap:anywhere] font-serif text-sm text-parchment">
+              {position.label}
+            </h4>
+            <dl className="mt-3 grid min-w-0 grid-cols-2 gap-x-3 gap-y-2 text-xs">
+              {[
+                ['Sign', position.sign ?? '—'],
+                ['Degree', degree(position.degree)],
+                ['Longitude', degree(position.longitude)],
+                ['Motion', position.isRetrograde === undefined ? 'Not supplied' : position.isRetrograde ? 'Retrograde' : 'Direct'],
+              ].map(([label, value]) => (
+                <div key={label} className="min-w-0 border-l border-gold/20 pl-2">
+                  <dt className="[overflow-wrap:anywhere] font-display uppercase tracking-[0.08em] text-gold/80">{label}</dt>
+                  <dd className="mt-1 [overflow-wrap:anywhere] text-parchment/85">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        ))}
+      </div>
+      <div
+        className="hidden min-w-0 max-w-full overflow-x-auto sm:block"
+        role="region"
+        aria-label={`${element.title} position table`}
+        tabIndex={0}
+      >
         <table className="w-full min-w-[34rem] border-collapse text-left text-[11px]">
           <caption className="sr-only">{element.title}: source positions and retrograde state</caption>
-          <thead className="border-b border-gold/20 font-display text-[9px] uppercase tracking-[0.16em] text-gold/65">
+          <thead className="border-b border-gold/20 font-display text-xs uppercase tracking-[0.16em] text-gold/80">
             <tr>
               <th scope="col" className="px-2 py-2 font-normal">Point</th>
               <th scope="col" className="px-2 py-2 font-normal">Sign</th>

@@ -98,7 +98,7 @@ function ReadyFolio({
       />
 
       {selected && document ? (
-        <div className="grid min-w-0 gap-7 xl:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="grid min-w-0 gap-7 2xl:grid-cols-[minmax(0,1fr)_22rem]">
           <section className="min-w-0" aria-labelledby="opened-reading-title">
             <div className="mb-3 flex items-end justify-between gap-3">
               <div>
@@ -195,7 +195,7 @@ export function ReadingLibraryPage({
   }
 
   return (
-    <div className="min-h-full overflow-x-hidden bg-void">
+    <div className="min-h-full bg-void">
       <PageFrame />
       <main
         id="main-content"

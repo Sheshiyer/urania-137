@@ -32,19 +32,19 @@ export function SafeGeometryPreview({
     >
       <div data-engine-artifact="safe-geometry-preview">
         <div className="grid min-h-32 place-items-center border border-gold/25 bg-gold/5 p-5 text-center" aria-hidden="true">
-          <span className="font-serif text-lg text-reading-ink">Source-shaped artifact</span>
+          <span className="font-serif text-lg text-parchment">Source-shaped artifact</span>
         </div>
         <dl className="mt-4 grid gap-3 sm:grid-cols-2">
           {items.map((item) => (
             <div key={item.id} className="border border-gold/15 p-3">
-              <dt className="text-[9px] uppercase tracking-[0.12em] text-reading-muted">{item.label}</dt>
-              <dd className="mt-1 break-words text-xs text-reading-ink">{safeText(item.value)}</dd>
-              <dd className="mt-2 break-all text-[9px] text-reading-muted">{item.sourcePath}</dd>
+              <dt className="text-xs uppercase tracking-[0.12em] text-metadata">{item.label}</dt>
+              <dd className="mt-1 break-words text-xs text-parchment">{safeText(item.value)}</dd>
+              <dd className="mt-2 break-all text-xs text-metadata">{item.sourcePath}</dd>
             </div>
           ))}
         </dl>
         {element.kind === 'artifact' && element.steps.length > 0 && (
-          <ol className="mt-4 space-y-2 text-xs text-reading-ink">
+          <ol className="mt-4 space-y-2 text-xs text-parchment">
             {element.steps.map((step) => <li key={step.id}>{step.label} · {step.sourcePath}</li>)}
           </ol>
         )}

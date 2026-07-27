@@ -32,6 +32,22 @@ function lockDocumentScroll(): () => void {
 
 type FocusTarget = HTMLElement | SVGElement
 
+function resolveConnectedFocusTarget(target: FocusTarget | null | undefined) {
+  if (!target) return null
+  if (target.isConnected) return target
+
+  const graphEntry = target.getAttribute('data-graph-entry')
+  const ariaLabel = target.getAttribute('aria-label')
+  if (!graphEntry && !ariaLabel) return null
+
+  return [...document.querySelectorAll<FocusTarget>(
+    '[data-graph-entry], [role="button"][aria-label]',
+  )].find((candidate) => (
+    (graphEntry && candidate.getAttribute('data-graph-entry') === graphEntry)
+    || (ariaLabel && candidate.getAttribute('aria-label') === ariaLabel)
+  )) ?? null
+}
+
 export interface InstrumentDialogProps {
   open: boolean
   title: string
@@ -78,8 +94,14 @@ export function InstrumentDialog({
   const descriptionId = useId()
 
   const restoreFocus = useCallback(() => {
-    const target = returnFocusRef?.current ?? openerRef.current
-    if (target?.isConnected) target.focus({ preventScroll: true })
+    const focusResolvedTarget = () => {
+      const target =
+        resolveConnectedFocusTarget(returnFocusRef?.current)
+        ?? resolveConnectedFocusTarget(openerRef.current)
+      target?.focus({ preventScroll: true })
+    }
+    focusResolvedTarget()
+    window.setTimeout(focusResolvedTarget, 0)
   }, [returnFocusRef])
 
   const requestClose = useCallback(() => {

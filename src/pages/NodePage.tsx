@@ -45,6 +45,15 @@ function isNativeRunChild(
   )
 }
 
+function findChildEntry(child: Pick<SelemeneChild, 'id' | 'label'>) {
+  return [...document.querySelectorAll<HTMLElement | SVGElement>(
+    '[data-graph-entry], [role="button"][aria-label]',
+  )].find((element) => (
+    element.getAttribute('data-graph-entry') === child.id
+    || element.getAttribute('aria-label') === child.label
+  )) ?? null
+}
+
 /**
  * A parent-node page (`#/node/:id`): the node re-centers as a golden astrolabe
  * and its children orbit as labelled orbs. Clicking a child opens the
@@ -74,6 +83,7 @@ export function NodePage({
   const { generateReport, activeReport, saveError } = useReportGenerator()
   const engineStatus = useEngineStatus(node.id === 'engine')
   const initialChildOpenedRef = useRef<string | null>(null)
+  const childReturnFocusRef = useRef<HTMLElement | SVGElement | null>(null)
 
   const openChild = (childId: string) => {
     const child = node.children?.find((c) => c.id === childId)
@@ -86,6 +96,7 @@ export function NodePage({
       && nativeChild?.id === childId
     ) return
 
+    childReturnFocusRef.current = findChildEntry(child)
     setSelectedChild(child)
     setChatChild(null)
     setNativeChild(null)
@@ -99,14 +110,30 @@ export function NodePage({
   }
 
   useEffect(() => {
-    if (!initialChildId || initialChildOpenedRef.current === initialChildId) return
+    if (!initialChildId) {
+      initialChildOpenedRef.current = null
+      setSelectedChild(null)
+      setModalView(null)
+      setChatChild(null)
+      setNativeChild(null)
+      setResultChildId(null)
+      lastSubmitRef.current = null
+      return
+    }
+    if (initialChildOpenedRef.current === initialChildId) return
     initialChildOpenedRef.current = initialChildId
     openChild(initialChildId)
   }, [initialChildId])
 
   const closeModal = () => {
+    const deepLinkedChild = selectedChild && initialChildId === selectedChild.id
+      ? { id: selectedChild.id, label: selectedChild.label }
+      : null
     setModalView(null)
     setSelectedChild(null)
+    if (deepLinkedChild) {
+      navigate(`/node/${node.id}`)
+    }
   }
 
   const closeChat = () => {
@@ -203,7 +230,10 @@ export function NodePage({
         title={selectedChild?.label ?? node.label}
         description={selectedChild ? presentChild(selectedChild, node.label).purpose : node.description}
         onClose={closeModal}
+        returnFocusRef={childReturnFocusRef}
         dataNodeId={selectedChild?.id}
+        className={node.id === 'engine' ? 'sm:!max-w-3xl' : ''}
+        bodyClassName={node.id === 'engine' ? 'flex-1 overflow-y-auto' : ''}
       >
         {selectedChild?.id === 'noesis-mirror' ? (
           <MirrorPanel />

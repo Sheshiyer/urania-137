@@ -31,20 +31,19 @@ const FAMILY_LABEL: Record<EngineVisualFamily, string> = {
   capture: 'Capture',
 }
 
-const WORKFLOW_GRID: Record<string, string> = {
-  'birth-blueprint': 'lg:grid-cols-2',
-  'creative-expression': 'sm:grid-cols-2 xl:grid-cols-3',
-  'daily-practice': 'grid-cols-1',
-  'decision-support': 'lg:grid-cols-2',
-  'full-spectrum': 'md:grid-cols-2 xl:grid-cols-3',
-  'self-inquiry': 'grid-cols-1',
-}
+const SINGLE_COLUMN_WORKFLOWS = new Set(['daily-practice', 'self-inquiry'])
 
 function titleCase(value: string): string {
   return value
     .split('-')
     .map((part) => part ? `${part[0].toUpperCase()}${part.slice(1)}` : part)
     .join(' ')
+}
+
+function humanizeIdentifier(value: string): string {
+  return value
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/[-_]+/g, ' ')
 }
 
 function hasOwnContract(
@@ -70,12 +69,11 @@ function ElementRegion({
 }) {
   return (
     <div
-      className="min-w-0 max-w-full overflow-x-auto"
+      className="min-w-0 max-w-full"
       role="region"
       aria-label={`${item.element.title} source-shaped element`}
       data-composition-owner={owner}
       data-source-order={item.sourceOrder}
-      tabIndex={0}
     >
       <ReadingElementView element={item.element} />
     </div>
@@ -132,20 +130,20 @@ function EngineComposition({
     >
       <header className="mb-4 flex min-w-0 flex-wrap items-end justify-between gap-3 px-1">
         <div className="min-w-0">
-          <p className="font-display text-[9px] uppercase tracking-[0.22em] text-reading-muted">
+          <p className="font-display text-xs uppercase tracking-[0.14em] text-reading-muted">
             {FAMILY_LABEL[contract.family]} · Engine composition
           </p>
           <p className="mt-1 break-words font-serif text-lg leading-tight text-reading-ink">
             {titleCase(engineId)}
           </p>
-          <p className="mt-1 text-[10px] uppercase tracking-[0.14em] text-reading-muted">
-            {contract.atlasComponents.primary}
+          <p className="mt-1 [overflow-wrap:anywhere] text-xs uppercase tracking-[0.1em] text-reading-muted">
+            {humanizeIdentifier(contract.atlasComponents.primary)}
             {contract.atlasComponents.secondary
-              ? ` · ${contract.atlasComponents.secondary}`
+              ? ` · ${humanizeIdentifier(contract.atlasComponents.secondary)}`
               : ''}
           </p>
         </div>
-        <div className="flex flex-wrap justify-end gap-2 text-[9px] uppercase tracking-[0.14em]">
+        <div className="flex flex-wrap justify-end gap-2 text-xs uppercase tracking-[0.1em]">
           <span className="border border-reading-rule/35 px-2 py-1 text-reading-muted">
             {contract.status}
           </span>
@@ -177,7 +175,7 @@ function EngineComposition({
         items={supporting}
         owner={owner}
         slot="supporting"
-        className="mt-4 sm:grid-cols-2"
+        className="mt-4 grid-cols-1"
       />
     </section>
   )
@@ -193,7 +191,7 @@ function UnclassifiedComposition({ items }: { items: IndexedElement[] }) {
       data-reading-composition="unclassified"
     >
       <header className="mb-4 px-1">
-        <p className="font-display text-[9px] uppercase tracking-[0.2em] text-reading-muted">
+        <p className="font-display text-xs uppercase tracking-[0.14em] text-reading-muted">
           Source-shaped fallback
         </p>
         <p className="mt-1 font-serif text-base text-reading-ink">
@@ -204,7 +202,7 @@ function UnclassifiedComposition({ items }: { items: IndexedElement[] }) {
         items={items}
         owner="unclassified"
         slot="unclassified"
-        className="sm:grid-cols-2"
+        className="reading-composition-grid"
       />
     </section>
   )
@@ -284,17 +282,17 @@ function WorkflowComposition({
     >
       <header className="flex min-w-0 flex-wrap items-end justify-between gap-3 px-1">
         <div className="min-w-0">
-          <p className="font-display text-[9px] uppercase tracking-[0.22em] text-reading-muted">
+          <p className="font-display text-xs uppercase tracking-[0.14em] text-reading-muted">
             Workflow composition · {contract.status}
           </p>
           <p className="mt-1 break-words font-serif text-xl leading-tight text-reading-ink">
             {contract.surface}
           </p>
-          <p className="mt-1 text-[10px] uppercase tracking-[0.14em] text-reading-muted">
-            {contract.atlasComponents.primary} · {contract.name}
+          <p className="mt-1 [overflow-wrap:anywhere] text-xs uppercase tracking-[0.1em] text-reading-muted">
+            {humanizeIdentifier(contract.atlasComponents.primary)} · {contract.name}
           </p>
         </div>
-        <p className="max-w-sm text-[10px] leading-relaxed text-reading-muted">
+        <p className="max-w-sm text-xs leading-relaxed text-reading-muted">
           {contract.nonVisual.label}
         </p>
       </header>
@@ -307,7 +305,12 @@ function WorkflowComposition({
       />
 
       <div
-        className={`grid min-w-0 gap-5 ${WORKFLOW_GRID[workflowId] ?? 'grid-cols-1'}`}
+        className={[
+          'reading-composition-grid grid min-w-0 gap-5',
+          SINGLE_COLUMN_WORKFLOWS.has(workflowId)
+            ? 'reading-composition-grid--single'
+            : '',
+        ].join(' ')}
         aria-label={`${contract.name} contributing Engine compositions`}
       >
         {engines.map((group) => (

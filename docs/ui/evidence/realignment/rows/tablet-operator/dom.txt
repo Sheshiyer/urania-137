@@ -1,0 +1,159 @@
+URANIA 137
+NOESIS
+MAP
+FOLIO
+BEGIN
+SETTINGS
+OPERATOR
+READER A
+LOGOUT
+GRAPH
+LIST
+01
+LIVE STATUS
+LIVE OPERATOR EVIDENCE
+Inspect endpoint-backed engine and infrastructure availability.
+operator instrument of Engine Status
+ENTER
+02
+SANKALPA DESKTOP
+CONSENT-GATED DESKTOP INSTRUMENT
+Review where Sankalpa practices continue outside this web surface.
+information instrument of Engine Status
+ENTER
+03
+PANCHANGA
+RUNNABLE ENGINE CALCULATION
+Calculate with the live panchanga engine.
+engine capability of Engine Status
+ENTER
+04
+VEDIC CLOCK
+RUNNABLE ENGINE CALCULATION
+Calculate with the live vedic-clock engine.
+engine capability of Engine Status
+ENTER
+05
+I CHING
+RUNNABLE ENGINE CALCULATION
+Calculate with the live i-ching engine.
+engine capability of Engine Status
+ENTER
+06
+TAROT
+RUNNABLE ENGINE CALCULATION
+Calculate with the live tarot engine.
+engine capability of Engine Status
+ENTER
+07
+TRANSITS
+RUNNABLE ENGINE CALCULATION
+Calculate with the live transits engine.
+engine capability of Engine Status
+ENTER
+08
+BIORHYTHM
+RUNNABLE ENGINE CALCULATION
+Calculate with the live biorhythm engine.
+engine capability of Engine Status
+ENTER
+09
+HUMAN DESIGN
+RUNNABLE ENGINE CALCULATION
+Calculate with the live human-design engine.
+engine capability of Engine Status
+ENTER
+10
+ENNEAGRAM
+RUNNABLE ENGINE CALCULATION
+Calculate with the live enneagram engine.
+engine capability of Engine Status
+ENTER
+11
+GENE KEYS
+RUNNABLE ENGINE CALCULATION
+Calculate with the live gene-keys engine.
+engine capability of Engine Status
+ENTER
+12
+SACRED GEOMETRY
+RUNNABLE ENGINE CALCULATION
+Calculate with the live sacred-geometry engine.
+engine capability of Engine Status
+ENTER
+
+Home
+ENGINE STATUS
+
+Engine Status
+
+THE MACHINE
+
+Diagnostic view of the consciousness engines and workflows.
+
+DOORWAYS
+12
+RUNNABLE
+10
+CONSTELLATION
+V0.5.0 · 4C25826
+
+✦ URANIA 137 ✦
+
+LIVE STATUS
+
+Inspect endpoint-backed engine and infrastructure availability.
+
+OPERATOR EVIDENCE
+
+Selemene engine status
+AVAILABILITY
+ok
+VERSION
+fixture-1.37
+UPTIME
+13h 42m
+LOADED
+18 engines · 6 workflows
+INFRASTRUCTURE
+ready
+REDIS
+ready
+POSTGRES
+ready
+ORCHESTRATOR
+ready
+BRIDGE
+ready
+ENGINE ROSTER
+18 engines
+biofield
+biofield-capture
+biorhythm
+enneagram
+face-reading
+gene-keys
+human-design
+i-ching
+nadabrahman
+numerology
+7ms
+
+fixture evidence
+
+panchanga
+13ms
+
+fixture evidence
+
+raaga
+sacred-geometry
+sigil-forge
+tarot
+transits
+vedic-clock
+vimshottari
+
+Endpoint evidence · ready
+
+Reader A

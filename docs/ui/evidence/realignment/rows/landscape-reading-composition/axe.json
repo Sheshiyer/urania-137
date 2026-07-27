@@ -1,0 +1,17 @@
+{
+  "url": "#/readings/reading-full-spectrum",
+  "violations": [
+    {
+      "id": "landmark-unique",
+      "impact": "moderate",
+      "description": "Ensure landmarks are unique",
+      "nodes": 4
+    },
+    {
+      "id": "region",
+      "impact": "moderate",
+      "description": "Ensure all page content is contained by landmarks",
+      "nodes": 1
+    }
+  ]
+}

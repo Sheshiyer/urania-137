@@ -10,9 +10,9 @@ export function ReadingNumberCodes({ element }: { element: ReadingNumberCodesEle
       >
         {element.codes.map((code) => (
           <li key={code.id} className="border border-gold/15 bg-void/45 p-3">
-            <div className="flex items-start justify-between gap-3">
-              <span className="font-display text-xs uppercase tracking-[0.16em] text-gold">{code.label}</span>
-              {code.isMaster && <span className="text-xs uppercase tracking-[0.14em] text-evidence-copy-witness">Master source value</span>}
+            <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
+              <span className="min-w-0 [overflow-wrap:anywhere] font-display text-xs uppercase tracking-[0.16em] text-gold">{code.label}</span>
+              {code.isMaster && <span className="min-w-0 [overflow-wrap:anywhere] text-xs uppercase tracking-[0.1em] text-evidence-copy-witness">Master source value</span>}
             </div>
             <p className="mt-2 font-serif text-3xl tabular-nums text-parchment">{code.value}</p>
             {code.reduction.length > 0 && (

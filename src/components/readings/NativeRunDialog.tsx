@@ -112,7 +112,7 @@ function NativeRunBody({
             className="border-l border-emerald/45 bg-emerald/[0.06] px-4 py-3"
             aria-label="Saved subject profile"
           >
-            <p className="font-display text-[9px] uppercase tracking-[0.22em] text-emerald">
+            <p className="font-display text-xs uppercase tracking-[0.22em] text-emerald">
               Saved pattern
             </p>
             <p className="mt-2 font-serif text-lg text-parchment">{profile.name}</p>
@@ -123,7 +123,7 @@ function NativeRunBody({
 
           {run.kind === 'daily' && (
             <section className="border-t border-gold/20 pt-4" aria-label="Daily reading location">
-              <p className="font-display text-[9px] uppercase tracking-[0.22em] text-gold">
+              <p className="font-display text-xs uppercase tracking-[0.22em] text-gold">
                 Place and hour
               </p>
               <p className="mt-2 text-sm text-parchment">{daily.location.display}</p>
@@ -133,7 +133,7 @@ function NativeRunBody({
 
           {needsIntention && (
             <label className="block space-y-2">
-              <span className="font-display text-[9px] uppercase tracking-[0.22em] text-gold">
+              <span className="font-display text-xs uppercase tracking-[0.22em] text-gold">
                 Intention required by this Engine
               </span>
               <textarea
@@ -149,7 +149,7 @@ function NativeRunBody({
             type="button"
             onClick={execute}
             disabled={!ready || busy}
-            className="min-h-11 w-full border border-gold/45 bg-gold/10 px-4 py-3 font-display text-[10px] uppercase tracking-[0.22em] text-gold transition-colors hover:bg-gold/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold disabled:cursor-not-allowed disabled:opacity-45"
+            className="min-h-11 w-full border border-gold/45 bg-gold/10 px-4 py-3 font-display text-xs uppercase tracking-[0.22em] text-gold transition-colors hover:bg-gold/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold disabled:cursor-not-allowed disabled:opacity-45"
           >
             {busy
               ? 'Computing…'
@@ -230,7 +230,7 @@ export function NativeRunDialog({
       dataNodeId={child.id}
     >
       {loading && (
-        <p role="status" className="py-8 text-center font-display text-[9px] uppercase tracking-[0.22em] text-gold">
+        <p role="status" className="py-8 text-center font-display text-xs uppercase tracking-[0.22em] text-gold">
           Recalling your saved pattern…
         </p>
       )}

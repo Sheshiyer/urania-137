@@ -11,7 +11,7 @@ export function ReadingCanvas({
 }) {
   return (
     <div
-      className="reading-canvas mx-auto w-full min-w-0 overflow-hidden"
+      className="reading-canvas mx-auto w-full min-w-0"
       data-reading-density={density}
       style={{ '--reading-measure': '70ch' } as CSSProperties}
     >

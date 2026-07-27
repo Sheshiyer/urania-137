@@ -278,10 +278,10 @@ export function ReadingSourcePayload({ payload }: { payload: unknown }) {
       className="min-w-0 border-y border-gold/20 py-3"
       data-reading-source="privacy-filtered"
     >
-      <summary className="min-h-11 cursor-pointer py-2 font-display text-[9px] uppercase tracking-[0.2em] text-gold marker:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold">
+      <summary className="min-h-11 cursor-pointer py-2 font-display text-xs uppercase tracking-[0.2em] text-gold marker:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold">
         Technical source
       </summary>
-      <p className="mb-3 max-w-2xl text-[10px] leading-relaxed text-silver/65">
+      <p className="mb-3 max-w-2xl text-xs leading-relaxed text-silver/65">
         This collapsed, privacy-filtered record shows the local engine response used by the visual elements. It is provenance, not an additional interpretation.
       </p>
       <div
@@ -290,7 +290,7 @@ export function ReadingSourcePayload({ payload }: { payload: unknown }) {
         aria-label="Privacy-filtered technical source"
         tabIndex={0}
       >
-        <pre className="max-h-[34rem] min-w-max border border-gold/10 bg-void/80 p-3 font-mono text-[10px] leading-relaxed text-parchment/75">
+        <pre className="max-h-[34rem] w-full max-w-full whitespace-pre-wrap break-all border border-gold/10 bg-void/80 p-3 font-mono text-xs leading-relaxed text-parchment/75">
           <code>{privacySafeSourceJson(payload)}</code>
         </pre>
       </div>

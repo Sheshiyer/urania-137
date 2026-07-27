@@ -33,7 +33,7 @@ export function ReadingPreview({ document }: { document: ReadingDocument }) {
         aria-labelledby={`reading-preview-title-${document.id}`}
       >
         <header className="border-b border-reading-rule/35 pb-4">
-          <p className="font-display text-[9px] uppercase tracking-[0.2em] text-reading-muted">
+          <p className="font-display text-xs uppercase tracking-[0.2em] text-reading-muted">
             Reading preview · {document.nodeLabel}
           </p>
           <h1
@@ -53,7 +53,7 @@ export function ReadingPreview({ document }: { document: ReadingDocument }) {
 
         {excerpt && (
           <section aria-label="Reading excerpt" className="max-w-[var(--reading-measure)]">
-            <p className="font-display text-[9px] uppercase tracking-[0.2em] text-reading-muted">
+            <p className="font-display text-xs uppercase tracking-[0.2em] text-reading-muted">
               {document.sections[0]?.title ?? 'Orientation'}
             </p>
             <p className="mt-2 break-words text-base leading-7 text-reading-ink">{excerpt}</p>
@@ -65,7 +65,7 @@ export function ReadingPreview({ document }: { document: ReadingDocument }) {
             aria-label="Source-only reading orientation"
             className="max-w-[var(--reading-measure)] border-l border-reading-rule/40 py-1 pl-4"
           >
-            <p className="font-display text-[9px] uppercase tracking-[0.2em] text-reading-muted">
+            <p className="font-display text-xs uppercase tracking-[0.2em] text-reading-muted">
               Source record received
             </p>
             <p className="mt-2 text-sm leading-6 text-reading-muted">
@@ -75,20 +75,20 @@ export function ReadingPreview({ document }: { document: ReadingDocument }) {
         )}
 
         <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-reading-rule/35 pt-4">
-          <span className="text-[10px] leading-relaxed text-reading-muted">
+          <span className="text-xs leading-relaxed text-reading-muted">
             The full Reading, Evidence, and Source layers remain in the canonical document.
           </span>
           {canonicalHref ? (
             <a
               href={canonicalHref}
-              className="inline-flex min-h-11 items-center border border-reading-rule/55 px-4 py-2 font-display text-[9px] uppercase tracking-[0.2em] text-reading-ink underline decoration-reading-rule/60 underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-reading-rule"
+              className="inline-flex min-h-11 items-center border border-reading-rule/55 px-4 py-2 font-display text-xs uppercase tracking-[0.2em] text-reading-ink underline decoration-reading-rule/60 underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-reading-rule"
             >
               Open reading
             </a>
           ) : (
             <span
               aria-disabled="true"
-              className="inline-flex min-h-11 items-center border border-reading-rule/35 px-4 py-2 font-display text-[9px] uppercase tracking-[0.2em] text-reading-muted"
+              className="inline-flex min-h-11 items-center border border-reading-rule/35 px-4 py-2 font-display text-xs uppercase tracking-[0.2em] text-reading-muted"
             >
               Open reading · save pending
             </span>

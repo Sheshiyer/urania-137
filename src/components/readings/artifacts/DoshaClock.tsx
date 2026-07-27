@@ -20,7 +20,7 @@ export function DoshaClock({
           <dl className="mt-3 grid gap-2 sm:grid-cols-2">
             {element.facts.map((fact) => (
               <div key={fact.id} className="border border-gold/15 p-3">
-                <dt className="text-[9px] uppercase tracking-[0.12em] text-metadata">{fact.label}</dt>
+                <dt className="text-xs uppercase tracking-[0.12em] text-metadata">{fact.label}</dt>
                 <dd className="mt-1 text-sm text-parchment/90">{fact.value}</dd>
               </div>
             ))}
@@ -28,7 +28,7 @@ export function DoshaClock({
         ) : (
           <table className="mt-3 w-full border-collapse text-left text-xs text-parchment/85">
             <caption className="sr-only">Explicit Vedic clock transitions</caption>
-            <thead className="text-[9px] uppercase tracking-[0.12em] text-metadata">
+            <thead className="text-xs uppercase tracking-[0.12em] text-metadata">
               <tr><th scope="col" className="border-b border-gold/15 py-2 pr-3">Time</th><th scope="col" className="border-b border-gold/15 py-2">Transition</th></tr>
             </thead>
             <tbody>

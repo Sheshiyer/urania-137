@@ -39,7 +39,7 @@ const TREATMENT: Record<ReadingRunState, string> = {
 export function RunStateBadge({ state }: { state: ReadingRunState }) {
   return (
     <span
-      className={`inline-flex min-h-6 items-center rounded-full border px-2 py-0.5 font-display text-[8px] uppercase tracking-[0.14em] ${TREATMENT[state]}`}
+      className={`inline-flex min-h-6 items-center rounded-full border px-2 py-0.5 font-display text-xs uppercase tracking-[0.14em] ${TREATMENT[state]}`}
       data-run-state={state}
     >
       {LABELS[state]}

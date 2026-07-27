@@ -14,7 +14,7 @@ export function TimingSpine({ moments }: { moments: ReadingMoment[] }) {
             <span className="absolute -left-[1.52rem] top-1 h-2 w-2 rounded-full border border-gold bg-void" aria-hidden="true" />
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <h3 className="text-xs text-parchment/90">{moment.label}</h3>
-              <span className="text-[8px] uppercase tracking-[0.16em] text-gold/55">{moment.status}</span>
+              <span className="text-xs uppercase tracking-[0.16em] text-gold/55">{moment.status}</span>
             </div>
             {moment.detail && <p className="mt-1 text-[11px] leading-relaxed text-silver/70">{moment.detail}</p>}
           </li>

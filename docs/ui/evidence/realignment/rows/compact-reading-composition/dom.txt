@@ -1,0 +1,776 @@
+URANIA 137
+NOESIS
+
+FOLIO · FALLBACK & RECOVERY
+
+Browse Folio
+
+Begin through conversation. Return here to browse, verify, or recover the exact canonical Reading.
+
+FOLIO MAP
+BEGIN IN CHAT
+Search canonical readings
+FAVORITES
+
+CANONICAL RECORDS
+
+FOLIO MAP
+
+Chat remains the primary doorway. Map and list reopen the same canonical Reading.
+
+READING LIST
+
+5 visible
+01
+A LONG SYNTHETIC READING
+Noesis Reading · 13 Jan 2026
+02
+NUMEROLOGY · SYNTHETIC
+Birth Witness · 13 Jan 2026
+03
+DAILY PRACTICE · SYNTHETIC
+Sky Weather · 13 Jan 2026
+04
+CAPTURE REQUIRED · SYNTHETIC
+Engine Status · 13 Jan 2026
+05
+FULL SPECTRUM · SYNTHETIC
+Noesis Reading · 13 Jan 2026
+Node family sets angular sector; creation time sets radial distance. The adjacent list contains every visible Reading, including any records beyond the plotted twenty-four.
+
+CANONICAL RECORD
+
+READING
+BROWSE FOLIO
+01 · READING
+Interpretation and source-shaped elements
+02 · EVIDENCE
+Systems, provenance, and confidence
+03 · SOURCE
+Collapsed, privacy-filtered record
+NOESIS READING
+13 JAN 2026, 13:27
+Full Spectrum · synthetic
+
+The Reading layer holds source-shaped orientation and narrative. Supporting provenance follows in Evidence; the privacy-filtered record remains collapsed in Source.
+
+READING FIELD
+
+Source-shaped elements
+
+Each element is derived from explicit engine structure; the source remains available below.
+
+WORKFLOW COMPOSITION · PROPOSED
+
+System Atlas
+
+FULL SPECTRUM CONSTELLATION · FULL SPECTRUM
+
+Grouped engine index with explicit present, missing, and error states.
+
+FULL-SPECTRUM
+
+OBSERVED
+WORKFLOW SYSTEM RUN LEDGER
+
+engine_outputs
+
+DECLARED SYSTEMS
+numerology
+human-design
+vimshottari
+panchanga
+vedic-clock
+biorhythm
+gene-keys
+biofield
+face-reading
+transits
+nadabrahman
+tarot
+i-ching
+enneagram
+sacred-geometry
+sigil-forge
+raaga
+RETURNED SYSTEMS
+numerology
+human-design
+vimshottari
+panchanga
+vedic-clock
+biorhythm
+gene-keys
+biofield
+face-reading
+transits
+nadabrahman
+tarot
+i-ching
+enneagram
+sacred-geometry
+sigil-forge
+raaga
+
+FOUNDATION · ENGINE COMPOSITION
+
+Numerology
+
+NUMBER REDUCTION MAP · NUMEROLOGY FACT GRID
+
+IMPLEMENTED
+OBSERVED DATA
+
+NUMEROLOGY
+
+DERIVED
+NUMBER CODES
+
+engine_outputs.numerology.result
+
+The large numeral is the computed code; the smaller trail preserves its source reduction.
+
+LIFE PATH
+
+7
+
+34 → 7
+
+Inquiry and discernment.
+
+EXPRESSION
+MASTER SOURCE VALUE
+
+11
+
+38 → 11
+
+Source-authored synthesis.
+
+FOUNDATION · ENGINE COMPOSITION
+
+Human Design
+
+BODYGRAPH MAP · ACTIVATION TABLE
+
+PARTIAL
+OBSERVED DATA
+
+HUMAN-DESIGN
+
+DERIVED
+HUMAN DESIGN PROFILE
+
+engine_outputs.human-design.result
+
+TYPE
+Generator
+AUTHORITY
+Sacral
+PROFILE
+3/5
+DEFINITION
+Split
+
+HUMAN-DESIGN
+
+DERIVED
+DEFINED CENTERS
+
+engine_outputs.human-design.result.defined_centers
+
+DEFINED CENTERS
+Sacral
+Root
+
+HUMAN-DESIGN
+
+DERIVED
+ACTIVE CHANNELS
+
+engine_outputs.human-design.result.active_channels
+
+Each line connects the two named endpoints; the center label is the exact source relation.
+
+Gate 43
+ACTIVE CHANNEL
+Gate 23
+43-23
+Gate 42
+ACTIVE CHANNEL
+Gate 53
+42-53
+
+TIME · ENGINE COMPOSITION
+
+Vimshottari
+
+DASHA TIMELINE · PERIOD DETAIL PANEL
+
+IMPLEMENTED
+OBSERVED DATA
+
+VIMSHOTTARI
+
+DERIVED
+CURRENT NESTED PERIODS
+
+engine_outputs.vimshottari.result.current_period
+
+Explicit period nesting is shown in source order; the canonical start and end boundaries remain printed.
+
+Mahadasha · Rahu
+
+2008-09-09T09:39:58Z → 2026-09-09T21:39:58Z
+
+Antardasha · Mars
+
+2025-08-22T09:21:58Z → 2026-09-09T21:39:58Z
+
+Canonical Vimshottari timeline
+Period	Planet / value	Start	End
+Mahadasha	Rahu	2008-09-09T09:39:58Z	2026-09-09T21:39:58Z
+Antardasha	Mars	2025-08-22T09:21:58Z	2026-09-09T21:39:58Z
+
+VIMSHOTTARI
+
+DERIVED
+EXPLICIT PERIOD TRANSITIONS
+
+engine_outputs.vimshottari.result.upcoming_transitions
+
+Vertical order follows the explicit source sequence; dates are printed beside each step.
+
+1
+Antardasha
+Mars → Rahu
+
+2026-09-09T21:39:58Z
+
+45 source days away
+
+TIME · ENGINE COMPOSITION
+
+Panchanga
+
+PANCHANGA FACT GRID · FIELD FACT GRID
+
+IMPLEMENTED
+OBSERVED DATA
+
+PANCHANGA
+
+DERIVED
+THE FIVE LIMBS
+
+engine_outputs.panchanga.result
+
+Five supplied limb memberships occupy five equal placements; no transition or rank is inferred.
+
+Vara
+Ravivara
+Tithi
+Shashthi
+Nakshatra
+Uttara Phalguni
+Yoga
+Parigha
+Karana
+Kaulava
+Five Panchanga limb values
+Limb	Source value
+Vara	Ravivara
+Tithi	Shashthi
+Nakshatra	Uttara Phalguni
+Yoga	Parigha
+Karana	Kaulava
+
+PANCHANGA
+
+DERIVED
+ASTRONOMICAL SOURCE FACTS
+
+engine_outputs.panchanga.result
+
+SOLAR LONGITUDE
+92.91
+Degrees
+
+TIME · ENGINE COMPOSITION
+
+Vedic Clock
+
+FIELD FACT GRID · TRANSITION SEQUENCE
+
+IMPLEMENTED
+OBSERVED DATA
+
+The primary source layer was not returned. Available supporting elements remain visible without inferred replacement.
+
+VEDIC-CLOCK
+
+OBSERVED
+STRUCTURED OUTPUT INCOMPLETE
+
+engine_outputs.vedic-clock.result
+
+WARNING
+Known fields were absent from this engine response. The source remains available below.
+
+MOTION · ENGINE COMPOSITION
+
+Biorhythm
+
+BIORHYTHM CYCLE BANDS · FORECAST SEQUENCE
+
+PARTIAL
+OBSERVED DATA
+
+The primary source layer was not returned. Available supporting elements remain visible without inferred replacement.
+
+BIORHYTHM
+
+OBSERVED
+STRUCTURED OUTPUT INCOMPLETE
+
+engine_outputs.biorhythm.result
+
+WARNING
+Known fields were absent from this engine response. The source remains available below.
+
+FOUNDATION · ENGINE COMPOSITION
+
+Gene Keys
+
+GENE KEY SEQUENCE · FREQUENCY TRIAD CARDS
+
+PARTIAL
+OBSERVED DATA
+
+GENE-KEYS
+
+DERIVED
+ACTIVATION SEQUENCE
+
+engine_outputs.gene-keys.result.activation_sequence
+
+The four supplied activation positions form a cross without adding connections, rank, or interpretation.
+
+Life's work
+4 · 49
+Evolution
+23 · 43
+Radiance
+4 · 23
+Purpose
+49 · 43
+Life's work: 4 · 49
+Evolution: 23 · 43
+Radiance: 4 · 23
+Purpose: 49 · 43
+
+CAPTURE · ENGINE COMPOSITION
+
+Biofield
+
+CHAKRA FIELD MAP · BIOFIELD METRIC BANDS
+
+CAPTURE-GATED
+OBSERVED DATA
+
+BIOFIELD
+
+UNVERIFIED
+BIOFIELD CAPTURE SUMMARY
+
+engine_outputs.biofield.result
+
+Only verified persisted capture observations are projected; consent, quality, and source paths remain written.
+
+SOURCE ANALYSIS RECORDED
+
+Capture evidence required
+
+The source marks these observations as mock data. Values are preserved as unverified source evidence.
+
+BIOFIELD
+
+OBSERVED
+MOCK SOURCE DATA
+
+engine_outputs.biofield.result
+
+UNRESOLVED
+This engine response identifies itself as mock data. It is preserved as source evidence and is not presented as verified computation.
+
+CAPTURE · ENGINE COMPOSITION
+
+Face Reading
+
+PHYSIOGNOMY OBSERVATION MAP · ELEMENTAL BALANCE BANDS
+
+CAPTURE-GATED
+OBSERVED DATA
+
+FACE-READING
+
+OBSERVED
+FACE-READING SOURCE SUMMARY
+
+engine_outputs.face-reading.result
+
+Only verified persisted capture observations are projected; consent, quality, and source paths remain written.
+
+CAPTURE REQUIRED
+
+Capture evidence required
+
+No capture or analysis fields were supplied. This engine requires consented acquisition in its capture-capable surface.
+
+MOTION · ENGINE COMPOSITION
+
+Transits
+
+TRANSIT ASPECT MAP · PLANET POSITION TABLE
+
+IMPLEMENTED
+OBSERVED DATA
+
+TRANSITS
+
+DERIVED
+TRANSIT-TO-NATAL ASPECTS
+
+engine_outputs.transits.result.aspects
+
+Each line connects the two named endpoints; the center label is the exact source relation.
+
+Mercury
+SQUARE
+1.25° orb · Applying
+Moon
+Dynamic
+
+TRANSITS
+
+DERIVED
+TRANSIT CONTEXT
+
+engine_outputs.transits.result
+
+PERIOD QUALITY
+Mixed
+
+TRANSITS
+
+DERIVED
+NATAL POSITIONS
+
+engine_outputs.transits.result.natal_positions
+
+Moon
+SIGN
+Virgo
+DEGREE
+1.38°
+LONGITUDE
+151.38°
+MOTION
+Direct
+
+TRANSITS
+
+DERIVED
+TRANSIT POSITIONS
+
+engine_outputs.transits.result.transit_positions
+
+Mercury
+SIGN
+Gemini
+DEGREE
+23.22°
+LONGITUDE
+83.22°
+MOTION
+Retrograde
+
+TIME · ENGINE COMPOSITION
+
+Nadabrahman
+
+RAGA RECOMMENDATION LIST · TIME RECOMMENDATION CARD
+
+IMPLEMENTED
+OBSERVED DATA
+
+The primary source layer was not returned. Available supporting elements remain visible without inferred replacement.
+
+NADABRAHMAN
+
+OBSERVED
+STRUCTURED OUTPUT INCOMPLETE
+
+engine_outputs.nadabrahman.result
+
+WARNING
+Known fields were absent from this engine response. The source remains available below.
+
+SYMBOL · ENGINE COMPOSITION
+
+Tarot
+
+TAROT SPREAD · CARD MEANING PANEL
+
+IMPLEMENTED
+OBSERVED DATA
+
+The primary source layer was not returned. Available supporting elements remain visible without inferred replacement.
+
+TAROT
+
+OBSERVED
+STRUCTURED OUTPUT INCOMPLETE
+
+engine_outputs.tarot.result
+
+WARNING
+Known fields were absent from this engine response. The source remains available below.
+
+SYMBOL · ENGINE COMPOSITION
+
+I Ching
+
+HEXAGRAM CHANGE MAP · CHANGING LINE SEQUENCE
+
+PARTIAL
+OBSERVED DATA
+
+I-CHING
+
+OBSERVED
+SOURCE-SUPPLIED HEXAGRAMS
+
+engine_outputs.i-ching.result
+
+Primary and relating hexagrams are connected only when both are supplied; changing lines retain source order.
+
+#1 · The Creative
+→
+#14 · Great Possession
+I Ching transition and changing lines
+Source position	Value
+Primary hexagram	#1 · The Creative
+Changing line 2	Line value 8
+Changing line 5	Line value 9
+Relating hexagram	#14 · Great Possession
+
+FOUNDATION · ENGINE COMPOSITION
+
+Enneagram
+
+INQUIRY QUESTION DECK · TYPOLOGY FACT GRID
+
+PARTIAL
+OBSERVED DATA
+
+The primary source layer was not returned. Available supporting elements remain visible without inferred replacement.
+
+ENNEAGRAM
+
+OBSERVED
+STRUCTURED OUTPUT INCOMPLETE
+
+engine_outputs.enneagram.result
+
+WARNING
+Known fields were absent from this engine response. The source remains available below.
+
+CREATION · ENGINE COMPOSITION
+
+Sacred Geometry
+
+SACRED GEOMETRY PLATE · GEOMETRY ELEMENT INDEX
+
+PARTIAL
+OBSERVED DATA
+
+SACRED-GEOMETRY
+
+OBSERVED
+SOURCE-SELECTED FORM
+
+engine_outputs.sacred-geometry.result.form
+
+Source method and construction steps are printed as text; arbitrary SVG and HTML are never executed.
+
+Source-shaped artifact
+FORM
+Sri Yantra
+engine_outputs.sacred-geometry.result.form
+NUMEROLOGY
+9
+engine_outputs.sacred-geometry.result.form
+SYMBOLISM
+Source-supplied geometric correspondence.
+engine_outputs.sacred-geometry.result.form
+
+CREATION · ENGINE COMPOSITION
+
+Sigil Forge
+
+SIGIL CONSTRUCTION PLATE · CONSTRUCTION STEP SEQUENCE
+
+PARTIAL
+SOURCE CONTRACT
+
+SIGIL-FORGE
+
+OBSERVED
+SIGIL METHOD AND GUIDANCE
+
+engine_outputs.sigil-forge.result
+
+Source method and construction steps are printed as text; arbitrary SVG and HTML are never executed.
+
+Source-shaped artifact
+INTENTION
+clarity in the work
+engine_outputs.sigil-forge.result.intention
+METHOD
+Word Elimination Method
+engine_outputs.sigil-forge.result.method
+REMAINING LETTERS
+CLRTYNHWK
+engine_outputs.sigil-forge.result.processing.remaining_letters
+SOURCE LETTER COUNT
+9
+engine_outputs.sigil-forge.result.processing.letter_count
+Remove vowels · engine_outputs.sigil-forge.result.method.steps[0]
+Merge remaining forms · engine_outputs.sigil-forge.result.method.steps[1]
+
+SIGIL-FORGE
+
+OBSERVED
+GENERATED SIGIL IMAGE
+
+engine_outputs.sigil-forge.result.generated_image
+
+Playback and viewing require an allowlisted media envelope; metadata and source provenance remain printed.
+
+Generated sigil image
+MEDIA UNAVAILABLE
+
+Generated sigil image was not supplied by this engine response.
+
+Media metadata and provenance
+Type	image
+MIME	Not supplied
+Source	engine_outputs.sigil-forge.result.generated_image
+
+CREATION · ENGINE COMPOSITION
+
+Raaga
+
+RAAGA PLAYER · SWARA SEQUENCE
+
+PARTIAL
+SOURCE CONTRACT
+
+RAAGA
+
+OBSERVED
+GENERATED RAAGA AUDIO
+
+engine_outputs.raaga.generated_audio
+
+Playback and viewing require an allowlisted media envelope; metadata and source provenance remain printed.
+
+Raaga audio clip
+MEDIA AVAILABLE
+
+Raaga audio clip supplied by the engine_outputs.raaga.generated_audio source field.
+
+Media metadata and provenance
+Type	audio
+MIME	Not supplied
+Source	engine_outputs.raaga.generated_audio
+
+RAAGA
+
+DERIVED
+RAAGA TONAL PROFILE
+
+engine_outputs.raaga.result
+
+MELAKARTA
+Mayamalavagaula
+MELAKARTA NUMBER
+15
+CHAKRA
+3
+ROOT FREQUENCY
+220 Hz
+
+RAAGA
+
+OBSERVED
+RAAGA SOURCE SETS
+
+engine_outputs.raaga.result
+
+SWARAS
+Sa · 220 Hz · ratio 1/1
+Re · 231.77 Hz · ratio 1.0534979423868314
+
+EVIDENCE
+
+Systems, identities, provenance, confidence, timing, and convergence remain explicit rather than borrowing certainty from the narrative.
+
+OWNER
+Reader A
+SUBJECT
+Subject not recorded · unknown
+PROVENANCE
+folio · workflow:full-spectrum
+CANONICAL IDENTITY
+reading-full-spectrum
+ACCESS REASON
+Signed in as the owner (Reader A)
+CHECKSUM
+sha256:d290f85bbeba0b31063720fbea18eabdaf3031650a8c38255b941a188d7d5d5c
+
+EVIDENCE LEDGER
+
+WHAT SUPPORTS THIS READING
+1 ENTRIES
+SYSTEM
+Folio record
+Noesis Reading · workflow:full-spectrum
+OBSERVED
+TECHNICAL SOURCE
+RECORD CLARITY
+
+These relations are separate on purpose. Owning a reading does not make you its subject, source, or producer.
+
+OWNER
+Reader A
+SUBJECT
+Not recorded in the current Folio contract
+SOURCE
+Urania D1 · Folio record reading-full-spectrum
+PRODUCER
+Selemene · workflow:full-spectrum
+WHY YOU CAN SEE THIS
+Signed in as the owner (Reader A)
+CHECKSUM
+sha256:d290f85bbeba0b31063720fbea18eabdaf3031650a8c38255b941a188d7d5d5c
+
+CANONICAL FOLIO RECORD
+
+reading-full-spectrum
+
+sha256 · d290f85bbeba…7d5d5c
+
+OPEN READING
+Reader A

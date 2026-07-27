@@ -51,7 +51,7 @@ export function ReadingBody({
               aria-label={block.language ? `${block.language} code block` : 'Code block'}
               tabIndex={0}
             >
-              <pre className="min-w-max border border-reading-rule/30 bg-void/90 p-3 font-mono text-[11px] leading-relaxed text-parchment">
+              <pre className="w-full max-w-full whitespace-pre-wrap break-all border border-reading-rule/30 bg-void/90 p-3 font-mono text-xs leading-relaxed text-parchment">
                 <code data-language={block.language ?? undefined}>{block.text}</code>
               </pre>
             </div>

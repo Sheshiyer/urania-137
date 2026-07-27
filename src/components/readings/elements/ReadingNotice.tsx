@@ -11,7 +11,7 @@ export function ReadingNotice({ element }: { element: ReadingNoticeElement }) {
   return (
     <ElementFrame element={element}>
       <p className={`border-l-2 px-3 py-1 text-pretty text-xs leading-relaxed ${TONE[element.tone]}`}>
-        <span className="mb-1 block font-display text-[8px] uppercase tracking-[0.16em]">{element.tone}</span>
+        <span className="mb-1 block font-display text-xs uppercase tracking-[0.16em]">{element.tone}</span>
         {element.body}
       </p>
     </ElementFrame>

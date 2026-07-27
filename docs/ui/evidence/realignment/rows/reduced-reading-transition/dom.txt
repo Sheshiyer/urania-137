@@ -33,7 +33,7 @@ FOLIO
 BRIDGE QUERY
 UNMAPPED
 FOLIO
-4 readings
+5 readings
 A LONG SYNTHETIC RE…
 Noesis Reading
 NUMEROLOGY · SYNTHE…
@@ -42,10 +42,12 @@ DAILY PRACTICE · SY…
 Sky Weather
 CAPTURE REQUIRED · …
 Engine Status
+FULL SPECTRUM · SYN…
+Noesis Reading
 
 READING LIST
 
-4 visible
+5 visible
 01
 A LONG SYNTHETIC READING
 Noesis Reading · 13 Jan 2026
@@ -58,6 +60,9 @@ Sky Weather · 13 Jan 2026
 04
 CAPTURE REQUIRED · SYNTHETIC
 Engine Status · 13 Jan 2026
+05
+FULL SPECTRUM · SYNTHETIC
+Noesis Reading · 13 Jan 2026
 Node family sets angular sector; creation time sets radial distance. The adjacent list contains every visible Reading, including any records beyond the plotted twenty-four.
 
 CANONICAL RECORD
@@ -76,21 +81,20 @@ Numerology · synthetic
 
 The Reading layer holds source-shaped orientation and narrative. Supporting provenance follows in Evidence; the privacy-filtered record remains collapsed in Source.
 
-READING ATLAS
-
-Unstructured source
-
-This saved record contains one flat body; no section relationships were stored.
-
-FLAT RECORD
-BIRTH WITNESS
-ONE STORED BODY · ZERO INFERRED SECTIONS
-
 READING FIELD
 
 Source-shaped elements
 
 Each element is derived from explicit engine structure; the source remains available below.
+
+FOUNDATION · ENGINE COMPOSITION
+
+Numerology
+
+NUMBER REDUCTION MAP · NUMEROLOGY FACT GRID
+
+IMPLEMENTED
+OBSERVED DATA
 
 NUMEROLOGY
 

@@ -20,12 +20,12 @@ export function ReadingAtlas({ document }: { document: ReadingDocument }) {
     <figure className="min-w-0 overflow-hidden border-y border-reading-rule/35 py-4" aria-labelledby={`reading-atlas-title-${document.id}`}>
       <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
         <div>
-          <p className="font-display text-[9px] uppercase tracking-[0.2em] text-reading-muted">Reading atlas</p>
+          <p className="font-display text-xs uppercase tracking-[0.2em] text-reading-muted">Reading atlas</p>
           <h2 id={`reading-atlas-title-${document.id}`} className="mt-1 font-serif text-lg leading-tight text-reading-ink">
             {native ? 'Section structure' : 'Unstructured source'}
           </h2>
         </div>
-        <p className="max-w-sm text-left text-[10px] leading-relaxed text-reading-muted sm:text-right">
+        <p className="max-w-sm text-left text-xs leading-relaxed text-reading-muted sm:text-right">
           {native
             ? 'Each spoke connects one source-supplied section to this reading.'
             : 'This saved record contains one flat body; no section relationships were stored.'}
@@ -83,7 +83,7 @@ export function ReadingAtlas({ document }: { document: ReadingDocument }) {
         </svg>
       </div>
 
-      <figcaption className="mt-2 flex flex-wrap gap-x-5 gap-y-2 border-t border-reading-rule/25 pt-3 text-[9px] uppercase tracking-[0.16em] text-reading-muted">
+      <figcaption className="mt-2 flex flex-wrap gap-x-5 gap-y-2 border-t border-reading-rule/25 pt-3 text-xs uppercase tracking-[0.16em] text-reading-muted">
         {native ? (
           <>
             <span className="flex items-center gap-1.5">

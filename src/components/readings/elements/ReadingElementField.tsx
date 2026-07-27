@@ -9,12 +9,12 @@ export function ReadingElementField({ elements }: { elements: ReadingElement[] }
     <section aria-labelledby={titleId} className="min-w-0 space-y-3">
       <header className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <p className="font-display text-[9px] uppercase tracking-[0.2em] text-reading-muted">Reading field</p>
+          <p className="font-display text-xs uppercase tracking-[0.2em] text-reading-muted">Reading field</p>
           <h2 id={titleId} className="mt-1 font-serif text-lg leading-tight text-reading-ink">
             Source-shaped elements
           </h2>
         </div>
-        <p className="max-w-sm text-[10px] leading-relaxed text-reading-muted">
+        <p className="max-w-sm text-xs leading-relaxed text-reading-muted">
           Each element is derived from explicit engine structure; the source remains available below.
         </p>
       </header>

@@ -27,7 +27,7 @@ export function CapturePanel({ element }: { element: ReadingCaptureElement }) {
         data-engine-artifact="capture-panel"
         data-capture-treatment={verified ? 'verified-persisted' : 'capture-gated'}
       >
-        <p className="text-[9px] uppercase tracking-[0.14em] text-evidence-copy-witness">
+        <p className="text-xs uppercase tracking-[0.14em] text-evidence-copy-witness">
           {element.captureState === 'capture-required'
             ? 'Capture required'
             : element.captureState === 'recorded'
@@ -38,8 +38,8 @@ export function CapturePanel({ element }: { element: ReadingCaptureElement }) {
         </p>
         {!verified ? (
           <section className="border border-violetglow/25 p-3">
-            <h4 className="font-serif text-sm text-reading-ink">Capture evidence required</h4>
-            <p className="mt-2 text-xs text-reading-muted">{element.body}</p>
+            <h4 className="font-serif text-sm text-parchment">Capture evidence required</h4>
+            <p className="mt-2 text-xs text-secondary">{element.body}</p>
           </section>
         ) : (
           <>

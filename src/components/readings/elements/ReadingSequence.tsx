@@ -24,10 +24,10 @@ export function ReadingSequence({ element }: { element: ReadingSequenceElement }
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <h4 className="text-xs text-parchment/90">{step.label}</h4>
                 {step.value && <span className="font-serif text-sm text-gold">{step.value}</span>}
-                {step.status && <span className="text-[8px] uppercase tracking-[0.14em] text-silver/60">{step.status}</span>}
+                {step.status && <span className="text-xs uppercase tracking-[0.14em] text-silver/60">{step.status}</span>}
               </div>
-              {time && <p className="mt-1 break-words font-mono text-[9px] tabular-nums text-silver/55">{time}</p>}
-              {step.detail && <p className="mt-1 text-[10px] leading-relaxed text-silver/70">{step.detail}</p>}
+              {time && <p className="mt-1 break-words font-mono text-xs tabular-nums text-silver/55">{time}</p>}
+              {step.detail && <p className="mt-1 text-xs leading-relaxed text-silver/70">{step.detail}</p>}
             </li>
           )
         })}

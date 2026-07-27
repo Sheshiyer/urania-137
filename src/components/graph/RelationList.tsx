@@ -34,6 +34,7 @@ export function RelationList({
                     ? 'border-interaction-selected bg-interaction-flow/10'
                     : 'border-gold/25 hover:border-interaction-active hover:bg-gold/5',
                 ].join(' ')}
+                aria-label={entry.label}
                 aria-pressed={selected}
                 onClick={() => onSelect(entry.id)}
                 data-graph-entry={entry.id}

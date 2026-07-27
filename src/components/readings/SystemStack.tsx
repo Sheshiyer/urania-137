@@ -7,7 +7,7 @@ export function SystemStack({ systems, compact = false }: { systems: string[]; c
       </h2>
       <ul className="flex flex-wrap gap-2">
         {systems.map((system) => (
-          <li key={system} className="glass-pill px-2.5 py-1 font-display text-[9px] uppercase tracking-[0.16em] text-emerald">
+          <li key={system} className="glass-pill px-2.5 py-1 font-display text-xs uppercase tracking-[0.16em] text-emerald">
             {system}
           </li>
         ))}

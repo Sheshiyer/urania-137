@@ -52,7 +52,7 @@ export function ReadingTrustPanel({
   }
 
   return (
-    <aside className="instrument-frame min-w-0 space-y-4 p-1" aria-labelledby={`trust-title-${entry.id}`}>
+    <aside className="instrument-frame min-w-0 space-y-4 p-1 2xl:sticky 2xl:top-24 2xl:self-start" aria-labelledby={`trust-title-${entry.id}`}>
       <div className="instrument-panel">
         <div className="flex items-center gap-2">
           <Fingerprint className="h-4 w-4 text-gold" aria-hidden="true" />
@@ -65,17 +65,17 @@ export function ReadingTrustPanel({
         </p>
         <dl className="mt-4 divide-y divide-gold/10 border-y border-gold/10">
           {facts.map(({ key, label, icon: Icon }) => (
-            <div key={key} className="grid gap-1 py-3 sm:grid-cols-[9.5rem_1fr] sm:gap-4">
+            <div key={key} className="grid min-w-0 gap-1.5 py-3">
               <dt className="flex items-center gap-2 font-display text-xs uppercase tracking-[0.18em] text-gold">
                 <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                 {label}
               </dt>
-              <dd className="min-w-0 break-words text-xs leading-relaxed text-parchment/85">{values[key]}</dd>
+              <dd className="min-w-0 [overflow-wrap:anywhere] text-xs leading-relaxed text-parchment/85">{values[key]}</dd>
             </div>
           ))}
         </dl>
         {participantGrant && (
-          <p className="mt-3 text-xs leading-relaxed text-secondary">
+          <p className="mt-3 [overflow-wrap:anywhere] text-xs leading-relaxed text-secondary">
             Relationship {participantGrant.relationshipId} · granted {participantGrant.grantedAt}
           </p>
         )}

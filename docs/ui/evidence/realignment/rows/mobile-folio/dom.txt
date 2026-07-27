@@ -20,7 +20,7 @@ Chat remains the primary doorway. Map and list reopen the same canonical Reading
 
 READING LIST
 
-4 visible
+5 visible
 01
 A LONG SYNTHETIC READING
 Noesis Reading · 13 Jan 2026
@@ -33,6 +33,9 @@ Sky Weather · 13 Jan 2026
 04
 CAPTURE REQUIRED · SYNTHETIC
 Engine Status · 13 Jan 2026
+05
+FULL SPECTRUM · SYNTHETIC
+Noesis Reading · 13 Jan 2026
 Node family sets angular sector; creation time sets radial distance. The adjacent list contains every visible Reading, including any records beyond the plotted twenty-four.
 
 ONE RECORD, MANY DOORWAYS

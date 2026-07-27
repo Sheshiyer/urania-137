@@ -22,11 +22,11 @@ export function ActivationCross({ element }: { element: ReadingSequenceElement }
               return (
                 <div
                   key={step.id}
-                  className={`${placement} grid min-h-20 place-items-center border border-gold/25 bg-gold/5 p-2 text-center`}
+                  className={`${placement} grid min-h-20 min-w-0 place-items-center border border-gold/25 bg-gold/5 p-2 text-center`}
                   data-activation-position={POSITION[index]}
                 >
-                  <span className="text-[10px] text-reading-muted">{step.label}</span>
-                  <span className="font-serif text-sm text-reading-ink">{step.value}</span>
+                  <span className="min-w-0 [overflow-wrap:anywhere] text-xs text-metadata">{step.label}</span>
+                  <span className="min-w-0 [overflow-wrap:anywhere] font-serif text-sm text-parchment">{step.value}</span>
                 </div>
               )
             })}
@@ -36,10 +36,10 @@ export function ActivationCross({ element }: { element: ReadingSequenceElement }
             Four source positions are required before cross geometry is shown.
           </p>
         )}
-        <ol className="mt-4 space-y-2 text-xs text-reading-ink">
+        <ol className="mt-4 space-y-2 text-xs text-parchment">
           {element.steps.map((step) => (
             <li key={step.id}>
-              <span className="text-reading-muted">{step.label}:</span> {step.value ?? 'Not supplied'}
+              <span className="text-metadata">{step.label}:</span> {step.value ?? 'Not supplied'}
             </li>
           ))}
         </ol>

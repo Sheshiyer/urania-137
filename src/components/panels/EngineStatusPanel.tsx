@@ -59,25 +59,25 @@ export function EngineStatusPanel({ child, status }: { child: SelemeneChild | nu
 
         {/* Overall fields are rendered only when GET /health returned them. */}
         {health && (
-          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-sm border border-reading-rule bg-reading-rule text-sm sm:grid-cols-4">
-            <div className="bg-reading-paper/95 px-3 py-2">
-              <dt className="console-eyebrow">Availability</dt>
-              <dd className="mt-1 flex items-center gap-2 text-reading-ink">
+          <dl className="operator-status-summary grid gap-3 text-sm">
+            <div className="min-w-0 rounded-sm border border-gold/20 bg-surface/90 px-4 py-3">
+              <dt className="font-display text-xs uppercase tracking-[0.14em] text-gold">Availability</dt>
+              <dd className="mt-2 flex min-w-0 items-center gap-2 break-words text-primary">
                 <Dot state={availability(health.status)} />
                 {health.status}
               </dd>
             </div>
-            <div className="bg-reading-paper/95 px-3 py-2">
-              <dt className="console-eyebrow">Version</dt>
-              <dd className="mt-1 font-mono text-reading-ink">{health.version}</dd>
+            <div className="min-w-0 rounded-sm border border-gold/20 bg-surface/90 px-4 py-3">
+              <dt className="font-display text-xs uppercase tracking-[0.14em] text-gold">Version</dt>
+              <dd className="mt-2 break-words font-mono text-primary">{health.version}</dd>
             </div>
-            <div className="bg-reading-paper/95 px-3 py-2">
-              <dt className="console-eyebrow">Uptime</dt>
-              <dd className="mt-1 font-mono text-reading-ink">{fmtUptime(health.uptime_seconds)}</dd>
+            <div className="min-w-0 rounded-sm border border-gold/20 bg-surface/90 px-4 py-3">
+              <dt className="font-display text-xs uppercase tracking-[0.14em] text-gold">Uptime</dt>
+              <dd className="mt-2 break-words font-mono text-primary">{fmtUptime(health.uptime_seconds)}</dd>
             </div>
-            <div className="bg-reading-paper/95 px-3 py-2">
-              <dt className="console-eyebrow">Loaded</dt>
-              <dd className="mt-1 font-mono text-reading-ink">
+            <div className="min-w-0 rounded-sm border border-gold/20 bg-surface/90 px-4 py-3">
+              <dt className="font-display text-xs uppercase tracking-[0.14em] text-gold">Loaded</dt>
+              <dd className="mt-2 break-words font-mono leading-relaxed text-primary">
                 {health.engines_loaded} engines · {health.workflows_loaded} workflows
               </dd>
             </div>
@@ -87,18 +87,18 @@ export function EngineStatusPanel({ child, status }: { child: SelemeneChild | nu
         {/* Infrastructure values come verbatim from GET /health/ready. */}
         {ready && (
           <Collapsible title="Infrastructure" defaultOpen badge={ready.overall_status}>
-            <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
+            <div className="operator-status-infrastructure grid gap-3 text-sm">
               {([
                 ['redis', ready.redis],
                 ['postgres', ready.postgres],
                 ['orchestrator', ready.orchestrator],
                 ['bridge', ready.bridge_status],
               ] as const).map(([key, value]) => (
-                <div key={key} className="flex items-center gap-2 rounded-sm border border-reading-rule bg-reading-paper/70 px-2.5 py-2">
+                <div key={key} className="flex min-w-0 items-start gap-3 rounded-sm border border-gold/20 bg-surface/90 px-3 py-3">
                   <Dot state={availability(value)} />
                   <div className="min-w-0">
-                    <div className="console-eyebrow">{key}</div>
-                    <div className="truncate font-mono text-reading-ink">{value}</div>
+                    <div className="font-display text-xs uppercase tracking-[0.14em] text-gold">{key}</div>
+                    <div className="mt-1 [overflow-wrap:anywhere] font-mono text-sm text-primary">{value}</div>
                   </div>
                 </div>
               ))}
@@ -109,7 +109,7 @@ export function EngineStatusPanel({ child, status }: { child: SelemeneChild | nu
         {/* A roster id alone proves loading, not health. Unknown stays neutral. */}
         {engines.length > 0 && (
           <Collapsible title="Engine roster" defaultOpen={Boolean(highlight)} badge={`${engines.length} engines`}>
-            <ul className="grid gap-1.5 sm:grid-cols-2">
+            <ul className="operator-status-roster grid gap-2">
               {engines.map((id) => {
                 const evidence = healthById.get(id)
                 const state = evidence
@@ -125,20 +125,20 @@ export function EngineStatusPanel({ child, status }: { child: SelemeneChild | nu
                       'rounded border px-2.5 py-2 text-xs',
                       selected
                         ? 'border-gold/45 bg-gold/10'
-                        : 'border-reading-rule bg-reading-paper/60',
+                        : 'border-gold/15 bg-surface/80',
                     ].join(' ')}
                   >
                     <div className="flex items-center gap-2">
                       <Dot state={state} />
-                      <span className="truncate font-mono text-reading-ink">{id}</span>
+                      <span className="min-w-0 [overflow-wrap:anywhere] font-mono text-primary">{id}</span>
                       {evidence && Number.isFinite(evidence.latency_ms) && (
-                        <span className="ml-auto shrink-0 font-mono text-reading-muted">
+                        <span className="ml-auto shrink-0 font-mono text-metadata">
                           {evidence.latency_ms}ms
                         </span>
                       )}
                     </div>
                     {evidence?.detail && (
-                      <p className="mt-1 pl-3.5 text-reading-muted">{evidence.detail}</p>
+                      <p className="mt-1 pl-3.5 text-secondary">{evidence.detail}</p>
                     )}
                   </li>
                 )
@@ -148,13 +148,13 @@ export function EngineStatusPanel({ child, status }: { child: SelemeneChild | nu
         )}
 
         {!loading && !health && !ready && engines.length === 0 && !error && (
-          <p className="py-4 text-sm text-reading-muted">
+          <p className="py-4 text-sm text-secondary">
             No operator evidence was returned by the configured endpoints.
           </p>
         )}
 
         {(ready || health) && (
-          <p className="font-mono text-[11px] text-reading-muted">
+          <p className="font-mono text-xs text-metadata">
             Endpoint evidence · {ready?.overall_status ?? health?.status}
           </p>
         )}

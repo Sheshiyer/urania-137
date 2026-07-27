@@ -32,10 +32,10 @@ export function ReadingLayerNav({ readingId }: { readingId: string }) {
               onClick={(event) => moveToLayer(event, targetId)}
               className="block min-h-11 border-l border-reading-rule/45 pl-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-reading-rule"
             >
-              <span className="block font-display text-[9px] uppercase tracking-[0.2em] text-reading-muted">
+              <span className="block font-display text-xs uppercase tracking-[0.2em] text-reading-muted">
                 {String(index + 1).padStart(2, '0')} · {layer.label}
               </span>
-              <span className="mt-0.5 block text-[10px] leading-snug text-reading-muted">
+              <span className="mt-0.5 block text-xs leading-snug text-reading-muted">
                 {layer.description}
               </span>
               </a>

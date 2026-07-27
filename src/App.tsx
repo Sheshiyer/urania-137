@@ -146,7 +146,7 @@ export default function App() {
           {route.view === 'home' && <HomePage experience={experience} />}
           {route.view === 'node' && (
             <NodePage
-              key={`${route.nodeId}:${route.childId ?? ''}`}
+              key={route.nodeId}
               nodeId={route.nodeId}
               initialChildId={route.childId}
               me={me}

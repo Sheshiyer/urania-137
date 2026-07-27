@@ -18,10 +18,10 @@ export function NestedPeriodSpiral({ element }: { element: ReadingSequenceElemen
                 data-period-depth={index}
                 style={{ marginInlineStart: `${Math.min(index, 5) * 1.25}rem` }}
               >
-                <p className="font-serif text-sm text-reading-ink">
+                <p className="font-serif text-sm text-parchment">
                   {step.label}{step.value ? ` · ${step.value}` : ''}
                 </p>
-                <p className="text-[10px] text-reading-muted">{step.start} → {step.end}</p>
+                <p className="text-xs text-metadata">{step.start} → {step.end}</p>
               </div>
             ))}
           </div>
@@ -30,12 +30,25 @@ export function NestedPeriodSpiral({ element }: { element: ReadingSequenceElemen
             Explicit start and end boundaries are required for the nested period view.
           </p>
         )}
-        <table className="mt-4 w-full text-left text-xs">
+        <table className="mt-4 w-full table-fixed text-left text-xs">
           <caption className="sr-only">Canonical Vimshottari timeline</caption>
-          <thead><tr><th scope="col">Period</th><th scope="col">Planet / value</th><th scope="col">Start</th><th scope="col">End</th></tr></thead>
+          <thead>
+            <tr>
+              {['Period', 'Planet / value', 'Start', 'End'].map((label) => (
+                <th key={label} scope="col" className="px-1.5 py-2 align-top [overflow-wrap:anywhere]">
+                  {label}
+                </th>
+              ))}
+            </tr>
+          </thead>
           <tbody>
             {element.steps.map((step) => (
-              <tr key={step.id}><th scope="row">{step.label}</th><td>{step.value ?? 'Not supplied'}</td><td>{step.start ?? 'Not supplied'}</td><td>{step.end ?? 'Not supplied'}</td></tr>
+              <tr key={step.id}>
+                <th scope="row" className="px-1.5 py-2 align-top [overflow-wrap:anywhere]">{step.label}</th>
+                <td className="px-1.5 py-2 align-top [overflow-wrap:anywhere]">{step.value ?? 'Not supplied'}</td>
+                <td className="px-1.5 py-2 align-top [overflow-wrap:anywhere]">{step.start ?? 'Not supplied'}</td>
+                <td className="px-1.5 py-2 align-top [overflow-wrap:anywhere]">{step.end ?? 'Not supplied'}</td>
+              </tr>
             ))}
           </tbody>
         </table>

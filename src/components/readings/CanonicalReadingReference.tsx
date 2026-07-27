@@ -122,7 +122,7 @@ export function CanonicalReadingReference({
       className={
         compact
           ? 'border-l border-emerald/40 pl-3'
-          : 'console-card grid gap-3 p-4 sm:grid-cols-[auto_1fr_auto] sm:items-center'
+          : 'canonical-reading-reference console-card grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-4 p-4'
       }
       aria-label="Canonical Folio identity"
     >
@@ -133,7 +133,13 @@ export function CanonicalReadingReference({
       )}
       <div className="min-w-0">
         <p className="console-eyebrow text-emerald">Canonical Folio record</p>
-        <p className="mt-1 truncate font-mono text-xs text-parchment" title={entry.id}>
+        <p
+          className={[
+            'mt-1 font-mono text-xs text-parchment',
+            compact ? 'truncate' : '[overflow-wrap:anywhere]',
+          ].join(' ')}
+          title={entry.id}
+        >
           {entry.id}
         </p>
         <p className="mt-1 font-mono text-xs text-metadata" title={checksum ?? undefined}>
@@ -145,7 +151,7 @@ export function CanonicalReadingReference({
         className={
           compact
             ? 'mt-2 inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 font-display text-xs uppercase tracking-[0.2em] text-gold underline decoration-gold/35 underline-offset-4 transition-colors hover:text-parchment focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold'
-            : 'inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 justify-self-start rounded-full border border-gold/30 px-4 py-2 font-display text-xs uppercase tracking-[0.2em] text-gold transition-colors hover:border-gold hover:bg-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold sm:justify-self-end'
+            : 'col-span-2 inline-flex min-h-11 w-full min-w-11 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full border border-gold/30 px-4 py-2 font-display text-xs uppercase tracking-[0.16em] text-gold transition-colors hover:border-gold hover:bg-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold'
         }
       >
         <Archive className="h-3.5 w-3.5" aria-hidden="true" />

@@ -41,7 +41,7 @@ export function BeginReadingDialog({ open, onClose }: BeginReadingDialogProps) {
               >
                 {node.label}
               </h2>
-              <span className="font-display text-[9px] uppercase tracking-[0.2em] text-metadata">
+              <span className="font-display text-xs uppercase tracking-[0.2em] text-metadata">
                 {node.epithet}
               </span>
             </div>
@@ -54,7 +54,7 @@ export function BeginReadingDialog({ open, onClose }: BeginReadingDialogProps) {
                     onClick={onClose}
                     className="group flex min-h-11 items-center justify-between gap-4 border border-gold/15 bg-void/35 px-3.5 py-2.5 text-left transition-colors hover:border-gold/45 hover:bg-gold/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
                   >
-                    <span className="font-display text-[10px] uppercase tracking-[0.16em] text-silver transition-colors group-hover:text-parchment">
+                    <span className="font-display text-xs uppercase tracking-[0.16em] text-silver transition-colors group-hover:text-parchment">
                       {child.label}
                     </span>
                     <span

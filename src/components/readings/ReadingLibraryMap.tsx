@@ -90,7 +90,7 @@ export function ReadingLibraryMap({
           {layout.sectors.map((sector, index) => (
             <span
               key={sector.id}
-              className="pointer-events-none absolute z-10 w-20 -translate-x-1/2 -translate-y-1/2 text-center font-display text-[8px] uppercase tracking-[0.12em] text-metadata"
+              className="pointer-events-none absolute z-10 w-20 -translate-x-1/2 -translate-y-1/2 text-center font-display text-xs uppercase tracking-[0.12em] text-metadata"
               style={sectorLabelPosition(index)}
             >
               {sector.label}
@@ -99,7 +99,7 @@ export function ReadingLibraryMap({
 
           <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-gold/35 bg-void/95 text-center shadow-[0_0_48px_rgba(197,160,23,0.12)]">
             <span className="font-serif text-xs uppercase tracking-[0.2em] text-parchment">Folio</span>
-            <span className="mt-1 font-mono text-[9px] text-gold">{readings.length} readings</span>
+            <span className="mt-1 font-mono text-xs text-gold">{readings.length} readings</span>
           </div>
 
           {layout.points.map(({ reading, x, y, sectorLabel }) => {
@@ -125,10 +125,10 @@ export function ReadingLibraryMap({
                     : 'border-gold/25 bg-void/95 text-secondary hover:border-interaction-active hover:bg-surface',
                 ].join(' ')}
               >
-                <span className="block truncate font-display text-[9px] uppercase tracking-[0.1em]" title={reading.title}>
+                <span className="block truncate font-display text-xs uppercase tracking-[0.1em]" title={reading.title}>
                   {compact(reading.title)}
                 </span>
-                <span className="mt-0.5 block truncate font-mono text-[8px] text-metadata">
+                <span className="mt-0.5 block truncate font-mono text-xs text-metadata">
                   {reading.nodeLabel}
                 </span>
               </button>
@@ -142,10 +142,10 @@ export function ReadingLibraryMap({
           aria-label="Complete Folio list lens"
         >
           <div className="mb-3 flex items-center justify-between gap-3">
-            <p className="font-display text-[9px] uppercase tracking-[0.18em] text-gold">
+            <p className="font-display text-xs uppercase tracking-[0.18em] text-gold">
               Reading list
             </p>
-            <span className="font-mono text-[9px] text-metadata">
+            <span className="font-mono text-xs text-metadata">
               {layout.list.length} visible
             </span>
           </div>
@@ -169,14 +169,14 @@ export function ReadingLibraryMap({
                     className="min-h-11 min-w-0 cursor-pointer px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-interaction-focus"
                   >
                     <span className="flex items-center gap-2">
-                      <span className="font-mono text-[8px] text-metadata" aria-hidden="true">
+                      <span className="font-mono text-xs text-metadata" aria-hidden="true">
                         {String(index + 1).padStart(2, '0')}
                       </span>
                       <span className="truncate font-serif text-xs uppercase tracking-[0.1em] text-primary">
                         {reading.title}
                       </span>
                     </span>
-                    <span className="mt-1 block truncate font-mono text-[9px] text-metadata">
+                    <span className="mt-1 block truncate font-mono text-xs text-metadata">
                       {reading.nodeLabel} · {dateLabel(reading.createdAt)}
                     </span>
                   </button>
@@ -198,7 +198,7 @@ export function ReadingLibraryMap({
         </div>
       </div>
 
-      <figcaption className="mt-4 border-t border-gold/15 pt-3 text-[10px] leading-relaxed text-metadata">
+      <figcaption className="mt-4 border-t border-gold/15 pt-3 text-xs leading-relaxed text-metadata">
         Node family sets angular sector; creation time sets radial distance. The adjacent list contains every visible Reading, including any records beyond the plotted twenty-four.
       </figcaption>
     </figure>

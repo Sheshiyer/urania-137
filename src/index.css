@@ -163,7 +163,41 @@ body {
 
   .reading-canvas {
     @apply bg-reading-surface text-reading-ink;
-    max-width: 70ch;
+    container-type: inline-size;
+    container-name: reading;
+  }
+
+  .reading-canvas:not([data-reading-density='folio']) {
+    max-width: var(--reading-measure);
+  }
+
+  .reading-composition-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .operator-field {
+    container-type: inline-size;
+    container-name: operator;
+  }
+
+  .operator-status-summary,
+  .operator-status-infrastructure,
+  .operator-status-roster {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @container reading (min-width: 48rem) {
+    .reading-composition-grid:not(.reading-composition-grid--single) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @container operator (min-width: 30rem) {
+    .operator-status-summary,
+    .operator-status-infrastructure,
+    .operator-status-roster {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   .semantic-metadata {

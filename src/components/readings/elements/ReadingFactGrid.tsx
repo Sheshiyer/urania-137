@@ -18,9 +18,9 @@ export function ReadingFactGrid({ element }: { element: ReadingFactGridElement }
       >
         {element.facts.map((item) => (
           <div key={item.id} className="min-w-0 bg-void/90 p-3">
-            <dt className="font-display text-[9px] uppercase tracking-[0.18em] text-gold/65">{item.label}</dt>
+            <dt className="font-display text-xs uppercase tracking-[0.18em] text-gold/80">{item.label}</dt>
             <dd className="mt-1 text-pretty text-sm text-parchment/90">{item.value}</dd>
-            {item.detail && <dd className="mt-1 text-[9px] leading-relaxed text-silver/55">{item.detail}</dd>}
+            {item.detail && <dd className="mt-1 text-xs leading-relaxed text-silver/55">{item.detail}</dd>}
           </div>
         ))}
       </dl>

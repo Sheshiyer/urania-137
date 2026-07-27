@@ -18,7 +18,16 @@ const DARK_INSTRUMENT_SOURCES = [
   'src/components/readings/elements/ReadingCollections.tsx',
   'src/components/readings/elements/ReadingNumberCodes.tsx',
   'src/components/readings/elements/ReadingRelations.tsx',
+  'src/components/readings/artifacts/ActivationCross.tsx',
+  'src/components/readings/artifacts/CapturePanel.tsx',
+  'src/components/readings/artifacts/ChakraSpectrum.tsx',
   'src/components/readings/artifacts/FiveLimbMandala.tsx',
+  'src/components/readings/artifacts/HexagramTransition.tsx',
+  'src/components/readings/artifacts/MediaArtifact.tsx',
+  'src/components/readings/artifacts/MetricField.tsx',
+  'src/components/readings/artifacts/NestedPeriodSpiral.tsx',
+  'src/components/readings/artifacts/QualityPanel.tsx',
+  'src/components/readings/artifacts/SafeGeometryPreview.tsx',
 ]
 
 describe('dark reading instrument contrast contract', () => {

@@ -23,7 +23,7 @@ export function ReadingSection({
       aria-labelledby={`reading-section-title-${section.id}`}
     >
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span className="font-display text-[9px] uppercase tracking-[0.24em] text-reading-muted">
+        <span className="font-display text-xs uppercase tracking-[0.24em] text-reading-muted">
           {String(index + 1).padStart(2, '0')}
         </span>
         <h2
@@ -32,7 +32,7 @@ export function ReadingSection({
         >
           {section.title}
         </h2>
-        <span className="border border-reading-rule/35 px-2 py-0.5 text-[8px] uppercase tracking-[0.18em] text-reading-muted">
+        <span className="border border-reading-rule/35 px-2 py-0.5 text-xs uppercase tracking-[0.18em] text-reading-muted">
           {KIND_LABEL[section.evidenceKind]}
         </span>
       </div>

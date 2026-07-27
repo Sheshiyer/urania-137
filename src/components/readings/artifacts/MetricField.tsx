@@ -6,7 +6,7 @@ export function MetricField({ observations }: { observations: ReadingCaptureObse
   const titleId = `capture-metric-field-${useId().replace(/:/g, '')}`
   return (
     <section aria-labelledby={titleId}>
-      <h4 id={titleId} className="font-serif text-sm text-reading-ink">Metric field</h4>
+      <h4 id={titleId} className="font-serif text-sm text-parchment">Metric field</h4>
       <table className="mt-2 w-full text-left text-xs">
         <caption className="sr-only">Persisted capture metrics</caption>
         <thead><tr><th scope="col">Metric</th><th scope="col">Value</th><th scope="col">Source</th></tr></thead>

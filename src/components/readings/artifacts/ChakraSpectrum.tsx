@@ -6,12 +6,12 @@ export function ChakraSpectrum({ observations }: { observations: ReadingCaptureO
   const titleId = `chakra-spectrum-${useId().replace(/:/g, '')}`
   return (
     <section aria-labelledby={titleId}>
-      <h4 id={titleId} className="font-serif text-sm text-reading-ink">Chakra spectrum</h4>
+      <h4 id={titleId} className="font-serif text-sm text-parchment">Chakra spectrum</h4>
       <div className="mt-2 space-y-2" aria-hidden="true">
         {observations.map((item) => (
           <div key={item.id} className="grid grid-cols-[minmax(8rem,1fr)_2fr] items-center gap-3">
-            <span className="text-[10px] text-reading-muted">{item.label}</span>
-            <span className="border-l-2 border-violetglow/35 bg-violetglow/5 p-2 text-xs text-reading-ink">{item.value}</span>
+            <span className="text-xs text-metadata">{item.label}</span>
+            <span className="border-l-2 border-violetglow/35 bg-violetglow/5 p-2 text-xs text-parchment">{item.value}</span>
           </div>
         ))}
       </div>

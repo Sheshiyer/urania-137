@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 import AxeBuilder from '@axe-core/playwright'
 import { chromium } from 'playwright'
 import {
+  CANONICAL_ENGINE_IDS,
   CHAT_SESSION,
   CHAT_TURNS,
   ENGINE_STATUS,
@@ -238,7 +239,91 @@ async function performAction(page, row) {
   } else if (row.action === 'open-menu') {
     await page.getByRole('button', { name: 'Open navigation menu' }).click()
     await page.getByRole('navigation', { name: 'Product sections' }).waitFor({ state: 'visible' })
+  } else if (row.action === 'expand-roster') {
+    const roster = page.getByRole('button', { name: /engine roster/i })
+    await roster.waitFor({ state: 'visible' })
+    if (await roster.getAttribute('aria-expanded') !== 'true') await roster.click()
+    await roster.evaluate((element) => {
+      const scroller = element.closest('dialog')?.querySelector('.overflow-y-auto')
+      if (scroller instanceof HTMLElement) scroller.scrollTop = 0
+    })
+  } else if (row.action === 'open-operator-graph') {
+    const graph = page.getByRole('button', { name: 'graph', exact: true }).first()
+    if (await graph.getAttribute('aria-pressed') !== 'true') await graph.click()
+    await page.getByRole('button', { name: 'Operator', exact: true }).click()
+    await page.getByRole('dialog', { name: /live status/i }).waitFor({ state: 'visible' })
+  } else if (row.action === 'focus-reading') {
+    await page.locator('section[aria-labelledby="opened-reading-title"]').evaluate((element) => {
+      element.scrollIntoView({ block: 'start' })
+    })
+  } else if (row.action === 'focus-composition') {
+    await page.locator('[data-workflow-composition="full-spectrum"]').evaluate((element) => {
+      element.scrollIntoView({ block: 'start' })
+    })
   }
+}
+
+async function verifyOperatorDeepLinkDismissal(page, row) {
+  await page.keyboard.press('Escape')
+  await page.getByRole('dialog').waitFor({ state: 'hidden' })
+  await page.waitForFunction(() => window.location.hash === '#/node/engine')
+  if (row.returnLens) {
+    await page.waitForFunction(
+      (lens) => document.querySelector('[data-graph-lens]')?.getAttribute('data-graph-lens') === lens,
+      row.returnLens,
+    )
+  }
+  await page.waitForFunction(() => (
+    document.activeElement?.getAttribute('data-graph-entry') === 'live-status'
+    || (
+      document.activeElement?.getAttribute('role') === 'button'
+      && document.activeElement?.getAttribute('aria-label') === 'Live Status'
+    )
+  ))
+  assert.deepEqual(
+    await page.evaluate(() => ({
+      hash: window.location.hash,
+      activeDestination:
+        document.activeElement?.getAttribute('data-graph-entry')
+        ?? (document.activeElement?.getAttribute('aria-label') === 'Live Status'
+          ? 'live-status'
+          : null),
+      lens: document.querySelector('[data-graph-lens]')?.getAttribute('data-graph-lens') ?? null,
+    })),
+    {
+      hash: '#/node/engine',
+      activeDestination: 'live-status',
+      lens: row.returnLens ?? (row.viewport.width <= 768 ? 'list' : 'graph'),
+    },
+    `${row.id} does not dismiss its deep link and restore useful focus`,
+  )
+}
+
+async function verifyOperatorHistoryReturn(page, row) {
+  await page.goBack()
+  await page.waitForFunction(() => window.location.hash === '#/node/engine')
+  await page.getByRole('dialog').waitFor({ state: 'hidden' })
+  await page.waitForFunction(
+    (lens) => document.querySelector('[data-graph-lens]')?.getAttribute('data-graph-lens') === lens,
+    row.returnLens,
+  )
+  await page.waitForFunction(() => (
+    document.activeElement?.getAttribute('data-graph-entry') === 'live-status'
+    || document.activeElement?.getAttribute('aria-label') === 'Live Status'
+  ))
+  await page.setViewportSize({ width: 320, height: 568 })
+  await page.waitForFunction(
+    () => document.querySelector('[data-graph-lens]')?.getAttribute('data-graph-lens') === 'list',
+  )
+  await page.evaluate(() => {
+    window.location.hash = '#/node/engine/live-status'
+  })
+  await page.getByRole('dialog', { name: /live status/i }).waitFor({ state: 'visible' })
+  await page.setViewportSize(row.viewport)
+  await page.waitForFunction(
+    (lens) => document.querySelector('[data-graph-lens]')?.getAttribute('data-graph-lens') === lens,
+    row.returnLens,
+  )
 }
 
 async function settleSurfaceMotion(page) {
@@ -336,6 +421,200 @@ async function browserAssertions(page, row, requestLog, consoleLog, pageErrors) 
     [],
     `${row.id} clips a reader-facing layer`,
   )
+
+  if (row.surface === 'selected-reading' || row.surface === 'reading-composition') {
+    const readingGeometry = await page.evaluate(() => {
+      const canvas = document.querySelector('.reading-canvas[data-reading-density="folio"]')
+      const opened = document.querySelector('section[aria-labelledby="opened-reading-title"]')
+      const trust = document.querySelector('aside[aria-labelledby^="trust-title-"]')
+      const layers = [...document.querySelectorAll('[data-reading-layer]')]
+      if (!(canvas instanceof HTMLElement) || !opened || !trust) return null
+      const openedRect = opened.getBoundingClientRect()
+      const trustRect = trust.getBoundingClientRect()
+      const canvasRect = canvas.getBoundingClientRect()
+      return {
+        canvasOverflow: canvas.scrollWidth - canvas.clientWidth,
+        canvasMetrics: {
+          clientWidth: canvas.clientWidth,
+          offsetWidth: canvas.offsetWidth,
+          scrollWidth: canvas.scrollWidth,
+          overflowX: getComputedStyle(canvas).overflowX,
+          overflowY: getComputedStyle(canvas).overflowY,
+        },
+        scrollContainers: [canvas, ...canvas.querySelectorAll('*')].flatMap((element) => {
+          const rect = element.getBoundingClientRect()
+          const overflow = element.scrollWidth - element.clientWidth
+          return rect.width > 0 && rect.height > 0 && overflow > 1
+            ? [{
+                tag: element.tagName.toLowerCase(),
+                className: typeof element.className === 'string' ? element.className : '',
+                overflow,
+                overflowX: getComputedStyle(element).overflowX,
+                text: element.textContent?.trim().slice(0, 80),
+              }]
+            : []
+        }).slice(0, 30),
+        overflowingDescendants: [...canvas.querySelectorAll('*')].flatMap((element) => {
+          const rect = element.getBoundingClientRect()
+          return rect.width > 0
+            && rect.height > 0
+            && (rect.left < canvasRect.left - 1 || rect.right > canvasRect.right + 1)
+            ? [{
+                tag: element.tagName.toLowerCase(),
+                className: typeof element.className === 'string' ? element.className : '',
+                text: element.textContent?.trim().slice(0, 80),
+                left: rect.left,
+                canvasLeft: canvasRect.left,
+                right: rect.right,
+                canvasRight: canvasRect.right,
+              }]
+            : []
+        }).slice(0, 12),
+        layerOverflow: layers.map((layer) => ({
+          layer: layer.getAttribute('data-reading-layer'),
+          overflow: layer.scrollWidth - layer.clientWidth,
+        })),
+        opened: { left: openedRect.left, right: openedRect.right, top: openedRect.top, bottom: openedRect.bottom },
+        trust: { left: trustRect.left, right: trustRect.right, top: trustRect.top, bottom: trustRect.bottom },
+      }
+    })
+    assert.ok(readingGeometry, `${row.id} does not render the selected Folio composition`)
+    assert.ok(
+      readingGeometry.canvasOverflow <= 1,
+      `${row.id} Folio canvas overflows its track: ${JSON.stringify(readingGeometry)}`,
+    )
+    assert.deepEqual(
+      readingGeometry.layerOverflow.filter(({ overflow }) => overflow > 1),
+      [],
+      `${row.id} has an overflowing Reading, Evidence, or Source layer`,
+    )
+    if (row.viewport.width < 1536) {
+      assert.ok(
+        readingGeometry.trust.top >= readingGeometry.opened.bottom - 1,
+        `${row.id} must stack provenance below the Reading`,
+      )
+    } else {
+      assert.ok(
+        readingGeometry.trust.left >= readingGeometry.opened.right - 1,
+        `${row.id} must place provenance beside the Reading`,
+      )
+    }
+  }
+
+  if (row.surface === 'reading-composition') {
+    const compositionGeometry = await page.evaluate(() => {
+      const composition = document.querySelector('[data-workflow-composition="full-spectrum"]')
+      const grid = composition?.querySelector('.reading-composition-grid')
+      const engines = [...(composition?.querySelectorAll('[data-engine-composition]') ?? [])]
+      if (!(composition instanceof HTMLElement) || !(grid instanceof HTMLElement)) return null
+      const columns = getComputedStyle(grid).gridTemplateColumns
+        .split(' ')
+        .filter(Boolean)
+      return {
+        engines: engines.length,
+        columns: columns.length,
+        overflow: composition.scrollWidth - composition.clientWidth,
+        artifacts: [...composition.querySelectorAll('[data-engine-artifact]')]
+          .map((artifact) => artifact.getAttribute('data-engine-artifact')),
+        overflowingEngines: engines.flatMap((engine) => (
+          engine.scrollWidth > engine.clientWidth + 1
+            ? [engine.getAttribute('data-engine-composition')]
+            : []
+        )),
+      }
+    })
+    assert.ok(compositionGeometry, `${row.id} does not render the Full Spectrum composition`)
+    assert.equal(compositionGeometry.engines, 17, `${row.id} does not preserve every Full Spectrum engine`)
+    assert.ok(compositionGeometry.columns <= 2, `${row.id} renders more than two engine columns`)
+    assert.ok(compositionGeometry.overflow <= 1, `${row.id} Full Spectrum composition overflows`)
+    assert.deepEqual(compositionGeometry.overflowingEngines, [], `${row.id} engine cards overflow`)
+    assert.deepEqual(
+      [
+        'activation-cross',
+        'capture-panel',
+        'five-limb-mandala',
+        'hexagram-transition',
+        'nested-period-spiral',
+        'raaga-player',
+        'safe-geometry-preview',
+      ].filter((artifact) => !compositionGeometry.artifacts.includes(artifact)),
+      [],
+      `${row.id} omits representative rich engine artifacts`,
+    )
+  }
+
+  if (row.surface === 'operator') {
+    const rosterToggle = page.getByRole('button', { name: /engine roster/i })
+    await rosterToggle.waitFor({ state: 'visible' })
+    if (await rosterToggle.getAttribute('aria-expanded') !== 'true') await rosterToggle.click()
+    try {
+      await page.waitForFunction(
+        (expected) => document.querySelectorAll('.operator-status-roster > li').length === expected,
+        CANONICAL_ENGINE_IDS.length,
+      )
+    } catch (error) {
+      throw new Error(
+        `${row.id} did not receive the canonical roster; requests=${JSON.stringify(requestLog)}`,
+        { cause: error },
+      )
+    }
+    const operatorGeometry = await page.evaluate(() => {
+      const dialog = document.querySelector('dialog[aria-modal="true"]')
+      const panel = dialog?.querySelector('[aria-label="Selemene engine status operator evidence"]')
+      const scroller = dialog?.querySelector('.overflow-y-auto')
+      const endpoint = [...(dialog?.querySelectorAll('p') ?? [])]
+        .find((element) => element.textContent?.includes('Endpoint evidence'))
+      if (!(dialog instanceof HTMLDialogElement) || !(panel instanceof HTMLElement) || !(scroller instanceof HTMLElement) || !endpoint) {
+        return null
+      }
+      const dialogRect = dialog.getBoundingClientRect()
+      const panelRect = panel.getBoundingClientRect()
+      const scrollerRect = scroller.getBoundingClientRect()
+      const previousScrollTop = scroller.scrollTop
+      scroller.scrollTop = scroller.scrollHeight
+      const endpointRect = endpoint.getBoundingClientRect()
+      const statusOverflow = [
+        ...panel.querySelectorAll('.operator-status-summary > *, .operator-status-infrastructure > *, .operator-status-roster > *'),
+      ].flatMap((element) => (
+        element.scrollWidth > element.clientWidth + 1
+          ? [{ text: element.textContent?.trim().slice(0, 80), overflow: element.scrollWidth - element.clientWidth }]
+          : []
+      ))
+      scroller.scrollTop = previousScrollTop
+      return {
+        bodyOverflow: document.body.style.overflow,
+        dialog: { left: dialogRect.left, right: dialogRect.right, top: dialogRect.top, bottom: dialogRect.bottom },
+        panel: { left: panelRect.left, right: panelRect.right },
+        scrollerOverflowY: getComputedStyle(scroller).overflowY,
+        endpointAtScrollEnd: endpointRect.bottom <= scrollerRect.bottom + 1,
+        statusOverflow,
+        rosterIds: [...panel.querySelectorAll('.operator-status-roster > li')]
+          .map((element) => element.querySelector('span.font-mono.text-primary')?.textContent?.trim()),
+      }
+    })
+    assert.ok(operatorGeometry, `${row.id} does not render the Live Status operator instrument`)
+    assert.equal(operatorGeometry.bodyOverflow, 'hidden', `${row.id} does not lock background scrolling`)
+    assert.ok(
+      operatorGeometry.dialog.left >= -1
+        && operatorGeometry.dialog.right <= row.viewport.width + 1
+        && operatorGeometry.dialog.top >= -1
+        && operatorGeometry.dialog.bottom <= row.viewport.height + 1,
+      `${row.id} dialog escapes the viewport`,
+    )
+    assert.ok(
+      operatorGeometry.panel.left >= operatorGeometry.dialog.left - 1
+        && operatorGeometry.panel.right <= operatorGeometry.dialog.right + 1,
+      `${row.id} operator panel escapes its dialog`,
+    )
+    assert.match(operatorGeometry.scrollerOverflowY, /auto|scroll/, `${row.id} modal body cannot scroll`)
+    assert.equal(operatorGeometry.endpointAtScrollEnd, true, `${row.id} endpoint evidence is unreachable`)
+    assert.deepEqual(operatorGeometry.statusOverflow, [], `${row.id} status cells overflow`)
+    assert.deepEqual(
+      operatorGeometry.rosterIds,
+      CANONICAL_ENGINE_IDS,
+      `${row.id} does not render the canonical 18-engine roster`,
+    )
+  }
 
   const rawOpen = await page.locator('details[open]').evaluateAll((details) => (
     details.filter((detail) => detail.querySelector('pre, code')).length
@@ -470,6 +749,19 @@ try {
       [],
       `${row.id} has serious/critical Axe violations`,
     )
+    const knownModerateViolations = new Set([
+      'landmark-one-main',
+      'landmark-unique',
+      'page-has-heading-one',
+      'region',
+    ])
+    assert.deepEqual(
+      axeResult.violations
+        .filter(({ impact, id }) => impact === 'moderate' && !knownModerateViolations.has(id))
+        .map(({ id }) => id),
+      [],
+      `${row.id} introduces an unreviewed moderate Axe violation`,
+    )
 
     const rowDirectory = join(artifactsRoot, row.id)
     mkdirSync(rowDirectory, { recursive: true })
@@ -512,7 +804,10 @@ try {
       graphEquivalent,
       forwardedMutations: 0,
       blockingAxeViolations: 0,
+      deepLinkDismissalVerified: row.surface === 'operator',
     })
+    if (row.verifyHistoryReturn) await verifyOperatorHistoryReturn(page, row)
+    if (row.surface === 'operator') await verifyOperatorDeepLinkDismissal(page, row)
     await context.close()
     console.log(`ui visual PASS ${row.id}`)
   }

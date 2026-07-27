@@ -10,13 +10,13 @@ function ParticipantSide({
 }) {
   return (
     <section
-      className="min-w-0 border border-reading-rule/45 bg-reading-paper/40 p-4 sm:p-5"
+      className="min-w-0 border border-reading-rule/45 bg-reading-surface/40 p-4 sm:p-5"
       data-compare-side={participant.role}
       data-compare-weight="equal"
       data-compare-order="identity,subject,grant"
       aria-label={`${participant.label}, ${participant.role} participant`}
     >
-      <p className="font-display text-[9px] uppercase tracking-[0.2em] text-reading-muted">
+      <p className="font-display text-xs uppercase tracking-[0.2em] text-reading-muted">
         {participant.role}
       </p>
       <h2 className="mt-2 break-words font-serif text-xl leading-tight text-reading-ink">
@@ -24,7 +24,7 @@ function ParticipantSide({
       </h2>
       <dl className="mt-4 space-y-3 border-t border-reading-rule/35 pt-4 text-xs">
         <div>
-          <dt className="font-display text-[9px] uppercase tracking-[0.16em] text-reading-muted">
+          <dt className="font-display text-xs uppercase tracking-[0.16em] text-reading-muted">
             Bound subject
           </dt>
           <dd className="mt-1 break-words text-reading-ink">
@@ -32,7 +32,7 @@ function ParticipantSide({
           </dd>
         </div>
         <div>
-          <dt className="font-display text-[9px] uppercase tracking-[0.16em] text-reading-muted">
+          <dt className="font-display text-xs uppercase tracking-[0.16em] text-reading-muted">
             Access
           </dt>
           <dd className="mt-1 text-reading-ink">{grantLabel}</dd>
@@ -63,7 +63,7 @@ export function CompareField({ document }: { document: ReadingDocument }) {
   return (
     <section className="min-w-0 space-y-4" aria-labelledby={`compare-title-${document.id}`}>
       <header className="text-center">
-        <p className="font-display text-[9px] uppercase tracking-[0.2em] text-reading-muted">
+        <p className="font-display text-xs uppercase tracking-[0.2em] text-reading-muted">
           Symmetrical dyad
         </p>
         <h2 id={`compare-title-${document.id}`} className="mt-1 font-serif text-xl text-reading-ink">

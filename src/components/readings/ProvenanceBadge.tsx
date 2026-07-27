@@ -12,7 +12,7 @@ export function ProvenanceBadge({
 }) {
   return (
     <span
-      className="inline-flex min-h-6 items-center rounded-full border border-parchment/10 px-2 py-0.5 text-[8px] uppercase tracking-[0.12em] text-reading-muted"
+      className="inline-flex min-h-6 items-center rounded-full border border-parchment/10 px-2 py-0.5 text-xs uppercase tracking-[0.12em] text-reading-muted"
       data-provenance={provenance}
     >
       {LABEL[provenance]}

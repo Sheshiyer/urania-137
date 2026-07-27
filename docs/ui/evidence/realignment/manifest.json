@@ -23,7 +23,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-new-user-redirect",
@@ -43,7 +44,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-home",
@@ -63,7 +65,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-operator-home",
@@ -83,7 +86,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-node-birth",
@@ -103,7 +107,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-node-compat",
@@ -123,7 +128,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-node-transit",
@@ -143,7 +149,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-node-witness",
@@ -163,7 +170,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-node-engine",
@@ -183,7 +191,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-node-folio",
@@ -203,7 +212,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-node-bridge",
@@ -223,7 +233,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-chat-intake",
@@ -243,7 +254,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-reading-preview",
@@ -263,7 +275,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-folio-populated",
@@ -283,7 +296,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-reading-selected",
@@ -303,7 +317,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-settings-active",
@@ -323,7 +338,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-operator",
@@ -333,7 +349,7 @@
       "requests": "docs/ui/evidence/realignment/rows/desktop-operator/requests.json",
       "console": "docs/ui/evidence/realignment/rows/desktop-operator/console.json",
       "axe": "docs/ui/evidence/realignment/rows/desktop-operator/axe.json",
-      "route": "#/node/engine/live-status",
+      "route": "#/node/engine",
       "viewport": {
         "width": 1440,
         "height": 1000
@@ -343,7 +359,260 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": true
+    },
+    {
+      "id": "compact-reading-selected",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/compact-reading-selected/compact-reading-selected.png",
+      "domText": "docs/ui/evidence/realignment/rows/compact-reading-selected/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/compact-reading-selected/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/compact-reading-selected/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/compact-reading-selected/axe.json",
+      "route": "#/readings/reading-long",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "fixture": "populated",
+      "surface": "selected-reading",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
+    },
+    {
+      "id": "compact-operator",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/compact-operator/compact-operator.png",
+      "domText": "docs/ui/evidence/realignment/rows/compact-operator/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/compact-operator/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/compact-operator/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/compact-operator/axe.json",
+      "route": "#/node/engine/live-status",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "fixture": "operator",
+      "surface": "operator",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": true
+    },
+    {
+      "id": "tablet-reading-selected",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/tablet-reading-selected/tablet-reading-selected.png",
+      "domText": "docs/ui/evidence/realignment/rows/tablet-reading-selected/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/tablet-reading-selected/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/tablet-reading-selected/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/tablet-reading-selected/axe.json",
+      "route": "#/readings/reading-long",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "fixture": "populated",
+      "surface": "selected-reading",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
+    },
+    {
+      "id": "tablet-operator",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/tablet-operator/tablet-operator.png",
+      "domText": "docs/ui/evidence/realignment/rows/tablet-operator/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/tablet-operator/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/tablet-operator/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/tablet-operator/axe.json",
+      "route": "#/node/engine/live-status",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "fixture": "operator",
+      "surface": "operator",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": true
+    },
+    {
+      "id": "landscape-reading-selected",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/landscape-reading-selected/landscape-reading-selected.png",
+      "domText": "docs/ui/evidence/realignment/rows/landscape-reading-selected/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/landscape-reading-selected/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/landscape-reading-selected/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/landscape-reading-selected/axe.json",
+      "route": "#/readings/reading-long",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "fixture": "populated",
+      "surface": "selected-reading",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
+    },
+    {
+      "id": "landscape-operator",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/landscape-operator/landscape-operator.png",
+      "domText": "docs/ui/evidence/realignment/rows/landscape-operator/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/landscape-operator/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/landscape-operator/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/landscape-operator/axe.json",
+      "route": "#/node/engine/live-status",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "fixture": "operator",
+      "surface": "operator",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": true
+    },
+    {
+      "id": "wide-reading-selected",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/wide-reading-selected/wide-reading-selected.png",
+      "domText": "docs/ui/evidence/realignment/rows/wide-reading-selected/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/wide-reading-selected/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/wide-reading-selected/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/wide-reading-selected/axe.json",
+      "route": "#/readings/reading-long",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "fixture": "populated",
+      "surface": "selected-reading",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
+    },
+    {
+      "id": "compact-reading-composition",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/compact-reading-composition/compact-reading-composition.png",
+      "domText": "docs/ui/evidence/realignment/rows/compact-reading-composition/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/compact-reading-composition/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/compact-reading-composition/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/compact-reading-composition/axe.json",
+      "route": "#/readings/reading-full-spectrum",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "fixture": "populated",
+      "surface": "reading-composition",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
+    },
+    {
+      "id": "tablet-reading-composition",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/tablet-reading-composition/tablet-reading-composition.png",
+      "domText": "docs/ui/evidence/realignment/rows/tablet-reading-composition/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/tablet-reading-composition/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/tablet-reading-composition/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/tablet-reading-composition/axe.json",
+      "route": "#/readings/reading-full-spectrum",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "fixture": "populated",
+      "surface": "reading-composition",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
+    },
+    {
+      "id": "landscape-reading-composition",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/landscape-reading-composition/landscape-reading-composition.png",
+      "domText": "docs/ui/evidence/realignment/rows/landscape-reading-composition/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/landscape-reading-composition/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/landscape-reading-composition/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/landscape-reading-composition/axe.json",
+      "route": "#/readings/reading-full-spectrum",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "fixture": "populated",
+      "surface": "reading-composition",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
+    },
+    {
+      "id": "desktop-reading-composition",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-reading-composition/desktop-reading-composition.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-reading-composition/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-reading-composition/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-reading-composition/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-reading-composition/axe.json",
+      "route": "#/readings/reading-full-spectrum",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "reading-composition",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
+    },
+    {
+      "id": "wide-reading-composition",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/wide-reading-composition/wide-reading-composition.png",
+      "domText": "docs/ui/evidence/realignment/rows/wide-reading-composition/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/wide-reading-composition/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/wide-reading-composition/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/wide-reading-composition/axe.json",
+      "route": "#/readings/reading-full-spectrum",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "fixture": "populated",
+      "surface": "reading-composition",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-folio-denied",
@@ -363,7 +632,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "desktop-dyad-current",
@@ -383,7 +653,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "mobile-home",
@@ -403,7 +674,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "mobile-home-menu",
@@ -423,7 +695,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "mobile-chat-sheet",
@@ -443,7 +716,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "mobile-folio",
@@ -463,7 +737,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "mobile-reading-measure",
@@ -483,7 +758,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "mobile-settings-revoked",
@@ -503,7 +779,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "mobile-operator-capture",
@@ -523,7 +800,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "mobile-dyad-historical",
@@ -543,7 +821,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "reflow-home",
@@ -563,7 +842,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "reflow-node",
@@ -583,7 +863,8 @@
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "reflow-folio-empty",
@@ -603,7 +884,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "reflow-long-reading",
@@ -623,7 +905,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "reflow-settings-failed",
@@ -643,7 +926,8 @@
       "reducedMotion": false,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "reduced-home-list",
@@ -663,7 +947,8 @@
       "reducedMotion": true,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "reduced-begin-dialog",
@@ -683,7 +968,8 @@
       "reducedMotion": true,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "reduced-composing-beat",
@@ -703,7 +989,8 @@
       "reducedMotion": true,
       "graphEquivalent": true,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     },
     {
       "id": "reduced-reading-transition",
@@ -723,7 +1010,8 @@
       "reducedMotion": true,
       "graphEquivalent": false,
       "forwardedMutations": 0,
-      "blockingAxeViolations": 0
+      "blockingAxeViolations": 0,
+      "deepLinkDismissalVerified": false
     }
   ]
 }

@@ -94,6 +94,213 @@ const captureReading = [
   '```',
 ].join('\n')
 
+export const CANONICAL_ENGINE_IDS = [
+  'biofield',
+  'biofield-capture',
+  'biorhythm',
+  'enneagram',
+  'face-reading',
+  'gene-keys',
+  'human-design',
+  'i-ching',
+  'nadabrahman',
+  'numerology',
+  'panchanga',
+  'raaga',
+  'sacred-geometry',
+  'sigil-forge',
+  'tarot',
+  'transits',
+  'vedic-clock',
+  'vimshottari',
+]
+
+const fullSpectrumEngineIds = [
+  'numerology',
+  'human-design',
+  'vimshottari',
+  'panchanga',
+  'vedic-clock',
+  'biorhythm',
+  'gene-keys',
+  'biofield',
+  'face-reading',
+  'transits',
+  'nadabrahman',
+  'tarot',
+  'i-ching',
+  'enneagram',
+  'sacred-geometry',
+  'sigil-forge',
+  'raaga',
+]
+
+const fullSpectrumResults = {
+  numerology: {
+    life_path: {
+      value: 7,
+      reduction_chain: [34, 7],
+      is_master: false,
+      meaning: 'Inquiry and discernment.',
+    },
+    expression: {
+      value: 11,
+      reduction_chain: [38, 11],
+      is_master: true,
+      meaning: 'Source-authored synthesis.',
+    },
+  },
+  'human-design': {
+    hd_type: 'Generator',
+    authority: 'Sacral',
+    profile: '3/5',
+    definition: 'Split',
+    defined_centers: ['Sacral', 'Root'],
+    active_channels: ['43-23', '42-53'],
+  },
+  vimshottari: {
+    current_period: {
+      mahadasha: {
+        planet: 'Rahu',
+        start: '2008-09-09T09:39:58Z',
+        end: '2026-09-09T21:39:58Z',
+      },
+      antardasha: {
+        planet: 'Mars',
+        start: '2025-08-22T09:21:58Z',
+        end: '2026-09-09T21:39:58Z',
+      },
+    },
+    upcoming_transitions: [{
+      type: 'Antardasha',
+      from_planet: 'Mars',
+      to_planet: 'Rahu',
+      date: '2026-09-09T21:39:58Z',
+      days_until: 45,
+    }],
+  },
+  panchanga: {
+    vara_name: 'Ravivara',
+    tithi_name: 'Shashthi',
+    nakshatra_name: 'Uttara Phalguni',
+    yoga_name: 'Parigha',
+    karana_name: 'Kaulava',
+    ['solar_longitude']: 92.91,
+  },
+  'vedic-clock': {
+    current_dosha: 'Pitta',
+    current_window: '11:00–13:00',
+  },
+  biorhythm: {
+    physical: 0.72,
+    emotional: -0.18,
+    intellectual: 0.44,
+  },
+  'gene-keys': {
+    activation_sequence: {
+      lifes_work: [4, 49],
+      evolution: [23, 43],
+      radiance: [4, 23],
+      purpose: [49, 43],
+    },
+  },
+  biofield: {
+    is_mock_data: true,
+    computation_mode: 'placeholder',
+    metrics: { coherence: 0.72, symmetry: 0.81 },
+  },
+  transits: {
+    period_quality: 'Mixed',
+    natal_positions: [{
+      planet: 'Moon',
+      sign: 'Virgo',
+      degree_in_sign: 1.38,
+      ['longitude']: 151.379,
+      is_retrograde: false,
+    }],
+    transit_positions: [{
+      planet: 'Mercury',
+      sign: 'Gemini',
+      degree_in_sign: 23.22,
+      ['longitude']: 83.216,
+      is_retrograde: true,
+    }],
+    aspects: [{
+      transiting_planet: 'Mercury',
+      natal_planet: 'Moon',
+      aspect_type: 'Square',
+      orb: 1.25,
+      nature: 'Dynamic',
+      is_applying: true,
+    }],
+  },
+  'i-ching': {
+    primary_hexagram: { number: 1, name: 'The Creative' },
+    casting: { line_values: [7, 8, 7, 8, 9, 7] },
+    changing_lines: [2, 5],
+    relating_hexagram: { number: 14, name: 'Great Possession' },
+  },
+  'sacred-geometry': {
+    form: {
+      name: 'Sri Yantra',
+      numerology: 9,
+      symbolism: 'Source-supplied geometric correspondence.',
+    },
+  },
+  'sigil-forge': {
+    intention: 'clarity in the work',
+    method: {
+      name: 'Word Elimination Method',
+      description: 'Condense the source intention into a mark.',
+      steps: ['Remove vowels', 'Merge remaining forms'],
+    },
+    processing: { remaining_letters: 'CLRTYNHWK', letter_count: 9 },
+    svg_preview: { status: 'absent' },
+  },
+  raaga: {
+    melakarta: { num: 15, name: 'Mayamalavagaula', chakra: 3 },
+    root_hz: 220,
+    swaras: [
+      { swara: 'Sa', hz: 220, ratio_num: 1, ratio_den: 1 },
+      { swara: 'Re', hz: 231.77, ratio_decimal: 1.0534979423868314 },
+    ],
+  },
+}
+
+function fullSpectrumEnvelope(engineId) {
+  return {
+    engine_id: engineId,
+    result: fullSpectrumResults[engineId] ?? {
+      status: 'observed',
+      summary: `${engineId} synthetic source evidence`,
+    },
+    ...(engineId === 'raaga'
+      ? {
+          generated_audio: {
+            clip_url: 'https://media.example/raaga-fixture.wav',
+            root_hz: 220,
+          },
+        }
+      : {}),
+  }
+}
+
+const fullSpectrumReading = [
+  '## Full Spectrum workflow',
+  '',
+  '```json',
+  JSON.stringify({
+    workflow_id: 'full-spectrum',
+    engine_outputs: Object.fromEntries(fullSpectrumEngineIds.map((engineId) => [
+      engineId,
+      fullSpectrumEnvelope(engineId),
+    ])),
+    synthesis: null,
+    total_time_ms: 1370,
+  }, null, 2),
+  '```',
+].join('\n')
+
 export const FOLIO_READINGS = [
   {
     id: 'reading-long',
@@ -133,6 +340,16 @@ export const FOLIO_READINGS = [
     title: 'Capture required · synthetic',
     content: captureReading,
     createdAt: FIXED_EPOCH - 411000,
+    favorite: false,
+  },
+  {
+    id: 'reading-full-spectrum',
+    nodeId: 'witness',
+    nodeLabel: 'Noesis Reading',
+    mode: 'workflow:full-spectrum',
+    title: 'Full Spectrum · synthetic',
+    content: fullSpectrumReading,
+    createdAt: FIXED_EPOCH - 548000,
     favorite: false,
   },
 ]
@@ -243,12 +460,16 @@ export const ENGINE_STATUS = {
     bridge_failed_engines: [],
     overall_status: 'ready',
   },
-  engines: ['panchanga', 'numerology', 'human-design', 'transits'],
+  engines: CANONICAL_ENGINE_IDS,
 }
 
 const desktop = { width: 1440, height: 1000 }
 const mobile = { width: 390, height: 844 }
 const reflow = { width: 720, height: 1000 }
+const compact = { width: 320, height: 568 }
+const tablet = { width: 768, height: 1024 }
+const landscape = { width: 1024, height: 768 }
+const wide = { width: 1920, height: 1080 }
 
 const parentRows = ['birth', 'compat', 'transit', 'witness', 'engine', 'folio', 'bridge']
   .map((nodeId) => ({
@@ -268,9 +489,21 @@ export const MATRIX_ROWS = [
   { id: 'desktop-chat-intake', viewport: desktop, route: '#/node/witness/integrated-reading', fixture: 'chat', surface: 'chat-intake' },
   { id: 'desktop-reading-preview', viewport: desktop, route: '#/readings/reading-workflow', fixture: 'workflow', surface: 'reading-preview' },
   { id: 'desktop-folio-populated', viewport: desktop, route: '#/readings', fixture: 'populated', surface: 'folio' },
-  { id: 'desktop-reading-selected', viewport: desktop, route: '#/readings/reading-long', fixture: 'populated', surface: 'selected-reading' },
+  { id: 'desktop-reading-selected', viewport: desktop, route: '#/readings/reading-long', fixture: 'populated', surface: 'selected-reading', action: 'focus-reading' },
   { id: 'desktop-settings-active', viewport: desktop, route: '#/settings', fixture: 'active', surface: 'settings' },
-  { id: 'desktop-operator', viewport: desktop, route: '#/node/engine/live-status', fixture: 'operator', surface: 'operator' },
+  { id: 'desktop-operator', viewport: desktop, route: '#/node/engine', fixture: 'operator', surface: 'operator', action: 'open-operator-graph', returnLens: 'graph', verifyHistoryReturn: true },
+  { id: 'compact-reading-selected', viewport: compact, route: '#/readings/reading-long', fixture: 'populated', surface: 'selected-reading', action: 'focus-reading' },
+  { id: 'compact-operator', viewport: compact, route: '#/node/engine/live-status', fixture: 'operator', surface: 'operator', action: 'expand-roster' },
+  { id: 'tablet-reading-selected', viewport: tablet, route: '#/readings/reading-long', fixture: 'populated', surface: 'selected-reading', action: 'focus-reading' },
+  { id: 'tablet-operator', viewport: tablet, route: '#/node/engine/live-status', fixture: 'operator', surface: 'operator', action: 'expand-roster' },
+  { id: 'landscape-reading-selected', viewport: landscape, route: '#/readings/reading-long', fixture: 'populated', surface: 'selected-reading', action: 'focus-reading' },
+  { id: 'landscape-operator', viewport: landscape, route: '#/node/engine/live-status', fixture: 'operator', surface: 'operator', action: 'expand-roster' },
+  { id: 'wide-reading-selected', viewport: wide, route: '#/readings/reading-long', fixture: 'populated', surface: 'selected-reading', action: 'focus-reading' },
+  { id: 'compact-reading-composition', viewport: compact, route: '#/readings/reading-full-spectrum', fixture: 'populated', surface: 'reading-composition', action: 'focus-composition' },
+  { id: 'tablet-reading-composition', viewport: tablet, route: '#/readings/reading-full-spectrum', fixture: 'populated', surface: 'reading-composition', action: 'focus-composition' },
+  { id: 'landscape-reading-composition', viewport: landscape, route: '#/readings/reading-full-spectrum', fixture: 'populated', surface: 'reading-composition', action: 'focus-composition' },
+  { id: 'desktop-reading-composition', viewport: desktop, route: '#/readings/reading-full-spectrum', fixture: 'populated', surface: 'reading-composition', action: 'focus-composition' },
+  { id: 'wide-reading-composition', viewport: wide, route: '#/readings/reading-full-spectrum', fixture: 'populated', surface: 'reading-composition', action: 'focus-composition' },
   { id: 'desktop-folio-denied', viewport: desktop, route: '#/readings', fixture: 'denied', surface: 'folio-denied' },
   { id: 'desktop-dyad-current', viewport: desktop, route: '#/relationships/relationship-fixture/readings/generation-fixture', fixture: 'active', surface: 'dyad-reading' },
   { id: 'mobile-home', viewport: mobile, route: '#/', fixture: 'populated', surface: 'home-list' },

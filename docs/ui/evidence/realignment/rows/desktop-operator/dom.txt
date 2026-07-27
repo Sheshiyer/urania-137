@@ -37,7 +37,7 @@ DOORWAYS
 RUNNABLE
 10
 CONSTELLATION
-V0.5.0 · E7D5D8E
+V0.5.0 · 4C25826
 
 ✦ URANIA 137 ✦
 
@@ -67,7 +67,33 @@ ready
 BRIDGE
 ready
 ENGINE ROSTER
-4 engines
+18 engines
+biofield
+biofield-capture
+biorhythm
+enneagram
+face-reading
+gene-keys
+human-design
+i-ching
+nadabrahman
+numerology
+7ms
+
+fixture evidence
+
+panchanga
+13ms
+
+fixture evidence
+
+raaga
+sacred-geometry
+sigil-forge
+tarot
+transits
+vedic-clock
+vimshottari
 
 Endpoint evidence · ready
 

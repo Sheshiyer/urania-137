@@ -78,7 +78,7 @@ export function ReadingFolio({
           className="min-w-0 space-y-7 px-4 py-6 text-reading-ink sm:px-7 sm:py-8"
         >
           <header className="border-b border-reading-rule/35 pb-5">
-            <div className="flex flex-wrap items-center justify-between gap-2 text-[9px] uppercase tracking-[0.18em] text-reading-muted">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs uppercase tracking-[0.18em] text-reading-muted">
               <span>{document.nodeLabel}</span>
               <span>{dateLabel(document.createdAt)}</span>
             </div>
@@ -110,7 +110,7 @@ export function ReadingFolio({
               className="border-l border-reading-rule/35 py-2 pl-5 sm:pl-7"
               aria-label="Stored reading"
             >
-              <p className="mb-3 font-display text-[9px] uppercase tracking-[0.18em] text-reading-muted">
+              <p className="mb-3 font-display text-xs uppercase tracking-[0.18em] text-reading-muted">
                 Stored reading
               </p>
               <ReadingBody body={document.body ?? ''} />
@@ -120,7 +120,7 @@ export function ReadingFolio({
               className="border-l border-reading-rule/35 py-2 pl-5 sm:pl-7"
               aria-label="Source-only stored record"
             >
-              <p className="font-display text-[9px] uppercase tracking-[0.18em] text-reading-muted">
+              <p className="font-display text-xs uppercase tracking-[0.18em] text-reading-muted">
                 Source-only stored record
               </p>
               <p className="mt-2 max-w-[var(--reading-measure)] text-sm leading-6 text-reading-muted">
@@ -131,7 +131,7 @@ export function ReadingFolio({
 
           {document.bridgeQuestion && (
             <aside className="border-y border-reading-rule/35 py-5 text-center">
-              <p className="font-display text-[9px] uppercase tracking-[0.2em] text-reading-muted">
+              <p className="font-display text-xs uppercase tracking-[0.2em] text-reading-muted">
                 Bridge question
               </p>
               <p className="mx-auto mt-2 max-w-[var(--reading-measure)] font-serif text-lg leading-relaxed text-reading-ink">
@@ -149,7 +149,7 @@ export function ReadingFolio({
           className="min-w-0 space-y-5 bg-void px-4 py-6 text-parchment sm:px-7 sm:py-8"
         >
           <header className="border-b border-gold/25 pb-4">
-            <p className="font-display text-[9px] uppercase tracking-[0.22em] text-gold">
+            <p className="font-display text-xs uppercase tracking-[0.22em] text-gold">
               Evidence
             </p>
             <p className="mt-2 max-w-2xl text-xs leading-relaxed text-silver">
@@ -159,7 +159,7 @@ export function ReadingFolio({
 
           <dl className="grid gap-3 border-y border-gold/15 py-4 text-xs sm:grid-cols-2">
             <div className="min-w-0 border-l border-gold/30 pl-3">
-              <dt className="font-display text-[9px] uppercase tracking-[0.16em] text-gold">
+              <dt className="font-display text-xs uppercase tracking-[0.16em] text-gold">
                 Owner
               </dt>
               <dd className="mt-1 break-words text-parchment">
@@ -167,7 +167,7 @@ export function ReadingFolio({
               </dd>
             </div>
             <div className="min-w-0 border-l border-gold/30 pl-3">
-              <dt className="font-display text-[9px] uppercase tracking-[0.16em] text-gold">
+              <dt className="font-display text-xs uppercase tracking-[0.16em] text-gold">
                 Subject
               </dt>
               <dd className="mt-1 break-words text-parchment">
@@ -175,7 +175,7 @@ export function ReadingFolio({
               </dd>
             </div>
             <div className="min-w-0 border-l border-gold/30 pl-3">
-              <dt className="font-display text-[9px] uppercase tracking-[0.16em] text-gold">
+              <dt className="font-display text-xs uppercase tracking-[0.16em] text-gold">
                 Provenance
               </dt>
               <dd className="mt-1 break-words text-parchment">
@@ -183,7 +183,7 @@ export function ReadingFolio({
               </dd>
             </div>
             <div className="min-w-0 border-l border-gold/30 pl-3">
-              <dt className="font-display text-[9px] uppercase tracking-[0.16em] text-gold">
+              <dt className="font-display text-xs uppercase tracking-[0.16em] text-gold">
                 Canonical identity
               </dt>
               <dd className="mt-1 break-words text-parchment">
@@ -191,7 +191,7 @@ export function ReadingFolio({
               </dd>
             </div>
             <div className="min-w-0 border-l border-gold/30 pl-3">
-              <dt className="font-display text-[9px] uppercase tracking-[0.16em] text-gold">
+              <dt className="font-display text-xs uppercase tracking-[0.16em] text-gold">
                 Access reason
               </dt>
               <dd className="mt-1 break-words text-parchment">
@@ -202,7 +202,7 @@ export function ReadingFolio({
               </dd>
             </div>
             <div className="min-w-0 border-l border-gold/30 pl-3">
-              <dt className="font-display text-[9px] uppercase tracking-[0.16em] text-gold">
+              <dt className="font-display text-xs uppercase tracking-[0.16em] text-gold">
                 Checksum
               </dt>
               <dd className="mt-1 break-words text-parchment">
@@ -215,13 +215,13 @@ export function ReadingFolio({
             {document.access?.reason === 'participant-grant' && (
               <>
                 <div className="min-w-0 border-l border-gold/30 pl-3">
-                  <dt className="font-display text-[9px] uppercase tracking-[0.16em] text-gold">
+                  <dt className="font-display text-xs uppercase tracking-[0.16em] text-gold">
                     Grant time
                   </dt>
                   <dd className="mt-1 break-words text-parchment">{document.access.grantedAt}</dd>
                 </div>
                 <div className="min-w-0 border-l border-gold/30 pl-3">
-                  <dt className="font-display text-[9px] uppercase tracking-[0.16em] text-gold">
+                  <dt className="font-display text-xs uppercase tracking-[0.16em] text-gold">
                     Relationship
                   </dt>
                   <dd className="mt-1 break-words text-parchment">{document.access.relationshipId}</dd>

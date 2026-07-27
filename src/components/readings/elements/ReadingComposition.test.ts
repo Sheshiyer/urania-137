@@ -187,6 +187,12 @@ describe('Reading composition', () => {
     )
     expect(html).toContain('data-composition-slot="primary"')
     expect(html).toContain('data-composition-slot="supporting"')
+    const supportingGrids = [...html.matchAll(
+      /<div class="([^"]+)" data-composition-slot="supporting">/g,
+    )]
+    expect(supportingGrids.length).toBeGreaterThan(0)
+    expect(supportingGrids.every(([, classes]) => classes.includes('grid-cols-1'))).toBe(true)
+    expect(supportingGrids.every(([, classes]) => !classes.includes('sm:grid-cols-2'))).toBe(true)
   })
 
   it('renders all six named workflow compositions in declared Engine order', () => {
@@ -206,6 +212,7 @@ describe('Reading composition', () => {
       }))
 
       expect(html).toContain(`data-workflow-composition="${workflowId}"`)
+      expect(html).toContain('reading-composition-grid')
       expect(html).toContain(`data-atlas-primary="${contract.atlasComponents.primary}"`)
       expect(html).toContain(`aria-label="${contract.name} workflow composition"`)
       expect(html.match(/data-reading-element=/g)).toHaveLength(1 + returned.length)
@@ -215,6 +222,7 @@ describe('Reading composition', () => {
       )
       expect(positions.every((position) => position >= 0)).toBe(true)
       expect(positions).toEqual([...positions].sort((left, right) => left - right))
+      expect(html).not.toContain('xl:grid-cols-3')
     }
   })
 
