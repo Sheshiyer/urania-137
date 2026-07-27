@@ -21,6 +21,11 @@ test('home copy and direct reading doorway are wired to the grounded vocabulary'
   assert.match(sources.home, /UI_COPY\.promise/)
   assert.match(sources.home, /UI_COPY\.beginReading/)
   assert.match(sources.home, /<BeginReadingDialog/)
+  assert.match(
+    sources.home,
+    /wrapperClassName="fixed inset-x-0 bottom-\[8\.75rem\] top-44 sm:inset-0"/,
+    'the narrow home lens must end above the 140px bottom chrome',
+  )
   assert.match(sources.threshold, /UI_COPY\.thresholdGrounding/)
 })
 

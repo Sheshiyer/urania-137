@@ -49,7 +49,7 @@ export function HomePage() {
     <div className="relative min-h-screen overflow-hidden bg-void">
       <ConstellationGraph
         variant="home"
-        wrapperClassName="fixed inset-x-0 bottom-0 top-44 sm:inset-0"
+        wrapperClassName="fixed inset-x-0 bottom-[8.75rem] top-44 sm:inset-0"
         orbitals={overviewOrbitals}
         selectedId={null}
         onSelect={(id) => navigate(`/node/${id}`)}
