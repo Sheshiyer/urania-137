@@ -19,17 +19,17 @@ export function EvidenceLedger({ evidence }: { evidence: ReadingEvidence[] }) {
             What supports this reading
           </h2>
         </div>
-        <span className="text-[9px] uppercase tracking-[0.16em] text-silver/55">{evidence.length} entries</span>
+        <span className="text-xs uppercase tracking-[0.16em] text-metadata">{evidence.length} entries</span>
       </div>
       <ol className="space-y-2">
         {evidence.map((item) => (
           <li key={item.id} className="grid gap-1 border-t border-gold/10 pt-2 sm:grid-cols-[8rem_1fr_auto] sm:gap-3">
-            <span className="text-[9px] uppercase tracking-[0.16em] text-gold/70">{KIND_LABEL[item.kind]}</span>
+            <span className="text-xs uppercase tracking-[0.16em] text-gold">{KIND_LABEL[item.kind]}</span>
             <span>
               <strong className="block text-xs font-medium text-parchment/90">{item.label}</strong>
-              <span className="text-[11px] leading-relaxed text-silver/75">{item.detail}</span>
+              <span className="text-xs leading-relaxed text-secondary">{item.detail}</span>
             </span>
-            <span className="self-start rounded-full border border-parchment/10 px-2 py-0.5 text-[8px] uppercase tracking-[0.14em] text-silver/60">
+            <span className="self-start rounded-full border border-parchment/10 px-2 py-0.5 text-xs uppercase tracking-[0.14em] text-metadata">
               {item.confidence}
             </span>
           </li>

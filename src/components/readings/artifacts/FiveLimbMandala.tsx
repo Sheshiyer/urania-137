@@ -18,8 +18,8 @@ export function FiveLimbMandala({ element }: { element: ReadingFactGridElement }
                 className="grid min-h-24 place-items-center border border-gold/25 bg-gold/5 p-3 text-center"
                 data-limb={index + 1}
               >
-                <span className="font-serif text-sm text-reading-ink">{limb.label}</span>
-                <span className="mt-1 block text-xs text-reading-muted">{limb.value}</span>
+                <span className="font-serif text-sm text-primary">{limb.label}</span>
+                <span className="mt-1 block text-xs text-secondary">{limb.value}</span>
               </div>
             ))}
           </div>
@@ -28,7 +28,7 @@ export function FiveLimbMandala({ element }: { element: ReadingFactGridElement }
             Five source limbs are required; the available values remain in the table.
           </p>
         )}
-        <table className="mt-4 w-full text-left text-xs">
+        <table className="mt-4 w-full text-left text-xs text-primary">
           <caption className="sr-only">Five Panchanga limb values</caption>
           <thead><tr><th scope="col">Limb</th><th scope="col">Source value</th></tr></thead>
           <tbody>

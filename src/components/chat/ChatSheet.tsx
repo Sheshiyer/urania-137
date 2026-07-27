@@ -434,7 +434,7 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, owner, onClose,
       eyebrow={
         <>
           {nodeLabel} · {SEED_KIND_LABEL[seed.kind]}
-          {chapter && <span className="text-gold/50"> · {chapter.replace('_', ' ')}</span>}
+          {chapter && <span className="text-metadata"> · {chapter.replace('_', ' ')}</span>}
         </>
       }
       onClose={onClose}
@@ -481,7 +481,7 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, owner, onClose,
 
           {/* Typing indicator — shown until the first block of the reply lands */}
           {streaming && (msgs.length === 0 || msgs[msgs.length - 1].role === 'user' || msgs[msgs.length - 1].blocks.length === 0) && (
-            <div className="flex items-center gap-1.5 py-1" aria-label="The narrator is composing">
+            <div className="flex items-center gap-1.5 py-1" role="status" aria-label="The narrator is composing">
               {[0, 1, 2].map((i) => (
                 <span
                   key={i}

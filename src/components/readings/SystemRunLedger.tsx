@@ -18,7 +18,7 @@ export function SystemRunLedger({ entries }: { entries: SystemRunEntry[] }) {
   return (
     <section className="console-card min-w-0 p-4" aria-labelledby="system-run-ledger-title">
       <p className="console-eyebrow">Workflow evidence</p>
-      <h2 id="system-run-ledger-title" className="mt-1 font-serif text-base text-reading-ink">System run ledger</h2>
+      <h2 id="system-run-ledger-title" className="mt-1 font-serif text-base text-primary">System run ledger</h2>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         {ORDER.map((state) => {
           const systems = entries.filter((entry) => entry.state === state)
@@ -26,10 +26,10 @@ export function SystemRunLedger({ entries }: { entries: SystemRunEntry[] }) {
           return (
             <section key={state} className="border border-reading-rule/30 bg-void/35 p-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h3 className="text-[10px] uppercase tracking-[0.14em] text-reading-muted">{LABEL[state]}</h3>
+                <h3 className="text-xs uppercase tracking-[0.14em] text-secondary">{LABEL[state]}</h3>
                 <RunStateBadge state={state} />
               </div>
-              <ul className="mt-2 space-y-1 text-xs text-reading-ink">
+              <ul className="mt-2 space-y-1 text-xs text-primary">
                 {systems.map(({ id }) => <li key={id}>{id}</li>)}
               </ul>
             </section>

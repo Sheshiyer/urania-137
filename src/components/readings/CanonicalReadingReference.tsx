@@ -132,11 +132,11 @@ export function CanonicalReadingReference({
         </span>
       )}
       <div className="min-w-0">
-        <p className="console-eyebrow text-emerald/80">Canonical Folio record</p>
-        <p className="mt-1 truncate font-mono text-[10px] text-parchment" title={entry.id}>
+        <p className="console-eyebrow text-emerald">Canonical Folio record</p>
+        <p className="mt-1 truncate font-mono text-xs text-parchment" title={entry.id}>
           {entry.id}
         </p>
-        <p className="mt-1 font-mono text-[9px] text-silver/60" title={checksum ?? undefined}>
+        <p className="mt-1 font-mono text-xs text-metadata" title={checksum ?? undefined}>
           sha256 · {shortChecksum(checksum)}
         </p>
       </div>
@@ -144,8 +144,8 @@ export function CanonicalReadingReference({
         href={`#/readings/${encodeURIComponent(entry.id)}`}
         className={
           compact
-            ? 'mt-2 inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 font-display text-[9px] uppercase tracking-[0.2em] text-gold underline decoration-gold/35 underline-offset-4 transition-colors hover:text-parchment focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold'
-            : 'inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 justify-self-start rounded-full border border-gold/30 px-4 py-2 font-display text-[9px] uppercase tracking-[0.2em] text-gold transition-colors hover:border-gold hover:bg-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold sm:justify-self-end'
+            ? 'mt-2 inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 font-display text-xs uppercase tracking-[0.2em] text-gold underline decoration-gold/35 underline-offset-4 transition-colors hover:text-parchment focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold'
+            : 'inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 justify-self-start rounded-full border border-gold/30 px-4 py-2 font-display text-xs uppercase tracking-[0.2em] text-gold transition-colors hover:border-gold hover:bg-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold sm:justify-self-end'
         }
       >
         <Archive className="h-3.5 w-3.5" aria-hidden="true" />
@@ -176,7 +176,7 @@ export function ChatCanonicalReadingReference({
   if (result.saveError) return null
   if (!binding.entry && binding.timedOut) {
     return (
-      <div className="space-y-2 border-l border-terracotta/30 pl-3 text-[10px] text-evidence-copy-unresolved">
+      <div className="space-y-2 border-l border-terracotta/30 pl-3 text-xs text-evidence-copy-unresolved">
         <p>The reading could not be confirmed in Folio yet.</p>
         <button
           type="button"
@@ -190,7 +190,7 @@ export function ChatCanonicalReadingReference({
   }
   if (!binding.entry) {
     return (
-      <div className="flex items-center gap-2 border-l border-gold/25 pl-3 text-[10px] text-silver/60">
+      <div className="flex items-center gap-2 border-l border-gold/25 pl-3 text-xs text-secondary">
         <LoaderCircle className="h-3.5 w-3.5 animate-spin text-gold motion-reduce:animate-none" aria-hidden="true" />
         Saving this reading to Folio…
       </div>

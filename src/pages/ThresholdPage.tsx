@@ -396,7 +396,7 @@ export function ThresholdPage() {
   const label = 'text-left font-display text-[9px] font-medium uppercase tracking-[0.26em] text-silver/80'
   const input =
     'w-full border-b border-silver/30 bg-transparent px-0.5 py-2.5 font-serif text-[22px] tracking-wide text-parchment transition-colors placeholder:text-lg placeholder:text-silver/45 focus:border-gold focus:outline-none disabled:opacity-40'
-  const hint = 'text-left text-xs leading-relaxed text-silver/70'
+  const hint = 'text-left text-xs leading-relaxed text-secondary'
   const btn =
     'self-end rounded-full border border-gold px-6 py-3 font-display text-[10px] font-medium uppercase tracking-[0.26em] text-gold transition-all hover:bg-gold hover:text-void disabled:cursor-default disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-gold'
   const chip = (on: boolean) =>
@@ -434,7 +434,7 @@ export function ThresholdPage() {
 
       {/* The narrator travels with you — latest reply, or a streaming pulse */}
       {(narrator || streaming) && (
-        <p className="fixed bottom-6 left-6 z-40 max-w-xs text-left text-xs italic leading-relaxed text-silver/70">
+        <p className="fixed bottom-6 left-6 z-40 max-w-xs text-left text-xs italic leading-relaxed text-secondary">
           {streaming ? 'The narrator is composing…' : narrator}
         </p>
       )}
@@ -648,7 +648,7 @@ export function ThresholdPage() {
                         onClick={() => { setPlacePick(hit); setPlaceHeld(true); setSugg([]) }}
                       >
                         <span className="truncate">{hit.display}</span>
-                        <small className="shrink-0 text-[11px] text-silver/70">{hit.location.timezone}</small>
+                        <small className="shrink-0 text-xs text-secondary">{hit.location.timezone}</small>
                       </button>
                     ))}
                     {placeQuery.trim().length >= 3 && !placeHeld && (
@@ -658,7 +658,7 @@ export function ThresholdPage() {
                         onClick={() => { setPlacePick(null); setPlaceHeld(true); setSugg([]) }}
                       >
                         <span className="truncate">Hold “{placeQuery.trim()}” as written</span>
-                        <small className="shrink-0 text-[11px] text-silver/70">manual entry</small>
+                        <small className="shrink-0 text-xs text-secondary">manual entry</small>
                       </button>
                     )}
                   </div>

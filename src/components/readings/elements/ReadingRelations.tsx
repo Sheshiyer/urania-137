@@ -10,15 +10,15 @@ export function ReadingRelations({ element }: { element: ReadingRelationsElement
             <span className="border border-gold/20 bg-void/55 px-3 py-2 text-center text-xs text-parchment/90">{relation.from}</span>
             <span className="relative flex min-h-10 flex-col items-center justify-center text-center">
               <i className="absolute left-0 right-0 top-1/2 border-t border-gold/30" aria-hidden="true" />
-              <strong className="relative bg-void px-2 font-display text-[8px] uppercase tracking-[0.14em] text-gold">{relation.relation}</strong>
+              <strong className="relative bg-void px-2 font-display text-xs uppercase tracking-[0.14em] text-gold">{relation.relation}</strong>
               {(relation.measure || relation.status) && (
-                <span className="relative mt-1 bg-void px-2 text-[8px] text-silver/65">
+                <span className="relative mt-1 bg-void px-2 text-xs text-metadata">
                   {[relation.measure, relation.status].filter(Boolean).join(' · ')}
                 </span>
               )}
             </span>
             <span className="border border-gold/20 bg-void/55 px-3 py-2 text-center text-xs text-parchment/90">{relation.to}</span>
-            {relation.detail && <span className="sm:col-span-3 text-center text-[9px] text-silver/55">{relation.detail}</span>}
+            {relation.detail && <span className="text-center text-xs text-secondary sm:col-span-3">{relation.detail}</span>}
           </li>
         ))}
       </ul>

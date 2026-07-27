@@ -172,7 +172,7 @@ body {
 
   /* Eyebrow header inside a card: small gold overline with flanking rules. */
   .console-eyebrow {
-    @apply font-display text-xs uppercase tracking-[0.28em] text-gold/80;
+    @apply font-display text-xs uppercase tracking-[0.28em] text-gold;
   }
 
   /* Hairline divider with a center diamond, from the reference panels. */

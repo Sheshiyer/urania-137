@@ -60,13 +60,13 @@ export function ReadingTrustPanel({
             Record clarity
           </h2>
         </div>
-        <p className="mt-2 text-xs leading-relaxed text-silver/70">
+        <p className="mt-2 text-xs leading-relaxed text-secondary">
           These relations are separate on purpose. Owning a reading does not make you its subject, source, or producer.
         </p>
         <dl className="mt-4 divide-y divide-gold/10 border-y border-gold/10">
           {facts.map(({ key, label, icon: Icon }) => (
             <div key={key} className="grid gap-1 py-3 sm:grid-cols-[9.5rem_1fr] sm:gap-4">
-              <dt className="flex items-center gap-2 font-display text-[9px] uppercase tracking-[0.18em] text-gold/65">
+              <dt className="flex items-center gap-2 font-display text-xs uppercase tracking-[0.18em] text-gold">
                 <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                 {label}
               </dt>
@@ -75,7 +75,7 @@ export function ReadingTrustPanel({
           ))}
         </dl>
         {participantGrant && (
-          <p className="mt-3 text-xs leading-relaxed text-silver/70">
+          <p className="mt-3 text-xs leading-relaxed text-secondary">
             Relationship {participantGrant.relationshipId} · granted {participantGrant.grantedAt}
           </p>
         )}
