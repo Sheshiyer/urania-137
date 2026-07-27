@@ -3119,6 +3119,9 @@ Living Archive.
   transforms 1,658 modules successfully. Browser evidence in
   `docs/ui/evidence/node-entry-import-visibility/` shows Numerology opening the
   native instrument while Integrated Reading retains the witness threshold.
+  Cloudflare Pages production deployment
+  `2cf55770-bbba-4c27-9e3c-23ec023eae5e` records source `c2c7673` on branch
+  `main`; the custom domain continues to enforce its Access boundary.
 - ISC-463–473, 487–489: the isolated Selemene delivery branch
   `codex/selemene-living-archive-visibility` passes three repository/schema
   tests, two API authorization tests, three admin source-contract tests,
