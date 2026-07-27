@@ -4,11 +4,11 @@ slug: 20260726-urania-living-readings-ecosystem
 project: Urania 137
 effort: advanced
 effort_source: classifier
-phase: verify
+phase: complete
 progress: 32/32
 mode: interactive
 started: 2026-07-14T16:00:00Z
-updated: 2026-07-27T07:05:03+05:30
+updated: 2026-07-27T08:05:34+05:30
 iteration: 10
 ---
 
@@ -47,7 +47,7 @@ A user lands on Urania 137, sees the same radial constellation as the reference,
 
 ## Goal
 
-Produce a clear architectural map of the full Instagram reference and a phased implementation plan so that Urania 137 moves from a single-layer radial graph to a multi-page, multi-depth stellar node console where each of the seven parent nodes has its own navigable page and each page branches into the relevant Selemene report dimensions.
+Produce a clear architectural map of the full Instagram reference and a phased implementation plan so that Urania 137 moves from a single-layer radial graph to a multi-page, multi-depth stellar node console where each of the seven parent nodes has its own navigable page and each page branches into the relevant Selemene report dimensions. The completed console must preserve the graph-first brand, chat-to-reading continuity, canonical Folio recovery, zero-trust consent boundaries, and honest source-shaped engine presentation under one reproducible exit gate.
 
 ## Criteria
 
@@ -265,6 +265,11 @@ Produce a clear architectural map of the full Instagram reference and a phased i
   refuted by: the live engine still returned `200 default` for a bogus mode after an all-green CD run. Every deploy job reported success while doing nothing — `Deploy to Railway`/`Deploy to Kubernetes`/`API Smoke Tests` each `exit 0` on missing secrets, and the K8s job pointed at an unreachable host. The same "reports success without doing the thing" failure the whole session hunted, living in the pipeline itself. Then even with CI green, my own `clippy` check false-passed (grepped coloured output for `^error`), and the deploy failed twice more on token type/value before landing.
   learned: a green pipeline is a claim, not evidence — verify the running service, not the status. A deploy step that can't deploy must FAIL, never skip; a verification gate that can't authenticate must FAIL, never skip; a self-check that also passes with wrong input (a made-up mode, a mis-grepped log) proves nothing. And deploying a shared branch after a long gap ships everything accumulated, not just the intended change — the auth-tightening that rode along invalidated the app's key and was caught only by checking the live proxy.
   criterion now: CD fails-loud on any missing deploy/verify config; the post-deploy gate runs `scripts/verify-mode-contract.mjs` against the deployed engine and exits non-zero (never 0) when unreachable; "deployed" is asserted by the live engine's behaviour (`bogus → 400`, restarted uptime) and the live app's proxy returning 200, not by a workflow's conclusion.
+
+- 2026-07-27 | conjectured: semantic token tests, source contracts, and focused component tests were sufficient to prove the realigned reading surfaces accessible and evidence-safe.
+  refuted by: the stable-state Axe matrix exposed computed contrast and ARIA defects that source tests missed, while the evidence gate exposed whitespace backtracking in the quoted `[MASKED]` sentinel detector.
+  learned: accessibility and privacy claims require one integrated gate that combines static contracts with computed built-runtime behavior, deterministic synthetic fixtures, and exact allowlisted artifacts.
+  criterion now: ISC-344 and ISC-345 require the complete `verify:ui-realignment` orchestrator, including 33 stable-state browser rows, blocking Axe, evidence redaction, build, and bundle budget.
 
 ## Verification
 
