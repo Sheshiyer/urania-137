@@ -148,7 +148,9 @@ export function threadResultToReadingDocument(
 
   const evidenceKind = evidenceKindFor(result)
   const native = result.structureSource === 'native'
-  const flatBody = native ? null : result.chapters.map((chapter) => chapter.body).join('\n\n')
+  const flatBody = native || result.kind === 'deterministic' || result.chapters.length === 0
+    ? null
+    : result.chapters.map((chapter) => chapter.body).join('\n\n')
   const sourcePayload = result.sourcePayload
 
   return {
@@ -199,6 +201,66 @@ export function threadResultToReadingDocument(
   }
 }
 
+const NAMED_JSON_SOURCE = /^\s*[-*]\s+([a-z0-9][a-z0-9_-]*):\s*([\[{].*)$/i
+
+function parseWholeJson(body: string): unknown | null {
+  const candidate = body.trim()
+  if (
+    !(
+      (candidate.startsWith('{') && candidate.endsWith('}'))
+      || (candidate.startsWith('[') && candidate.endsWith(']'))
+    )
+  ) {
+    return null
+  }
+  try {
+    return JSON.parse(candidate)
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Older Folio rows can contain server-seed output such as
+ * `- panchanga: {...}` rather than one fenced payload. Valid named fragments
+ * become engine envelopes for the existing allowlisted extractors. Truncated
+ * or invalid technical bodies remain exact source strings so ReadingFolio's
+ * raw-only branch keeps them out of Reading and inside collapsed Source.
+ */
+function recoverLegacyTechnicalSource(body: string): unknown | null {
+  const fenced = parseDeterministicPayload(body)
+  if (fenced !== null) return fenced
+
+  const whole = parseWholeJson(body)
+  if (whole !== null) return whole
+
+  let sawNamedTechnicalSource = false
+  const engineOutputs: Record<string, { engine_id: string; result: unknown }> = {}
+  for (const line of body.split(/\r?\n/)) {
+    const match = line.match(NAMED_JSON_SOURCE)
+    if (!match) continue
+    sawNamedTechnicalSource = true
+    try {
+      engineOutputs[match[1]] = {
+        engine_id: match[1],
+        result: JSON.parse(match[2]),
+      }
+    } catch {
+      // The exact body becomes the privacy-filtered Source fallback below.
+    }
+  }
+
+  if (Object.keys(engineOutputs).length > 0) {
+    return {
+      engine_outputs: engineOutputs,
+      source_markdown: body,
+    }
+  }
+
+  const containsJsonFence = /```json\b/i.test(body)
+  return sawNamedTechnicalSource || containsJsonFence ? body : null
+}
+
 /**
  * Adapt the frozen D1 contract honestly. ReadingDTO stores one flat body, so
  * this adapter emits no chapters and labels the structure source `flat`.
@@ -207,7 +269,7 @@ export function folioEntryToReadingDocument(
   entry: ReadingDTO,
   context?: ReadingAdapterContext,
 ): ReadingDocument {
-  const sourcePayload = parseDeterministicPayload(entry.content)
+  const sourcePayload = recoverLegacyTechnicalSource(entry.content)
   return {
     id: `folio:${entry.id}`,
     title: entry.title,

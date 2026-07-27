@@ -10,9 +10,9 @@ import type { DailyReading } from '../daily/source'
 
 /**
  * Phase 3 result-message mapping contract: hook state → in-thread chapters.
- * Witness/daily render ONE chapter per `{id,title,output}` pass; deterministic
- * renders a single chapter carrying the same fenced-json markdown the Folio
- * archive stores; failures map to a retryable error state, never silently.
+ * Witness/daily render only reader-facing `{id,title,output}` passes;
+ * deterministic source remains structured for components while its lossless
+ * serialization stays archive-only. Failures remain retryable, never silent.
  */
 
 const witnessReport = (over: Partial<GeneratedReport>): GeneratedReport => ({
@@ -77,6 +77,100 @@ describe('witnessThreadResult', () => {
     expect(r?.chapters).toEqual([{ id: 'assembled', title: 'Noesis Reading — integrated-kundali-l0', body: '## Reading\n\nWhole cloth.' }])
     expect(r?.structureSource).toBe('flat')
     expect(r?.footer).toBeUndefined()
+  })
+
+  it('keeps source_pack as provenance while excluding technical serialized passes from visible chapters', () => {
+    const sourcePack = {
+      register: 'l1_l3',
+      quality: { gate_status: 'ready' },
+      engines: ['panchanga', 'numerology'],
+    }
+    const technicalPass = [
+      'Pass alpha — Structural Field',
+      '- panchanga: {"vara_name":"Somavara"}',
+      '- numerology: {"life_path":{"value":7}}',
+    ].join('\n')
+    const raw = {
+      mode: 'integrated-reading',
+      register: 'l1_l3',
+      passes: [
+        { id: 'alpha', title: 'Structural Field', output: technicalPass },
+        { id: 'reading', title: 'Reading', output: 'The source-authored interpretation remains visible.' },
+      ],
+      assembled: `## Structural Field\n\n${technicalPass}\n\n## Reading\n\nThe source-authored interpretation remains visible.`,
+      engines_used: ['panchanga', 'numerology'],
+      source_pack: sourcePack,
+    }
+
+    const r = witnessThreadResult(witnessReport({ status: 'complete', raw, content: raw.assembled }), null)
+
+    expect(r?.chapters).toEqual([
+      { id: 'reading', title: 'Reading', body: 'The source-authored interpretation remains visible.' },
+    ])
+    expect(r?.sourcePayload).toBe(sourcePack)
+    expect(r?.archiveContent).toBe(raw.assembled)
+    expect(r?.chapters.some((chapter) => chapter.body.includes('{"vara_name"'))).toBe(false)
+  })
+
+  it('turns an all-technical witness response into a source-only result without losing its archive', () => {
+    const sourcePack = { engines: ['panchanga'], quality: { gate_status: 'ready' } }
+    const technicalPass = 'Pass alpha — Structural Field\n- panchanga: {"vara_name":"Somavara"}'
+    const raw = {
+      mode: 'integrated-reading',
+      register: 'l1_l3',
+      passes: [{ id: 'alpha', title: 'Structural Field', output: technicalPass }],
+      assembled: `## Structural Field\n\n${technicalPass}`,
+      engines_used: ['panchanga'],
+      source_pack: sourcePack,
+    }
+
+    const r = witnessThreadResult(witnessReport({ status: 'complete', raw, content: raw.assembled }), null)
+
+    expect(r?.structureSource).toBe('flat')
+    expect(r?.chapters).toEqual([])
+    expect(r?.sourcePayload).toBe(sourcePack)
+    expect(r?.archiveContent).toBe(raw.assembled)
+  })
+
+  it('keeps fenced, whole-object, and multiline witness JSON out of visible chapters', () => {
+    const technicalPasses = [
+      {
+        id: 'fenced',
+        title: 'Fenced source',
+        output: '```json\n{"engine_id":"panchanga","result":{"vara":"Somavara"}}\n```',
+      },
+      {
+        id: 'whole',
+        title: 'Whole source',
+        output: '{"engine_id":"numerology","result":{"life_path":7}}',
+      },
+      {
+        id: 'multiline',
+        title: 'Multiline source',
+        output: 'Pass beta — Somatic Field\n- human-design:\n  {"authority":"Sacral"}',
+      },
+    ]
+    const raw = {
+      mode: 'integrated-reading',
+      register: 'l1_l3',
+      passes: [
+        ...technicalPasses,
+        { id: 'reading', title: 'Reading', output: 'A reader-facing interpretation.' },
+      ],
+      assembled: technicalPasses.map((pass) => pass.output).join('\n\n'),
+      engines_used: ['panchanga', 'numerology', 'human-design'],
+    }
+
+    const r = witnessThreadResult(
+      witnessReport({ status: 'complete', raw, content: raw.assembled }),
+      null,
+    )
+
+    expect(r?.chapters).toEqual([
+      { id: 'reading', title: 'Reading', body: 'A reader-facing interpretation.' },
+    ])
+    expect(r?.sourcePayload).toEqual({ technical_passes: technicalPasses })
+    expect(r?.archiveContent).toBe(raw.assembled)
   })
 
   it('Folio save failure after a complete reading → saveError rides the complete result (reading stays whole)', () => {
@@ -171,21 +265,21 @@ describe('deterministicThreadResult', () => {
     expect(deterministicThreadResult(detBase, 'Birth Blueprint')).toBeNull()
   })
 
-  it('engine result → single chapter with the byte-identical Folio markdown body', () => {
-    const engine = { engine_id: 'numerology', result: { life_path: 7 } }
+  it('engine result → structured source for components with lossless JSON confined to the archive', () => {
+    const engine = { engine_id: 'numerology', result: { life_path: { value: 7 } } }
     const r = deterministicThreadResult({ ...detBase, engine }, 'Birth Blueprint')
     expect(r?.status).toBe('complete')
-    expect(r?.chapters).toHaveLength(1)
-    expect(r?.chapters[0].id).toBe('numerology')
-    expect(r?.chapters[0].title).toBe('Birth Blueprint')
-    expect(r?.chapters[0].body).toBe('```json\n' + JSON.stringify(engine, null, 2) + '\n```')
+    expect(r?.chapters).toEqual([])
     expect(r?.structureSource).toBe('flat')
     expect(r?.systems).toEqual(['numerology'])
     expect(r?.warning).toBeUndefined()
     expect(r?.sourcePayload).toEqual(engine)
+    expect(r?.archiveContent).toBe(
+      '## Birth Blueprint (numerology)\n\n```json\n' + JSON.stringify(engine, null, 2) + '\n```\n',
+    )
   })
 
-  it('workflow result → single chapter + dropped-engine honesty warning', () => {
+  it('workflow result → source-shaped presentation + dropped-engine honesty warning', () => {
     const workflow = {
       workflow_id: 'birth-blueprint',
       engine_outputs: { jyotish: { engine_id: 'jyotish', result: {} } },
@@ -196,10 +290,11 @@ describe('deterministicThreadResult', () => {
       { ...detBase, workflow, declaredEngines: ['jyotish', 'numerology'] },
       'Birth Blueprint',
     )
-    expect(r?.chapters).toHaveLength(1)
-    expect(r?.chapters[0].id).toBe('birth-blueprint')
+    expect(r?.chapters).toEqual([])
     expect(r?.warning).toContain('numerology')
     expect(r?.warning).toContain('drops it silently')
+    expect(r?.archiveContent).toContain('```json')
+    expect(r?.sourcePayload).toBe(workflow)
   })
 
   it('a Folio save failure keeps the computed deterministic result available as fallback', () => {
@@ -213,7 +308,7 @@ describe('deterministicThreadResult', () => {
       saveError: 'D1 unavailable',
       retryScope: 'same-request',
     })
-    expect(r?.chapters).toHaveLength(1)
+    expect(r?.chapters).toEqual([])
   })
 
   it('workflow with every declared engine present → no warning', () => {

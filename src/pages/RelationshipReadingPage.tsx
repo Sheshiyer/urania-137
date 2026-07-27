@@ -160,9 +160,9 @@ export function RelationshipReadingPage({
   )
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-void">
+    <div className="min-h-full overflow-x-hidden bg-void">
       <PageFrame />
-      <main id="main-content" className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-24 pt-24 sm:px-10">
+      <main id="main-content" className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-24 pt-8 sm:px-10 sm:pt-10">
         <header className="mb-7 border-b border-gold/15 pb-6">
           <p className="console-eyebrow">Union Mirror · participant-granted archive</p>
           <h1 className="mt-2 font-display text-2xl font-light uppercase tracking-[0.12em] text-parchment sm:text-4xl">

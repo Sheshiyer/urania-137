@@ -22,11 +22,11 @@
     "forwarded": false
   },
   {
-    "method": "POST",
-    "path": "/api/chat/session",
+    "method": "GET",
+    "path": "/api/viewer-context",
     "status": 200,
     "expected": false,
-    "mutating": true,
+    "mutating": false,
     "forwarded": false
   },
   {
@@ -35,6 +35,14 @@
     "status": 200,
     "expected": false,
     "mutating": false,
+    "forwarded": false
+  },
+  {
+    "method": "POST",
+    "path": "/api/chat/session",
+    "status": 200,
+    "expected": false,
+    "mutating": true,
     "forwarded": false
   },
   {

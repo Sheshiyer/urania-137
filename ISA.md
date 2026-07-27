@@ -1,15 +1,15 @@
 ---
-task: "Execute branded graph-first frontend realignment from completed engine atlas"
+task: "Repair Urania role-aware journeys, viewport shell, and structured reading presentation"
 slug: 20260726-urania-living-readings-ecosystem
 project: Urania 137
-effort: advanced
+effort: deep
 effort_source: classifier
 phase: complete
-progress: 32/32
+progress: 42/42
 mode: interactive
 started: 2026-07-14T16:00:00Z
-updated: 2026-07-27T08:05:34+05:30
-iteration: 10
+updated: 2026-07-27T16:38:00+05:30
+iteration: 11
 ---
 
 ## Problem
@@ -2318,3 +2318,211 @@ branded ecosystem without weakening existing data or authorization contracts.
 - Evidence redaction tests must distinguish an actual sensitive value from a
   quoted `[MASKED]` sentinel without regex whitespace backtracking; the fixed
   detector preserves fail-closed scanning for all unmasked values.
+
+## Iteration 11 — Role-Aware Journey and Reading Presentation Repair (2026-07-27)
+
+### Problem
+
+The production home and Reading surfaces expose three regressions that the
+previous source-level contracts did not catch. Independent fixed chrome layers
+compete for the same viewport, mobile navigation presents four equally weighted
+labels, and technical engine serialization can still appear as reader-facing
+narrative. The first-run gate also treats any subject row as a completed self
+profile and never refreshes lifecycle state after Threshold completion.
+
+### Vision
+
+Urania opens as one coherent celestial instrument. New readers cross a semantic,
+progressively enhanced Threshold; returning readers resume directly inside
+their map; authorized operators gain an additive evidence doorway without
+losing the personal reading journey. Every engine and witness result resolves
+into the branded typed component grammar, while exact technical provenance
+remains lossless, collapsed, and privacy-filtered in Source.
+
+### Out of Scope
+
+- No client-side email rule authorizes operator data or cross-user actions.
+- No replacement of the existing Threshold state machine or persisted sessions.
+- No database, D1 ReadingDTO, relationship-consent, or Selemene engine contract
+  migration.
+- No scroll hijacking that blocks keyboard, touch, screen-reader, or reduced
+  motion access.
+- No generated moodboard asset becomes runtime data, evidence, or telemetry.
+
+### Constraints
+
+- CF Access identity remains the sole authentication boundary.
+- Operator presentation is asserted by server configuration and remains
+  separate from all owner, subject, relationship, and consent authorization.
+- The graph remains the primary spatial interface at every depth.
+- Exact engine responses remain available for persistence and provenance, but
+  never become default reading prose.
+- The existing Urania Void, Gold, Parchment, Silver, serif, display, hairline,
+  and constellation vocabulary remains the complete visual token family.
+
+### Goal
+
+Ship and verify a responsive shared shell, correct new/returning/operator
+journeys, and a typed reading handoff that eliminates the raw JSON visible in
+the supplied production screenshot without weakening persistence, privacy, or
+authorization.
+
+### Criteria
+
+- [x] ISC-346: A profile without a stored `self` subject classifies as new.
+- [x] ISC-347: A stored `self` subject classifies the reader as returning.
+- [x] ISC-348: Operator presentation derives only from a server-asserted capability.
+- [x] ISC-349: Operator presentation never bypasses server-side ownership or consent authorization.
+- [x] ISC-350: Experience-resolution failure exposes one explicit recoverable degraded state.
+- [x] ISC-351: Returning readers land on the map without Threshold redirection.
+- [x] ISC-352: Incomplete Threshold sessions resume at the first unfinished gate.
+- [x] ISC-353: Threshold completion promotes lifecycle state before map interaction begins.
+- [x] ISC-354: Returning home foregrounds continuation, Folio, and reading doorways.
+- [x] ISC-355: Operator home adds evidence tools without hiding personal doorways.
+- [x] ISC-356: Shared chrome reserves layout space instead of overlaying page content.
+- [x] ISC-357: Mobile navigation initially exposes one menu trigger, not four labels.
+- [x] ISC-358: Home graph labels remain inside explicit top and bottom safe zones.
+- [x] ISC-359: Reduced-motion onboarding remains complete without scrubbed animation.
+- [x] ISC-360: Keyboard and screen-reader users can complete every Threshold gate sequentially.
+- [x] ISC-361: Home, node, Folio, settings, and dyad routes share one navigation contract.
+- [x] ISC-362: Completed deterministic results contain no fenced-JSON presentation chapter.
+- [x] ISC-363: Deterministic results preserve the exact response in `sourcePayload`.
+- [x] ISC-364: Deterministic archive content remains lossless and storage-only.
+- [x] ISC-365: Reading adapters never copy deterministic serialization into visible body text.
+- [x] ISC-366: Every known single-engine payload produces a non-raw reading element.
+- [x] ISC-367: Known workflows expose their returned system ledger.
+- [x] ISC-368: Returned known workflow engines produce their typed element families.
+- [x] ISC-369: Unknown deterministic payloads render an explicit source-only orientation.
+- [x] ISC-370: Typed deterministic previews expose neither code fences nor JSON syntax.
+- [x] ISC-371: Save-failed deterministic readings retain typed presentation without JSON.
+- [x] ISC-372: Technical Source remains closed and privacy-filtered by default.
+- [x] ISC-373: Witness results preserve `source_pack` for typed presentation and provenance.
+- [x] ISC-374: Technical witness passes never render serialized objects as narrative sections.
+- [x] ISC-375: Legacy Folio technical bodies never render as default prose.
+- [x] ISC-376: Valid legacy named payload fragments recover into typed reading elements.
+- [x] ISC-377: Unrecognized legacy technical bodies degrade to source-only orientation.
+- [x] ISC-378: Reading navigation occupies flow and never covers the Reading title.
+- [x] ISC-379: Expanded technical Source cannot create viewport-level horizontal overflow.
+- [x] ISC-380: Threshold motion is progressive enhancement over semantic section content.
+- [x] ISC-381: The operator doorway is visible only when the server capability is present.
+- [x] ISC-382: Anti: no browser code contains a privileged-email allowlist.
+- [x] ISC-383: Anti: no raw braces, `engine_id`, or JSON fence appears outside Source.
+- [x] ISC-384: Anti: no route composes multiple independently fixed chrome regions.
+- [x] ISC-385: Anti: no mobile header presents four competing primary text controls.
+- [x] ISC-386: Role, route, viewport, motion, and reading-payload browser fixtures all pass.
+- [x] ISC-387: Build, focused tests, Axe, redaction, and bundle budgets pass.
+
+### Test Strategy
+
+| ISC | Type | Check | Threshold | Tool |
+| --- | --- | --- | --- | --- |
+| 346–355 | lifecycle | self-subject classification, server capability, completion refresh, route policy | complete state matrix passes | Vitest + Functions tests |
+| 356–361 | shell and onboarding | flow layout, menu disclosure, safe zones, semantic gates, motion fallback | no overlap or blocked gate | Vitest + Playwright |
+| 362–373 | live reading | deterministic/witness result mapping, typed extraction, archive separation | zero JSON outside Source | Vitest |
+| 374–380 | legacy and accessibility | technical-section classification, named fragment recovery, overflow, sequential forms | typed or source-only fallback | Vitest + Playwright |
+| 381–385 | authority and anti-regression | server assertion, no email inference, no fixed-layer or mobile-label recurrence | all negative probes absent | Node + Playwright |
+| 386–387 | exit gate | full role/route/payload matrix, Axe, redaction, build, bundle | zero blocking findings | Playwright + npm |
+
+### Features
+
+| Feature | Satisfies | Depends on | Parallelizable |
+| --- | --- | --- | --- |
+| Server-authoritative viewer context | 346–355, 381–382 | CF Access identity and subjects | yes |
+| Shared responsive viewport shell | 356–361, 378, 384–385 | existing chrome primitives | yes |
+| Structured live-result handoff | 362–374 | ReadingDocument and element registry | yes |
+| Legacy technical-reading recovery | 375–377, 383 | structured handoff classifiers | yes |
+| Integrated browser exit matrix | 379–380, 386–387 | all implementation lanes | no |
+
+### Decisions
+
+- 2026-07-27: The user screenshots are the primary visual reference. Refero
+  live search returned `NO_SUBSCRIPTION`, so the offline path preserves the
+  existing Urania assets and established craft references without importing a
+  new visual family.
+- 2026-07-27: The production reading screenshot is a separate witness/native
+  pass leak in addition to the deterministic fenced-JSON defect. Both ingress
+  paths are explicit test surfaces.
+- 2026-07-27: Lifecycle and privilege are orthogonal. Lifecycle derives from
+  a stored `self` subject; operator presentation derives from a server-side
+  allowlist evaluated only after CF Access verification.
+- 2026-07-27: Operator presentation is not authorization. Existing owner,
+  participant, and consent checks remain unchanged and cannot be bypassed by
+  the new viewer capability.
+- 2026-07-27: Threshold already owns the required seven-scene scroll journey
+  and persisted chat state. This iteration integrates its completion signal,
+  removes gate-clamping for reduced motion, and treats scrub effects as
+  progressive enhancement rather than rebuilding the onboarding engine.
+- 2026-07-27: Storage and presentation split at the reading adapter boundary.
+  `sourcePayload` and archive content stay lossless; reader-facing sections
+  admit only narrative or typed component output.
+- 2026-07-27: A single shared shell owns navigation and graph/footer safe
+  zones. Decorative framing may remain fixed because it is non-interactive and
+  occupies no content space.
+- 2026-07-27: The immutable 516,660-byte historical bundle baseline remains
+  intact. The exact pre-change commit `e7d5d8e` rebuilt to 567,565 bytes, so
+  iteration 11 carries a separate reviewed two-percent incremental ceiling.
+
+### Changelog
+
+- 2026-07-27: Iteration 11 opened after production screenshots falsified the
+  previous anti-JSON and non-overlap acceptance criterion.
+- 2026-07-27: IterativeDepth ran eight stakeholder, temporal, experiential,
+  failure, literal, constraint-inversion, analogical, and meta lenses across
+  two read-only implementation lanes.
+- 2026-07-27: SystemsThinking identified shifting-the-burden: route-local
+  fixed offsets and renderer-local serialization decisions repeatedly
+  reproduce the same visual defect.
+- 2026-07-27: RootCauseAnalysis traced raw JSON to a missing boundary between
+  persistence serialization and presentation chapters, compounded by missing
+  source-level witness payload propagation.
+- 2026-07-27: Advisor blocked email-derived administrator UI and made
+  server-authoritative capability assertion a build prerequisite.
+- 2026-07-27: Browser QA found two failures missed by source checks: the mobile
+  graph list ran behind bottom chrome and a selected Reading inherited a
+  576-pixel min-content width. Measured viewport assertions now guard both.
+- 2026-07-27: The final read-only audit found no blocking or high-severity
+  defects. Its three P2 probes are closed by broader witness serialization
+  classification, validated subject responses, and a new-lifecycle first-paint
+  gate; the P3 live-handoff browser gap remains covered at component/integration
+  level rather than being promoted into this bounded visual matrix.
+- 2026-07-27: The integrated exit gate completed with 681 application tests,
+  106 focused UI tests, 36 deterministic browser rows, blocking Axe, evidence
+  redaction, Functions typecheck, build, and bundle budget all green.
+
+### Verification
+
+- ISC-346–355 and ISC-381–382: lifecycle, viewer-context, TopNav, Home, and
+  Functions route tests pass. A spoofed browser role cannot grant operator
+  presentation; the verified server capability remains presentation-only.
+- ISC-356–361 and ISC-378–380: browser geometry proves the route field begins
+  below navigation, fills the remaining dynamic viewport, list scrolling ends
+  above bottom chrome, and Reading layers stay within the viewport. Independent
+  browser QA completed returning, operator, new-user, keyboard-reachable
+  Threshold, 390-pixel mobile, and 1440-pixel desktop journeys without errors.
+- ISC-362–377 and ISC-383: deterministic, witness, legacy, preview, Folio, and
+  transition suites prove that technical serialization is storage/Source-only,
+  known structures become typed elements, and unrecognized shapes receive an
+  explicit source-only orientation.
+- ISC-384–387: `npm run verify:ui-realignment -- http://127.0.0.1:8788`
+  passed 681/681 application tests, 106/106 focused tests, 36/36 browser rows,
+  zero blocking Axe violations, the complete redacted evidence manifest,
+  Functions typecheck, production build, `git diff --check`, and the bundle
+  budget at 577,622/578,916 bytes.
+- The final read-only adversarial re-audit reports no blocking, high, P0, P1,
+  or remaining P2 findings.
+
+### Learn
+
+- Reserving only padding beneath a scroll layer does not prevent intermediate
+  rows from moving behind anchored chrome. The scroll viewport itself must end
+  at the reserved boundary.
+- `min-w-0` is a semantic layout boundary in CSS Grid: without it, an
+  intentionally scrollable 36rem reading instrument can force its entire
+  canonical document wider than a mobile viewport.
+- A visual test that samples an entrance animation can report false computed
+  contrast. The matrix now settles every finite surface animation while still
+  leaving infinite ambient motion and reduced-motion behavior independently
+  testable.
+- Persistence fidelity and reader clarity are compatible only when the
+  archive/source channel and presentation channel are separated before the
+  reading adapter, not repaired after rendering.

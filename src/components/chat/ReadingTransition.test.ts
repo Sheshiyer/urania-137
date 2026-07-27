@@ -4,6 +4,8 @@ import { describe, expect, it, vi } from 'vitest'
 import type { ReadingDTO } from '../../lib/api/contract'
 import type { ThreadReadingContext } from '../../lib/readings'
 import type { ThreadResult } from '../../lib/chat/resultMessages'
+import { deterministicThreadResult, witnessThreadResult } from '../../lib/chat/resultMessages'
+import type { GeneratedReport } from '../../types'
 import {
   ReadingTransition,
   deriveReadingTransitionPhase,
@@ -114,5 +116,55 @@ describe('ReadingTransition', () => {
     expect(html).toContain('The reading could not be confirmed in Folio yet')
     expect(html).toContain('Check Folio again')
     expect(html).not.toContain('Binding this telling')
+  })
+
+  it('renders a deterministic engine as a typed component without its serialized chapter', () => {
+    const result = deterministicThreadResult({
+      busy: false,
+      error: null,
+      workflow: null,
+      engine: {
+        engine_id: 'numerology',
+        result: { life_path: { value: 7, reduction_chain: [34, 7] } },
+      },
+      declaredEngines: [],
+    }, 'Birth Blueprint')
+    expect(result).not.toBeNull()
+
+    const html = render(result!, null)
+
+    expect(html).toContain('Number codes')
+    expect(html).toContain('Life Path')
+    expect(html).not.toContain('data-language="json"')
+    expect(html).not.toContain('&quot;engine_id&quot;')
+  })
+
+  it('renders an all-technical witness response as source-only orientation', () => {
+    const sourcePack = { engines: ['panchanga'], quality: { gate_status: 'ready' } }
+    const technicalPass = 'Pass alpha — Structural Field\n- panchanga: {"vara_name":"Somavara"}'
+    const report: GeneratedReport = {
+      id: 'technical-witness',
+      nodeId: 'witness',
+      title: 'Technical witness',
+      status: 'complete',
+      content: `## Structural Field\n\n${technicalPass}`,
+      generatedAt: new Date('2026-07-27T00:00:00.000Z'),
+      raw: {
+        mode: 'integrated-reading',
+        register: 'l1_l3',
+        passes: [{ id: 'alpha', title: 'Structural Field', output: technicalPass }],
+        assembled: `## Structural Field\n\n${technicalPass}`,
+        engines_used: ['panchanga'],
+        source_pack: sourcePack,
+      },
+    }
+    const result = witnessThreadResult(report, null)
+    expect(result).not.toBeNull()
+
+    const html = render(result!, null)
+
+    expect(html).toContain('Source record received')
+    expect(html).not.toContain('vara_name')
+    expect(html).not.toContain('Pass alpha')
   })
 })

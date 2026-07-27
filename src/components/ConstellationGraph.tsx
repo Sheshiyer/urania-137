@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { GraphOrbital } from '../types'
 import {
   COLORS,
@@ -51,12 +51,23 @@ export function ConstellationGraph({
   ariaLabel = 'stellar node constellation',
   topInset = 0,
   bottomInset = 0,
-  wrapperClassName = 'fixed inset-0',
+  wrapperClassName = 'absolute inset-0',
   variant = 'node',
 }: ConstellationGraphProps) {
-  const { width, height, centerX } = useNodeGraph()
+  const containerRef = useRef<HTMLElement>(null)
+  const { width, height, centerX } = useNodeGraph(containerRef)
   const isHome = variant === 'home'
   const small = width < 640
+  const compact = width < 768
+  // Below `sm`, BottomChrome stacks the stat strip and build badge. Reserve
+  // that taller measured rail for both graph geometry and the list viewport.
+  // Between `sm` and `md`, the rail is horizontal but still eight pixels
+  // taller than the desktop measurement because the compact labels reflow.
+  const effectiveBottomInset = small
+    ? Math.max(bottomInset, 144)
+    : compact
+      ? Math.max(bottomInset, 120)
+      : bottomInset
   const labelScale = small ? 0.8 : 1
   /** Hovered orbital — lifts the "active path" (moodboard §04) into the graph
    *  so the spoke to a hovered orb lights emerald before the click lands. */
@@ -67,7 +78,7 @@ export function ConstellationGraph({
   // stat footer), so orbs and their labels can never slide under either. The
   // reference art frames the mandala the same way.
   const bandTop = topInset
-  const bandHeight = Math.max(height - topInset - bottomInset, 200)
+  const bandHeight = Math.max(height - topInset - effectiveBottomInset, 200)
   const centerY = bandTop + bandHeight / 2
 
   // Home labels sit outside the planet, so they need clearance beyond the orb.
@@ -170,13 +181,14 @@ export function ConstellationGraph({
 
   return (
     <GraphLens
+      containerRef={containerRef}
       className={`${wrapperClassName} motion-safe:animate-graph-in`}
       entries={entries}
       selectedId={selectedId}
       onSelect={onSelect}
       ariaLabel={ariaLabel}
       topInset={topInset}
-      bottomInset={bottomInset}
+      bottomInset={effectiveBottomInset}
       graph={(
       <svg
         viewBox={`0 0 ${width} ${height}`}

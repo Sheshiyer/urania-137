@@ -10,8 +10,17 @@ import { IdentityChip } from './IdentityChip'
  * The compact global product routes. Folio has one canonical destination;
  * Begin returns to the map and opens its real runnable-doorway index.
  */
-export function TopNav({ route, me }: { route: Route; me: User | null }) {
+export function TopNav({
+  route,
+  me,
+  operator,
+}: {
+  route: Route
+  me: User | null
+  operator: boolean
+}) {
   const activeId = route.view === 'node' ? route.nodeId : null
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   const requestBeginReading = () => {
     if (route.view === 'home') {
@@ -28,27 +37,44 @@ export function TopNav({ route, me }: { route: Route; me: User | null }) {
     { key: 'begin', label: 'Begin', onClick: requestBeginReading },
     { key: 'settings', label: 'Settings', onClick: () => navigate('/settings'), active: route.view === 'settings' },
   ]
+  if (operator) {
+    items.push({
+      key: 'operator',
+      label: 'Operator',
+      onClick: () => navigate('/node/engine/live-status'),
+      active:
+        route.view === 'node' &&
+        route.nodeId === 'engine' &&
+        route.childId === 'live-status',
+    })
+  }
+  const mobileEntries = items
+
+  const invokeMobile = (action: () => void) => {
+    setMobileOpen(false)
+    action()
+  }
 
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-40">
-      <div className="flex items-start justify-between gap-2 px-4 pt-3 sm:px-10 sm:pt-4">
+    <header className="sticky top-0 z-40 shrink-0 border-b border-gold/10 bg-void">
+      <div className="flex min-h-[4.75rem] items-center justify-between gap-3 px-5 sm:px-10">
         {/* Two-tier wordmark lockup (the moodboard header): URANIA 137 over NOESIS */}
         <button
           type="button"
           onClick={() => navigate('/')}
-          className="pointer-events-auto group flex min-h-11 min-w-11 shrink-0 flex-col items-start justify-center text-left"
+          className="group flex min-h-11 min-w-11 shrink-0 flex-col items-start justify-center text-left"
           aria-label="Urania 137 — home"
         >
           <span className="font-serif text-xs font-semibold uppercase tracking-[0.16em] text-parchment transition-colors group-hover:text-gold sm:text-base sm:tracking-[0.24em]">
             Urania <span className="text-gold">137</span>
           </span>
-          <span className="mt-0.5 font-display text-[7px] uppercase tracking-[0.38em] text-gold/70 transition-colors group-hover:text-gold sm:text-[8px] sm:tracking-[0.5em]">
+          <span className="mt-0.5 font-display text-[7px] uppercase tracking-[0.38em] text-gold transition-colors sm:text-[8px] sm:tracking-[0.5em]">
             Noesis
           </span>
         </button>
 
         {/* Nav + search + identity */}
-        <div className="pointer-events-auto flex min-w-0 items-center gap-2 sm:gap-4 sm:pt-1">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-4">
           <nav className="hidden items-center gap-3 md:flex" aria-label="Product sections">
             {items.map((it, i) => (
               <span key={it.key} className="flex items-center gap-3">
@@ -74,37 +100,90 @@ export function TopNav({ route, me }: { route: Route; me: User | null }) {
               </span>
             ))}
           </nav>
-          <nav className="flex min-w-0 items-center gap-1 md:hidden" aria-label="Product sections">
-            {items.map((it) => (
-              <button
-                key={it.key}
-                type="button"
-                onClick={it.onClick}
-                aria-current={it.active ? 'page' : undefined}
-                className={`min-h-11 min-w-11 px-0.5 font-display text-[8px] uppercase tracking-[0.08em] transition-colors ${
-                  it.active ? 'text-gold' : 'text-silver hover:text-parchment'
-                }`}
-              >
-                {it.label}
-              </button>
-            ))}
-          </nav>
           <div className="hidden xl:block">
             <NodeSearch activeId={activeId} />
           </div>
           <IdentityChip me={me} />
+          {mobileOpen ? (
+            <button
+              type="button"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center text-silver transition-colors hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold md:hidden"
+              aria-label="Close navigation menu"
+              aria-expanded="true"
+              aria-controls="mobile-product-navigation"
+              onClick={() => setMobileOpen(false)}
+            >
+              <span className="font-serif text-2xl font-light leading-none" aria-hidden="true">×</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center text-silver transition-colors hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold md:hidden"
+              aria-label="Open navigation menu"
+              aria-expanded="false"
+              aria-controls="mobile-product-navigation"
+              onClick={() => setMobileOpen(true)}
+            >
+              <span className="flex w-5 flex-col gap-1" aria-hidden="true">
+                <span className="h-px w-full bg-current" />
+                <span className="h-px w-full bg-current" />
+                <span className="h-px w-full bg-current" />
+              </span>
+            </button>
+          )}
         </div>
       </div>
 
       {/* Gold hairline ruling the bar off from the field, with a center diamond
           and end caps — the rule seen across the reference pages. */}
-      <div className="mt-2 flex items-center px-4 sm:mt-3 sm:px-10" aria-hidden="true">
+      <div className="flex items-center px-5 sm:px-10" aria-hidden="true">
         <span className="h-1 w-1 rotate-45 border border-gold/50" />
         <span className="h-px flex-1 bg-gradient-to-r from-gold/40 via-gold/15 to-gold/15" />
         <span className="mx-2 h-1.5 w-1.5 rotate-45 border border-gold/70" />
         <span className="h-px flex-1 bg-gradient-to-l from-gold/40 via-gold/15 to-gold/15" />
         <span className="h-1 w-1 rotate-45 border border-gold/50" />
       </div>
+
+      {mobileOpen && (
+        <nav
+          id="mobile-product-navigation"
+          className="grid gap-px border-t border-gold/15 bg-gold/15 px-5 py-px md:hidden"
+          aria-label="Product sections"
+        >
+          {mobileEntries.map((entry) => (
+            <button
+              key={entry.key}
+              type="button"
+              onClick={() => invokeMobile(entry.onClick)}
+              aria-current={entry.active ? 'page' : undefined}
+              className={`flex min-h-11 items-center justify-between bg-void/95 px-3 text-left font-display text-[10px] uppercase tracking-[0.2em] transition-colors ${
+                entry.active
+                  ? 'text-gold'
+                  : 'text-silver hover:bg-surface hover:text-parchment'
+              }`}
+            >
+              {entry.label}
+              <span
+                className={`h-1.5 w-1.5 rotate-45 border ${
+                  entry.active ? 'border-gold bg-gold' : 'border-gold/45'
+                }`}
+                aria-hidden="true"
+              />
+            </button>
+          ))}
+          {me && (
+            <a
+              href="/api/logout"
+              className="flex min-h-11 items-center justify-between bg-void/95 px-3 font-display text-[10px] uppercase tracking-[0.2em] text-silver transition-colors hover:bg-surface hover:text-gold"
+            >
+              Log out
+              <span className="truncate pl-4 text-[9px] text-secondary">
+                {me.email}
+              </span>
+            </a>
+          )}
+        </nav>
+      )}
     </header>
   )
 }

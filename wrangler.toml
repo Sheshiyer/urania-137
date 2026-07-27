@@ -35,6 +35,9 @@ SELEMENE_API_URL = "https://selemene.tryambakam.space"
 NARRATOR_LLM_URL = "https://selemene-llm-proxy.sheshnarayan-iyer.workers.dev"
 CF_ACCESS_AUD = "df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4"
 CF_ACCESS_TEAM_DOMAIN = "red-queen-4dfa.cloudflareaccess.com"
+# Presentation-only operator lens. API authorization remains actor-scoped and
+# does not consult this allowlist.
+OPERATOR_EMAILS = "sheshnarayan.iyer@gmail.com"
 
 # Per-user readings store (T-080). Production D1 provisioned 2026-07-20 in the
 # 9d9d account (region APAC). Pages applies this single binding to all deployments;

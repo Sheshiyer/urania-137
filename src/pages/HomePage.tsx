@@ -9,6 +9,11 @@ import { CHROME } from '../components/chrome/insets'
 import { navigate } from '../hooks/useHashRoute'
 import { UI_COPY } from '../content/uiCopy'
 import { BeginReadingDialog } from '../components/readings/BeginReadingDialog'
+import { HomeJourneyRail } from '../components/home/HomeJourneyRail'
+import {
+  INITIAL_EXPERIENCE,
+  type ExperienceState,
+} from '../lib/experience'
 
 export const BEGIN_READING_EVENT = 'urania:begin-reading'
 
@@ -36,7 +41,11 @@ const HOME_TAXONOMY: Stat[] = [
  * The galactic home view (`#/`): the NOESIS core ringed by the seven parent
  * nodes. Clicking a node enters its page. The graph is the interface.
  */
-export function HomePage() {
+export function HomePage({
+  experience = INITIAL_EXPERIENCE,
+}: {
+  experience?: ExperienceState
+}) {
   const [beginOpen, setBeginOpen] = useState(false)
 
   useEffect(() => {
@@ -46,32 +55,37 @@ export function HomePage() {
   }, [])
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-void">
+    <div className="relative h-full min-h-[30rem] overflow-hidden bg-void">
       <ConstellationGraph
         variant="home"
-        wrapperClassName="fixed inset-x-0 bottom-[8.75rem] top-44 sm:inset-0"
+        wrapperClassName="absolute inset-0"
         orbitals={overviewOrbitals}
         selectedId={null}
         onSelect={(id) => navigate(`/node/${id}`)}
         centerLabel="NOESIS"
         ariaLabel="Selemene stellar node overview"
-        topInset={CHROME.nav}
+        topInset={CHROME.homeContext}
         bottomInset={CHROME.footer}
       />
       <PageFrame />
 
-      <section className="pointer-events-none fixed inset-x-4 top-[6.8rem] z-10 flex flex-col items-center text-center sm:inset-x-auto sm:left-10 sm:top-28 sm:max-w-[21rem] sm:items-start sm:text-left">
+      <section className="pointer-events-none absolute inset-x-5 top-3 z-10 flex flex-col items-center text-center sm:inset-x-auto sm:left-10 sm:top-5 sm:max-w-[21rem] sm:items-start sm:text-left">
         <p className="max-w-[32rem] font-serif text-[clamp(15px,1.7vw,21px)] leading-relaxed text-parchment [text-shadow:0_2px_16px_rgba(7,11,29,0.95)]">
           {UI_COPY.promise}
         </p>
         <button
           type="button"
           onClick={() => setBeginOpen(true)}
-          className="pointer-events-auto mt-4 min-h-11 border border-gold/55 bg-void/80 px-5 py-3 font-display text-[10px] uppercase tracking-[0.23em] text-gold backdrop-blur-md transition-colors hover:bg-gold hover:text-void focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          className="pointer-events-auto mt-3 min-h-11 border border-gold/55 bg-void/90 px-5 py-3 font-display text-[10px] uppercase tracking-[0.23em] text-gold transition-colors hover:bg-gold hover:text-void focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
         >
           {UI_COPY.beginReading}
         </button>
       </section>
+
+      <HomeJourneyRail
+        experience={experience}
+        onBegin={() => setBeginOpen(true)}
+      />
 
       <BottomChrome>
         <StatFooter stats={HOME_TAXONOMY} />

@@ -1,0 +1,7 @@
+{
+  "baseCommit": "e7d5d8e2216724c0724d32acc9191381777e45cc",
+  "bundleBytes": 567565,
+  "maximumGrowthRatio": 0.02,
+  "measurement": "minified production JavaScript and CSS",
+  "reason": "Role-aware application shell, onboarding lifecycle, and structured reading boundary"
+}

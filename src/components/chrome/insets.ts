@@ -1,5 +1,5 @@
 /**
- * Measured heights (px) of the fixed chrome that overlays the graph.
+ * Measured heights (px) of the chrome reserved inside each graph field.
  *
  * The graph reserves these as insets so orbs and their labels can never slide
  * under the nav, the page title, the tab strip, or the stat footer — the bug
@@ -7,12 +7,12 @@
  * PageHeader, PageTabs and StatFooter if their sizing changes.
  */
 export const CHROME = {
-  /** TopNav: pt-4 + two-tier wordmark + the gold hairline rule. */
-  nav: 68,
-  /** Node page: nav + the top-left title block (breadcrumb, instrument title, epithet, rule). */
-  navAndTitle: 210,
+  /** Home orientation and primary action inside the route field. */
+  homeContext: 118,
+  /** Node page top-left title block inside the route field. */
+  nodeTitle: 176,
   /** Home: shell hairline + StatFooter. */
-  footer: 104,
+  footer: 120,
   /** Node page: shell hairline + PageTabs (>=sm) beside the StatFooter on the split rail. */
   tabsAndFooter: 130,
 } as const

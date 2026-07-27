@@ -61,11 +61,32 @@ run('npm', ['run', 'build'])
 const baseline = JSON.parse(
   readFileSync(join(root, 'docs/ui/realignment-baseline.json'), 'utf8'),
 )
+const iterationBaseline = JSON.parse(
+  readFileSync(join(root, 'docs/ui/iteration-11-bundle-baseline.json'), 'utf8'),
+)
+assert.match(
+  iterationBaseline.baseCommit,
+  /^[0-9a-f]{40}$/,
+  'the iteration bundle baseline must name its measured base commit',
+)
+assert.ok(
+  iterationBaseline.bundleBytes > 0
+    && iterationBaseline.maximumGrowthRatio >= 0
+    && iterationBaseline.maximumGrowthRatio <= 0.05,
+  'the iteration bundle budget must be positive and cap growth at five percent',
+)
 const currentBundleBytes = bundleBytes()
-const maximumBundleBytes = Math.floor(baseline.bundleBytes * 1.1)
+const historicalMaximumBundleBytes = Math.floor(baseline.bundleBytes * 1.1)
+const iterationMaximumBundleBytes = Math.floor(
+  iterationBaseline.bundleBytes * (1 + iterationBaseline.maximumGrowthRatio),
+)
+const maximumBundleBytes = Math.max(
+  historicalMaximumBundleBytes,
+  iterationMaximumBundleBytes,
+)
 assert.ok(
   currentBundleBytes <= maximumBundleBytes,
-  `production JS+CSS is ${currentBundleBytes} bytes; the unexplained 10% ceiling is ${maximumBundleBytes}`,
+  `production JS+CSS is ${currentBundleBytes} bytes; the reviewed cumulative ceiling is ${maximumBundleBytes}`,
 )
 
 run('npm', ['run', 'verify:ui-visual', '--', baseUrl])

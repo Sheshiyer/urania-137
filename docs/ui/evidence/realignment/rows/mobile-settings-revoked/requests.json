@@ -15,6 +15,30 @@
   },
   {
     "method": "GET",
+    "path": "/api/me",
+    "status": 200,
+    "expected": false,
+    "mutating": false,
+    "forwarded": false
+  },
+  {
+    "method": "GET",
+    "path": "/api/viewer-context",
+    "status": 200,
+    "expected": false,
+    "mutating": false,
+    "forwarded": false
+  },
+  {
+    "method": "GET",
+    "path": "/api/subjects",
+    "status": 200,
+    "expected": false,
+    "mutating": false,
+    "forwarded": false
+  },
+  {
+    "method": "GET",
     "path": "/api/subjects",
     "status": 200,
     "expected": false,
@@ -39,23 +63,7 @@
   },
   {
     "method": "GET",
-    "path": "/api/me",
-    "status": 200,
-    "expected": false,
-    "mutating": false,
-    "forwarded": false
-  },
-  {
-    "method": "GET",
     "path": "/api/relationships/relationship-fixture/readings",
-    "status": 200,
-    "expected": false,
-    "mutating": false,
-    "forwarded": false
-  },
-  {
-    "method": "GET",
-    "path": "/api/subjects",
     "status": 200,
     "expected": false,
     "mutating": false,

@@ -13,8 +13,9 @@ import { HomePage } from './HomePage'
  * The Threshold (W2-A + W2-B) — the pre-graph onboarding scene. Seven
  * scroll-scrubbed scenes in the POC's grammar (`prototypes/threshold.html`,
  * owner-approved): Arrival / Compact / Name / Moment / Place / Dedication /
- * Crossing. The four form scenes are HARD GATES — the scroll position clamps
- * at the first unpassed gate, with the POC's nudge affordance.
+ * Crossing. The four form scenes are HARD GATES for submission, but never
+ * trap document scroll: keyboard, assistive-technology, and reduced-motion
+ * viewers can traverse every scene while Continue preserves data order.
  *
  * Unlike the POC, the gates are not local theater: each one drives the
  * caller's real `threshold` chat session over SSE (the narrator voice rides
@@ -97,7 +98,7 @@ type Confidence = 'exact' | 'approximate' | 'unknown'
 // Page
 // ---------------------------------------------------------------------------
 
-export function ThresholdPage() {
+export function ThresholdPage({ onComplete }: { onComplete?: () => void }) {
   const [loading, setLoading] = useState(true)
   const [streaming, setStreaming] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -121,7 +122,6 @@ export function ThresholdPage() {
   const streamingRef = useRef(false)
   const initRef = useRef(false)
   const abortRef = useRef<(() => void) | null>(null)
-  const lastNudgeRef = useRef(0)
   const crossingRef = useRef<HTMLDivElement | null>(null)
 
   const setGate = (key: GateKey) => {
@@ -242,34 +242,23 @@ export function ThresholdPage() {
   useEffect(() => () => abortRef.current?.(), [])
 
   // -------------------------------------------------------------------------
-  // Hard-gate clamp + crossing scrub (the POC's master scroll loop)
+  // Crossing scrub (the POC's master scroll loop)
   // -------------------------------------------------------------------------
 
   useEffect(() => {
-    const enforceGate = () => {
-      const open = firstOpenGate(gatesRef.current)
-      if (!open) return
-      const el = document.getElementById(GATE_SCENE[open])
-      if (!el) return
-      const limit = el.offsetTop
-      if (window.scrollY > limit + 8) {
-        scrollToY(limit, true)
-        const now = performance.now()
-        if (now - lastNudgeRef.current > 700) {
-          lastNudgeRef.current = now
-          const card = el.querySelector('.threshold-card')
-          if (card) {
-            card.classList.remove('threshold-nudge')
-            void (card as HTMLElement).offsetWidth
-            card.classList.add('threshold-nudge')
-          }
-        }
-      }
-    }
     const updateCrossing = () => {
       const track = document.getElementById('crossing-track')
       const el = crossingRef.current
       if (!track || !el) return
+      if (REDUCED_MOTION()) {
+        const open = gatesRef.current.dedication
+        el.style.clipPath = open
+          ? 'inset(0% 0% round 0px)'
+          : 'inset(50% 50% round 6px)'
+        el.style.pointerEvents = open ? 'auto' : 'none'
+        setCrossed(open)
+        return
+      }
       const vh = window.innerHeight
       const range = track.offsetHeight - vh
       const p = clamp((window.scrollY - track.offsetTop) / range, 0, 1)
@@ -280,13 +269,12 @@ export function ThresholdPage() {
       setCrossed(e > 0.85)
     }
     const onScroll = () => {
-      enforceGate()
       updateCrossing()
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     onScroll()
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [gates.dedication])
 
   // -------------------------------------------------------------------------
   // Geocoder (scene 005) — debounced Nominatim, same seam as the daily doorway
@@ -362,6 +350,7 @@ export function ThresholdPage() {
       const done = await completeSession(sess.sessionId)
       sessionRef.current = done
       setGate('dedication')
+      onComplete?.()
       setNarrator('The mirror is aimed. The sky is yours to open.')
       scrollToY((document.getElementById('crossing-track')?.offsetTop ?? 0) + window.innerHeight * 0.4)
     } catch (err) {
@@ -372,7 +361,7 @@ export function ThresholdPage() {
       streamingRef.current = false
       setStreaming(false)
     }
-  }, [])
+  }, [onComplete])
 
   const passDedication = () => {
     if (streamingRef.current || loading) return

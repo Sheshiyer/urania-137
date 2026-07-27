@@ -20,7 +20,10 @@ import { VersionBadge } from './VersionBadge'
 export function BottomChrome({ children }: { children: ReactNode }) {
   const [left, ...rest] = Children.toArray(children)
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-20">
+    <div
+      data-bottom-chrome
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-20"
+    >
       {/* Shell rule — mirrors the TopNav hairline; caps echo the frame diamonds. */}
       <div className="mb-3 flex items-center px-6 sm:px-10" aria-hidden="true">
         <span className="h-1 w-1 rotate-45 border border-gold/50" />

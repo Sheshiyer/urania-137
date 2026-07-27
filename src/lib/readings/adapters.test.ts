@@ -5,7 +5,6 @@ import {
   folioEntryToReadingDocument,
   grantedSynastryToReadingDocument,
   readingDocumentToFolioEntry,
-  readingDocumentToSaveRequest,
   threadResultToReadingDocument,
 } from './adapters'
 import type { GrantedSynastryReading } from './relationshipReadings'
@@ -73,16 +72,21 @@ describe('canonical reading adapters', () => {
     expect(document?.body).toBeNull()
   })
 
-  it('keeps deterministic thread output unstructured through the save adapter', () => {
+  it('keeps deterministic serialization out of the reader body while extracting typed elements', () => {
+    const sourcePayload = {
+      engine_id: 'numerology',
+      result: { life_path: { value: 7, reduction_chain: [34, 7] } },
+    }
     const result: ThreadResult = {
       kind: 'deterministic',
       status: 'complete',
       structureSource: 'flat',
-      chapters: [{ id: 'jyotish', title: 'Birth Blueprint', body: '```json\n{"lagna":"Leo"}\n```' }],
-      systems: ['jyotish'],
+      chapters: [{ id: 'legacy', title: 'Birth Blueprint', body: `\`\`\`json\n${JSON.stringify(sourcePayload)}\n\`\`\`` }],
+      systems: ['numerology'],
       error: null,
       saveError: null,
-      sourcePayload: { engine_id: 'jyotish', result: { lagna: 'Leo' } },
+      sourcePayload,
+      archiveContent: `## Birth Blueprint\n\n\`\`\`json\n${JSON.stringify(sourcePayload)}\n\`\`\``,
     }
     const document = threadResultToReadingDocument(result, {
       title: 'Birth Blueprint',
@@ -93,10 +97,9 @@ describe('canonical reading adapters', () => {
       subject,
     })
     expect(document?.sections).toEqual([])
-    expect(document?.body).toBe(result.chapters[0].body)
+    expect(document?.body).toBeNull()
     expect(document?.elements).toHaveLength(1)
-    expect(document?.elements[0]).toMatchObject({ kind: 'raw', sourceSystem: 'jyotish' })
-    expect(document && readingDocumentToSaveRequest(document).content).toBe(result.chapters[0].body)
+    expect(document?.elements[0]).toMatchObject({ kind: 'number-codes', sourceSystem: 'numerology' })
   })
 
   it('rehydrates explicit deterministic Folio JSON without manufacturing sections', () => {
@@ -114,6 +117,50 @@ describe('canonical reading adapters', () => {
     expect(document.sections).toEqual([])
     expect(document.sourcePayload).toEqual(payload)
     expect(document.elements[0]).toMatchObject({ kind: 'number-codes', sourceSystem: 'numerology' })
+    expect(readingDocumentToFolioEntry(document)).toEqual(entry)
+  })
+
+  it('recovers valid named JSON fragments from a legacy technical Folio entry', () => {
+    const entry = {
+      ...folioEntry,
+      content: [
+        '## Structural Field',
+        '',
+        'Pass alpha — Structural Field',
+        '- panchanga: {"vara_name":"Somavara","tithi_name":"Saptami","nakshatra_name":"Hasta","yoga_name":"Siddhi","karana_name":"Bava"}',
+        '- numerology: {"life_path":{"value":7,"reduction_chain":[34,7]}}',
+      ].join('\n'),
+    }
+
+    const document = folioEntryToReadingDocument(entry, { owner, subject })
+
+    expect(document.elements.map((element) => element.kind)).toEqual(['fact-grid', 'number-codes'])
+    expect(document.sourcePayload).toMatchObject({
+      engine_outputs: {
+        panchanga: { engine_id: 'panchanga' },
+        numerology: { engine_id: 'numerology' },
+      },
+      source_markdown: entry.content,
+    })
+    expect(readingDocumentToFolioEntry(document)).toEqual(entry)
+  })
+
+  it('marks truncated technical Folio markdown source-only instead of rendering it as narrative', () => {
+    const entry = {
+      ...folioEntry,
+      content: [
+        '## Structural Field',
+        '',
+        'Pass alpha — Structural Field',
+        '- panchanga: {"vara_name":"Somavara","tithi_name":"Saptami"…',
+      ].join('\n'),
+    }
+
+    const document = folioEntryToReadingDocument(entry, { owner, subject })
+
+    expect(document.sourcePayload).toBe(entry.content)
+    expect(document.elements).toHaveLength(1)
+    expect(document.elements[0]).toMatchObject({ kind: 'raw', value: entry.content })
     expect(readingDocumentToFolioEntry(document)).toEqual(entry)
   })
 

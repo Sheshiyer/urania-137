@@ -9,13 +9,12 @@ import { deterministicMarkdown } from '../../hooks/useDeterministicRun'
  * from the engine response, are never persisted as chat turns, and the
  * reading's durable copy is the Folio row the hook already saved.
  *
- * The mapping preserves the modal era's surfacing semantics exactly:
- * witness/daily readings render ONE chapter per pass (the `{id, title,
- * output}` pass model — pass title as the chapter heading, output as the
- * body); deterministic results render the same fenced-json markdown the
- * Folio archive stores (`deterministicMarkdown`, byte-identical) as a single
- * chapter; engine/save failures surface as an error with a retry path,
- * never silently.
+ * The mapping preserves the modal era's failure and archive semantics while
+ * enforcing the canonical reading presentation boundary:
+ * witness/daily readings render source-authored narrative passes. Technical
+ * witness passes and deterministic payload serialization remain source/archive
+ * material for the canonical reading components rather than narrator prose.
+ * Engine/save failures surface as an error with a retry path, never silently.
  */
 
 /** One narrator-style chapter in the result thread. */
@@ -82,29 +81,84 @@ const failed = (kind: ThreadResult['kind'], error: string): ThreadResult => ({
 // Witness — useReportGenerator's activeReport
 // ---------------------------------------------------------------------------
 
+const TECHNICAL_PASS_ITEM = /^\s*[-*]\s+[a-z0-9][a-z0-9_-]*:\s*(?:\{|\[)/i
+const TECHNICAL_PASS_MULTILINE_ITEM =
+  /^\s*[-*]\s+[a-z0-9][a-z0-9_-]*:[ \t]*(?:\r?\n[ \t]*)?(?:\{|\[)/im
+const TECHNICAL_PASS_HEADER = /^\s*Pass\s+\S+\s+—\s+/i
+
+function isWholeJsonContainer(output: string): boolean {
+  const candidate = output.trim()
+  if (
+    !(
+      (candidate.startsWith('{') && candidate.endsWith('}'))
+      || (candidate.startsWith('[') && candidate.endsWith(']'))
+    )
+  ) {
+    return false
+  }
+  try {
+    const parsed: unknown = JSON.parse(candidate)
+    return typeof parsed === 'object' && parsed !== null
+  } catch {
+    return false
+  }
+}
+
+/**
+ * The fallback/server-seed renderer returns pass bodies that are object dumps,
+ * not interpretations. One named object item is enough when the pass also
+ * identifies itself as a `Pass …`; two named object items are independently
+ * conclusive. Fenced JSON, whole JSON containers, and multiline named
+ * containers are technical by construction. The original body remains
+ * lossless in `archiveContent`.
+ */
+function isTechnicalSerializedPass(output: string): boolean {
+  if (/```json\b[\s\S]*?```/i.test(output) || isWholeJsonContainer(output)) {
+    return true
+  }
+  const lines = output.split(/\r?\n/).filter((line) => line.trim().length > 0)
+  const technicalItems = lines.filter((line) => TECHNICAL_PASS_ITEM.test(line)).length
+  const hasMultilineItem = TECHNICAL_PASS_MULTILINE_ITEM.test(output)
+  return technicalItems >= 2
+    || ((technicalItems >= 1 || hasMultilineItem)
+      && lines.some((line) => TECHNICAL_PASS_HEADER.test(line)))
+}
+
+function technicalPassSource(
+  passes: AssetGenerateResponse['passes'],
+): { technical_passes: AssetGenerateResponse['passes'] } | null {
+  const technical = passes.filter((pass) => isTechnicalSerializedPass(pass.output))
+  return technical.length ? { technical_passes: technical } : null
+}
+
 export function witnessThreadResult(report: GeneratedReport | null, saveError: string | null): ThreadResult | null {
   if (!report) return null
   if (report.status === 'generating') return composing('witness')
   if (report.status === 'error') return failed('witness', report.content || 'The engines did not answer.')
 
   const raw = report.raw as AssetGenerateResponse | undefined
-  // One chapter per pass; a response without a pass list falls back to the
-  // single assembled body (exactly what the result modal rendered).
-  const chapters: ResultChapter[] = raw?.passes?.length
-    ? raw.passes.map((p) => ({ id: p.id, title: p.title, body: p.output }))
-    : [{ id: 'assembled', title: report.title, body: report.content }]
+  const sourcePasses = raw?.passes ?? []
+  const visiblePasses = sourcePasses.filter((pass) => !isTechnicalSerializedPass(pass.output))
+  // A response without passes keeps the historical assembled fallback unless
+  // that body is itself a server-seed technical dump. When passes exist, only
+  // reader-facing passes cross into chapters; filtered bodies remain archived.
+  const chapters: ResultChapter[] = sourcePasses.length
+    ? visiblePasses.map((pass) => ({ id: pass.id, title: pass.title, body: pass.output }))
+    : isTechnicalSerializedPass(report.content)
+      ? []
+      : [{ id: 'assembled', title: report.title, body: report.content }]
   const footer = raw?.engines_used?.length ? `Engines: ${raw.engines_used.join(', ')} · register ${raw.register}` : undefined
   return {
     kind: 'witness',
     status: 'complete',
-    structureSource: raw?.passes?.length ? 'native' : 'flat',
+    structureSource: visiblePasses.length ? 'native' : 'flat',
     chapters,
     systems: raw?.engines_used ?? [],
     error: null,
     saveError,
     retryScope: saveError ? 'same-request' : undefined,
     footer,
-    sourcePayload: null,
+    sourcePayload: raw?.source_pack ?? technicalPassSource(sourcePasses),
     archiveContent: report.content,
     archiveTitle: report.title,
     archiveMode: raw?.mode,
@@ -183,7 +237,7 @@ export function deterministicThreadResult(state: DeterministicRunState, label: s
     kind: 'deterministic',
     status: 'complete',
     structureSource: 'flat',
-    chapters: [{ id, title: label, body: deterministicMarkdown(payload) }],
+    chapters: [],
     systems: state.workflow ? Object.keys(state.workflow.engine_outputs ?? {}) : [id],
     error: null,
     saveError: state.error,

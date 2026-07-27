@@ -1,0 +1,46 @@
+URANIA 137
+NOESIS
+MAP
+FOLIO
+BEGIN
+SETTINGS
+OPERATOR
+READER A
+LOGOUT
+GRAPH
+LIST
+BIRTH WITNESS
+THE ARRIVAL
+UNION MIRROR
+THE UNION
+SKY WEATHER
+THE PASSAGE
+NOESIS READING
+THE READING
+ENGINE STATUS
+THE MACHINE
+FOLIO ARCHIVE
+THE RECORD
+BRIDGE QUERY
+THE INQUIRY
+NOESIS
+
+See what is active. Choose a lens; the narrator assembles the reading with you.
+
+BEGIN A READING
+
+OPERATOR LENS
+
+Personal map, with an evidence lens.
+
+Choose a known pattern, continue from the Folio, or begin another reading with the narrator.
+
+BEGIN READING
+OPEN FOLIO
+EVIDENCE
+PARENT LENSES
+7
+RUNNABLE DOORWAYS
+35
+V0.5.0 · E7D5D8E
+Reader A

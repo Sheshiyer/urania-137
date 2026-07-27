@@ -82,7 +82,7 @@ export function ReadingFolio({
             </div>
             <h1
               id={`reading-title-${document.id}`}
-              className="mt-2 font-serif text-2xl leading-tight text-reading-ink sm:text-3xl"
+              className="mt-2 break-words font-serif text-2xl leading-tight text-reading-ink sm:text-3xl"
             >
               {document.title}
             </h1>

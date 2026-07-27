@@ -94,8 +94,14 @@ async function installFixtures(page, row, requestLog) {
 
     if (url.pathname === '/api/me' && method === 'GET') {
       body = IDENTITY
+    } else if (url.pathname === '/api/viewer-context' && method === 'GET') {
+      body = {
+        capabilities: {
+          operator: row.fixture === 'operator',
+        },
+      }
     } else if (url.pathname === '/api/subjects' && method === 'GET') {
-      body = { subjects: SUBJECTS }
+      body = { subjects: row.fixture === 'new' ? [] : SUBJECTS }
     } else if (url.pathname === '/api/folio/import' && method === 'POST') {
       body = { imported: 0 }
     } else if (url.pathname === '/api/folio' && method === 'GET') {
@@ -229,16 +235,18 @@ async function performAction(page, row) {
   if (row.action === 'open-begin') {
     await page.getByRole('button', { name: /begin a reading/i }).first().click()
     await page.getByRole('dialog', { name: /begin a reading/i }).waitFor({ state: 'visible' })
+  } else if (row.action === 'open-menu') {
+    await page.getByRole('button', { name: 'Open navigation menu' }).click()
+    await page.getByRole('navigation', { name: 'Product sections' }).waitFor({ state: 'visible' })
   }
 }
 
 async function settleSurfaceMotion(page) {
   await page.evaluate(async () => {
-    const finiteDialogAnimations = [...document.querySelectorAll('dialog')]
-      .flatMap((dialog) => dialog.getAnimations())
+    const finiteSurfaceAnimations = document.getAnimations()
       .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
     await Promise.race([
-      Promise.allSettled(finiteDialogAnimations.map((animation) => animation.finished)),
+      Promise.allSettled(finiteSurfaceAnimations.map((animation) => animation.finished)),
       new Promise((resolve) => window.setTimeout(resolve, 1500)),
     ])
   })
@@ -254,12 +262,51 @@ async function browserAssertions(page, row, requestLog, consoleLog, pageErrors) 
     `${row.id} overflows ${dimensions.scrollWidth}/${dimensions.clientWidth}`,
   )
 
+  const shellGeometry = await page.evaluate(() => {
+    const navigation = document.querySelector('[data-app-shell] > header')
+    const field = document.querySelector('[data-route-field]')
+    if (!navigation || !field) return null
+    const navRect = navigation.getBoundingClientRect()
+    const fieldRect = field.getBoundingClientRect()
+    return {
+      navigationBottom: navRect.bottom,
+      fieldTop: fieldRect.top,
+      fieldBottom: fieldRect.bottom,
+      viewportHeight: window.innerHeight,
+    }
+  })
+  if (shellGeometry) {
+    assert.ok(
+      shellGeometry.fieldTop >= shellGeometry.navigationBottom - 1,
+      `${row.id} route field begins beneath the navigation`,
+    )
+    assert.ok(
+      Math.abs(shellGeometry.fieldBottom - shellGeometry.viewportHeight) <= 1,
+      `${row.id} route field must fill the remaining viewport`,
+    )
+  }
+
+  const protectedListGeometry = await page.evaluate(() => {
+    const list = document.querySelector('[data-graph-list-viewport]')
+    const chrome = document.querySelector('[data-bottom-chrome]')
+    if (!list || !chrome) return null
+    const listRect = list.getBoundingClientRect()
+    const chromeRect = chrome.getBoundingClientRect()
+    return { listBottom: listRect.bottom, chromeTop: chromeRect.top }
+  })
+  if (protectedListGeometry) {
+    assert.ok(
+      protectedListGeometry.listBottom <= protectedListGeometry.chromeTop + 1,
+      `${row.id} list viewport runs behind bottom chrome`,
+    )
+  }
+
   const clipped = await page.evaluate(() => {
     const selectors = [
       '[aria-label="Urania 137 — home"]',
       'header [aria-label="Product sections"] button',
       '[aria-label^="Open settings"]',
-      'header.fixed a[href="/api/logout"]',
+      'header a[href="/api/logout"]',
     ]
     return selectors.flatMap((selector) => (
       [...document.querySelectorAll(selector)].flatMap((element) => {
@@ -276,10 +323,33 @@ async function browserAssertions(page, row, requestLog, consoleLog, pageErrors) 
   })
   assert.deepEqual(clipped, [], `${row.id} clips global controls`)
 
+  const clippedReadingLayers = await page.locator(
+    '[data-reading-layer], article[data-reading-preview]',
+  ).evaluateAll((layers) => layers.flatMap((layer) => {
+    const rect = layer.getBoundingClientRect()
+    return rect.left < -1 || rect.right > innerWidth + 1
+      ? [{ left: rect.left, right: rect.right, viewport: innerWidth }]
+      : []
+  }))
+  assert.deepEqual(
+    clippedReadingLayers,
+    [],
+    `${row.id} clips a reader-facing layer`,
+  )
+
   const rawOpen = await page.locator('details[open]').evaluateAll((details) => (
     details.filter((detail) => detail.querySelector('pre, code')).length
   ))
   assert.equal(rawOpen, 0, `${row.id} opens raw JSON by default`)
+
+  const visibleReadingText = await page.locator(
+    '[data-reading-layer="reading"], article[data-reading-preview]',
+  ).evaluateAll((readings) => readings.map((reading) => reading.textContent ?? '').join('\n'))
+  assert.doesNotMatch(
+    visibleReadingText,
+    /```json\b|["']?engine_id["']?\s*:|(?:^|\s)\{["'][a-z0-9_-]+["']\s*:/im,
+    `${row.id} exposes technical serialization in a reader-facing layer`,
+  )
 
   const longLiveRegions = await page.locator('[aria-live]').evaluateAll((regions) => (
     regions.flatMap((region) => {

@@ -29,6 +29,7 @@ export function ReadingPreview({ document }: { document: ReadingDocument }) {
       <article
         className="min-w-0 space-y-5 p-4 text-reading-ink sm:p-6"
         data-reading-origin={document.origin}
+        data-reading-preview
         aria-labelledby={`reading-preview-title-${document.id}`}
       >
         <header className="border-b border-reading-rule/35 pb-4">
@@ -56,6 +57,20 @@ export function ReadingPreview({ document }: { document: ReadingDocument }) {
               {document.sections[0]?.title ?? 'Orientation'}
             </p>
             <p className="mt-2 break-words text-base leading-7 text-reading-ink">{excerpt}</p>
+          </section>
+        )}
+
+        {!primaryElement && !excerpt && (
+          <section
+            aria-label="Source-only reading orientation"
+            className="max-w-[var(--reading-measure)] border-l border-reading-rule/40 py-1 pl-4"
+          >
+            <p className="font-display text-[9px] uppercase tracking-[0.2em] text-reading-muted">
+              Source record received
+            </p>
+            <p className="mt-2 text-sm leading-6 text-reading-muted">
+              This engine returned technical source without reader-ready narrative. Its privacy-filtered record remains in the canonical Source layer.
+            </p>
           </section>
         )}
 

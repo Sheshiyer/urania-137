@@ -99,13 +99,13 @@ function ReadyFolio({
 
       {selected && document ? (
         <div className="grid min-w-0 gap-7 xl:grid-cols-[minmax(0,1fr)_22rem]">
-          <section aria-labelledby="opened-reading-title">
+          <section className="min-w-0" aria-labelledby="opened-reading-title">
             <div className="mb-3 flex items-end justify-between gap-3">
               <div>
                 <p className="console-eyebrow">Canonical record</p>
                 <h2
                   id="opened-reading-title"
-                  className="mt-1 font-serif text-lg uppercase tracking-[0.14em] text-parchment"
+                  className="mt-1 break-words font-serif text-lg uppercase tracking-[0.14em] text-parchment"
                 >
                   Reading
                 </h2>
@@ -195,11 +195,11 @@ export function ReadingLibraryPage({
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-void">
+    <div className="min-h-full overflow-x-hidden bg-void">
       <PageFrame />
       <main
         id="main-content"
-        className="relative z-10 mx-auto w-full max-w-[96rem] px-5 pb-20 pt-24 sm:px-10 lg:px-14"
+        className="relative z-10 mx-auto w-full max-w-[112rem] px-5 pb-20 pt-8 sm:px-10 sm:pt-10 lg:px-14"
       >
         <header className="grid gap-8 border-b border-gold/15 pb-8 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>

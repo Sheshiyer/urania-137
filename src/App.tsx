@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHashRoute } from './hooks/useHashRoute'
 import { useMe } from './hooks/useMe'
 import { HomePage } from './pages/HomePage'
@@ -8,8 +8,15 @@ import { ReadingLibraryPage } from './pages/ReadingLibraryPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { RelationshipReadingPage } from './pages/RelationshipReadingPage'
 import { TopNav } from './components/chrome/TopNav'
+import { AppShell } from './components/layout/AppShell'
 import { importLegacyFolioOnce } from './lib/folioImport'
 import { listSubjects } from './lib/subjectsApi'
+import { useViewerContext } from './hooks/useViewerContext'
+import {
+  deriveExperience,
+  INITIAL_SUBJECT_LIFECYCLE,
+  type SubjectLifecycleState,
+} from './lib/experience'
 
 /**
  * Urania 137 is a multi-page stellar console. A hash router renders the galactic
@@ -27,7 +34,10 @@ export default function App() {
   const route = useHashRoute()
   // Signed-in identity for the app chrome (T-024/T-025): CF Access owns the
   // session cookie, so useMe just reads GET /api/me once on mount.
-  const { me } = useMe()
+  const { me, loading: meLoading } = useMe()
+  const viewerContext = useViewerContext(Boolean(me))
+  const [subjectLifecycle, setSubjectLifecycle] =
+    useState<SubjectLifecycleState>(INITIAL_SUBJECT_LIFECYCLE)
   // One-time legacy localStorage→D1 Folio import (T-048). CF Access guarantees
   // the user is authenticated before React mounts; the module guards so the
   // import POST fires at most once per browser.
@@ -35,50 +45,124 @@ export default function App() {
     void importLegacyFolioOnce()
   }, [])
 
-  const gateCheckedRef = useRef(false)
   useEffect(() => {
-    if (!me || gateCheckedRef.current) return
-    gateCheckedRef.current = true
+    if (!me) {
+      setSubjectLifecycle(INITIAL_SUBJECT_LIFECYCLE)
+      return
+    }
     let live = true
+    setSubjectLifecycle(INITIAL_SUBJECT_LIFECYCLE)
     void listSubjects()
       .then((subjects) => {
-        if (!live || subjects.length > 0) return
-        if (window.location.hash === '#/threshold') return
-        // Replace, not push: the Threshold is the landing, not a detour the
-        // back button should return to.
-        history.replaceState(null, '', '#/threshold')
-        window.dispatchEvent(new HashChangeEvent('hashchange'))
+        if (live) {
+          setSubjectLifecycle({
+            status: 'ready',
+            subjects,
+            error: null,
+          })
+        }
       })
-      .catch(() => {
-        // Fail-open — a profile-read hiccup never traps a returning user.
+      .catch((error) => {
+        if (!live) return
+        setSubjectLifecycle({
+          status: 'degraded',
+          subjects: null,
+          error:
+            error instanceof Error
+              ? error.message
+              : 'Your saved profile could not be read.',
+        })
       })
     return () => {
       live = false
     }
   }, [me])
 
+  const experience = useMemo(
+    () => deriveExperience(viewerContext, subjectLifecycle),
+    [subjectLifecycle, viewerContext],
+  )
+
+  useEffect(() => {
+    if (experience.lifecycle !== 'new' || route.view === 'threshold') return
+    // Replace, not push: the Threshold is the new viewer's landing, not a
+    // detour the back button should return to.
+    history.replaceState(null, '', '#/threshold')
+    window.dispatchEvent(new HashChangeEvent('hashchange'))
+  }, [experience.lifecycle, route.view])
+
+  const completeThreshold = useCallback(() => {
+    setSubjectLifecycle({
+      status: 'ready',
+      subjects: [{ id: me ? `self:${me.id}` : 'self:current', role: 'self' }],
+      error: null,
+    })
+  }, [me])
+
+  if (route.view === 'threshold') {
+    return <ThresholdPage onComplete={completeThreshold} />
+  }
+
+  // Do not paint an interactive returning-user map before the authenticated
+  // identity and subject lifecycle have resolved. This is a short semantic
+  // gate, not a second onboarding flow; new readers move directly from it to
+  // Threshold once the empty self-profile state is known.
+  const profilePending =
+    meLoading
+    || (Boolean(me) && subjectLifecycle.status === 'loading')
+    || experience.lifecycle === 'new'
+
   return (
-    <>
-      {route.view !== 'threshold' && <TopNav route={route} me={me} />}
-      {route.view === 'home' && <HomePage />}
-      {route.view === 'node' && (
-        <NodePage
-          key={`${route.nodeId}:${route.childId ?? ''}`}
-          nodeId={route.nodeId}
-          initialChildId={route.childId}
+    <AppShell
+      data-app-shell
+      navigation={
+        <TopNav
+          route={route}
           me={me}
+          operator={experience.operator}
         />
+      }
+      degradedNotice={
+        experience.status === 'degraded' ? experience.notice : null
+      }
+    >
+      {profilePending ? (
+        <main
+          id="main-content"
+          data-experience-gate
+          className="grid h-full min-h-[30rem] place-items-center px-6 text-center"
+        >
+          <div role="status" className="border-y border-gold/20 px-8 py-6">
+            <p className="font-display text-[9px] uppercase tracking-[0.28em] text-gold">
+              Opening the field
+            </p>
+            <p className="mt-3 font-serif text-lg text-parchment">
+              Recalling your place in the map.
+            </p>
+          </div>
+        </main>
+      ) : (
+        <>
+          {route.view === 'home' && <HomePage experience={experience} />}
+          {route.view === 'node' && (
+            <NodePage
+              key={`${route.nodeId}:${route.childId ?? ''}`}
+              nodeId={route.nodeId}
+              initialChildId={route.childId}
+              me={me}
+            />
+          )}
+          {route.view === 'readings' && <ReadingLibraryPage me={me} readingId={route.readingId} />}
+          {route.view === 'settings' && <SettingsPage me={me} />}
+          {route.view === 'relationship-reading' && (
+            <RelationshipReadingPage
+              relationshipId={route.relationshipId}
+              generationId={route.generationId}
+              me={me}
+            />
+          )}
+        </>
       )}
-      {route.view === 'threshold' && <ThresholdPage />}
-      {route.view === 'readings' && <ReadingLibraryPage me={me} readingId={route.readingId} />}
-      {route.view === 'settings' && <SettingsPage me={me} />}
-      {route.view === 'relationship-reading' && (
-        <RelationshipReadingPage
-          relationshipId={route.relationshipId}
-          generationId={route.generationId}
-          me={me}
-        />
-      )}
-    </>
+    </AppShell>
   )
 }

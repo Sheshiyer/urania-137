@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type RefObject } from 'react'
 import { SPACING } from '../styles/tokens'
 
 export interface NodeGraphGeometry {
@@ -10,24 +10,33 @@ export interface NodeGraphGeometry {
 }
 
 /**
- * Tracks the viewport and derives the graph geometry (center + orbit radius).
- * Shared by the home graph and every parent-node page so the radial layout is
- * computed one way everywhere.
+ * Tracks the graph's actual layout field and derives its geometry. The graph
+ * used to read `window.innerHeight`, which made an in-flow app header invisible
+ * to its coordinate system and pushed labels beneath adjacent chrome.
  */
-export function useNodeGraph(): NodeGraphGeometry {
+export function useNodeGraph(containerRef?: RefObject<HTMLElement | null>): NodeGraphGeometry {
   const [dimensions, setDimensions] = useState({ width: 1200, height: 800 })
 
   useEffect(() => {
     const update = () => {
+      const bounds = containerRef?.current?.getBoundingClientRect()
       setDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: Math.max(bounds?.width ?? window.innerWidth, 1),
+        height: Math.max(bounds?.height ?? window.innerHeight, 1),
       })
     }
     update()
+    const target = containerRef?.current
+    const observer = target && typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(update)
+      : null
+    if (target && observer) observer.observe(target)
     window.addEventListener('resize', update)
-    return () => window.removeEventListener('resize', update)
-  }, [])
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', update)
+    }
+  }, [containerRef])
 
   const { width, height } = dimensions
   return {

@@ -178,9 +178,9 @@ export function SettingsPage({ me }: { me: User | null }) {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-void">
+    <div className="min-h-full overflow-x-hidden bg-void">
       <PageFrame />
-      <main id="main-content" className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-24 pt-24 sm:px-10 lg:px-14">
+      <main id="main-content" className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-24 pt-8 sm:px-10 sm:pt-10 lg:px-14">
         <header className="grid gap-8 border-b border-gold/15 pb-8 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
             <p className="console-eyebrow">Identity · circle · consent · visibility</p>

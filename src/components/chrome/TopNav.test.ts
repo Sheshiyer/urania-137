@@ -12,11 +12,12 @@ function expectMinimumTarget(tag: string | undefined) {
 }
 
 describe('TopNav target geometry', () => {
-  it('keeps the wordmark and every viewport navigation control at least 44px square', () => {
+  it('keeps the wordmark, desktop routes, and one mobile disclosure at least 44px square', () => {
     const html = renderToStaticMarkup(
       createElement(TopNav, {
         route: { view: 'home' },
         me: null,
+        operator: false,
       }),
     )
 
@@ -27,9 +28,13 @@ describe('TopNav target geometry', () => {
       const controls = Array.from(
         html.matchAll(new RegExp(`<button([^>]*)>${label}(?:<|</button>)`, 'g')),
       )
-      expect(controls).toHaveLength(2)
+      expect(controls).toHaveLength(1)
       for (const control of controls) expectMinimumTarget(control[1])
     }
+
+    const menu = html.match(/<button[^>]*aria-label="Open navigation menu"[^>]*>/)?.[0]
+    expectMinimumTarget(menu)
+    expect(html).not.toContain('fixed inset-x-0 top-0')
   })
 
   it('keeps the desktop node search input at least 44px square', () => {
@@ -37,11 +42,32 @@ describe('TopNav target geometry', () => {
       createElement(TopNav, {
         route: { view: 'home' },
         me: null,
+        operator: false,
       }),
     )
     const search = html.match(/<input[^>]*aria-label="Search stellar nodes"[^>]*>/)?.[0]
 
     expectMinimumTarget(search)
+  })
+
+  it('renders operator instrumentation only from the explicit capability prop', () => {
+    const reader = renderToStaticMarkup(
+      createElement(TopNav, {
+        route: { view: 'home' },
+        me: { id: 'reader', email: 'sheshnarayan.iyer@gmail.com' },
+        operator: false,
+      }),
+    )
+    const operator = renderToStaticMarkup(
+      createElement(TopNav, {
+        route: { view: 'home' },
+        me: { id: 'operator', email: 'reader@example.com' },
+        operator: true,
+      }),
+    )
+
+    expect(reader).not.toContain('Operator')
+    expect(operator).toContain('Operator')
   })
 })
 

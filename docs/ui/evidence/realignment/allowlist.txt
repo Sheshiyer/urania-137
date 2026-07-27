@@ -26,6 +26,11 @@ docs/ui/evidence/realignment/rows/desktop-home/console.json
 docs/ui/evidence/realignment/rows/desktop-home/desktop-home.png
 docs/ui/evidence/realignment/rows/desktop-home/dom.txt
 docs/ui/evidence/realignment/rows/desktop-home/requests.json
+docs/ui/evidence/realignment/rows/desktop-new-user-redirect/axe.json
+docs/ui/evidence/realignment/rows/desktop-new-user-redirect/console.json
+docs/ui/evidence/realignment/rows/desktop-new-user-redirect/desktop-new-user-redirect.png
+docs/ui/evidence/realignment/rows/desktop-new-user-redirect/dom.txt
+docs/ui/evidence/realignment/rows/desktop-new-user-redirect/requests.json
 docs/ui/evidence/realignment/rows/desktop-node-birth/axe.json
 docs/ui/evidence/realignment/rows/desktop-node-birth/console.json
 docs/ui/evidence/realignment/rows/desktop-node-birth/desktop-node-birth.png
@@ -61,6 +66,11 @@ docs/ui/evidence/realignment/rows/desktop-node-witness/console.json
 docs/ui/evidence/realignment/rows/desktop-node-witness/desktop-node-witness.png
 docs/ui/evidence/realignment/rows/desktop-node-witness/dom.txt
 docs/ui/evidence/realignment/rows/desktop-node-witness/requests.json
+docs/ui/evidence/realignment/rows/desktop-operator-home/axe.json
+docs/ui/evidence/realignment/rows/desktop-operator-home/console.json
+docs/ui/evidence/realignment/rows/desktop-operator-home/desktop-operator-home.png
+docs/ui/evidence/realignment/rows/desktop-operator-home/dom.txt
+docs/ui/evidence/realignment/rows/desktop-operator-home/requests.json
 docs/ui/evidence/realignment/rows/desktop-operator/axe.json
 docs/ui/evidence/realignment/rows/desktop-operator/console.json
 docs/ui/evidence/realignment/rows/desktop-operator/desktop-operator.png
@@ -101,6 +111,11 @@ docs/ui/evidence/realignment/rows/mobile-folio/console.json
 docs/ui/evidence/realignment/rows/mobile-folio/dom.txt
 docs/ui/evidence/realignment/rows/mobile-folio/mobile-folio.png
 docs/ui/evidence/realignment/rows/mobile-folio/requests.json
+docs/ui/evidence/realignment/rows/mobile-home-menu/axe.json
+docs/ui/evidence/realignment/rows/mobile-home-menu/console.json
+docs/ui/evidence/realignment/rows/mobile-home-menu/dom.txt
+docs/ui/evidence/realignment/rows/mobile-home-menu/mobile-home-menu.png
+docs/ui/evidence/realignment/rows/mobile-home-menu/requests.json
 docs/ui/evidence/realignment/rows/mobile-home/axe.json
 docs/ui/evidence/realignment/rows/mobile-home/console.json
 docs/ui/evidence/realignment/rows/mobile-home/dom.txt

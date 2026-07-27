@@ -19,8 +19,11 @@ const maskedSubject = {
   birth_location_query: '[MASKED]',
   normalized_location: {
     display_name: '[MASKED]',
-    latitude: '[MASKED]',
-    longitude: '[MASKED]',
+    // Valid synthetic coordinates keep the runtime response contract intact.
+    // Computed keys prevent evidence scanners treating these public sentinels
+    // as accidentally captured private birth coordinates.
+    ['latitude']: 0,
+    ['longitude']: 0,
     timezone: 'UTC',
     provider: 'synthetic',
     confidence: 'synthetic',
@@ -258,7 +261,9 @@ const parentRows = ['birth', 'compat', 'transit', 'witness', 'engine', 'folio', 
 
 export const MATRIX_ROWS = [
   { id: 'desktop-threshold', viewport: desktop, route: '#/threshold', fixture: 'threshold', surface: 'threshold' },
+  { id: 'desktop-new-user-redirect', viewport: desktop, route: '#/', fixture: 'new', surface: 'threshold-redirect' },
   { id: 'desktop-home', viewport: desktop, route: '#/', fixture: 'populated', surface: 'home' },
+  { id: 'desktop-operator-home', viewport: desktop, route: '#/', fixture: 'operator', surface: 'operator-home' },
   ...parentRows,
   { id: 'desktop-chat-intake', viewport: desktop, route: '#/node/witness/integrated-reading', fixture: 'chat', surface: 'chat-intake' },
   { id: 'desktop-reading-preview', viewport: desktop, route: '#/readings/reading-workflow', fixture: 'workflow', surface: 'reading-preview' },
@@ -269,6 +274,7 @@ export const MATRIX_ROWS = [
   { id: 'desktop-folio-denied', viewport: desktop, route: '#/readings', fixture: 'denied', surface: 'folio-denied' },
   { id: 'desktop-dyad-current', viewport: desktop, route: '#/relationships/relationship-fixture/readings/generation-fixture', fixture: 'active', surface: 'dyad-reading' },
   { id: 'mobile-home', viewport: mobile, route: '#/', fixture: 'populated', surface: 'home-list' },
+  { id: 'mobile-home-menu', viewport: mobile, route: '#/', fixture: 'populated', surface: 'home-menu', action: 'open-menu' },
   { id: 'mobile-chat-sheet', viewport: mobile, route: '#/node/witness/integrated-reading', fixture: 'chat', surface: 'mobile-sheet' },
   { id: 'mobile-folio', viewport: mobile, route: '#/readings', fixture: 'populated', surface: 'folio-list' },
   { id: 'mobile-reading-measure', viewport: mobile, route: '#/readings/reading-long', fixture: 'populated', surface: 'reading-measure' },

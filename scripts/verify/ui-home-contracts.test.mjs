@@ -7,9 +7,13 @@ const read = (path) => readFileSync(new URL(`../../${path}`, import.meta.url), '
 const sources = {
   home: read('src/pages/HomePage.tsx'),
   node: read('src/pages/NodePage.tsx'),
+  app: read('src/App.tsx'),
   nodePresentation: read('src/lib/nodePresentation.ts'),
   engineStatus: read('src/components/panels/EngineStatusPanel.tsx'),
   topNav: read('src/components/chrome/TopNav.tsx'),
+  pageHeader: read('src/components/layout/PageHeader.tsx'),
+  bottomChrome: read('src/components/chrome/BottomChrome.tsx'),
+  graph: read('src/components/ConstellationGraph.tsx'),
   pageTabs: read('src/components/chrome/PageTabs.tsx'),
   statFooter: read('src/components/chrome/StatFooter.tsx'),
   threshold: read('src/pages/ThresholdPage.tsx'),
@@ -23,10 +27,45 @@ test('home copy and direct reading doorway are wired to the grounded vocabulary'
   assert.match(sources.home, /<BeginReadingDialog/)
   assert.match(
     sources.home,
-    /wrapperClassName="fixed inset-x-0 bottom-\[8\.75rem\] top-44 sm:inset-0"/,
-    'the narrow home lens must end above the 140px bottom chrome',
+    /wrapperClassName="absolute inset-0"/,
+    'the graph must occupy its measured route field instead of the viewport',
   )
   assert.match(sources.threshold, /UI_COPY\.thresholdGrounding/)
+})
+
+test('interactive chrome owns flow space while decorative framing may remain fixed', () => {
+  assert.doesNotMatch(sources.topNav, /className="[^"]*\bfixed\b/)
+  assert.doesNotMatch(sources.pageHeader, /className="[^"]*\bfixed\b/)
+  assert.doesNotMatch(sources.bottomChrome, /className="[^"]*\bfixed\b/)
+  assert.doesNotMatch(sources.graph, /wrapperClassName = ['"]fixed inset-0['"]/)
+  assert.doesNotMatch(sources.home, /className="[^"]*\bfixed\b/)
+  assert.doesNotMatch(sources.node, /wrapperClassName="fixed inset-0"/)
+  assert.match(sources.app, /data-app-shell/)
+  assert.match(
+    read('src/components/layout/AppShell.tsx'),
+    /h-dvh[\s\S]*overflow-y-auto/,
+    'the route field must own the remaining dynamic viewport and its scroll',
+  )
+})
+
+test('mobile navigation begins with one disclosure instead of four competing labels', () => {
+  assert.match(sources.topNav, /aria-label="Open navigation menu"/)
+  assert.doesNotMatch(
+    sources.topNav,
+    /md:hidden[\s\S]{0,1000}items\.map/,
+    'the compact header must not paint every product route at once',
+  )
+})
+
+test('experience and operator presentation stay orthogonal to authorization', () => {
+  assert.match(sources.app, /experience/)
+  assert.match(sources.app, /data-experience-gate/)
+  assert.match(
+    sources.app,
+    /meLoading[\s\S]*subjectLifecycle\.status === 'loading'[\s\S]*experience\.lifecycle === 'new'/,
+  )
+  assert.match(sources.topNav, /operator/)
+  assert.doesNotMatch(`${sources.app}\n${sources.topNav}`, /sheshnarayan\.iyer@gmail\.com/i)
 })
 
 test('fictional telemetry and reference-only navigation language are absent', () => {

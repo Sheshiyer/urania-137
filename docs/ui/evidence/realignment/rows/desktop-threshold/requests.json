@@ -39,6 +39,14 @@
   },
   {
     "method": "GET",
+    "path": "/api/viewer-context",
+    "status": 200,
+    "expected": false,
+    "mutating": false,
+    "forwarded": false
+  },
+  {
+    "method": "GET",
     "path": "/api/subjects",
     "status": 200,
     "expected": false,

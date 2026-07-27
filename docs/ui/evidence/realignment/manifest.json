@@ -26,6 +26,26 @@
       "blockingAxeViolations": 0
     },
     {
+      "id": "desktop-new-user-redirect",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-new-user-redirect/desktop-new-user-redirect.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-new-user-redirect/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-new-user-redirect/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-new-user-redirect/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-new-user-redirect/axe.json",
+      "route": "#/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "new",
+      "surface": "threshold-redirect",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
       "id": "desktop-home",
       "fixtureLabel": "Reader A",
       "screenshot": "docs/ui/evidence/realignment/rows/desktop-home/desktop-home.png",
@@ -40,6 +60,26 @@
       },
       "fixture": "populated",
       "surface": "home",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-operator-home",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-operator-home/desktop-operator-home.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-operator-home/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-operator-home/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-operator-home/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-operator-home/axe.json",
+      "route": "#/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "operator",
+      "surface": "operator-home",
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,
@@ -360,6 +400,26 @@
       },
       "fixture": "populated",
       "surface": "home-list",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "mobile-home-menu",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/mobile-home-menu/mobile-home-menu.png",
+      "domText": "docs/ui/evidence/realignment/rows/mobile-home-menu/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/mobile-home-menu/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/mobile-home-menu/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/mobile-home-menu/axe.json",
+      "route": "#/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fixture": "populated",
+      "surface": "home-menu",
       "reducedMotion": false,
       "graphEquivalent": true,
       "forwardedMutations": 0,

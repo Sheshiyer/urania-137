@@ -174,16 +174,16 @@ export function NodePage({
   ]
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-void">
+    <div className="relative h-full min-h-[30rem] overflow-hidden bg-void">
       <ConstellationGraph
-        wrapperClassName="fixed inset-0"
+        wrapperClassName="absolute inset-0"
         orbitals={presentation.orbitals}
         selectedId={selectedChild?.id ?? null}
         onSelect={openChild}
         centerLabel={node.label}
         onHomeRequest={() => navigate('/')}
         ariaLabel={`${node.label} sub-node constellation`}
-        topInset={CHROME.navAndTitle}
+        topInset={CHROME.nodeTitle}
         bottomInset={CHROME.tabsAndFooter}
       />
       <PageHeader title={node.label} epithet={node.epithet} subtitle={node.description} onBack={() => navigate('/')} />

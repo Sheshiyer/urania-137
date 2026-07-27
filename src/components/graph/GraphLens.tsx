@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode, type RefObject } from 'react'
 import type { GraphEntry } from '../../types'
 import { RelationList } from './RelationList'
 
@@ -13,6 +13,7 @@ export interface GraphLensProps {
   className?: string
   topInset?: number
   bottomInset?: number
+  containerRef?: RefObject<HTMLElement | null>
 }
 
 const LIST_PREFERENCE_QUERY =
@@ -38,6 +39,7 @@ export function GraphLens({
   className,
   topInset = 0,
   bottomInset = 0,
+  containerRef,
 }: GraphLensProps) {
   const [preferList, setPreferList] = useState(prefersListLens)
   const [requestedView, setRequestedView] = useState<GraphView | null>(null)
@@ -53,6 +55,7 @@ export function GraphLens({
 
   return (
     <section
+      ref={containerRef}
       className={className}
       aria-label={`${ariaLabel} view`}
       data-graph-lens={view}
@@ -87,10 +90,12 @@ export function GraphLens({
         graph
       ) : (
         <div
-          className="absolute inset-0 overflow-y-auto bg-void px-4 sm:px-8"
+          data-graph-list-viewport
+          className="absolute inset-x-0 overflow-y-auto bg-void px-4 sm:px-8"
           style={{
-            paddingTop: Math.max(topInset + 76, 88),
-            paddingBottom: Math.max(bottomInset + 24, 40),
+            top: Math.max(topInset + 76, 88),
+            bottom: Math.max(bottomInset, 0),
+            paddingBottom: 24,
           }}
         >
           <RelationList

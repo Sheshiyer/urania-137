@@ -103,4 +103,32 @@ describe('ReadingPreview', () => {
     expect(html).toContain('Open reading')
     expect(html).toContain('#/readings/canonical-reading')
   })
+
+  it('shows an explicit source-only orientation when no narrative or typed element is available', () => {
+    const sourceOnly = {
+      ...document,
+      structureSource: 'flat' as const,
+      sections: [],
+      body: null,
+      elements: [{
+        id: 'future:raw',
+        title: 'Future source',
+        kind: 'raw' as const,
+        sourceSystem: 'future',
+        sourcePath: 'source',
+        evidenceKind: 'deterministic' as const,
+        confidence: 'observed' as const,
+        value: { engine_id: 'future', private_value: 'technical-only' },
+      }],
+      sourcePayload: { engine_id: 'future', private_value: 'technical-only' },
+      bridgeQuestion: null,
+    }
+
+    const html = renderToStaticMarkup(createElement(ReadingPreview, { document: sourceOnly }))
+
+    expect(html).toContain('Source record received')
+    expect(html).toContain('reader-ready narrative')
+    expect(html).not.toContain('technical-only')
+    expect(html).not.toContain('&quot;engine_id&quot;')
+  })
 })

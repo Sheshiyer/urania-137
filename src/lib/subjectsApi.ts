@@ -14,6 +14,37 @@
 
 import type { SubjectProfile } from '../types/chat'
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function isSubjectProfile(value: unknown): value is SubjectProfile {
+  if (!isRecord(value) || !isRecord(value.normalized_location)) return false
+  const confidence = value.birth_time_confidence
+  const location = value.normalized_location
+  return (
+    [
+      value.id,
+      value.role,
+      value.name,
+      value.birth_date,
+      value.birth_time,
+      value.birth_location_query,
+      value.createdAt,
+      value.updatedAt,
+      location.display_name,
+      location.timezone,
+      location.provider,
+      location.confidence,
+    ].every((item) => typeof item === 'string')
+    && (confidence === 'exact' || confidence === 'approximate' || confidence === 'unknown')
+    && typeof location.latitude === 'number'
+    && Number.isFinite(location.latitude)
+    && typeof location.longitude === 'number'
+    && Number.isFinite(location.longitude)
+  )
+}
+
 async function toError(res: Response, fallback: string): Promise<Error> {
   try {
     const body = (await res.json()) as { error?: string; message?: string }
@@ -30,7 +61,14 @@ export async function listSubjects(): Promise<SubjectProfile[]> {
     headers: { accept: 'application/json' },
   })
   if (!res.ok) throw await toError(res, `subjects ${res.status}`)
-  const body = (await res.json()) as { subjects: SubjectProfile[] }
+  const body: unknown = await res.json()
+  if (
+    !isRecord(body)
+    || !Array.isArray(body.subjects)
+    || !body.subjects.every(isSubjectProfile)
+  ) {
+    throw new Error('subjects response was invalid')
+  }
   return body.subjects
 }
 

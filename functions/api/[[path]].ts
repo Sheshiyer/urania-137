@@ -188,6 +188,15 @@ async function requireUser(
   }
 }
 
+function hasOperatorPresentation(env: Env, email: string): boolean {
+  const normalized = email.trim().toLowerCase()
+  return (env.OPERATOR_EMAILS ?? '')
+    .split(',')
+    .map((candidate) => candidate.trim().toLowerCase())
+    .filter(Boolean)
+    .includes(normalized)
+}
+
 export const onRequest: PagesFunction<Env> = async (ctx) => {
   const { pathname } = new URL(ctx.request.url)
   const method = ctx.request.method
@@ -209,6 +218,19 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
     }
     await upsertUser(ctx.env.DB, me)
     return json(me)
+  }
+
+  // Server-authored presentation context. This is deliberately separate from
+  // the frozen /api/me identity contract, and deliberately cannot authorize
+  // any route: every API below still scopes actions from verified claims.
+  if (pathname === '/api/viewer-context' && method === 'GET') {
+    const identity = await requireUser(ctx.env, auth.claims)
+    if (!identity.ok) return identity.response
+    return json({
+      capabilities: {
+        operator: hasOperatorPresentation(ctx.env, identity.user.email),
+      },
+    })
   }
 
   // T-020 — logout: hand the session teardown to CF Access.

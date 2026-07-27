@@ -17,7 +17,7 @@ interface PageHeaderProps {
  */
 export function PageHeader({ title, epithet, subtitle, showBack = true, onBack }: PageHeaderProps) {
   return (
-    <div className="pointer-events-none fixed left-8 right-6 top-[84px] z-10 sm:left-14 sm:right-auto sm:top-[96px]">
+    <div className="pointer-events-none absolute left-8 right-6 top-4 z-10 sm:left-14 sm:right-auto sm:top-6">
       {/* Breadcrumb eyebrow — HOME is the way back; the hub + MAP also return. */}
       {showBack && (
         <p className="mb-3 flex items-center gap-2 font-display text-xs uppercase tracking-[0.28em] text-metadata">

@@ -28,4 +28,9 @@ export interface Env {
    * templates. Non-secret — committed in wrangler.toml [vars].
    */
   NARRATOR_LLM_URL?: string
+  /**
+   * Comma-separated, server-side presentation allowlist. This may reveal an
+   * operator lens in the UI but grants no API authority.
+   */
+  OPERATOR_EMAILS?: string
 }
