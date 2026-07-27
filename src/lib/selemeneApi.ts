@@ -8,6 +8,7 @@ import {
   SelemeneWorkflow,
   WorkflowResult,
 } from '../types'
+import { appBuildInfo } from './appVersion'
 
 /**
  * All calls go through the same-origin serverless proxy (`/api/selemene/*`),
@@ -18,6 +19,20 @@ import {
  * proxy elsewhere; the API key itself is never a client-side variable.
  */
 const PROXY_BASE = (import.meta.env.VITE_SELEMENE_PROXY_BASE || '/api/selemene').replace(/\/+$/, '')
+
+const uraniaClientContext = () => ({
+  source_client: 'urania' as const,
+  device_platform: 'web',
+  device_app_version: appBuildInfo().version,
+})
+
+export function withUraniaClientContext(body: unknown): unknown {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return body
+  return {
+    ...(body as Record<string, unknown>),
+    client_context: uraniaClientContext(),
+  }
+}
 
 /** Generate a witness report/asset for a given mode (the primary Selemene surface). */
 export async function generateAsset(request: AssetGenerateRequest): Promise<AssetGenerateResponse> {
@@ -43,7 +58,7 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`${PROXY_BASE}${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: JSON.stringify(withUraniaClientContext(body)),
   })
   if (!res.ok) {
     const text = await res.text().catch(() => '')
