@@ -77,7 +77,10 @@ Every child is wired to a capability the engine **actually serves** — verified
 
 ## Visual direction
 
-Brand-aligned design references were locked before implementation; the built app matches them one-to-one. The moodboard anchors palette, typography, and composition:
+Brand-aligned design references were locked before implementation. They are
+directional composition contracts—not runtime data, telemetry, or proof that a
+surface is implemented. The moodboard anchors palette, typography, and
+composition:
 
 <div align="center">
 
@@ -102,6 +105,8 @@ The multi-page architecture — overview, a parent cluster, and the narrative ch
 </div>
 
 The full set of per-node design references lives in [`.assets/page-references/`](./.assets/page-references/).
+Implemented truth lives in typed runtime components, executable registries, and
+the evidence produced by `npm run verify:ui-realignment`.
 
 The living-reading component family and full folio composition are anchored by:
 
@@ -129,6 +134,26 @@ npm run dev                      # build (tsc + vite) then wrangler pages dev �
 There is no separate Vite dev server: `wrangler pages dev` is the single local
 entrypoint, so the SPA and the API always run together exactly as they do on
 Cloudflare Pages.
+
+### Graph-first UI exit gate
+
+The deterministic UI gate uses synthetic `.test` identities and fulfilled
+network fixtures. It never mutates local D1 or calls live Selemene.
+
+```bash
+# terminal one
+npm run build
+npx wrangler pages dev dist --port 8788
+
+# terminal two
+npm run verify:ui-realignment -- http://127.0.0.1:8788
+```
+
+The gate runs component and contract suites, the 18-engine/6-workflow atlas,
+Functions type checks, production build and bundle budget, the
+desktop/mobile/effective-reflow/reduced-motion visual matrix, Axe, and evidence
+redaction. Traceability and bounded artifacts live under
+[`docs/ui/`](./docs/ui/).
 
 ### Local environment (`.dev.vars`, gitignored — never commit)
 
@@ -181,10 +206,13 @@ graph TD
     RT --> NP["NodePage — variant=node"]
     HP --> G["ConstellationGraph (shared renderer)"]
     NP --> G
+    RT --> FL["ReadingLibraryPage — canonical Folio"]
+    RT --> ST["SettingsPage — identity + consent"]
+    RT --> RR["RelationshipReadingPage — participant grant"]
     NP --> K[Click a sub-node orb]
     K -->|run| C["ChatSheet — narrative onboarding (SSE)"]
     K -->|engine| ES["EngineStatusPanel — live /health + roster"]
-    K -->|folio| FP["FolioPanel — per-user D1 archive"]
+    K -->|folio| FL
     C --> CT["/api/chat/* — D1 sessions + narrator turns"]
     C -->|handoff| P["fetch same-origin /api/selemene/*"]
     P --> PX["Pages Function: inject X-API-Key server-side"]
@@ -197,8 +225,9 @@ graph TD
 - `src/styles/tokens.ts` — the single source of colour + typography truth.
 - `primitives/` — `StellarNode` (plain / ornate orb / home planet), `CoreGlow` (ornate astrolabe hub with flower-of-life), `Glyph` (sacred-geometry icon set), `CompassStar`.
 - `chrome/` — `TopNav`, `StatFooter`, `PageTabs` (the console dressing).
-- `panels/` — `EngineStatusPanel` (live telemetry), `FolioPanel` (persisted archive).
-- `App` → `useHashRoute` → `HomePage` / `NodePage`; `NodePage` owns the chat sheet and the info modal.
+- `panels/` — `EngineStatusPanel` (endpoint-backed operator evidence).
+- `readings/` — canonical Reading, Evidence, and collapsed privacy-filtered Source instruments.
+- `App` → `useHashRoute` → graph, Folio, Settings, and participant-granted relationship pages; `NodePage` owns the chat sheet and the info dialog.
 
 ## Project structure
 
@@ -206,7 +235,8 @@ graph TD
 urania-137
 ├── .assets/
 │   ├── moodboard.png                     # Brand + composition moodboard
-│   └── page-references/                   # Per-node design references (design targets)
+│   ├── page-references/                   # Directional design contracts
+│   └── generated/                         # Directional component boards, never runtime truth
 ├── docs/
 │   ├── auth/                              # CF-Access contracts + phase-gate evidence
 │   ├── integrated-product-map.md
@@ -218,17 +248,18 @@ urania-137
 ├── scripts/verify/                        # runnable gates (taxonomy, daily, V5, phase exits)
 ├── src/
 │   ├── App.tsx                            # Router: TopNav + HomePage / NodePage
-│   ├── pages/  (HomePage, NodePage)        # The two views
+│   ├── pages/                              # Graph, Folio, Settings, dyad reading views
 │   ├── components/
 │   │   ├── ConstellationGraph.tsx         # Shared renderer (variant: home | node)
-│   │   ├── Modal.tsx                       # Info-panel shell (run children use chat)
+│   │   ├── ui/InstrumentDialog.tsx         # Shared focus-managed overlay
 │   │   ├── chat/    (ChatSheet, ResultThread) # Narrative onboarding + in-thread results
 │   │   ├── chrome/   (TopNav, StatFooter, PageTabs)
-│   │   ├── panels/   (EngineStatusPanel, FolioPanel)
+│   │   ├── panels/   (EngineStatusPanel)
+│   │   ├── readings/ (canonical document + engine/workflow instruments)
 │   │   ├── layout/   (PageHeader, PageFrame)
 │   │   └── primitives/ (StellarNode, CoreGlow, Glyph, CompassStar)
 │   ├── data/selemeneNodes.ts              # Seven surfaces, their modes and children
-│   ├── hooks/  (useHashRoute, useNodeGraph, useReportGenerator, useEngineStatus, useFolio)
+│   ├── hooks/  (hash route, graph geometry, reading generation, Folio)
 │   ├── lib/    (selemeneApi.ts, folioStore.ts, api/contract.ts, graphUtils.ts)
 │   ├── styles/tokens.ts                   # Design tokens (single source of truth)
 │   └── types/index.ts

@@ -4,11 +4,11 @@ slug: 20260726-urania-living-readings-ecosystem
 project: Urania 137
 effort: advanced
 effort_source: classifier
-phase: execute
-progress: 19/32
+phase: verify
+progress: 32/32
 mode: interactive
 started: 2026-07-14T16:00:00Z
-updated: 2026-07-27T13:57:00+05:30
+updated: 2026-07-27T07:05:03+05:30
 iteration: 10
 ---
 
@@ -2066,19 +2066,19 @@ branded ecosystem without weakening existing data or authorization contracts.
 - [x] ISC-330: Every graph relationship has a named non-visual equivalent.
 - [x] ISC-331: Graph interaction remains keyboard reachable at narrow and wide viewports.
 - [x] ISC-332: Canonical readings render separate Reading, Evidence, and privacy-filtered Source layers.
-- [ ] ISC-333: Chat transitions explicitly into the canonical reading without a mutating long-form live region.
-- [ ] ISC-334: Home retains exactly seven parent nodes and offers a direct reading doorway.
-- [ ] ISC-335: Folio browsing, filtering, grouping, and reading detail use one coherent surface.
-- [ ] ISC-336: All eighteen engines map to typed reusable reading instruments.
-- [ ] ISC-337: All six workflows expose honest member, state, provenance, and fallback presentation.
-- [ ] ISC-338: Node pages distinguish runnable, partial, capture-gated, unavailable, and informational children.
-- [ ] ISC-339: Operator evidence contains no personal interpretation or browser-side authorization.
-- [ ] ISC-340: Settings preserve owner, subject, consent, relationship, and revocation boundaries.
-- [ ] ISC-341: Dyad readings present both subjects symmetrically in the canonical grammar.
-- [ ] ISC-342: Deep links, hash history, browser navigation, and refresh behavior remain verified.
-- [ ] ISC-343: Desktop, effective-reflow, and mobile visual matrices pass with deterministic fixtures.
-- [ ] ISC-344: Accessibility, evidence-redaction, build, focused tests, and bundle budgets pass.
-- [ ] ISC-345: Anti: no default surface exposes raw JSON, fictional telemetry, generic SaaS styling, or generated-image truth.
+- [x] ISC-333: Chat transitions explicitly into the canonical reading without a mutating long-form live region.
+- [x] ISC-334: Home retains exactly seven parent nodes and offers a direct reading doorway.
+- [x] ISC-335: Folio browsing, filtering, grouping, and reading detail use one coherent surface.
+- [x] ISC-336: All eighteen engines map to typed reusable reading instruments.
+- [x] ISC-337: All six workflows expose honest member, state, provenance, and fallback presentation.
+- [x] ISC-338: Node pages distinguish runnable, partial, capture-gated, unavailable, and informational children.
+- [x] ISC-339: Operator evidence contains no personal interpretation or browser-side authorization.
+- [x] ISC-340: Settings preserve owner, subject, consent, relationship, and revocation boundaries.
+- [x] ISC-341: Dyad readings present both subjects symmetrically in the canonical grammar.
+- [x] ISC-342: Deep links, hash history, browser navigation, and refresh behavior remain verified.
+- [x] ISC-343: Desktop, effective-reflow, and mobile visual matrices pass with deterministic fixtures.
+- [x] ISC-344: Accessibility, evidence-redaction, build, focused tests, and bundle budgets pass.
+- [x] ISC-345: Anti: no default surface exposes raw JSON, fictional telemetry, generic SaaS styling, or generated-image truth.
 
 ### Test Strategy
 
@@ -2150,6 +2150,29 @@ branded ecosystem without weakening existing data or authorization contracts.
   and reading commits remain atomic; the full browser matrix is read-only and
   exercises the built Cloudflare Pages runtime at wide, effective-reflow, and
   mobile widths before Tasks 6–9 are allowed to begin.
+- 2026-07-27: Tasks 6–9 converge on one saved Reading identity. Home and chat
+  are doorways, Folio is recovery and browsing, and engine/workflow output
+  registries are source-shaped instruments rather than raw JSON surfaces.
+- 2026-07-27: Independent Task-9 review blocked analyzed capture payloads that
+  lacked a persisted reading/session identifier and a nested period spiral
+  that hid its planetary value. Adversarial tests now fail both cases closed.
+- 2026-07-27: Tasks 10–11 preserve authority boundaries: operator facts remain
+  endpoint-backed, while dyad access requires a current or historical
+  participant grant. Neither email identity nor an administrative role can
+  substitute for consent.
+- 2026-07-27: The first Batch-B browser gate passed 63/70 checks and exposed
+  two real shared-boundary defects: 401/403 Folio responses lost their typed
+  denied state, and several chrome/reading actions rendered below 44×44.
+  Both repairs were added test-first before the remediation rerun.
+- 2026-07-27: The Task-12 Axe matrix remains blocking for serious and critical
+  findings. It exposed reading-instrument contrast, a transient dialog-motion
+  measurement, and a composing-beat ARIA defect; runtime issues were repaired
+  test-first, while the harness now waits for finite dialog entrance motion
+  before measuring the stable state.
+- 2026-07-27: The checked-in browser evidence is entirely synthetic and
+  allowlisted. It uses only `.test` identities, forwards no mutations, contacts
+  no live corpus or Selemene endpoint, and contains no raw capture, birth,
+  credential, absolute-path, or production-identity material.
 
 ### Verification
 
@@ -2222,6 +2245,50 @@ branded ecosystem without weakening existing data or authorization contracts.
 - Fresh primary verification after both audit repairs passed 24/24 focused
   tests and a production build of 1,626 modules; CSS is 48.51 kB and JS is
   488.45 kB before gzip.
+- ISC-333: `ReadingTransition` and `useThreadScroll` tests prove that composing
+  narration is finite, long-form reading content is outside the live region,
+  following pauses on user scroll, and only “Return to latest” resumes it.
+  Commit: `80ef9b4`.
+- ISC-334: home contracts and live browser evidence retain seven parent nodes,
+  a direct Begin doorway, canonical Folio navigation, and collision-free
+  mobile graph/card geometry. Commit: `f6380c7`.
+- ISC-335: Folio view/layout tests and Pages evidence prove exclusive async
+  states, deterministic map/list equivalence, canonical direct selection,
+  structured Parchment reading detail, and collapsed Source. Commit: `ed51439`.
+- ISC-336–337: the executable atlas reconciles exactly 18 engines and six
+  workflows with typed instruments, written state, provenance, accessible
+  equivalents, and honest fallback/capture gates. Commits: `f9767e2`,
+  `d191cdb`.
+- ISC-338–339: 15 node/operator contract checks prove real capability states,
+  equivalent graph/list doorways, canonical Folio routes, endpoint-backed
+  operator evidence, and no email-derived authority. Commit: `bc4058e`.
+- ISC-340–341: independent read-only review passed 46 focused consent, dyad,
+  provenance, HTTP, and accessibility checks. Settings uses exclusive shared
+  boundaries; foreign/admin access fails closed; revocation blocks future
+  generation while persisted participant grants remain historical. Commit:
+  `cfbc072`.
+- Integrated primary verification after Tasks 10–11 and Batch-B repairs passed
+  75 files and 639 tests, the engine atlas and UI Node contracts passed 21/21,
+  TypeScript/Vite built 1,649 modules, and `git diff --check` was silent.
+- ISC-342: the focused exit suite passed all four hash-route history/deep-link
+  checks; the deterministic route matrix opened every canonical home, node,
+  Folio, selected Reading, Settings, operator, denied, current-grant, and
+  historical-grant URL through the built Pages runtime.
+- ISC-343: all 33 deterministic browser rows passed across desktop, mobile,
+  effective 320px reflow, and reduced-motion contexts. Every row owns a PNG,
+  DOM transcript, request ledger, console ledger, and Axe record in the exact
+  168-file allowlist under `docs/ui/evidence/realignment/`.
+- ISC-344: `npm run verify:ui-realignment -- http://127.0.0.1:8788` passed
+  seven UI contract checks, 103 focused tests, nine engine-atlas checks, all
+  77 test files and 653 tests, Functions typechecking, a production build of
+  1,649 modules, 33 browser rows, four evidence-redaction checks, and
+  `git diff --check`. JS+CSS measured 567,565 bytes against the unexplained
+  568,326-byte ceiling.
+- ISC-345: every matrix row records zero blocking Axe violations and zero
+  forwarded mutations; technical JSON stays collapsed and privacy-filtered,
+  runtime imports exclude generated design boards and fixture modules, and the
+  registry remains exactly eighteen real engines plus six honest workflows.
+  Accessibility remediation commit: `a3395ce`.
 
 ### Learn
 
@@ -2237,3 +2304,12 @@ branded ecosystem without weakening existing data or authorization contracts.
 - Vite preview is not a valid integrated QA target for this Pages application:
   it omits `/api/*` Functions and can create false UI failures. Browser gates
   must use `wrangler pages dev dist` or a deployed Pages environment.
+- Static token checks are necessary but insufficient for nested dark
+  instruments: computed Axe contrast found opacity, font-size, and inherited
+  reading-ink combinations that source-level checks could not prove.
+- Accessibility measurements must target the stable interaction state.
+  Finite entrance animations now settle before Axe, while reduced-motion rows
+  still independently prove that meaningful motion collapses.
+- Evidence redaction tests must distinguish an actual sensitive value from a
+  quoted `[MASKED]` sentinel without regex whitespace backtracking; the fixed
+  detector preserves fail-closed scanning for all unmasked values.

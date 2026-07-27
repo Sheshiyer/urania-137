@@ -1,0 +1,122 @@
+URANIA 137
+NOESIS
+MAP
+FOLIO
+BEGIN
+SETTINGS
+
+FOLIO · FALLBACK & RECOVERY
+
+Browse Folio
+
+Begin through conversation. Return here to browse, verify, or recover the exact canonical Reading.
+
+FOLIO MAP
+BEGIN IN CHAT
+Search canonical readings
+FAVORITES
+
+CANONICAL RECORDS
+
+FOLIO MAP
+
+Chat remains the primary doorway. Map and list reopen the same canonical Reading.
+
+READING LIST
+
+4 visible
+01
+A LONG SYNTHETIC READING
+Noesis Reading · 13 Jan 2026
+02
+NUMEROLOGY · SYNTHETIC
+Birth Witness · 13 Jan 2026
+03
+DAILY PRACTICE · SYNTHETIC
+Sky Weather · 13 Jan 2026
+04
+CAPTURE REQUIRED · SYNTHETIC
+Engine Status · 13 Jan 2026
+Node family sets angular sector; creation time sets radial distance. The adjacent list contains every visible Reading, including any records beyond the plotted twenty-four.
+
+CANONICAL RECORD
+
+READING
+BROWSE FOLIO
+01 · READING
+Interpretation and source-shaped elements
+02 · EVIDENCE
+Systems, provenance, and confidence
+03 · SOURCE
+Collapsed, privacy-filtered record
+ENGINE STATUS
+13 JAN 2026, 13:30
+Capture required · synthetic
+
+The Reading layer holds source-shaped orientation and narrative. Supporting provenance follows in Evidence; the privacy-filtered record remains collapsed in Source.
+
+READING ATLAS
+
+Unstructured source
+
+This saved record contains one flat body; no section relationships were stored.
+
+FLAT RECORD
+ENGINE STATUS
+ONE STORED BODY · ZERO INFERRED SECTIONS
+
+SOURCE-ONLY STORED RECORD
+
+This flat record contains technical source rather than narrative. Its privacy-filtered payload is available in the collapsed Source layer.
+
+EVIDENCE
+
+Systems, identities, provenance, confidence, timing, and convergence remain explicit rather than borrowing certainty from the narrative.
+
+OWNER
+Reader A
+SUBJECT
+Subject not recorded · unknown
+PROVENANCE
+folio · engine:biofield
+CANONICAL IDENTITY
+reading-capture
+ACCESS REASON
+Signed in as the owner (Reader A)
+CHECKSUM
+sha256:d23e346c9607896151f0ad853876b3f6ca8e7c71bcad0c6029a14c313a52bb52
+
+EVIDENCE LEDGER
+
+WHAT SUPPORTS THIS READING
+1 ENTRIES
+SYSTEM
+Folio record
+Engine Status · engine:biofield
+OBSERVED
+TECHNICAL SOURCE
+RECORD CLARITY
+
+These relations are separate on purpose. Owning a reading does not make you its subject, source, or producer.
+
+OWNER
+Reader A
+SUBJECT
+Not recorded in the current Folio contract
+SOURCE
+Urania D1 · Folio record reading-capture
+PRODUCER
+Selemene · engine:biofield
+WHY YOU CAN SEE THIS
+Signed in as the owner (Reader A)
+CHECKSUM
+sha256:d23e346c9607896151f0ad853876b3f6ca8e7c71bcad0c6029a14c313a52bb52
+
+CANONICAL FOLIO RECORD
+
+reading-capture
+
+sha256 · d23e346c9607…52bb52
+
+OPEN READING
+Reader A

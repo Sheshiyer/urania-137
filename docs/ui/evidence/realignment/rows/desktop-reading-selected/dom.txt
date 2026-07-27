@@ -1,0 +1,151 @@
+URANIA 137
+NOESIS
+MAP
+FOLIO
+BEGIN
+SETTINGS
+READER A
+LOGOUT
+
+FOLIO · FALLBACK & RECOVERY
+
+Browse Folio
+
+Begin through conversation. Return here to browse, verify, or recover the exact canonical Reading.
+
+FOLIO MAP
+BEGIN IN CHAT
+Search canonical readings
+FAVORITES
+
+CANONICAL RECORDS
+
+FOLIO MAP
+
+Chat remains the primary doorway. Map and list reopen the same canonical Reading.
+
+BIRTH WITNESS
+UNION MIRROR
+SKY WEATHER
+NOESIS READING
+ENGINE STATUS
+FOLIO
+BRIDGE QUERY
+UNMAPPED
+FOLIO
+4 readings
+A LONG SYNTHETIC RE…
+Noesis Reading
+NUMEROLOGY · SYNTHE…
+Birth Witness
+DAILY PRACTICE · SY…
+Sky Weather
+CAPTURE REQUIRED · …
+Engine Status
+
+READING LIST
+
+4 visible
+01
+A LONG SYNTHETIC READING
+Noesis Reading · 13 Jan 2026
+02
+NUMEROLOGY · SYNTHETIC
+Birth Witness · 13 Jan 2026
+03
+DAILY PRACTICE · SYNTHETIC
+Sky Weather · 13 Jan 2026
+04
+CAPTURE REQUIRED · SYNTHETIC
+Engine Status · 13 Jan 2026
+Node family sets angular sector; creation time sets radial distance. The adjacent list contains every visible Reading, including any records beyond the plotted twenty-four.
+
+CANONICAL RECORD
+
+READING
+BROWSE FOLIO
+01 · READING
+Interpretation and source-shaped elements
+02 · EVIDENCE
+Systems, provenance, and confidence
+03 · SOURCE
+Collapsed, privacy-filtered record
+NOESIS READING
+13 JAN 2026, 13:37
+A long synthetic Reading
+
+The Reading layer holds source-shaped orientation and narrative. Supporting provenance follows in Evidence; the privacy-filtered record remains collapsed in Source.
+
+READING ATLAS
+
+Unstructured source
+
+This saved record contains one flat body; no section relationships were stored.
+
+FLAT RECORD
+NOESIS READING
+ONE STORED BODY · ZERO INFERRED SECTIONS
+
+STORED READING
+
+Orientation
+
+A stable synthetic reading demonstrates the sustained Parchment measure without carrying a private corpus record.
+
+Observed structure
+
+The instrument keeps narration, evidence, and technical source distinct. This paragraph repeats only to exercise a long readable surface.
+
+The graph remains a doorway while the Reading becomes a calm document. No sentence predicts an outcome or prescribes a decision.
+
+EVIDENCE
+
+Systems, identities, provenance, confidence, timing, and convergence remain explicit rather than borrowing certainty from the narrative.
+
+OWNER
+Reader A
+SUBJECT
+Subject not recorded · unknown
+PROVENANCE
+folio · integrated-reading
+CANONICAL IDENTITY
+reading-long
+ACCESS REASON
+Signed in as the owner (Reader A)
+CHECKSUM
+sha256:40da56c47793775881fdca161964a676ec0a85b86ce8c8407e2e1ea8ee661233
+
+EVIDENCE LEDGER
+
+WHAT SUPPORTS THIS READING
+1 ENTRIES
+SYSTEM
+Folio record
+Noesis Reading · integrated-reading
+OBSERVED
+TECHNICAL SOURCE
+RECORD CLARITY
+
+These relations are separate on purpose. Owning a reading does not make you its subject, source, or producer.
+
+OWNER
+Reader A
+SUBJECT
+Not recorded in the current Folio contract
+SOURCE
+Urania D1 · Folio record reading-long
+PRODUCER
+Selemene · integrated-reading
+WHY YOU CAN SEE THIS
+Signed in as the owner (Reader A)
+CHECKSUM
+sha256:40da56c47793775881fdca161964a676ec0a85b86ce8c8407e2e1ea8ee661233
+
+CANONICAL FOLIO RECORD
+
+reading-long
+
+sha256 · 40da56c47793…661233
+
+OPEN READING
+Reader A

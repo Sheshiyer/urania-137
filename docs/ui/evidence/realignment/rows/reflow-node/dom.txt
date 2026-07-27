@@ -1,0 +1,67 @@
+URANIA 137
+NOESIS
+MAP
+FOLIO
+BEGIN
+SETTINGS
+GRAPH
+LIST
+01
+BIRTH BLUEPRINT
+RUNNABLE GUIDED WORKFLOW
+Begin the live birth-blueprint workflow.
+workflow capability of Birth Witness
+ENTER
+02
+NUMEROLOGY
+RUNNABLE ENGINE CALCULATION
+Calculate with the live numerology engine.
+engine capability of Birth Witness
+ENTER
+03
+HUMAN DESIGN
+RUNNABLE ENGINE CALCULATION
+Calculate with the live human-design engine.
+engine capability of Birth Witness
+ENTER
+04
+GENE KEYS
+RUNNABLE ENGINE CALCULATION
+Calculate with the live gene-keys engine.
+engine capability of Birth Witness
+ENTER
+05
+VIMSHOTTARI
+RUNNABLE ENGINE CALCULATION
+Calculate with the live vimshottari engine.
+engine capability of Birth Witness
+ENTER
+06
+PANCHANGA
+RUNNABLE ENGINE CALCULATION
+Calculate with the live panchanga engine.
+engine capability of Birth Witness
+ENTER
+07
+VEDIC CLOCK
+RUNNABLE ENGINE CALCULATION
+Calculate with the live vedic-clock engine.
+engine capability of Birth Witness
+ENTER
+
+Home
+BIRTH WITNESS
+
+Birth Witness
+
+THE ARRIVAL
+
+Natal imprint, moment-of-arrival pattern, and incarnation signature.
+
+DOORWAYS
+7
+RUNNABLE
+7
+CONSTELLATION
+V0.5.0 · A3395CE
+Reader A

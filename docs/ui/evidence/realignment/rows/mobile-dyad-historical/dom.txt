@@ -1,0 +1,106 @@
+URANIA 137
+NOESIS
+MAP
+FOLIO
+BEGIN
+SETTINGS
+
+UNION MIRROR · PARTICIPANT-GRANTED ARCHIVE
+
+YOU ↔ INVITED PARTICIPANT
+Return to consent settings
+historical · granted before revocation
+01 · READING
+Interpretation and source-shaped elements
+02 · EVIDENCE
+Systems, provenance, and confidence
+03 · SOURCE
+Collapsed, privacy-filtered record
+UNION MIRROR
+13 JAN 2026, 13:37
+You ↔ Invited participant
+
+The Reading layer holds source-shaped orientation and narrative. Supporting provenance follows in Evidence; the privacy-filtered record remains collapsed in Source.
+
+READING ATLAS
+
+Unstructured source
+
+This saved record contains one flat body; no section relationships were stored.
+
+FLAT RECORD
+UNION MIRROR
+ONE STORED BODY · ZERO INFERRED SECTIONS
+
+SYMMETRICAL DYAD
+
+Two subjects · one consented field
+
+INVITER
+
+You
+BOUND SUBJECT
+fixture-subject-a
+ACCESS
+Historical participant grant
+
+SYNASTRY
+
+DERIVED
+NAMED RELATIONS
+
+result.relations
+
+Each line connects the two named endpoints; the center label is the exact source relation.
+
+Inviting participant
+NAMED SYNTHETIC RELATION
+balanced
+You
+
+INVITEE
+
+Invited participant
+BOUND SUBJECT
+fixture-subject-b
+ACCESS
+Historical participant grant
+
+STORED READING
+
+A synthetic dyad Reading preserves both participant sides with equal visual weight.
+
+EVIDENCE
+
+Systems, identities, provenance, confidence, timing, and convergence remain explicit rather than borrowing certainty from the narrative.
+
+OWNER
+Reader A
+SUBJECT
+You ↔ Invited participant · dyad
+PROVENANCE
+relationship-grant · synastry
+CANONICAL IDENTITY
+generation-fixture
+ACCESS REASON
+historical participant-grant
+CHECKSUM
+sha256:1371371371371371371371371371371371371371371371371371371371371371
+GRANT TIME
+2026-01-13T13:37:00.000Z
+RELATIONSHIP
+relationship-fixture
+
+EVIDENCE LEDGER
+
+WHAT SUPPORTS THIS READING
+1 ENTRIES
+HISTORICAL
+Historical participant grant
+Granted 2026-01-13T13:37:00.000Z before relationship revocation
+OBSERVED
+SYSTEM STACK
+TRANSITS
+HUMAN-DESIGN
+TECHNICAL SOURCE
+Reader A

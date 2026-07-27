@@ -1,0 +1,69 @@
+URANIA 137
+NOESIS
+MAP
+FOLIO
+BEGIN
+SETTINGS
+READER A
+LOGOUT
+
+FOLIO · FALLBACK & RECOVERY
+
+Browse Folio
+
+Begin through conversation. Return here to browse, verify, or recover the exact canonical Reading.
+
+FOLIO MAP
+BEGIN IN CHAT
+Search canonical readings
+FAVORITES
+
+CANONICAL RECORDS
+
+FOLIO MAP
+
+Chat remains the primary doorway. Map and list reopen the same canonical Reading.
+
+BIRTH WITNESS
+UNION MIRROR
+SKY WEATHER
+NOESIS READING
+ENGINE STATUS
+FOLIO
+BRIDGE QUERY
+UNMAPPED
+FOLIO
+4 readings
+A LONG SYNTHETIC RE…
+Noesis Reading
+NUMEROLOGY · SYNTHE…
+Birth Witness
+DAILY PRACTICE · SY…
+Sky Weather
+CAPTURE REQUIRED · …
+Engine Status
+
+READING LIST
+
+4 visible
+01
+A LONG SYNTHETIC READING
+Noesis Reading · 13 Jan 2026
+02
+NUMEROLOGY · SYNTHETIC
+Birth Witness · 13 Jan 2026
+03
+DAILY PRACTICE · SYNTHETIC
+Sky Weather · 13 Jan 2026
+04
+CAPTURE REQUIRED · SYNTHETIC
+Engine Status · 13 Jan 2026
+Node family sets angular sector; creation time sets radial distance. The adjacent list contains every visible Reading, including any records beyond the plotted twenty-four.
+
+ONE RECORD, MANY DOORWAYS
+
+SELECT A READING
+
+Conversation composes one owner-scoped Folio row. Map, list, and direct canonical URL reopen that same identity and body without making a display copy.
+
+Reader A

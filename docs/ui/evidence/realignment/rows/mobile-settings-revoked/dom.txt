@@ -1,0 +1,121 @@
+URANIA 137
+NOESIS
+MAP
+FOLIO
+BEGIN
+SETTINGS
+
+IDENTITY · CIRCLE · CONSENT · VISIBILITY
+
+Settings
+
+Your account owns access. Subjects name who a reading concerns. Shared relationships require both people to choose their own subject.
+
+RETURN TO MAP
+
+THE OWNER AND THEIR FIELD
+
+PROFILE & CIRCLE
+YOUR PATTERN
+EDIT
+NAME
+Reader A
+BIRTH DATE
+[MASKED]
+BIRTH TIME
+[MASKED] (noon convention)
+PLACE
+[MASKED]
+RE-CROSS THE THRESHOLD
+APP VERSION
+v0.5.0
+BUILT
+2026-07-27 01:33:39 UTC
+COMMIT
+a3395ce
+
+SIGNED IN
+
+Reader A
+
+LOGOUT
+
+CIRCLE SUBJECTS
+
+Circle members are personally held profiles, added only after “hold for next time” in chat.
+
+◇
+NOTHING RECORDED
+
+No circle subjects yet. Hold a completed subject explicitly in chat to add one.
+
+READING VISIBILITY
+
+OWNER ONLY BY DEFAULT
+
+Folio records are scoped to Reader A. There is no public link. Active relationship consent authorizes shared generation; it does not expose either person’s complete archive.
+
+CURRENT
+
+Owner-scoped Folio
+
+SHARED READINGS
+
+Active consent only
+
+TWO PEOPLE · TWO OWNED SUBJECTS
+
+SHARED RELATIONSHIPS
+
+1 relations
+
+Reader A
+
+relationship-fixture
+
+REVOKED
+
+Future shared generation is blocked.
+
+EXPIRES
+13 Feb 2026
+LAST CHANGE
+13 Jan 2026
+
+YOU · INVITER
+
+fixture-subject-a
+
+revoked · 13 Jan 2026
+
+OTHER PARTICIPANT · INVITEE
+
+fixture-subject-b
+
+revoked · 13 Jan 2026
+
+GRANTED READINGS
+
+historical · granted before revocation
+generation-fixture
+No further consent action
+
+INVITE SOMEONE
+
+You choose only your subject. The invited person must sign in with the intended email and choose theirs.
+
+YOUR SUBJECT
+Reader A · self
+INVITEE EMAIL
+CREATE PRIVATE INVITE
+
+RESPOND TO AN INVITE
+
+The token proves possession; your authenticated email and chosen subject are still checked server-side.
+
+PRIVATE TOKEN
+YOUR SUBJECT
+Reader A · self
+ACCEPT WITH THIS SUBJECT
+DECLINE INVITE
+Reader A

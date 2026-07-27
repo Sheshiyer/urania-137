@@ -1,0 +1,60 @@
+URANIA 137
+NOESIS
+MAP
+FOLIO
+BEGIN
+SETTINGS
+GRAPH
+LIST
+01
+BIRTH WITNESS
+THE ARRIVAL
+Natal imprint, moment-of-arrival pattern, and incarnation signature.
+lens of NOESIS
+ENTER
+02
+UNION MIRROR
+THE UNION
+Relational pattern field between two or more birth witnesses.
+lens of NOESIS
+ENTER
+03
+SKY WEATHER
+THE PASSAGE
+Current celestial weather and its invitation to the native pattern.
+lens of NOESIS
+ENTER
+04
+NOESIS READING
+THE READING
+Narrative witness-pipeline reading from the Selemene engines.
+lens of NOESIS
+ENTER
+05
+ENGINE STATUS
+THE MACHINE
+Diagnostic view of the consciousness engines and workflows.
+lens of NOESIS
+ENTER
+06
+FOLIO ARCHIVE
+THE RECORD
+Previously generated readings and saved witnesses in one canonical Folio.
+lens of NOESIS
+ENTER
+07
+BRIDGE QUERY
+THE INQUIRY
+Direct inquiry into the Selemene Bridge and its engines.
+lens of NOESIS
+ENTER
+
+See what is active. Choose a lens; the narrator assembles the reading with you.
+
+BEGIN A READING
+PARENT LENSES
+7
+RUNNABLE DOORWAYS
+35
+V0.5.0 · A3395CE
+Reader A

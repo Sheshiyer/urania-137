@@ -23,7 +23,11 @@
     "verify:delink": "node scripts/verify/delink-check.mjs",
     "verify:ui-baseline": "npm run build && node scripts/verify/ui-realignment-baseline.mjs",
     "verify:ui-dialog": "node scripts/verify/ui-dialog.mjs",
-    "verify:ui-home": "node --test scripts/verify/ui-home-contracts.test.mjs"
+    "verify:ui-home": "node --test scripts/verify/ui-home-contracts.test.mjs",
+    "verify:ui-contracts": "node --test scripts/verify/ui-realignment-contracts.test.mjs",
+    "verify:ui-evidence": "node --test scripts/verify/ui-evidence-redaction.test.mjs",
+    "verify:ui-visual": "node scripts/verify/ui-visual-matrix.mjs",
+    "verify:ui-realignment": "node scripts/verify/ui-realignment.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -33,18 +37,19 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@cloudflare/workers-types": "^5.20260714.1",
     "@types/node": "^20.19.43",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.0",
-    "wrangler": "^4.112.0",
     "autoprefixer": "^10.4.20",
     "playwright": "^1.61.1",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.0",
     "vite": "^6.0.0",
-    "vitest": "^2.1.9"
+    "vitest": "^2.1.9",
+    "wrangler": "^4.112.0"
   }
 }
