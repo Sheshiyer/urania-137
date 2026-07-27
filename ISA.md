@@ -3111,6 +3111,9 @@ Living Archive.
   backfill. Direct union and database evidence refuted both assumptions; the
   retained gates were exhaustive classification, uniqueness, consent,
   migration ordering, and authorization.
+- 2026-07-27: Post-deliverable Advisor returned an in-scope pass after explicit
+  negative authorization, consent, production-schema, UI-consumer, rollback,
+  and commit-to-deployment lineage evidence.
 
 ### Verification
 
@@ -3121,7 +3124,9 @@ Living Archive.
   native instrument while Integrated Reading retains the witness threshold.
   Cloudflare Pages production deployment
   `2cf55770-bbba-4c27-9e3c-23ec023eae5e` records source `c2c7673` on branch
-  `main`; the custom domain continues to enforce its Access boundary.
+  `main`; `git diff` confirms the tested node-entry files match that deployed
+  commit exactly, and the custom domain continues to enforce its Access
+  boundary.
 - ISC-463–473, 487–489: the isolated Selemene delivery branch
   `codex/selemene-living-archive-visibility` passes three repository/schema
   tests, two API authorization tests, three admin source-contract tests,
@@ -3129,13 +3134,18 @@ Living Archive.
   deployment `13c373a9-485f-46f9-adde-8fbc79f8d641` reports `SUCCESS`; its live
   health endpoint reports version 3.3.1 with 18 Engines and 6 workflows.
   Vercel production deployment `68GfTvYQ6ZMiYCC6ghmVFgGas6Z7` is aliased to
-  `https://144.tryambakam.space`.
+  `https://144.tryambakam.space`. Both were uploaded from a clean detached
+  worktree at `e1ab659beab1a452776d832ea9c67c3b65d14a74`.
 - ISC-474–484: production PostgreSQL contains migration 036 and exactly one
   active completed pilot,
   `sheshnarayan-cumbipuram-nateshan-l0-2026-07-09`, with two artifacts, one
   evidence row, independently related owner and subject, and `owner_only`
-  editorial visibility. The importer passes 7/7 tests including checksum lock,
-  rerun idempotency, compensation, and deletion audit boundaries. Remote
+  editorial visibility. Live metadata records consent basis
+  `principal-requested-one-reading-pilot` and the expected pilot identifier.
+  The importer passes 8/8 tests including explicit consent rejection, checksum
+  lock, rerun idempotency, compensation, and deletion audit boundaries.
+  Production schema fingerprints match migration 036, and the ledger-less
+  manual apply/rollback round trip removes all eleven archive tables. Remote
   Urania D1 returns zero matching pilot rows.
 - ISC-490: `[DEFERRED-VERIFY]` follow-up
   `owner-visual-review-living-archive-2026-07-27`. The user explicitly retained

@@ -96,6 +96,15 @@ test('rejects a pilot descriptor containing a relationship or second subject', a
   )
 })
 
+test('rejects a pilot descriptor without the explicit owner-consent basis', async () => {
+  const descriptor = await loadPilotDescriptor(descriptorPath)
+  descriptor.consent = { basis: 'unverified-import' }
+  await assert.rejects(
+    preparePilot(descriptor, { corpusRoot }),
+    /missing the explicit owner-consent basis/,
+  )
+})
+
 test('imports once and reuses the completed graph and objects on rerun', async () => {
   const pilot = await prepared()
   const fake = fixtures()
