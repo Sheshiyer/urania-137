@@ -1,0 +1,669 @@
+{
+  "schemaVersion": 1,
+  "base": "local-wrangler",
+  "syntheticFixtureLabels": [
+    "Reader A"
+  ],
+  "rows": [
+    {
+      "id": "desktop-threshold",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-threshold/desktop-threshold.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-threshold/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-threshold/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-threshold/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-threshold/axe.json",
+      "route": "#/threshold",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "threshold",
+      "surface": "threshold",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-home",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-home/desktop-home.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-home/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-home/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-home/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-home/axe.json",
+      "route": "#/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "home",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-node-birth",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-node-birth/desktop-node-birth.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-node-birth/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-node-birth/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-node-birth/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-node-birth/axe.json",
+      "route": "#/node/birth",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "parent-birth",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-node-compat",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-node-compat/desktop-node-compat.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-node-compat/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-node-compat/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-node-compat/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-node-compat/axe.json",
+      "route": "#/node/compat",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "parent-compat",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-node-transit",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-node-transit/desktop-node-transit.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-node-transit/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-node-transit/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-node-transit/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-node-transit/axe.json",
+      "route": "#/node/transit",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "parent-transit",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-node-witness",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-node-witness/desktop-node-witness.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-node-witness/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-node-witness/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-node-witness/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-node-witness/axe.json",
+      "route": "#/node/witness",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "parent-witness",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-node-engine",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-node-engine/desktop-node-engine.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-node-engine/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-node-engine/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-node-engine/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-node-engine/axe.json",
+      "route": "#/node/engine",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "operator",
+      "surface": "parent-engine",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-node-folio",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-node-folio/desktop-node-folio.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-node-folio/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-node-folio/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-node-folio/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-node-folio/axe.json",
+      "route": "#/node/folio",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "parent-folio",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-node-bridge",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-node-bridge/desktop-node-bridge.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-node-bridge/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-node-bridge/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-node-bridge/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-node-bridge/axe.json",
+      "route": "#/node/bridge",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "parent-bridge",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-chat-intake",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-chat-intake/desktop-chat-intake.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-chat-intake/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-chat-intake/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-chat-intake/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-chat-intake/axe.json",
+      "route": "#/node/witness/integrated-reading",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "chat",
+      "surface": "chat-intake",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-reading-preview",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-reading-preview/desktop-reading-preview.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-reading-preview/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-reading-preview/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-reading-preview/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-reading-preview/axe.json",
+      "route": "#/readings/reading-workflow",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "workflow",
+      "surface": "reading-preview",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-folio-populated",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-folio-populated/desktop-folio-populated.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-folio-populated/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-folio-populated/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-folio-populated/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-folio-populated/axe.json",
+      "route": "#/readings",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "folio",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-reading-selected",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-reading-selected/desktop-reading-selected.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-reading-selected/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-reading-selected/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-reading-selected/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-reading-selected/axe.json",
+      "route": "#/readings/reading-long",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "selected-reading",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-settings-active",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-settings-active/desktop-settings-active.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-settings-active/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-settings-active/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-settings-active/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-settings-active/axe.json",
+      "route": "#/settings",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "active",
+      "surface": "settings",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-operator",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-operator/desktop-operator.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-operator/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-operator/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-operator/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-operator/axe.json",
+      "route": "#/node/engine/live-status",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "operator",
+      "surface": "operator",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-folio-denied",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-folio-denied/desktop-folio-denied.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-folio-denied/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-folio-denied/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-folio-denied/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-folio-denied/axe.json",
+      "route": "#/readings",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "denied",
+      "surface": "folio-denied",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "desktop-dyad-current",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/desktop-dyad-current/desktop-dyad-current.png",
+      "domText": "docs/ui/evidence/realignment/rows/desktop-dyad-current/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/desktop-dyad-current/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/desktop-dyad-current/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/desktop-dyad-current/axe.json",
+      "route": "#/relationships/relationship-fixture/readings/generation-fixture",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "active",
+      "surface": "dyad-reading",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "mobile-home",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/mobile-home/mobile-home.png",
+      "domText": "docs/ui/evidence/realignment/rows/mobile-home/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/mobile-home/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/mobile-home/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/mobile-home/axe.json",
+      "route": "#/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fixture": "populated",
+      "surface": "home-list",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "mobile-chat-sheet",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/mobile-chat-sheet/mobile-chat-sheet.png",
+      "domText": "docs/ui/evidence/realignment/rows/mobile-chat-sheet/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/mobile-chat-sheet/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/mobile-chat-sheet/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/mobile-chat-sheet/axe.json",
+      "route": "#/node/witness/integrated-reading",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fixture": "chat",
+      "surface": "mobile-sheet",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "mobile-folio",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/mobile-folio/mobile-folio.png",
+      "domText": "docs/ui/evidence/realignment/rows/mobile-folio/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/mobile-folio/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/mobile-folio/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/mobile-folio/axe.json",
+      "route": "#/readings",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fixture": "populated",
+      "surface": "folio-list",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "mobile-reading-measure",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/mobile-reading-measure/mobile-reading-measure.png",
+      "domText": "docs/ui/evidence/realignment/rows/mobile-reading-measure/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/mobile-reading-measure/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/mobile-reading-measure/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/mobile-reading-measure/axe.json",
+      "route": "#/readings/reading-long",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fixture": "populated",
+      "surface": "reading-measure",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "mobile-settings-revoked",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/mobile-settings-revoked/mobile-settings-revoked.png",
+      "domText": "docs/ui/evidence/realignment/rows/mobile-settings-revoked/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/mobile-settings-revoked/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/mobile-settings-revoked/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/mobile-settings-revoked/axe.json",
+      "route": "#/settings",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fixture": "revoked",
+      "surface": "settings-revoked",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "mobile-operator-capture",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/mobile-operator-capture/mobile-operator-capture.png",
+      "domText": "docs/ui/evidence/realignment/rows/mobile-operator-capture/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/mobile-operator-capture/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/mobile-operator-capture/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/mobile-operator-capture/axe.json",
+      "route": "#/readings/reading-capture",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fixture": "capture-gated",
+      "surface": "capture-gated",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "mobile-dyad-historical",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/mobile-dyad-historical/mobile-dyad-historical.png",
+      "domText": "docs/ui/evidence/realignment/rows/mobile-dyad-historical/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/mobile-dyad-historical/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/mobile-dyad-historical/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/mobile-dyad-historical/axe.json",
+      "route": "#/relationships/relationship-fixture/readings/generation-fixture",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "fixture": "historical",
+      "surface": "historical-grant",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "reflow-home",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/reflow-home/reflow-home.png",
+      "domText": "docs/ui/evidence/realignment/rows/reflow-home/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/reflow-home/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/reflow-home/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/reflow-home/axe.json",
+      "route": "#/",
+      "viewport": {
+        "width": 720,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "home-reflow",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "reflow-node",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/reflow-node/reflow-node.png",
+      "domText": "docs/ui/evidence/realignment/rows/reflow-node/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/reflow-node/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/reflow-node/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/reflow-node/axe.json",
+      "route": "#/node/birth",
+      "viewport": {
+        "width": 720,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "node-reflow",
+      "reducedMotion": false,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "reflow-folio-empty",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/reflow-folio-empty/reflow-folio-empty.png",
+      "domText": "docs/ui/evidence/realignment/rows/reflow-folio-empty/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/reflow-folio-empty/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/reflow-folio-empty/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/reflow-folio-empty/axe.json",
+      "route": "#/readings",
+      "viewport": {
+        "width": 720,
+        "height": 1000
+      },
+      "fixture": "empty",
+      "surface": "folio-empty",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "reflow-long-reading",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/reflow-long-reading/reflow-long-reading.png",
+      "domText": "docs/ui/evidence/realignment/rows/reflow-long-reading/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/reflow-long-reading/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/reflow-long-reading/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/reflow-long-reading/axe.json",
+      "route": "#/readings/reading-long",
+      "viewport": {
+        "width": 720,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "long-reading",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "reflow-settings-failed",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/reflow-settings-failed/reflow-settings-failed.png",
+      "domText": "docs/ui/evidence/realignment/rows/reflow-settings-failed/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/reflow-settings-failed/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/reflow-settings-failed/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/reflow-settings-failed/axe.json",
+      "route": "#/settings",
+      "viewport": {
+        "width": 720,
+        "height": 1000
+      },
+      "fixture": "failed",
+      "surface": "settings-failed",
+      "reducedMotion": false,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "reduced-home-list",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/reduced-home-list/reduced-home-list.png",
+      "domText": "docs/ui/evidence/realignment/rows/reduced-home-list/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/reduced-home-list/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/reduced-home-list/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/reduced-home-list/axe.json",
+      "route": "#/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "reduced-graph",
+      "reducedMotion": true,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "reduced-begin-dialog",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/reduced-begin-dialog/reduced-begin-dialog.png",
+      "domText": "docs/ui/evidence/realignment/rows/reduced-begin-dialog/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/reduced-begin-dialog/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/reduced-begin-dialog/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/reduced-begin-dialog/axe.json",
+      "route": "#/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "populated",
+      "surface": "reduced-dialog",
+      "reducedMotion": true,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "reduced-composing-beat",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/reduced-composing-beat/reduced-composing-beat.png",
+      "domText": "docs/ui/evidence/realignment/rows/reduced-composing-beat/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/reduced-composing-beat/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/reduced-composing-beat/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/reduced-composing-beat/axe.json",
+      "route": "#/node/witness/integrated-reading",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "composing",
+      "surface": "reduced-composing",
+      "reducedMotion": true,
+      "graphEquivalent": true,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    },
+    {
+      "id": "reduced-reading-transition",
+      "fixtureLabel": "Reader A",
+      "screenshot": "docs/ui/evidence/realignment/rows/reduced-reading-transition/reduced-reading-transition.png",
+      "domText": "docs/ui/evidence/realignment/rows/reduced-reading-transition/dom.txt",
+      "requests": "docs/ui/evidence/realignment/rows/reduced-reading-transition/requests.json",
+      "console": "docs/ui/evidence/realignment/rows/reduced-reading-transition/console.json",
+      "axe": "docs/ui/evidence/realignment/rows/reduced-reading-transition/axe.json",
+      "route": "#/readings/reading-engine",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "fixture": "partial",
+      "surface": "reduced-transition",
+      "reducedMotion": true,
+      "graphEquivalent": false,
+      "forwardedMutations": 0,
+      "blockingAxeViolations": 0
+    }
+  ]
+}

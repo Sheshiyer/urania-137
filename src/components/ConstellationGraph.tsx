@@ -1,11 +1,18 @@
 import { useState } from 'react'
 import { GraphOrbital } from '../types'
-import { COLORS, NODE_ACCENTS, STATE } from '../styles/tokens'
+import {
+  COLORS,
+  INTERACTION,
+  NODE_ACCENTS,
+  STATE,
+} from '../styles/tokens'
 import { useNodeGraph } from '../hooks/useNodeGraph'
 import { toRad, noise } from '../lib/graphUtils'
 import { StellarNode } from './primitives/StellarNode'
 import { CoreGlow } from './primitives/CoreGlow'
 import { CompassStar } from './primitives/CompassStar'
+import { GraphLens } from './graph/GraphLens'
+import { buildGraphEntries } from './graph/graphEntries'
 
 interface ConstellationGraphProps {
   orbitals: GraphOrbital[]
@@ -95,6 +102,7 @@ export function ConstellationGraph({
       y: centerY + orbitRadius * Math.sin(a),
     }
   })
+  const entries = buildGraphEntries(orbitals, centerLabel)
 
   // Starfield — scattered across the field, plus a band clustered on the mandala.
   const scatter = Array.from({ length: 190 }).map((_, i) => ({
@@ -118,6 +126,10 @@ export function ConstellationGraph({
   // Concentric orbit rings between the hub and the orbit, plus faint outer rings.
   const innerRings = [0.5, 0.66, 0.82].map((f) => orbitRadius * f)
   const outerRings = [1.28, 1.7].map((f) => orbitRadius * f)
+  // The astrolabe plate — large dashed rings reaching past the orbit toward the
+  // frame, so the instrument fills a wide viewport the way the page references
+  // do (their radial grid runs to the filigree corners).
+  const plateRings = [1.14, 1.42, 1.86, 2.4].map((f) => orbitRadius * f)
 
   // Beaded lattice — a bright dot where each primary/secondary spoke crosses a ring.
   const spokeAngles = positions.flatMap((p, i) => {
@@ -157,8 +169,22 @@ export function ConstellationGraph({
   })
 
   return (
-    <div className={`${wrapperClassName} motion-safe:animate-graph-in`}>
-      <svg viewBox={`0 0 ${width} ${height}`} className="h-full w-full" role="img" aria-label={ariaLabel}>
+    <GraphLens
+      className={`${wrapperClassName} motion-safe:animate-graph-in`}
+      entries={entries}
+      selectedId={selectedId}
+      onSelect={onSelect}
+      ariaLabel={ariaLabel}
+      topInset={topInset}
+      bottomInset={bottomInset}
+      graph={(
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        className="h-full w-full"
+        role="group"
+        aria-label={ariaLabel}
+      >
+        <title>{ariaLabel}</title>
         <defs>
           <radialGradient id="pageBloom" cx="50%" cy="50%" r="60%">
             <stop offset="0%" stopColor={WARM} stopOpacity="0.16" />
@@ -174,6 +200,15 @@ export function ConstellationGraph({
           <radialGradient id="orbGlow" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor={WARM} stopOpacity="0.5" />
             <stop offset="60%" stopColor={COLORS.gold} stopOpacity="0.12" />
+            <stop offset="100%" stopColor={COLORS.gold} stopOpacity="0" />
+          </radialGradient>
+          {/* Sun heart — the page references' orbs are glowing suns, not
+              outline circles: a bright warm heart falling off fast, so the
+              in-orb label zone stays dark enough to read. */}
+          <radialGradient id="sunCore" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#FFF3D6" stopOpacity="0.9" />
+            <stop offset="30%" stopColor={WARM} stopOpacity="0.55" />
+            <stop offset="65%" stopColor={COLORS.gold} stopOpacity="0.16" />
             <stop offset="100%" stopColor={COLORS.gold} stopOpacity="0" />
           </radialGradient>
           <radialGradient id="pageVignette" cx="50%" cy="50%" r="75%">
@@ -206,20 +241,20 @@ export function ConstellationGraph({
           </filter>
         </defs>
 
-        <rect width={width} height={height} fill={COLORS.void} />
+        <rect width={width} height={height} fill={COLORS.void} pointerEvents="none" aria-hidden="true" />
 
         {/* Nebula clouds (deep background) — a whisper, not a wash: the
             reference field is near-black and the mandala is its only light. */}
-        <g className="cn-nebula reveal-field" pointerEvents="none">
+        <g className="cn-nebula reveal-field pointer-events-none" pointerEvents="none" aria-hidden="true">
           <ellipse cx={width * 0.2} cy={height * 0.24} rx={width * 0.34} ry={height * 0.3} fill="url(#nebulaViolet)" opacity={0.22} />
           <ellipse cx={width * 0.82} cy={height * 0.7} rx={width * 0.3} ry={height * 0.32} fill="url(#nebulaIndigo)" opacity={0.2} />
           <ellipse cx={width * 0.7} cy={height * 0.16} rx={width * 0.22} ry={height * 0.2} fill="url(#nebulaViolet)" opacity={0.12} />
         </g>
 
-        <rect width={width} height={height} fill="url(#pageBloom)" />
+        <rect width={width} height={height} fill="url(#pageBloom)" pointerEvents="none" aria-hidden="true" />
 
         {/* Starfield (far parallax layer) — fine dust, never a blanket */}
-        <g className="cn-stars reveal-field">
+        <g className="cn-stars reveal-field pointer-events-none" pointerEvents="none" aria-hidden="true">
           {scatter.map((s, i) => (
             <circle key={`star-${i}`} cx={s.x} cy={s.y} r={s.r} fill={s.warm ? COLORS.gold : COLORS.parchment} fillOpacity={s.o} />
           ))}
@@ -230,6 +265,12 @@ export function ConstellationGraph({
 
         {/* Mandala (near parallax + camera zoom layer) */}
         <g className="cn-mandala">
+        <g aria-hidden="true" pointerEvents="none" className="pointer-events-none">
+        {/* Astrolabe plate — the wide-field radial grid behind everything */}
+        {plateRings.map((r, i) => (
+          <circle key={`plate-${i}`} cx={centerX} cy={centerY} r={r} fill="none" stroke={COLORS.gold} strokeOpacity={0.09 - i * 0.015} strokeWidth={0.6} strokeDasharray={i % 2 === 0 ? '1 6' : '3 9'} />
+        ))}
+
         {/* Outer + inner orbit rings */}
         {outerRings.map((r, i) => (
           <circle key={`outer-${i}`} cx={centerX} cy={centerY} r={r} fill="none" stroke={COLORS.gold} strokeOpacity={0.05} strokeWidth={1} strokeDasharray={i === 0 ? '2 10' : undefined} />
@@ -260,13 +301,13 @@ export function ConstellationGraph({
           <circle key={`lat-${i}`} cx={d.x} cy={d.y} r={d.r + 0.3} fill={COLORS.gold} fillOpacity={Math.max(d.o + 0.1, 0.2)} />
         ))}
 
-        {/* Primary beaded spokes — the moodboard's connection states:
-            hovered = emerald ACTIVE PATH, selected = luminous gold, else quiet.
+        {/* Primary beaded spokes — the interaction state matrix:
+            hovered = gold ACTIVE PATH, selected = luminous gold, else quiet.
             Each spoke draws itself out of the hub on mount (pathLength=1). */}
         {positions.map(({ x, y, orbital }, i) => {
           const isSel = selectedId === orbital.id
           const isHot = hoveredId === orbital.id
-          const stroke = isHot ? STATE.active : COLORS.gold
+          const stroke = isHot ? INTERACTION.active : COLORS.gold
           const beads = [0.34, 0.52, 0.7].map((f) => ({ bx: centerX + (x - centerX) * f, by: centerY + (y - centerY) * f }))
           return (
             <g key={`spoke-${orbital.id}`}>
@@ -296,6 +337,7 @@ export function ConstellationGraph({
           const rr = orbitRadius * 0.58
           return <CompassStar key={`glyph-${i}`} cx={centerX + rr * Math.cos(mid)} cy={centerY + rr * Math.sin(mid)} size={7} opacity={0.45} />
         })}
+        </g>
 
         {/* Child orbs (node) / parent planets (home) — each condenses out of
             the hub with a stagger, after its spoke has begun to draw. */}
@@ -328,14 +370,17 @@ export function ConstellationGraph({
         </g>
 
         {/* Mid-edge compass stars with inward connector lines */}
+        <g aria-hidden="true" pointerEvents="none" className="pointer-events-none">
         <line x1={width * 0.055} y1={centerY} x2={width * 0.055 + 90} y2={centerY} stroke={COLORS.gold} strokeOpacity={0.18} strokeWidth={0.6} />
         <line x1={width * 0.945} y1={centerY} x2={width * 0.945 - 90} y2={centerY} stroke={COLORS.gold} strokeOpacity={0.18} strokeWidth={0.6} />
         <CompassStar cx={width * 0.055} cy={centerY} size={Math.min(width, height) * 0.03} opacity={0.75} />
         <CompassStar cx={width * 0.945} cy={centerY} size={Math.min(width, height) * 0.03} opacity={0.75} />
+        </g>
 
         {/* Edge vignette — deepens the field toward the reference's near-black corners */}
-        <rect width={width} height={height} fill="url(#pageVignette)" pointerEvents="none" />
+        <rect width={width} height={height} fill="url(#pageVignette)" pointerEvents="none" aria-hidden="true" />
       </svg>
-    </div>
+      )}
+    />
   )
 }

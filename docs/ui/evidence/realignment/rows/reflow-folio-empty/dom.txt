@@ -1,0 +1,23 @@
+URANIA 137
+NOESIS
+MAP
+FOLIO
+BEGIN
+SETTINGS
+
+FOLIO · FALLBACK & RECOVERY
+
+Browse Folio
+
+Begin through conversation. Return here to browse, verify, or recover the exact canonical Reading.
+
+FOLIO MAP
+BEGIN IN CHAT
+Search canonical readings
+FAVORITES
+◇
+NOTHING RECORDED
+
+Your Folio is still quiet. Begin through conversation to create its first canonical Reading.
+
+Reader A

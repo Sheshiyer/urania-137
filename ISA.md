@@ -1,14 +1,15 @@
 ---
-task: "Review Instagram reference and map the full stellar-node branching architecture to Urania 137"
-slug: 20260714-160000_urania-137-architecture-review
+task: "Execute branded graph-first frontend realignment from completed engine atlas"
+slug: 20260726-urania-living-readings-ecosystem
 project: Urania 137
 effort: advanced
-effort_source: auto
+effort_source: classifier
 phase: complete
-progress: 12/12
+progress: 32/32
 mode: interactive
 started: 2026-07-14T16:00:00Z
-updated: 2026-07-15T21:20:00Z
+updated: 2026-07-27T08:05:34+05:30
+iteration: 10
 ---
 
 ## Problem
@@ -46,7 +47,7 @@ A user lands on Urania 137, sees the same radial constellation as the reference,
 
 ## Goal
 
-Produce a clear architectural map of the full Instagram reference and a phased implementation plan so that Urania 137 moves from a single-layer radial graph to a multi-page, multi-depth stellar node console where each of the seven parent nodes has its own navigable page and each page branches into the relevant Selemene report dimensions.
+Produce a clear architectural map of the full Instagram reference and a phased implementation plan so that Urania 137 moves from a single-layer radial graph to a multi-page, multi-depth stellar node console where each of the seven parent nodes has its own navigable page and each page branches into the relevant Selemene report dimensions. The completed console must preserve the graph-first brand, chat-to-reading continuity, canonical Folio recovery, zero-trust consent boundaries, and honest source-shaped engine presentation under one reproducible exit gate.
 
 ## Criteria
 
@@ -265,6 +266,11 @@ Produce a clear architectural map of the full Instagram reference and a phased i
   learned: a green pipeline is a claim, not evidence — verify the running service, not the status. A deploy step that can't deploy must FAIL, never skip; a verification gate that can't authenticate must FAIL, never skip; a self-check that also passes with wrong input (a made-up mode, a mis-grepped log) proves nothing. And deploying a shared branch after a long gap ships everything accumulated, not just the intended change — the auth-tightening that rode along invalidated the app's key and was caught only by checking the live proxy.
   criterion now: CD fails-loud on any missing deploy/verify config; the post-deploy gate runs `scripts/verify-mode-contract.mjs` against the deployed engine and exits non-zero (never 0) when unreachable; "deployed" is asserted by the live engine's behaviour (`bogus → 400`, restarted uptime) and the live app's proxy returning 200, not by a workflow's conclusion.
 
+- 2026-07-27 | conjectured: semantic token tests, source contracts, and focused component tests were sufficient to prove the realigned reading surfaces accessible and evidence-safe.
+  refuted by: the stable-state Axe matrix exposed computed contrast and ARIA defects that source tests missed, while the evidence gate exposed whitespace backtracking in the quoted `[MASKED]` sentinel detector.
+  learned: accessibility and privacy claims require one integrated gate that combines static contracts with computed built-runtime behavior, deterministic synthetic fixtures, and exact allowlisted artifacts.
+  criterion now: ISC-344 and ISC-345 require the complete `verify:ui-realignment` orchestrator, including 33 stable-state browser rows, blocking Axe, evidence redaction, build, and bundle budget.
+
 ## Verification
 
 - ISC-1: Read `instagram-post-chrome.png` and `stellar-node-branching.jpg`; identified seven radial parent labels in the reference.
@@ -283,3 +289,2032 @@ Produce a clear architectural map of the full Instagram reference and a phased i
 - ISC-29: `node scripts/verify/delink-check.mjs` exits **0** on the delinked HEAD (2026-07-21) and exits **non-zero** when a Vercel token is deliberately reintroduced into a staged fixture — the negative probe proving the gate detects, captured in the T-062 commit evidence.
 - ISC-30: **verified live 2026-07-23/24** — both hostnames serve the SPA + Functions; remote D1 proven by a real OTP session (`users` row id == JWT `sub`; folio create/read/delete round-trip). Evidence: `docs/auth/evidence/2026-07-23-*`, `2026-07-24-v2-v4-session-a.json`.
 - ISC-31: **tracked, not started** — `birth_profiles` fast-follow; gets its own ISC + verification when scheduled.
+
+## Iteration 2 — Living Readings Ecosystem (2026-07-26)
+
+### Problem
+
+Urania now has strong chat-first intake, verified Selemene execution, and durable
+per-user Folio storage, but the saved-reading surface still exposes a flat content
+record rather than the anatomy of a reading. The historical `723` corpus contains
+roughly 1,579 mixed artifacts across solo, dyadic, run, and legacy contexts, yet
+the current D1 row cannot preserve owner, subject, provenance, source systems,
+witness passes, learned patterns, or companion media as distinct relationships.
+Without a canonical document shared by chat and Folio, Urania risks becoming two
+products: a conversational generator and an unrelated archive viewer.
+
+### Vision
+
+Urania is a living atlas of readings. Chat remains the primary threshold: it
+learns who or what the reading concerns, assembles a request, and renders the
+result as it arrives. The same canonical reading document then opens as an
+explorable folio with a system stack, convergence map, evidence ledger, timing
+spine, pattern constellation, and bridge question. Sacred geometry communicates
+real structure—source, relation, sequence, confidence, or convergence—and every
+visual mark can explain what it encodes.
+
+The authenticated owner and the reading subject are separate identities. The
+verified Cloudflare Access account `sheshnarayan.iyer@gmail.com` may own the
+catalogue while every person, dyad, family system, and research run retains its
+own subject identity and consent boundary. Historical material enters through a
+catalogue-and-review pipeline, not a blind flattening import.
+
+### Principles
+
+- **One document, two views.** Chat thread and folio reader render the same model.
+- **Witness, not seer.** Describe structure without prediction, diagnosis, or command.
+- **Geometry carries evidence.** Decorative marks never masquerade as meaningful data.
+- **Owner is not subject.** Authentication never collapses the people being read.
+- **Engine facts stay primary.** Synthesis memory cannot override deterministic results.
+- **Historical language stays attributable.** Legacy copy is evidence, not current voice.
+- **Continuous learning is consented.** Only anonymized approved abstractions reach retrieval.
+- **A reading remains legible without animation, color, or hidden interaction.**
+
+### Scope
+
+This iteration ships the canonical front-end reading document, shared visual
+components, chat/Folio integration, vocabulary realignment, visual reference
+assets, and an evidence-backed architecture and migration specification. It does
+not bulk-import private `723` content, mutate the Selemene database, deploy a new
+embedding model, or claim that the existing Vectorize library is already a
+continuous production learning loop.
+
+### Criteria
+
+- [x] ISC-32: Chat and Folio render one canonical reading document.
+- [x] ISC-33: Owner and subject identities remain structurally distinct.
+- [x] ISC-34: Reading sections preserve source and witness provenance.
+- [x] ISC-35: Every data graphic exposes its encoded relationship.
+- [x] ISC-36: Folio entries render as readable structured documents.
+- [x] ISC-37: Current public copy avoids prohibited wellness vocabulary.
+- [x] ISC-38: Witness copy remains non-predictive and non-prescriptive.
+- [x] ISC-39: Historical copy remains labeled rather than silently rewritten.
+- [x] ISC-40: Retrieval patterns remain subordinate to deterministic chart facts.
+- [x] ISC-41: Private birth data never enters vector metadata.
+- [x] ISC-42: Corpus migration preserves subject and artifact relationships.
+- [x] ISC-43: Legacy files are catalogued before any remote mutation.
+- [x] ISC-44: Visual components work across narrow and wide viewports.
+- [x] ISC-45: Reduced-motion users retain the complete reading structure.
+- [x] ISC-46: Generated references follow the existing Urania visual language.
+- [x] ISC-47: Build, type checks, and focused tests all pass.
+- [x] ISC-A8: No decorative geometry implies unsupported analytical certainty.
+- [x] ISC-A9: No bulk import flattens unrelated subjects into owner identity.
+- [x] ISC-A10: No custom embedding capability is claimed without deployed evidence.
+
+### Test Strategy
+
+```yaml
+- isc: ISC-32
+  type: component-contract
+  check: thread result and stored row adapt to ReadingDocument
+  threshold: both adapters pass focused unit tests
+
+- isc: ISC-33
+  type: schema-inspection
+  check: owner reference and subject references are separate fields
+  threshold: no adapter derives subject identity from authenticated owner
+
+- isc: ISC-35
+  type: accessibility
+  check: each visualization provides title, description, legend, or text alternative
+  threshold: no semantic graphic is unlabeled
+
+- isc: ISC-37
+  type: vocabulary-gate
+  check: reader-facing source strings are scanned for prohibited vocabulary
+  threshold: zero unreviewed prohibited terms
+
+- isc: ISC-42
+  type: migration-design
+  check: corpus map retains owner, subject, relationship, artifact, and provenance
+  threshold: no canonical entity is represented only inside prose
+
+- isc: ISC-47
+  type: regression
+  check: focused tests, TypeScript checks, and production build
+  threshold: every command exits zero
+```
+
+### Decisions
+
+- 2026-07-26: The fallback reading UI is not a separate product route. It is a
+  second projection of the same `ReadingDocument` used by in-thread results.
+- 2026-07-26: `723` is treated as a private historical corpus with mixed-quality
+  language and artifacts. This iteration maps it but performs no remote import.
+- 2026-07-26: Cloudflare Access ownership maps to the verified Urania identity;
+  Selemene admin ownership remains unverified until its Postgres connection or
+  authenticated admin surface is available.
+- 2026-07-26: Vectorize currently uses Workers AI
+  `@cf/baai/bge-small-en-v1.5`; custom embedding and continuous write-loop claims
+  remain future-state until deployment evidence exists.
+- 2026-07-26: Visual language keeps Void Black, Sacred Gold, Witness Violet,
+  Flow Indigo, Coherence Emerald, and Parchment, but sacred geometry becomes
+  semantic: nodes are entities, edges are relationships, rings are layers, and
+  density is convergence.
+- 2026-07-26: The Algorithm's deep thinking passes run inline because the active
+  developer policy prohibits unsolicited subagents. Forge and Cato floors are
+  therefore recorded as policy-skipped rather than falsely claimed.
+
+### Verification Evidence
+
+- ISC-32/34: `src/lib/readings/types.ts` is the canonical model;
+  `threadResultToReadingDocument` and `folioEntryToReadingDocument` are the two
+  source adapters; `ReadingFolio` renders both. Six adapter tests are green.
+- ISC-33/A9: `ReadingDocument.owner` and `.subject` are distinct non-nullable
+  objects. Browser evidence showed `Owned by dev@urania.local` beside
+  `Reading subject: Subject not recorded · unknown`; cross-owner D1 routes
+  remain protected by the existing adversarial Folio suites.
+- ISC-35/A8: `ReadingAtlas` supplies SVG title, description, visible legend,
+  and a flat-state description. Browser accessibility snapshot announced
+  `One stored body · zero inferred sections`.
+- ISC-36: The Folio no longer renders the archive body in a raw `<pre>`;
+  Playwright opened a local-only saved row through the graph and rendered the
+  full reading article, atlas, body, and evidence ledger.
+- ISC-37/38: `vocabulary.test.ts`, existing prompt tests, and daily
+  non-prescription tests are green; the authored lexicon scan returns zero
+  prohibited-register hits.
+- ISC-39/42/43: `docs/living-readings-ecosystem.md` defines origin treatment and
+  the relationship-preserving schema. `catalog-corpus.mjs` catalogued 1,522
+  files, 51 subject candidates, two relationship candidates, and 71 manifests
+  with `catalogue-owner-only` mapping and no file-body reads or writes.
+- ISC-40/41/A10: the architecture records the inspected BGE-small model,
+  privacy scrub, deterministic precedence, missing retrieval filters, and
+  unverified deployment loop; `architectureClaims.test.ts` prevents those
+  current/future claims from drifting.
+- ISC-44/45: Playwright verified 1440×1000 and 390×844 layouts. Reduced-motion
+  emulation retained the flat structure and `zero inferred sections`; browser
+  console contained zero errors or warnings.
+- ISC-46: GPT Image 2 generated `component-atlas.png` and `reading-folio.png`
+  through Codex OAuth using the project moodboard and page references.
+- ISC-47: `npm test` → 40 files and 440 tests green; `npm run build` and
+  `npm run typecheck:functions` exit zero; `git diff --check` exits zero.
+
+### Iteration 2 Changelog
+
+- 2026-07-26 | conjectured: one richer reading hierarchy could be reconstructed
+  from both live thread chapters and every flat D1 Folio body.
+  refuted by: independent Advisor review showed that manufacturing chapters from
+  a flat body would make sacred geometry encode relationships the source never
+  supplied.
+  learned: visual integrity depends on loss-aware adapters. A less elaborate
+  `flat` state is more truthful than a beautiful invented constellation.
+  criterion now: every document declares `structureSource`; the flat adapter
+  emits zero sections and the atlas states `zero inferred sections`.
+
+- 2026-07-26 | conjectured: “Vectorize + embeddings” in the integrated engine
+  implied a deployed custom embedding and continuous learning loop.
+  refuted by: source inspection found BGE-small fixed in the store, example/plan
+  wiring around worker bindings, and missing language/relationship filters in
+  the active retrieval filter builder.
+  learned: a library capability, deployment, and closed learning loop are three
+  different states. Product copy must name only the evidenced state.
+  criterion now: the architecture names BGE-small as current, custom embedding
+  and continuous deployment as future, and a test guards the distinction.
+
+- 2026-07-26 | conjectured: a structured frame around flat Markdown was enough
+  to make the Folio a reading surface.
+  refuted by: browser inspection showed the title and source boundary still
+  exposed literal Markdown markers inside the otherwise refined folio.
+  learned: fallback reading quality includes typography, not only provenance
+  chrome. Presentation markup can be interpreted without inferring semantic
+  reading structure.
+  criterion now: `ReadingBody` safely renders headings, paragraphs, lists, and
+  fenced engine output; three parser tests and a browser assertion verify it.
+
+## Iteration 3 — Reading-Specific Visual Elements (2026-07-26)
+
+### Problem
+
+The canonical `ReadingDocument` now gives chat and Folio one honest reading
+substrate, but deterministic engine output still collapses into a fenced JSON
+body. The `723` corpus proves that the underlying readings already contain
+distinct semantic shapes: the five panchanga limbs, number codes, planetary
+positions, transit-to-natal aspects, Vimshottari periods, Human Design channels,
+Gene Keys sequences, cyclic measurements, oracle spreads, witness passes,
+questions, provenance manifests, and incomplete or mock-source notices.
+Treating all of these as prose or arbitrary cards hides the real relationships
+the engine computed.
+
+### Vision
+
+Each reading becomes a composed field of typed visual elements. The element
+registry chooses a truthful renderer from explicit source structure: a limb band
+for panchanga, a code grid for numerology, a positional field and relationship
+ledger for transits, a period path for Vimshottari, a sequence for Gene Keys, and
+accessible tables or notices when richer geometry would overclaim. The same
+elements appear beneath chat results and when a deterministic Folio record is
+reopened. The complete source payload remains inspectable, while unknown data
+falls back without loss or invented interpretation.
+
+### Principles
+
+- **The graph remains the interface.** Elements reveal nodes, edges, sequence,
+  layers, and cycles already present in the source.
+- **Shape before decoration.** Renderer choice follows payload semantics rather
+  than a desire to fill a dashboard.
+- **Specific when known, lossless when unknown.** Known engines receive named
+  adapters; unknown fields remain available in source evidence.
+- **A calculation is not a command.** Visual components orient and witness; they
+  do not prescribe behavior or predict outcomes.
+- **Source status is visible.** Missing, mock, historical, and incomplete inputs
+  never receive the visual authority of verified computation.
+- **Flat is still flat.** Rehydrating explicit JSON elements does not manufacture
+  witness chapters or archive structure.
+
+### Scope
+
+This iteration adds the typed element union, source extractors, shared element
+registry, reading-specific components, deterministic chat integration, daily
+source-payload integration, safe Folio JSON rehydration, tests, and a component
+matrix. It does not change the D1 schema, bulk-import `723`, persist new private
+metadata, deploy new engines, or generate interpretations beyond source output.
+
+### Criteria
+
+- [x] ISC-48: Representative `723` engine payload shapes are catalogued by keys and types.
+- [x] ISC-49: `ReadingDocument` carries typed elements separately from prose sections.
+- [x] ISC-50: Every typed element names its source system and evidence confidence.
+- [x] ISC-51: The complete deterministic source payload remains inspectable.
+- [x] ISC-52: Known engine extractors read an explicit allowlist of source fields.
+- [x] ISC-53: Unknown engine payloads receive a lossless, visibly generic fallback.
+- [x] ISC-54: Panchanga renders its five limbs without inventing transition times.
+- [x] ISC-55: Numerology renders named codes, values, reductions, and meanings.
+- [x] ISC-56: Planetary positions render planet, sign, degree, and retrograde state.
+- [x] ISC-57: Transit aspects expose both endpoints, aspect, orb, nature, and motion.
+- [x] ISC-58: Vimshottari periods and explicit transitions render as sequence.
+- [x] ISC-59: Gene Keys activation positions render as a named four-step sequence.
+- [x] ISC-60: Human Design facts, centers, and channels remain separate structures.
+- [x] ISC-61: Cyclic measurements expose labels, values, units, and target date.
+- [x] ISC-62: Tarot and I Ching outputs render ordered source-supplied positions.
+- [x] ISC-63: Enneagram and reflection prompts render as questions, not conclusions.
+- [x] ISC-64: Mock, missing, incomplete, or unavailable outputs render an explicit notice.
+- [x] ISC-65: The element renderer is exhaustive over the discriminated union.
+- [x] ISC-66: Panchanga payloads map through a focused named extractor.
+- [x] ISC-67: Numerology payloads map through a focused named extractor.
+- [x] ISC-68: Transit payloads map through a focused named extractor.
+- [x] ISC-69: Vimshottari payloads map through a focused named extractor.
+- [x] ISC-70: Human Design and Gene Keys map through focused named extractors.
+- [x] ISC-71: Other observed engines map through semantic generic primitives.
+- [x] ISC-72: Deterministic chat results carry typed elements beside their source body.
+- [x] ISC-73: Daily deterministic readings carry panchanga and transit source payloads.
+- [x] ISC-74: Stored deterministic Folio JSON safely rehydrates the same elements.
+- [x] ISC-75: Rehydrated Folio records remain `structureSource: flat`.
+- [x] ISC-76: Witness and historical prose behavior remains unchanged.
+- [x] ISC-77: Every element uses semantic headings, lists, tables, or figures.
+- [x] ISC-78: Every non-tabular visual explains its encoding in visible copy.
+- [x] ISC-79: Status never depends on color alone.
+- [x] ISC-80: The element field reflows at narrow and wide viewports.
+- [x] ISC-81: The complete reading remains usable with reduced motion.
+- [x] ISC-82: Raw source evidence is disclosed progressively rather than hidden.
+- [x] ISC-83: Source Markdown and JSON cannot inject arbitrary HTML.
+- [x] ISC-84: Focused tests cover every element kind and known extractor family.
+- [x] ISC-85: Full tests, type checks, build, and diff hygiene pass.
+- [x] ISC-86: A reading-to-element component matrix documents present coverage.
+- [x] ISC-87: Anti: no component authors predictive or prescriptive copy.
+- [x] ISC-88: Anti: mock or incomplete data never appears as verified computation.
+- [x] ISC-89: Anti: visual extraction never collapses owner and subject identity.
+- [x] ISC-90: Anti: this pass makes no API, D1, or remote production mutation.
+
+### Test Strategy
+
+```yaml
+- isc: ISC-49
+  type: type-contract
+  check: canonical documents expose a discriminated ReadingElement array
+  threshold: adapters always return an array and registry is exhaustive
+
+- isc: ISC-54
+  type: fixture-extraction
+  check: frozen panchanga fixture becomes exactly five named limbs
+  threshold: no inferred timestamp or unlisted limb
+
+- isc: ISC-57
+  type: fixture-extraction
+  check: frozen transit aspects preserve endpoints, orb, nature, and applying state
+  threshold: every mapped relation is lossless for its allowlisted fields
+
+- isc: ISC-74
+  type: roundtrip
+  check: deterministic Markdown saved through the frozen Folio contract rehydrates elements
+  threshold: document stays flat and source JSON remains byte-inspectable
+
+- isc: ISC-85
+  type: regression
+  check: focused tests, full tests, TypeScript checks, build, and diff check
+  threshold: every command exits zero
+```
+
+### Decisions
+
+- 2026-07-26: The first visual grammar is derived from 51 archived L0 engine
+  bundles plus frozen live-contract fixtures. It is not derived from labels in
+  the design references.
+- 2026-07-26: Components are semantic primitives with engine-specific adapters.
+  This avoids one bespoke component per engine while retaining a truthful
+  panchanga, transit, timeline, channel, sequence, cycle, oracle, and question
+  vocabulary.
+- 2026-07-26: Existing deterministic Folio rows can regain typed elements from
+  their explicit fenced JSON source. This is source parsing, not section
+  inference; archive structure remains flat.
+- 2026-07-26: Historical biofield and face-reading payloads may contain
+  `is_mock_data` or notices. Those states receive an unresolved notice and do
+  not acquire computed styling.
+- 2026-07-26: `codex-gpt-image` remains deferred until the implemented element
+  grammar is verified. Generated reference art must describe real components,
+  not decide their semantics.
+
+### Iteration 3 Verification Evidence
+
+- ISC-48/52/66–71/86: inspected 51 archived L0 `engines.json` bundles by key
+  and value type, then documented the observed source-to-element matrix in
+  `docs/reading-element-library.md`. Fifteen named engine families map through
+  allowlisted extractors; unknown shapes preserve a raw source fallback.
+- ISC-49–65/77–79/82/87–89: the canonical document carries an eleven-kind
+  discriminated `ReadingElement` union. Each element records source system,
+  source path, evidence kind, and confidence; the exhaustive React registry
+  renders semantic definitions, tables, lists, sequences, relations, cycles,
+  spreads, questions, notices, or a progressive raw disclosure.
+- ISC-72–76/83: deterministic chat, daily reading, and strict single-fence
+  Folio rehydration share the same extraction path. The frozen Folio adapter
+  remains `structureSource: flat`; witness prose is unchanged; React escaping
+  and strict JSON-fence parsing prevent arbitrary HTML injection.
+- ISC-80/81: Playwright checked the real production build at 1440px and
+  390×844. Cards measured 422px and 292px respectively, document scroll width
+  equalled viewport width, exact source disclosure opened, console errors and
+  warnings were zero, and reduced-motion emulation left no running animation
+  inside any reading element.
+- ISC-84/85: `npm test` passed 43 files and 467 tests; `npm run build`,
+  `npm run typecheck:functions`, and `git diff --check` all exited zero. The
+  inherited missing `astro/tsconfigs/strict` warning remains non-failing and
+  outside this package's changes.
+- ISC-90: browser QA used one synthetic local Wrangler Folio row only. The row
+  was deleted successfully after verification; no remote API, D1, deployment,
+  or production data was changed.
+- Independent Advisor was invoked after the durable deliverable, but its third
+  response was not parseable JSON. It is recorded as unavailable, not counted
+  as verification evidence.
+
+### Iteration 3 Changelog
+
+- 2026-07-26 | conjectured: each observed reading engine needed a bespoke visual
+  component.
+  refuted by: the 51-bundle inventory repeatedly exposed the same semantic
+  shapes across systems: facts, positions, relations, sequences, cycles,
+  spreads, collections, questions, and notices.
+  learned: a small typed visual grammar preserves engine identity while keeping
+  the component library coherent.
+  criterion now: engine-specific adapters target an exhaustive eleven-kind
+  semantic union, with raw preservation for every unknown shape.
+
+- 2026-07-26 | conjectured: viewport breakpoints were sufficient for responsive
+  element cards.
+  refuted by: browser inspection inside the narrow Folio modal showed desktop
+  viewport breakpoints compressing two cards into roughly 203px columns.
+  learned: modal components must respond to their containing field, not only the
+  browser viewport.
+  criterion now: outer and inner grids use container-width-aware `auto-fit`
+  tracks, proven at both desktop and 390px mobile widths.
+
+## Iteration 4 — Grounded Non-Report Interpretation Agents (2026-07-26)
+
+### Problem
+
+Urania currently presents one surface as “chat,” but that surface is an
+onboarding state machine with an optional narrator voice. It collects validated
+intake and hands work to deterministic engines, workflows, witness assets, or
+the daily seam. It does not interpret a completed reading or sustain a
+post-reading conversation. Selemene exposes one distinct non-report
+interpretation route, `POST /api/v1/witness/interpret`, whose Aletheios and
+Pichet passes require live biofield scores and are therefore not a general
+follow-up endpoint. The raw OpenAI-compatible LLM proxy is provider transport,
+not a product interpretation contract. Without explicit scaffolding, these
+three responsibilities can collapse into one ungrounded generalist prompt that
+sounds authoritative, loses source lineage, and quietly diverges from the
+deterministic reports.
+
+### Vision
+
+A completed or archived reading can open a conversational interpretation seam
+without becoming a new report. The caller chooses a named interpretive posture;
+the server loads only the authenticated owner's reading; a route registry
+selects one narrow agent; and every returned claim names its evidence pointer
+and epistemic status. Aletheios reflects source-visible patterns, Pichet offers
+embodied inquiry, Synthesis connects already-grounded observations, and
+Navigator returns typed graph destinations. The existing narrator remains the
+voice of onboarding and never impersonates these agents. When the model or
+source is unavailable, the response says so directly and invents nothing.
+
+### Out of Scope
+
+- No Cloudflare Agents SDK or Durable Object migration in this iteration.
+- No replacement of D1 chat sessions, SSE replay, or the intake state machine.
+- No new deterministic engine, witness calculation, or report renderer.
+- No Vectorize retrieval, custom embedding deployment, or continuous-learning claim.
+- No automatic memory extraction from prose or cross-reading personalization.
+- No remote deployment, production data mutation, or account remapping.
+- No use of the live witness endpoint without its required live biofield scores.
+
+### Constraints
+
+- Authentication and ownership remain the sole trust boundary for reading access.
+- Existing Pages Functions, D1 persistence, and LLM-proxy bindings remain in place.
+- Reading evidence is untrusted model input and can never alter routing or policy.
+- Agent routing is explicit; an unknown posture has no implicit default.
+- Deterministic reports and witness assets remain byte- and route-independent.
+- Model output is parsed into a bounded response contract before reaching clients.
+- Framework ports remain replaceable if Durable Objects become justified later.
+
+### Goal
+
+Ship and document a framework-neutral agent layer for owned-reading follow-up:
+an explicit agent registry, grounded interpretation envelope, narrow model port,
+honest fallback behavior, authenticated non-report endpoint, and contract tests
+that explain what Urania and Selemene currently do without overstating memory,
+retrieval, learning, or agent autonomy.
+
+### Criteria
+
+- [x] ISC-91: The current onboarding narrator, witness interpreter, and raw LLM proxy are documented as three distinct responsibilities.
+- [x] ISC-92: The live Selemene witness interpretation route and its required live-score fields are documented.
+- [x] ISC-93: The absence of a general post-reading interpretation endpoint before this iteration is stated explicitly.
+- [x] ISC-94: A typed registry defines every supported non-report interpretation route.
+- [x] ISC-95: Every registry entry names its intent, agent, allowed evidence, and response posture.
+- [x] ISC-96: Unknown or omitted routes fail validation without selecting a default agent.
+- [x] ISC-97: Pairwise-distinct routes resolve to pairwise-distinct agent identifiers.
+- [x] ISC-98: The onboarding narrator is catalogued but cannot be selected by the interpretation endpoint.
+- [x] ISC-99: Aletheios reflects patterns and cannot originate deterministic facts.
+- [x] ISC-100: Pichet frames embodied inquiry as provisional observation, not instruction.
+- [x] ISC-101: Synthesis combines grounded claims and cannot introduce unsupported evidence.
+- [x] ISC-102: Navigator returns typed node destinations rather than prose-only links.
+- [x] ISC-103: Each interpretation request names exactly one authenticated owned reading.
+- [x] ISC-104: Cross-owner and unknown reading identifiers remain indistinguishable.
+- [x] ISC-105: User questions and optional conversation history are length- and count-bounded.
+- [x] ISC-106: Reading content is projected into stable evidence excerpts with source pointers.
+- [x] ISC-107: Every source-grounded response claim cites at least one supplied evidence identifier.
+- [x] ISC-108: Interpretive synthesis claims are labeled separately from source-grounded claims.
+- [x] ISC-109: Model responses with unknown evidence identifiers are rejected or degraded.
+- [x] ISC-110: Empty, malformed, timed-out, and failed model responses become explicit unavailable responses.
+- [x] ISC-111: Degraded responses contain no engine, retrieval, or deterministic factual claims.
+- [x] ISC-112: Prompt-like text inside reading evidence cannot modify agent, route, tools, or provenance.
+- [x] ISC-113: The LLM proxy is accessed only through a replaceable model port.
+- [x] ISC-114: The model adapter sends the configured chat secret only when present.
+- [x] ISC-115: The endpoint response exposes agent, route, provenance, degradation, claims, question, and targets.
+- [x] ISC-116: The response's first sentence reflects the caller's present concern when the model succeeds.
+- [x] ISC-117: Follow-up history can preserve conversational continuity without persisting speculative memory.
+- [x] ISC-118: The default chat response never dumps the entire reading or raw engine payload.
+- [x] ISC-119: Report generation, report persistence, and result rendering routes remain untouched by interpretation.
+- [x] ISC-120: No Vectorize, custom-embedding, or continuous-learning capability is represented as live.
+- [x] ISC-121: No Cloudflare Agents SDK package, Durable Object binding, or migration is added.
+- [x] ISC-122: Contract tests cover route resolution, evidence validation, degradation, and prompt-injection-shaped evidence.
+- [x] ISC-123: Route tests cover authentication, ownership, malformed bodies, and successful interpretation.
+- [x] ISC-124: Full tests, Functions typecheck, application build, and diff hygiene pass.
+- [x] ISC-125: Architecture documentation gives a staged path from this scaffold to durable multi-agent conversation.
+
+### Test Strategy
+
+```yaml
+- isc: ISC-94
+  type: registry-contract
+  check: every public interpretation route resolves to one frozen agent definition
+  threshold: no duplicate agent id and no implicit fallback
+
+- isc: ISC-107
+  type: grounded-response
+  check: parsed model claims reference only evidence ids projected by the server
+  threshold: every grounded claim has at least one known pointer
+
+- isc: ISC-110
+  type: failure-matrix
+  check: timeout, non-2xx, invalid JSON, empty answer, and invalid citations
+  threshold: explicit degraded response with zero claims
+
+- isc: ISC-104
+  type: ownership-adversarial
+  check: own, unknown, and cross-owner reading ids through the route
+  threshold: own succeeds; unknown and cross-owner return identical 404 envelopes
+
+- isc: ISC-119
+  type: regression
+  check: existing report, witness asset, Folio, and onboarding chat suites
+  threshold: no changed snapshots, routes, or persisted report payloads
+
+- isc: ISC-124
+  type: repository-gate
+  check: focused tests, full tests, Functions typecheck, build, diff check
+  threshold: every command exits zero
+```
+
+### Features
+
+- A closed agent catalogue that makes existing and new responsibilities visible.
+- A server-owned reading evidence projector with stable, inspectable pointers.
+- A route policy that separates pattern, embodied, synthesis, and navigation answers.
+- A narrow model adapter over the already-configured Selemene LLM proxy.
+- A bounded interpretation response suitable for later chat and reading UI integration.
+- An explicit degraded state that preserves trust when interpretation is unavailable.
+
+### Decisions
+
+- 2026-07-26: Keep the interpretation kernel framework-neutral. The current
+  Cloudflare Agents SDK would add a second Durable Object state architecture
+  before durable post-reading behavior is proven.
+- 2026-07-26: Interpret only an authenticated owner's stored reading in this
+  slice. The browser may name the reading but cannot provide trusted evidence.
+- 2026-07-26: Keep follow-up history bounded and ephemeral. Persisted
+  interpretation sessions require their own consent and lifecycle contract.
+- 2026-07-26: Return model failure as HTTP 200 plus a typed degraded response.
+  This lets the reading UI preserve a coherent fallback without pretending the
+  interpretation succeeded.
+- 2026-07-26: Defer visible chat controls to the next reading-UI slice. The
+  current deliverable is the callable, tested backend contract those controls
+  will consume.
+
+### Verification
+
+- ISC-91–93/120/121/125:
+  `docs/chat-interpretation-architecture.md` records the live endpoint
+  inventory, Witness Dyad input boundary, absence of a previous general
+  interpreter, current/future capability distinction, official Cloudflare
+  migration requirements, concept map, and five-stage evolution path.
+- ISC-94–102:
+  `functions/lib/agents/registry.ts` defines four routes and four pairwise
+  distinct agents. The existing Narrator and Witness Dyad are catalogued as
+  non-selectable. The registry test proves unknown and `general` routes resolve
+  to no agent.
+- ISC-103–118:
+  the route loads `getReadingById(DB, userId, readingId)` before interpretation;
+  the request validator bounds route, concern, and history; the evidence
+  projector emits stable source paths; the prompt treats all evidence as
+  untrusted; and the parser accepts only bounded claims and typed targets that
+  cite known evidence ids.
+- ISC-104/123:
+  route tests prove missing auth returns 401, malformed route returns 400, own
+  reading succeeds, and cross-owner/unknown ids return byte-equivalent 404
+  envelopes.
+- ISC-109–114/122:
+  kernel tests cover unknown citations, non-JSON content, empty/unavailable and
+  unconfigured models, prompt-injection-shaped reading content, and conditional
+  `x-chat-key` forwarding. Every degraded case has zero claims.
+- ISC-119/124:
+  `npm test` passed 45 files and 483 tests, including all existing onboarding,
+  SSE replay, Folio, Selemene proxy, daily, witness, and result suites.
+  `npm run typecheck:functions`, `npm run build`, and `git diff --check` exited
+  zero. The inherited non-failing missing `astro/tsconfigs/strict` warning is
+  unchanged.
+- The Algorithm Advisor returned no parseable payload. Forge and Anvil halted
+  at missing external prerequisites (`codex` executable; Moonshot credential
+  and progress tool) and changed no files. None is counted as verification.
+
+### Changelog
+
+- 2026-07-26 | conjectured: Selemene's Witness Dyad could serve every
+  post-reading question.
+  refuted by: its live request contract requires a six-field biofield score
+  envelope and runs its own engine context assembly.
+  learned: a witness calculation and an archive interpretation have different
+  prerequisites and provenance.
+  criterion now: the existing Dyad remains catalogued but non-selectable; the
+  new endpoint starts only from an owned stored reading.
+
+- 2026-07-26 | conjectured: “agent scaffolding” implied immediate adoption of
+  Cloudflare's Agents SDK.
+  refuted by: the application already persists onboarding sessions and replay
+  events in D1, while the SDK requires a Durable Object binding, SQLite-class
+  migration, package, compatibility flag, and its own state authority.
+  learned: agent identity and evidence policy are domain concerns; durable
+  runtime state is an adapter chosen when a real synchronization need appears.
+  criterion now: the kernel depends on a model port and makes no SDK migration.
+
+- 2026-07-26 | conjectured: one capable generalist prompt would be the simplest
+  conversational layer.
+  refuted by: failure and experiential passes showed that generic routing erases
+  epistemic posture, source lineage, navigation contracts, and honest failure.
+  learned: a small closed registry is simpler to verify than one unconstrained
+  persona.
+  criterion now: four explicit routes resolve to four agents, and an unknown
+  route has no default.
+
+## Iteration 5 — Living Archive, Admin Authority, and Consented Synastry (2026-07-26)
+
+### Problem
+
+The production systems contain many generated Selemene readings, one
+owner-scoped Urania Folio record, and a 1.21 GB historical corpus, but the
+corpus has not been imported with verifiable source provenance. The current D1
+Folio row cannot preserve many-to-many subjects, relationship context, source
+runs, companion artifacts, editorial state, or deletion lineage. The Selemene
+admin browser exists, but the named owner's local database role is `viewer`;
+Cloudflare Access claims replace that role on login, so a direct database patch
+would not be durable. Urania supports same-owner subject dyads, but it has no
+consent model for pairing two authenticated accounts.
+
+### Vision
+
+Historical readings enter a living archive through a deterministic manifest,
+reviewed identity mappings, a reversible one-reading pilot, and then restartable
+approved batches. Admin access is granted at the Cloudflare group boundary and
+every admin detail view explains its provenance and visibility. Two account
+owners can invite, accept, generate, browse, and revoke a synastry relationship
+without giving administrators or either participant silent access to the
+other's profile. Chat remains the threshold; the visual reading remains the
+durable fallback.
+
+### Out of Scope
+
+- No blind bulk import of all 1,522 corpus files.
+- No binary corpus bodies stored directly in D1 or Postgres.
+- No automatic merge of directory aliases into one person.
+- No Postgres-only role patch represented as durable Cloudflare admin access.
+- No admin override of participant consent for synastry generation.
+- No Vectorize write, custom embedding training, or continuous-learning claim.
+- No rewrite of historical reading copy during provenance ingestion.
+
+### Constraints
+
+- Owner, subject, producer, and source remain separate relations.
+- Urania D1 remains owner-scoped conversational state and Folio storage.
+- Selemene Postgres remains the canonical shared reading and admin archive.
+- Object bytes require content-addressed object storage plus checksums.
+- Cloudflare Access groups are the human-admin source of truth.
+- Cross-account relationship generation requires two active consents.
+- Existing same-owner `subjects[]` relationship modes remain compatible.
+- Every import mutation is idempotent, auditable, and reversible.
+
+### Goal
+
+Land the first implementation batch for a provenance-safe living archive and
+consented relationship layer: a deterministic corpus manifest, canonical
+archive schema, and cross-account consent contract. Preserve clear blockers for
+Cloudflare admin policy mutation and full production import until their explicit
+preflight and pilot gates pass.
+
+### Criteria
+
+- [x] ISC-126: The corpus manifest has an explicit versioned schema.
+- [x] ISC-127: Every file record carries a SHA-256 content checksum.
+- [x] ISC-128: Every source identifier is stable across repeated runs.
+- [x] ISC-129: Manifest ordering and identifier output are deterministic.
+- [x] ISC-130: Symbolic links cannot escape or enter the manifest.
+- [x] ISC-131: Catalogue-only mode never reads source file bodies.
+- [x] ISC-132: Manifest ownership never implies reading subject identity.
+- [x] ISC-133: Subject directory names remain provisional candidates.
+- [x] ISC-134: Synastry directories remain explicit relationship candidates.
+- [x] ISC-135: Manifest generation cannot mutate remote storage or databases.
+- [x] ISC-136: Selemene has a canonical living-readings archive migration.
+- [x] ISC-137: Stable source IDs and locators prevent duplicate import rows.
+- [x] ISC-138: Import runs have stable idempotency keys and terminal states.
+- [x] ISC-139: Archived readings can reference multiple subjects with roles.
+- [x] ISC-140: Artifact records store checksums and object locators, not bytes.
+- [x] ISC-141: Evidence and readings expose explicit editorial states.
+- [x] ISC-142: Subject aliases cannot merge automatically during import.
+- [ ] ISC-143: Archive deletion preserves auditable run and source boundaries.
+- [ ] ISC-144: Archive records are queryable through permissioned admin boundaries.
+- [ ] ISC-145: `selemene-admin` remains the durable `platform-admin` mapping.
+- [ ] ISC-146: Access-login role replacement is documented and regression-tested.
+- [x] ISC-147: Relationship invitations expose opaque tokens and store hashes.
+- [x] ISC-148: Only the intended authenticated recipient can accept an invite.
+- [x] ISC-149: Each relationship participant supplies one personally owned subject.
+- [x] ISC-150: Pending, active, declined, revoked, and expired states are enforced.
+- [x] ISC-151: Cross-account generation requires two currently active consents.
+- [x] ISC-152: Either participant can revoke future synastry generation.
+- [x] ISC-153: Existing same-owner Composite Dyad behavior remains unchanged.
+- [ ] ISC-154: Administrative permissions cannot bypass relationship consent.
+- [x] ISC-155: Full corpus import remains blocked before pilot verification.
+- [x] ISC-156: Focused and full repository verification gates pass.
+- [x] ISC-157: Documentation distinguishes current, landed, blocked, and future states.
+
+### Test Strategy
+
+```yaml
+- isc: ISC-126
+  type: fixture-manifest
+  check: run the manifest builder twice over a frozen mixed-format fixture
+  threshold: byte-identical semantic output and matching manifest id
+
+- isc: ISC-131
+  type: negative-io
+  check: catalogue-only fixture contains an unreadable regular file
+  threshold: structural catalogue succeeds without opening its body
+
+- isc: ISC-136
+  type: migration
+  check: apply and roll back the living-readings migration locally
+  threshold: every table, key, constraint, and index is present then removable
+
+- isc: ISC-138
+  type: roundtrip
+  check: insert the same manifest and import-run key twice
+  threshold: the second run creates no duplicate source or reading relation
+
+- isc: ISC-148
+  type: authorization
+  check: intended recipient, wrong recipient, inviter, and unauthenticated acceptance
+  threshold: only the intended recipient can bind an owned subject
+
+- isc: ISC-151
+  type: state-machine
+  check: generation gate across every consent-state pair
+  threshold: only active plus active is allowed
+
+- isc: ISC-153
+  type: regression
+  check: existing subject and relationship chat suites
+  threshold: no request, snapshot, or ownership behavior changes
+
+- isc: ISC-156
+  type: repository-gate
+  check: focused tests, full tests, typecheck, build, and diff hygiene
+  threshold: every required command exits zero
+```
+
+### Features
+
+- `CorpusManifest`: deterministic local source inventory and checksum contract;
+  satisfies ISC-126–135; parallelizable.
+- `LivingArchiveSchema`: provenance, subject, relationship, artifact, evidence,
+  and import-run entities in Selemene; satisfies ISC-136–144; parallelizable.
+- `CloudflareAdminAuthority`: durable Access group mapping and verification;
+  satisfies ISC-145–146; depends on an Access-write credential.
+- `RelationshipConsent`: invite, accept, decline, revoke, expire, and authorize;
+  satisfies ISC-147–154; parallelizable with archive work.
+- `PilotImport`: one approved reading plus artifacts, round-trip and deletion;
+  satisfies ISC-137–143 and ISC-155; depends on archive schema and review.
+- `AdminReadingExperience`: provenance-aware admin browsing and filters;
+  satisfies ISC-144–146 and ISC-157; depends on archive API and admin mapping.
+- `ConsentedSynastryExperience`: two-account settings and generation flow;
+  satisfies ISC-148–154; depends on RelationshipConsent.
+- `RegressionAndTruthGate`: repository checks and capability-state documentation;
+  satisfies ISC-153, ISC-155–157; depends on all landed slices.
+
+### Decisions
+
+- 2026-07-26 22:30: refined: the existing `plan.md` is a completed
+  Cloudflare/Folio migration plan and explicitly excludes this backend work.
+  Execution now follows
+  `docs/superpowers/plans/2026-07-26-living-readings-admin-synastry.md`.
+- 2026-07-26 22:30: canonical shared archive metadata belongs in Selemene
+  Postgres so its protected admin surface can query it. Urania D1 remains the
+  owner-scoped chat, subject, and Folio store.
+- 2026-07-26 22:30: corpus bytes remain content-addressed artifacts in object
+  storage; relational stores carry checksums, locators, subjects, evidence, and
+  editorial state.
+- 2026-07-26 22:30: Cloudflare `selemene-admin` membership, not a local
+  Postgres role patch, is the durable admin-access intervention because Access
+  login replaces `user_roles`.
+- 2026-07-26 22:30: cross-account synastry is a peer-consent product flow, not
+  an administrator pairing tool. Platform-admin access cannot substitute for
+  participant consent.
+
+### Risks
+
+- An ambiguous alias can merge two people and leak private readings.
+- A full import can make historical placeholders appear current or verified.
+- An artifact upload without checksum and deletion lineage can orphan private data.
+- A direct local role update can disappear on the next Cloudflare login.
+- An invitation token leak can bind the wrong account without recipient matching.
+- Cross-system identity drift can confuse a CF subject with a Selemene UUID.
+- A new relationship route can accidentally weaken existing owner-scoped subject checks.
+- Treating Vectorize as archive storage can make deletion and provenance unverifiable.
+
+### Verification
+
+- ISC-126–135: fixture and full-corpus probes —
+  `node --test scripts/readings/corpus-manifest.test.mjs` returned
+  `tests 6`, `pass 6`, `fail 0`; catalogue-only traversal returned
+  `files: 1522`, `directories: 550`, `bytes: 1210480462`, and stable
+  `manifest_7d3414cf0a774f9560e0d680054dc8324362a455d20d9bc36192642c5fddd3f8`.
+- ISC-136–142: PostgreSQL schema contract —
+  `cargo test -p noesis-data --test living_readings_schema` returned
+  `3 passed; 0 failed`. The live PostgreSQL 16 probe applied migration 036,
+  inserted two-subject relationship provenance, permitted duplicate hashes at
+  distinct locators, rejected cross-owner alias provenance, round-tripped the
+  reading/artifact/evidence/editorial graph, and applied the dependency-ordered
+  rollback.
+- ISC-147–152: authorization and transition matrix —
+  `npx vitest run functions/__tests__/relationships.test.ts` returned
+  `1 passed` file and `9 passed` tests. The suite proves hash-only one-time
+  tokens, intended-email matching, subject ownership, accept-once behavior,
+  decline, expiry, participant revocation, and active-plus-active generation.
+- ISC-153: full Urania regression —
+  `npm test` returned `46 passed` files and `492 passed` tests, including the
+  existing same-owner dyad and relationship-context suites.
+- ISC-155: production read-only boundary probe —
+  Selemene Postgres returned `corpus_723_markers|0` and
+  `archive_table|absent` inside `BEGIN READ ONLY ... ROLLBACK`; no corpus or
+  archive schema was written remotely.
+- ISC-156: repository gates —
+  `npm run typecheck:functions`, `npm run build`,
+  `cargo fmt --check -p noesis-data`, focused Cargo tests, tracked and
+  untracked whitespace checks, and both repository diff checks exited zero.
+- ISC-157: capability-state documentation —
+  `docs/superpowers/plans/2026-07-26-living-readings-admin-synastry.md`
+  separates landed foundations, product-surface work, credential-gated admin
+  policy, one-reading pilot, reviewed rollout, and stop conditions.
+- Open gates: ISC-143/144 require the pilot importer and permissioned admin
+  query surface; ISC-145/146 require a Cloudflare Access-write credential and
+  fresh login; ISC-154 requires the authenticated route layer to prove no admin
+  bypass at the HTTP boundary.
+
+### Changelog
+
+- 2026-07-26 | conjectured: globally unique content checksums would provide
+  archive-import idempotence.
+  refuted by: the corpus contains legitimate repeated files at distinct source
+  locators.
+  learned: stable record identifiers and locators enforce idempotence while
+  checksums remain integrity evidence and lookup indexes.
+  criterion now: ISC-137 permits repeated hashes when provenance locators
+  differ.
+- 2026-07-26 | conjectured: assigning the production Postgres account an admin
+  role would complete durable administrator access.
+  refuted by: Cloudflare login replaces local roles from Access-group claims,
+  and the available OAuth token cannot write Access groups or policies.
+  learned: `selemene-admin` membership is the authority of record and must be
+  followed by a fresh Access login.
+  criterion now: ISC-145 and ISC-146 remain open until policy mutation and
+  replacement are verified.
+- 2026-07-26 | conjectured: finishing corpus ingestion meant importing all 723
+  content immediately.
+  refuted by: unresolved subject aliases, editorial classifications, and
+  deletion propagation make an unreviewed bulk import unsafe.
+  learned: catalogue-only discovery must precede a one-reading round-trip and
+  deletion pilot, then a reviewed rollout.
+  criterion now: ISC-143 and ISC-155 retain the pilot boundary before any
+  production corpus write.
+
+### Learn Decisions
+
+- 2026-07-26 21:48: the external Temperance audit rail produced task plans but
+  no `index.json` or `SUMMARY.md` within the verification window. The rail
+  failed open: implementation proceeded through isolated Codex workers and was
+  independently verified by the primary agent.
+- 2026-07-26 21:48: Batch 1 is a checkpoint, not project completion. The
+  continuation plan remains active for the permissioned query/API surface,
+  Cloudflare policy activation, pilot import, admin reading UI, and
+  authenticated synastry routes.
+
+## Iteration 6 — Complete Living Readings Product and Pilots (2026-07-26)
+
+### Problem
+
+The archive schema, deterministic manifest, and consent domain exist, but they
+are not yet connected to protected HTTP boundaries or product surfaces.
+Selemene cannot browse living-archive provenance through its admin API, Urania
+cannot manage cross-account relationships through Settings, and no reversible
+reading or two-account pilot proves the system end to end. The current
+Cloudflare OAuth token also lacks Access-policy write authority.
+
+### Vision
+
+Chat remains the primary doorway into interpretation while a calm visual
+library makes every canonical reading recoverable. Administrators can inspect
+provenance without gaining consent powers. Two people can understand, accept,
+generate, browse, and revoke a shared synastry bond while the system visibly
+explains owner, subject, source, producer, and access reason.
+
+### Out of Scope
+
+- No blind bulk import of unresolved or unconsented corpus material.
+- No administrative consent override for cross-account synastry.
+- No archive bytes stored directly in Postgres or D1.
+- No claim of durable admin activation without fresh Access claims.
+- No continuous-learning or Vectorize write before deletion filters pass.
+
+### Constraints
+
+- Cloudflare Access remains the durable administrator authority.
+- Selemene Postgres remains the canonical provenance archive.
+- Urania D1 remains the owner-scoped relationship and Folio boundary.
+- Chat and visual browsing must resolve the same canonical reading identity.
+- Cross-account authorization must hold at request and archival commit time.
+- Pilot ingestion must be idempotent, reversible, and failure-injection tested.
+- The graph remains the primary interface; navigation chrome stays additive.
+
+### Goal
+
+Ship and verify the protected archive browser, Urania reading/settings
+experience, authenticated relationship routes and synastry generation, durable
+Cloudflare administrator mapping, and reversible one-reading plus two-account
+pilots. Stop before broad corpus rollout unless identity, consent, deletion,
+and provenance reviews are explicitly satisfied.
+
+### Criteria
+
+- [x] ISC-158: Archive repository lists living readings with bounded pagination.
+- [x] ISC-159: Archive repository filters subject, relationship, source, run, and editorial state.
+- [x] ISC-160: Archive detail returns provenance, visibility, artifacts, evidence, and subjects.
+- [x] ISC-161: Living-archive admin routes require `admin:analytics:read`.
+- [x] ISC-162: Non-administrators receive denial from every living-archive route.
+- [x] ISC-163: Living-archive administrator routes expose no mutation operation.
+- [x] ISC-164: Admin web exposes a distinct living-readings browser surface.
+- [x] ISC-165: Admin detail visibly explains why the administrator can view each record.
+- [x] ISC-166: Admin filters expose source, subject, relationship, run, and editorial state.
+- [x] ISC-167: Admin detail displays checksums and locators without fetching bytes implicitly.
+- [x] ISC-168: Pilot importer reruns without duplicating archive relations.
+- [x] ISC-169: Failed pilot object/database boundaries leave zero orphan artifacts.
+- [x] ISC-170: Pilot deletion removes content links while retaining auditable run boundaries.
+- [x] ISC-171: One explicitly owned Shesh reading has a frozen pilot manifest.
+- [x] ISC-172: Pilot object upload round-trips with matching SHA-256 checksum.
+- [x] ISC-173: The imported pilot reading is browsable through protected admin boundaries.
+- [x] ISC-174: Authenticated HTTP routes create and list relationship invitations.
+- [x] ISC-175: Authenticated HTTP routes accept, decline, and revoke invitations.
+- [x] ISC-176: Anti: Administrator permissions cannot bypass either participant’s consent.
+- [x] ISC-177: Generation resolves both owned subject snapshots exclusively server-side.
+- [x] ISC-178: Consent is revalidated before generated reading archival commit.
+- [x] ISC-179: Synastry generation sends two subjects and typed relationship context.
+- [x] ISC-180: Generated relationship readings create explicit participant visibility grants.
+- [x] ISC-181: Revocation immediately denies every future cross-account generation.
+- [x] ISC-182: Revocation preserves independently owned participant audit records.
+- [x] ISC-183: Settings shows self profile, circle, shared relationships, and reading visibility.
+- [x] ISC-184: Pending, active, declined, revoked, and expired states are visually distinct.
+- [x] ISC-185: Antecedent: Chat and library open one matching reading identifier and checksum.
+- [x] ISC-186: Reading views explain owner, subject, source, producer, and access reason.
+- [x] ISC-187: The named email belongs to durable `selemene-admin` Access authority.
+- [ ] [DEFERRED-VERIFY: FV-188-production-admin-session] ISC-188: Fresh Access login yields `platform-admin` and `admin:analytics:read`.
+- [ ] [DEFERRED-VERIFY: FV-189-two-account-synastry] ISC-189: Two authenticated accounts pass invite, accept, generate, browse, revoke, and deny.
+
+### Test Strategy
+
+```yaml
+- isc: ISC-158
+  type: postgres-integration
+  check: seed two archive owners and exercise pagination plus filter combinations
+  threshold: bounded deterministic rows with no cross-filter leakage
+
+- isc: ISC-161
+  type: authorization
+  check: call every living-archive route with viewer and administrator claims
+  threshold: viewer denied and administrator read succeeds
+
+- isc: ISC-168
+  type: idempotency
+  check: run the frozen pilot import twice
+  threshold: second run creates zero additional archive relations
+
+- isc: ISC-169
+  type: failure-injection
+  check: interrupt before and after object upload and database commit
+  threshold: reconciliation reports zero unowned object locators
+
+- isc: ISC-176
+  type: authorization
+  check: generate as administrator without both active participant consents
+  threshold: request denied before engine invocation
+
+- isc: ISC-178
+  type: race
+  check: revoke consent after request authorization but before archive commit
+  threshold: commit denied and result invisible to both participants
+
+- isc: ISC-185
+  type: user-interface
+  check: open one archived reading from chat and the visual library
+  threshold: identifiers and checksums match exactly
+
+- isc: ISC-189
+  type: live-e2e
+  check: run the full lifecycle with two distinct authenticated accounts
+  threshold: post-revocation generation is denied
+```
+
+### Features
+
+- `LivingArchiveRepository`: query and detail models for migration 036;
+  satisfies ISC-158–160; parallelizable.
+- `LivingArchiveAdminAPI`: protected read-only handlers and route permissions;
+  satisfies ISC-161–163; depends on LivingArchiveRepository.
+- `LivingArchiveAdminWeb`: branded browse, filter, and provenance detail UI;
+  satisfies ISC-164–167; depends on LivingArchiveAdminAPI.
+- `PilotImporter`: frozen manifest, object lifecycle, idempotence, deletion,
+  and failure recovery; satisfies ISC-168–173; parallelizable after schema.
+- `RelationshipHTTP`: authenticated invitation lifecycle routes;
+  satisfies ISC-174–176; parallelizable.
+- `ConsentedSynastry`: server snapshots, double authorization, generation,
+  grants, and revocation; satisfies ISC-177–182; depends on RelationshipHTTP.
+- `ReadingSettingsExperience`: visual library, profiles, relationship states,
+  provenance language, and canonical-reading links; satisfies ISC-183–186.
+- `CloudflareAdminActivation`: group membership and fresh-claim verification;
+  satisfies ISC-187–188; depends on Access write authority.
+- `TwoAccountPilot`: live lifecycle and denial proof; satisfies ISC-189;
+  depends on RelationshipHTTP, ConsentedSynastry, and two authenticated owners.
+
+### Decisions
+
+- 2026-07-26 22:28: refined: completion now means end-to-end product and pilot
+  behavior, not only schema and domain foundations.
+- 2026-07-26 22:28: the failure lens added object/database partial-commit,
+  mid-generation consent revocation, stale-role, and deletion-boundary probes.
+- 2026-07-26 22:28: the experiential lens made canonical identity and visible
+  access reason prerequisites of a trustworthy chat-plus-library experience.
+- 2026-07-26 22:33: SystemsThinking selected the system-rules boundary
+  (Meadows level 5) as the highest feasible leverage: Access claims govern
+  administrator authority, participant state governs synastry, and neither can
+  substitute for the other. Visible access reasons are the bundled
+  information-flow intervention (level 6).
+- 2026-07-26 22:33: Science compared five falsifiable completion hypotheses:
+  backend-first, Urania-first, UI-first, one-shot deployment, and isolated
+  reversible slices. UI-first is refuted by absent routes; one-shot deployment
+  is refuted by credential and rollback risk. The selected hypothesis is
+  isolated slices with local failure probes, then dependency-ordered deployment.
+- 2026-07-26 22:33: the current Access credential cannot satisfy ISC-187 or
+  ISC-188 through the API. Implementation continues while the primary session
+  tests whether an authenticated dashboard session can provide the missing
+  control surface.
+- 2026-07-26 22:45: root-cause-at-ingestion checkpoint: the incomplete state
+  enters at missing transport and persistence boundaries, not at rendering.
+  Selemene archive queries are fixed database-up; Urania consent and synastry
+  are fixed request-to-commit; product views consume those typed boundaries
+  instead of reconstructing authority client-side.
+- 2026-07-26 22:45: dirty repository changes are intentional user work and
+  will not be stashed or reset. Each producer has explicit file ownership,
+  must preserve surrounding edits, and returns focused before/after evidence.
+- 2026-07-26 23:22: Cloudflare Access rule groups are reusable policy
+  collections, not identity-provider group claims. Production persisted the
+  authenticated owner as `viewer`, falsifying the former assumption that the
+  rule-group name would arrive in JWT `groups`. Selemene now keeps JWT
+  signature, issuer, and audience validation primary, then requires an exact
+  fail-closed `CF_PLATFORM_ADMIN_EMAILS` match before assigning
+  `platform-admin`; unmatched identities remain viewers.
+- 2026-07-26 23:34: a stale in-flight Folio GET could overwrite the newly
+  inserted client snapshot after a successful POST. Saving now invalidates
+  older refresh sequences, and compact chat provenance includes the actionable
+  canonical-record link instead of identity text alone.
+
+### Risks
+
+- Object storage may be unavailable or unbound in the current Pages project.
+- The Selemene production migration can expose an older-schema incompatibility.
+- A generated reading may complete after either participant revokes consent.
+- A user-facing library can accidentally duplicate instead of reference Folio.
+- Admin UI permission checks can drift from API permission enforcement.
+- A second real authenticated owner cannot be simulated as production consent.
+
+### Verification
+
+- Preflight: `wrangler 4.114.0` is authenticated to the intended 9d9d account
+  as `sheshnarayan.iyer@gmail.com`; its OAuth permissions include Pages, D1,
+  Workers, and storage writes but do not include Zero Trust Access policy
+  writes.
+- Preflight: the Urania project has production D1 configured; no R2 binding is
+  currently declared in `wrangler.toml`.
+- Preflight: `temperance-batch`, Railway CLI, and PostgreSQL client are
+  installed; the Urania directory itself is not linked to a Railway project.
+- ISC-168: isolated PostgreSQL 16 integration — two executions of the generated
+  pilot transaction returned exactly `runs|1`, `sources|1`, `subjects|1`,
+  `readings|1`, `artifacts|2`, and `editorial|1`.
+- ISC-169: failure-injection unit probe — an injected archive-commit failure
+  left `objects.size === 0`, while a checksum-matching pre-existing object
+  remained present and was not compensated.
+- ISC-170: PostgreSQL and object-adapter deletion probes — soft deletion
+  returned `deleted|1|1|2`, preserving one import run and one source while both
+  artifacts entered the deleted state; fake object bytes were removed.
+- ISC-171: file/checksum probe — the frozen descriptor identifies only
+  `Sheshnarayan Cumbipuram Nateshan`; `manifest.json` is 608 bytes with
+  SHA-256 `ae56…c989`, and `reading.md` is 147,658 bytes with SHA-256
+  `d1bd…8f18`.
+- ISC-172: live R2 object probe — the dedicated private
+  `tryambakam-noesis-readings` bucket accepted both pilot artifacts; remote
+  reads hashed to the frozen `ae56…c989` and `d1bd…8f18` digests.
+- ISC-174–182: authenticated Functions matrix —
+  `relationships.test.ts` plus `relationship-http.test.ts` returned
+  `16 passed; 0 failed`. The suite proves the full invitation lifecycle,
+  unauthenticated denial, foreign/admin non-access, exactly two server-resolved
+  subjects plus typed relationship context, revocation-during-generation
+  rejection, two grants, one canonical checksum-protected result, historical
+  grantee browse after revocation, and denial of new generation.
+- ISC-174–182: D1 contract — migrations 0001–0007 applied locally as eight
+  successful commands and `PRAGMA foreign_key_check` returned an empty result.
+- ISC-158–161/163–167: Selemene archive repository/API/admin-web verification —
+  three live PostgreSQL repository tests passed, the permission test passed,
+  `cargo check -p noesis-data -p noesis-api` exited zero, and the protected
+  admin-web typecheck plus production build completed with `/living-readings`.
+  The API router exposes only GET operations for this archive and the UI
+  renders access reason, filters, locators, and checksums without an artifact
+  byte-fetch client.
+- Production archive pilot: migration 036 applied to Railway PostgreSQL in one
+  transaction. The frozen pilot SQL then ran twice and still returned exactly
+  `runs|1`, `sources|1`, `readings|1`, `artifacts|2`, and `editorial|1`;
+  the active record is owner-only and `needs_review`.
+- ISC-183/184/186: Urania SPA verification — the full suite passed 51 files and
+  510 tests, Functions typecheck exited zero, and the production build
+  transformed 1,616 modules. Settings exposes profile, circle, consent
+  lifecycle, and visibility; canonical reading views expose the owner,
+  subject, source, producer, access reason, identifier, and checksum.
+- ISC-187: authenticated Cloudflare dashboard inspection showed durable rule
+  group `selemene-admin` (`8423500a-493e-4314-8b93-a488804da984`) includes
+  `sheshnarayan.iyer@gmail.com` and is referenced by the reusable
+  `Selemene-admin` allow policy used by the Selemene application.
+- ISC-162: route-level authorization probe —
+  `living_readings_auth_tests.rs` called both living-archive GET routes with a
+  viewer JWT; both returned `403 FORBIDDEN` and named
+  `admin:analytics:read` before repository access.
+- ISC-173: live production API probe — an ephemeral API key carrying only
+  `basic:access` plus `admin:analytics:read` returned `200` from list and
+  detail through the Railway origin. Reading
+  `75c78363-a307-4b4c-a26c-e9cc96470ce7` exposed owner-only
+  `needs_review`, its protected access reason, two available R2 locators, and
+  the frozen `ae56…c989` / `d1bd…8f18` checksums. The key was revoked
+  immediately after the probe.
+- ISC-185: QATester browser proof — a fresh local chat generation returned
+  Selemene `200`, Folio `201`, and an actionable `Open record`. Chat and
+  Library both exposed reading
+  `2ceacf42-527e-41c4-934c-4bf0132bd76a` with SHA-256
+  `4886cef8a1e8acfc3acc0931c8743ac859820f0a577c741d7be313d8ceda2bcc`;
+  ten of ten assertions passed with zero console errors or warnings.
+- ISC-188 implementation evidence — nine Cloudflare role-mapping tests and
+  `cargo check -p noesis-api` pass; Railway deployment
+  `a0753629-4fc2-4f78-827e-b418fa6752c1` is healthy with the exact admin
+  allowlist configured. Fresh human-session proof remains open because the
+  authenticated Chrome session closed before `/admin/session` could be read.
+  Follow-up `FV-188-production-admin-session`: authorize a fresh browser login,
+  then capture `/api/v1/admin/session` and the protected pilot detail.
+- ISC-189 remains open: remote D1 contains only one authenticated owner and
+  zero relationship generations. A second real Access identity and its
+  participant-owned subject are required; the system will not fabricate either
+  or substitute administrator authority for consent. Follow-up
+  `FV-189-two-account-synastry`: sign in as a second real user and run invite,
+  accept, generate, browse, revoke, then verify a new generation is denied.
+
+## Iteration 7 — Frontend Brand, Components, and Journey Review (2026-07-26)
+
+### Problem
+
+Urania now contains a constellation map, ritual Threshold, chat-first reading
+doorways, canonical Reading Library, visual reading components, identity
+settings, and consented-relationship controls. Each surface is individually
+functional, but the product has not received one integrated review against the
+original `.assets` aesthetic, the graph-first philosophy, the living-reading
+vocabulary, responsive behavior, and accessibility fundamentals.
+
+### Vision
+
+The constellation, conversation, reading, archive, and consent surfaces feel
+like one calm celestial instrument. Chat remains the primary way to begin;
+visual readings make complexity legible; Library remains a trusted recovery
+surface; and Settings makes ownership and consent understandable without
+turning Urania into a generic administration dashboard.
+
+### Out of Scope
+
+- No frontend redesign or component implementation during this review.
+- No production data mutation, corpus import, or consent lifecycle execution.
+- No replacement of the established palette, typography, or generated assets.
+- No claims about experiences that cannot be inspected in code or a browser.
+
+### Constraints
+
+- The current dirty worktree is the reviewed source and must remain intact.
+- The review environment, viewport, route, and data limitation must be recorded.
+- Access-gated or data-empty states cannot be described as populated production proof.
+- Visual recommendations must extend the current brand rather than introduce a substitute.
+- Accessibility findings require source evidence, computed contrast, or browser interaction.
+
+### Goal
+
+Produce one evidence-backed frontend review that explains the present Urania
+brand, maps its integrated journeys, identifies the most consequential design
+and accessibility gaps, and defines a prioritized living-reading component
+system without modifying the user-facing implementation.
+
+### Criteria
+
+- [x] ISC-190: The review maps every primary route and its intended user job.
+- [x] ISC-191: The first-time, returning, reading, recovery, and synastry journeys are diagrammed.
+- [x] ISC-192: The `.assets` moodboard and generated reading components are visually inspected.
+- [x] ISC-193: Implemented palette, typography, frames, motion, and iconography are compared with the references.
+- [x] ISC-194: The review identifies where the constellation remains primary and where dashboard chrome displaces it.
+- [x] ISC-195: Chat onboarding, composing, result, canonical-link, and archive-return beats are reviewed as one flow.
+- [x] ISC-196: Reading visualizations are reviewed for semantic meaning, hierarchy, and accessible alternatives.
+- [x] ISC-197: Component and token consistency is evaluated without proposing a new unrelated visual language.
+- [x] ISC-198: Vocabulary is evaluated for sacred, technical, trustworthy, and plain-language balance.
+- [x] ISC-199: Desktop and mobile routes are exercised in a real browser with screenshots.
+- [x] ISC-200: Browser console and network diagnostics are captured for the reviewed journeys.
+- [x] ISC-201: Small text, opacity, focus, dialog, keyboard, motion, and graph accessibility risks are identified.
+- [x] ISC-202: Contrast evidence includes computed ratios for recurring muted text treatments.
+- [x] ISC-203: Findings distinguish strengths, material problems, and deliberate product tradeoffs.
+- [x] ISC-204: Recommendations are prioritized by user impact and implementation sequence.
+- [x] ISC-205: The review defines a coherent component-library direction for readings, evidence, time, relations, and trust.
+- [x] ISC-206: No existing intentional workspace change is overwritten or reformatted.
+- [x] ISC-207: Final claims cite inspected source, assets, or browser evidence.
+- [x] ISC-208: The reviewed commit, worktree state, runtime, routes, and viewport matrix are recorded.
+- [x] ISC-209: Loading, empty, error, disabled, validation, overflow, and long-content states are evaluated.
+- [x] ISC-210: Design-token adherence and hardcoded style drift are assessed.
+- [x] ISC-211: Findings use blocker, major, moderate, or minor severity with reproducible guidance.
+
+### Test Strategy
+
+```yaml
+- isc: ISC-192
+  type: visual-reference
+  check: inspect moodboard, architecture reference, component atlas, and folio image
+  threshold: palette, type, framing, geometry, and information-density observations recorded
+
+- isc: ISC-199
+  type: browser-matrix
+  check: exercise home, node, chat, library, settings at desktop and mobile widths
+  threshold: screenshots plus route-level observations for every available surface
+
+- isc: ISC-201
+  type: accessibility
+  check: inspect semantics, focus behavior, motion handling, text size, and contrast
+  threshold: every material finding cites source, browser behavior, or computed ratio
+
+- isc: ISC-202
+  type: contrast-calculation
+  check: composite recurring silver and gold opacity treatments over the void background
+  threshold: ratios recorded and compared with text-size requirements
+
+- isc: ISC-208
+  type: environment
+  check: record git state, runtime host, browser, data state, and viewport sizes
+  threshold: audit can be reproduced without assuming unobserved production data
+```
+
+### Features
+
+- `BrandCoherenceAudit`: compares the shipped visual grammar with `.assets`.
+- `ComponentSemanticsAudit`: evaluates tokens, visualization meaning, and content hierarchy.
+- `JourneyAudit`: traces Threshold, graph, chat, canonical record, Library, and Settings.
+- `AccessibilityAudit`: reviews keyboard, focus, dialog, contrast, graph, and motion behavior.
+- `PrioritizedDirection`: turns findings into an ordered component-system roadmap.
+
+### Decisions
+
+- 2026-07-27: Keep the task review-only. The user requested understanding and
+  evaluation; implementation requires a subsequent explicit change request.
+- 2026-07-27: Treat `.assets` as intended direction, never as proof that a
+  component exists in the running application.
+- 2026-07-27: Distinguish semantic visualizations from decorative celestial
+  framing. A visual earns authority only when its marks encode stored data.
+- 2026-07-27: Add accessibility, state coverage, responsive behavior, token
+  drift, and environment pinning after the commitment-boundary Advisor review.
+
+### Risks
+
+- Reference imagery can be mistaken for an implemented component system.
+- Dense celestial ornament can hide weak information hierarchy.
+- Chat-first language can conflict with map-first navigation and library chrome.
+- Very small tracked labels can look distinctive while becoming unreadable.
+- Network graphs can encode relationships visually without an equivalent list.
+- A live Access boundary can obscure product behavior during browser review.
+
+### Verification
+
+- ISC-190–198/203–205/207/210–211: the durable review maps the route and
+  reading loop, compares the shipped identity with canonical assets and voice,
+  ranks findings by severity, and defines a component taxonomy that extends the
+  existing Urania visual language.
+- ISC-192–193: the moodboard, seven page references, component atlas, and
+  reading-folio image were inspected alongside the shipped palette, type,
+  frames, geometry, and motion. A source import scan confirmed those images are
+  reference material rather than runtime assets.
+- ISC-199–200: QATester exercised Home, Witness, Folio, Readings, and Settings
+  in headless Chromium at 1440×1000 and 390×844, plus a 720×1000 CSS-pixel
+  viewport proxy for effective 200% reflow. Diagnostics contained zero console
+  errors or warnings, page errors, failed requests, or HTTP failures.
+- ISC-201–202: source and browser probes reproduced dialog focus escape,
+  missing Escape/focus restoration, invisible graph focus, mobile SVG pointer
+  interception, clipped chrome, zoom-reflow node loss, and contrast ratios from
+  2.24:1 to 4.28:1 for recurring muted text.
+- ISC-206: `git status` confirms the pre-existing dirty application worktree
+  remains present; this review changed only `ISA.md` and added
+  `docs/frontend-brand-flow-review-2026-07-27.md`.
+- ISC-208–209: the report records commit/worktree, runtime identity, local data,
+  viewport matrix, live-state limitations, and source-reviewed loading, empty,
+  error, disabled, validation, overflow, and long-content behavior.
+- Production build: `npm run build` passed with 1,616 transformed modules; the
+  pre-existing missing `astro/tsconfigs/strict` warning remains non-blocking.
+- Diff hygiene: `git diff --check` passed.
+
+### ReReadCheck
+
+The latest request requires Temperance parallel dispatch, appropriate local
+skills, one integrated frontend review, and an understanding of brand
+aesthetics plus end-to-end flow. The external Temperance run was attempted and
+failed open without an index; three bounded Codex auditors then supplied live
+QA, brand/vocabulary, and component-semantics evidence. The durable review
+explicitly covers the requested visual identity, vocabulary, route journey,
+reading components, responsive behavior, and accessibility.
+
+### Changelog
+
+- Added the durable frontend brand, component, and journey review.
+- Added desktop, mobile, zoom-reflow, focus, pointer, console, and network
+  evidence to the original source and asset review.
+- Added canonical vocabulary findings, including critical `Path(s)` drift,
+  first-encounter proposition gaps, deterministic-copy drift, and typography.
+- Added a semantic reading-component taxonomy and P0–P3 implementation order.
+- Refined the initial “chat-first” assumption: Urania is currently graph-first
+  for discovery, conversation-first for intake, and visual-reading-first for
+  return.
+
+### Learn
+
+- The initial conjecture that visual inconsistency was the primary design
+  problem was refuted. The palette, frame, and celestial grammar are already
+  coherent; semantic accountability and interaction access are the larger gaps.
+- The initial conjecture that the shipped product was chat-first was refuted by
+  route and browser evidence. The honest designation is graph-first discovery,
+  conversation-first intake, and visual-reading-first return.
+- The initial conjecture that clean mobile width implied responsive stability
+  was refuted. Decorative SVG hit interception, clipped Logout chrome, invisible
+  focus, and viewport-proxy node loss show that interaction and reflow must be
+  tested independently from document overflow.
+- The final Advisor review correctly challenged an over-broad accessibility
+  completion claim. The report now states that the run used headless Chromium,
+  that the 720 CSS-pixel check was a viewport proxy rather than actual browser
+  zoom, and that screen-reader, cross-engine, and formal 320 CSS-pixel WCAG
+  reflow tests remain future implementation verification.
+- Advisor priority guidance was incorporated: dialog focus management and a
+  non-graph navigation equivalent now precede simulated-data and vocabulary
+  refinement in P0.
+- Temperance external dispatch produced no aggregate index within the bounded
+  window, so the documented fail-open path was used. The resulting three Codex
+  audits remained independent and converged on the same trust/access diagnosis.
+- `frontend-design-direction`, `ui-ux-pro-max`, `frontend-a11y`,
+  `noesis-writer-skill`, browser automation, ISA, and Advisor skills materially
+  shaped the evidence model, canonical vocabulary gate, responsive matrix,
+  component taxonomy, and conformance boundary.
+
+## Iteration 8 — Engine Output Visualization Atlas (2026-07-27)
+
+### Problem
+
+Urania preserves deterministic engine responses for provenance, but an
+unrecognized or weakly adapted payload can still collapse into literal JSON or
+JSON-shaped prose. The existing element layer covers many recurrent shapes, yet
+there is no single exhaustive, executable inventory connecting all eighteen
+Selemene engines and six workflows to their source fields, visual grammar,
+fallback state, and branded component.
+
+### Vision
+
+Every engine result opens as an intelligible visual reading: measures become
+scales, positions become plotted placements, relationships become named edges
+plus lists, periods become sequences, spreads preserve source order, media
+becomes a playable artifact, and capture-gated engines state their boundary.
+Exact JSON remains available only as collapsed provenance. The graph remains
+the interface: engine and workflow nodes open these visual reading surfaces
+without forcing the reader to inspect developer payloads.
+
+### Out of Scope
+
+- No change to Selemene engine calculations or response contracts.
+- No invention of meaning for unknown, null, mock, or capture-gated fields.
+- No public exposure of private `723` reading values in documentation or images.
+- No automatic generative interpretation added to deterministic facts.
+- No replacement of the existing Urania brand identity or graph navigation.
+- No claim that a generated concept board is shipped application behavior.
+
+### Principles
+
+- Visual form follows the source relationship, never the engine’s mystical name.
+- JSON is provenance, not the reader-facing experience.
+- Every quantitative mark prints its value, scale, unit, and source path.
+- Every graph has a text or table equivalent.
+- Unknown data stays unknown; missing data stays visibly missing.
+- Gold frames structure, emerald denotes computation, violet denotes witness,
+  terracotta denotes unresolved state, and none of them imply moral value.
+- The graph remains the primary spatial navigation at every depth.
+
+### Constraints
+
+- The current dirty worktree contains intentional user changes and must remain intact.
+- Schema mining may record paths and types but never private source values.
+- Generated imagery must use the existing `.assets` references.
+- Image generation must use Codex OAuth through `codex-gpt-image`.
+- External parallel work must fail open to Codex agents.
+- Durable outputs live in the repository under `docs/`, `scripts/`, or `.assets/generated/`.
+
+### Goal
+
+Create an executable, evidence-backed engine-output atlas covering all eighteen
+engines and six workflows, define the complete branded component inventory that
+replaces visible JSON, and generate reference boards from the existing Urania
+assets without altering engine truth.
+
+### Criteria
+
+- [x] ISC-212: Numerology has an observed path/type schema and named visual mapping.
+- [x] ISC-213: Human Design has an observed path/type schema and named visual mapping.
+- [x] ISC-214: Gene Keys has an observed path/type schema and named visual mapping.
+- [x] ISC-215: Vimshottari has an observed path/type schema and named visual mapping.
+- [x] ISC-216: Panchanga has an observed path/type schema and named visual mapping.
+- [x] ISC-217: Vedic Clock has an observed path/type schema and named visual mapping.
+- [x] ISC-218: Biorhythm has an observed path/type schema and named visual mapping.
+- [x] ISC-219: Transits has an observed path/type schema and named visual mapping.
+- [x] ISC-220: Tarot has an observed path/type schema and named visual mapping.
+- [x] ISC-221: I Ching has an observed path/type schema and named visual mapping.
+- [x] ISC-222: Enneagram has an observed path/type schema and named visual mapping.
+- [x] ISC-223: Sacred Geometry has an observed path/type schema and named visual mapping.
+- [x] ISC-224: Nadabrahman has an observed path/type schema and named visual mapping.
+- [x] ISC-225: Raaga has an observed path/type schema and named visual mapping.
+- [x] ISC-226: Sigil Forge has an observed path/type schema and named visual mapping.
+- [x] ISC-227: Biofield has an observed path/type schema and explicit capture boundary.
+- [x] ISC-228: Biofield Capture has an observed path/type schema and explicit capture boundary.
+- [x] ISC-229: Face Reading has an observed path/type schema and explicit capture boundary.
+- [x] ISC-230: Birth Blueprint names its contributing engines and composite presentation.
+- [x] ISC-231: Daily Practice names its contributing engines and composite presentation.
+- [x] ISC-232: Full Spectrum names its contributing engines and composite presentation.
+- [x] ISC-233: Creative Expression names its contributing engines and composite presentation.
+- [x] ISC-234: Decision Support names its contributing engines and composite presentation.
+- [x] ISC-235: Self Inquiry names its contributing engines and composite presentation.
+- [x] ISC-236: Anti: reader-facing defaults never expose expanded raw JSON.
+- [x] ISC-237: Non-sensitive source fields remain available through collapsed, privacy-filtered provenance.
+- [x] ISC-238: Fact-grid payloads map to a branded facts component.
+- [x] ISC-239: Number-code payloads map to a branded reduction component.
+- [x] ISC-240: Position payloads map to tables or plotted placements with values.
+- [x] ISC-241: Relationship payloads map to named edges plus an equivalent list.
+- [x] ISC-242: Ordered-period payloads map to a sequence or timing component.
+- [x] ISC-243: Cyclic payloads map to labeled scales with printed values.
+- [x] ISC-244: Spread payloads preserve source order and source labels.
+- [x] ISC-245: Collection payloads expose named membership without invented rank.
+- [x] ISC-246: Question payloads remain questions rather than conclusions.
+- [x] ISC-247: Media payloads map to playable/downloadable artifact components.
+- [x] ISC-248: Capture-gated payloads map to consent and device-state components.
+- [x] ISC-249: Null and unknown payloads map to an explicit unresolved component.
+- [x] ISC-250: A machine-readable manifest contains exactly eighteen engine entries.
+- [x] ISC-251: A machine-readable manifest contains exactly six workflow entries.
+- [x] ISC-252: The durable atlas lists every engine’s primary, secondary, and fallback component.
+- [x] ISC-253: The durable atlas lists the complete reusable component inventory.
+- [x] ISC-254: One generated overview board shows the component families.
+- [x] ISC-255: One generated detail board shows representative engine surfaces.
+- [x] ISC-256: Generated boards visibly follow the existing palette, framing, and geometry.
+- [x] ISC-257: Image generation uses Codex OAuth and reports model and dimensions.
+- [x] ISC-258: Anti: schema outputs contain no private source values.
+- [x] ISC-259: Anti: no intentional application change is overwritten or reformatted.
+- [x] ISC-260: The schema miner runs successfully against the current `723` corpus.
+- [x] ISC-261: The schema miner produces deterministic ordering.
+- [x] ISC-262: The manifest validates without duplicate engine identifiers.
+- [x] ISC-263: Existing reading-element tests pass.
+- [x] ISC-264: Production TypeScript and Vite build passes.
+- [x] ISC-265: Documentation links each mapping to inspected code or source evidence.
+- [x] ISC-266: The atlas distinguishes implemented, partial, capture-gated, and proposed states.
+- [x] ISC-267: The component inventory includes accessible text/table alternatives.
+- [x] ISC-268: The component inventory includes loading, empty, partial, error, and stale states.
+- [x] ISC-269: The component inventory includes thread, reading, Folio, compare, and operator densities.
+- [x] ISC-270: No generated board presents fictional statistics as stored telemetry.
+- [x] ISC-271: Antecedent: exact engine identifiers and workflow membership are verified before visual assignment.
+- [x] ISC-272: Every visual mapping names the field relationship it encodes.
+- [x] ISC-273: The atlas explains why engine-specific dashboards are composed from shared grammars.
+- [x] ISC-274: The generated assets are saved under `.assets/generated/engine-output-atlas/`.
+- [x] ISC-275: A validation probe confirms all eighteen engines have non-JSON default presentations.
+- [x] ISC-276: Every engine entry declares implemented, partial, capture-gated, or proposed status.
+- [x] ISC-277: Anti: generated artifacts contain no absolute corpus paths or subject directory names.
+- [x] ISC-278: Every generated tile declares observed-data or generated-reference provenance.
+- [x] ISC-279: The manifest encodes the complete engine-by-workflow membership matrix.
+- [x] ISC-280: Every visual component contract names its non-visual equivalent.
+- [x] ISC-281: Anti: the generated manifest embeds no raw values, binary media, tokens, or secrets.
+
+### Test Strategy
+
+| ISC | Type | Check | Threshold | Tool |
+| --- | --- | --- | --- | --- |
+| 212–229 | schema | mine path/type shapes and inspect source contracts | one entry per engine | schema miner + source |
+| 230–235 | workflow | inspect workflow registry and live taxonomy evidence | six exact compositions | source + evidence |
+| 236–249 | renderer | inspect presentation rules and fallbacks | no expanded JSON default | manifest validation |
+| 250–262 | artifact | validate JSON manifest invariants | exact counts, stable order | Node test |
+| 263–264 | build | run focused tests and production build | exit zero | npm |
+| 254–257/270/274 | visual | inspect generated boards against references | branded, factual, saved | image inspection |
+| 258–259 | anti | scan outputs and worktree | no values or clobbering | rg + git |
+| 265–273/275 | completeness | cross-check document and manifest | every entry mapped | validation script |
+| 276–281 | trust | validate status, provenance, matrix, alternatives, and redaction | no ambiguous or private cells | manifest test |
+
+### Features
+
+| Feature | Satisfies | Depends on | Parallelizable |
+| --- | --- | --- | --- |
+| Corpus schema miner | 212–229, 258, 260–262 | local `723` bundles | yes |
+| Engine/workflow contract audit | 212–235, 265, 271 | Selemene source | yes |
+| Visualization grammar matrix | 236–253, 266–273, 275 | schema inventory | yes |
+| Generated component boards | 254–257, 270, 274 | converged component list | no |
+| Verification sweep | 263–275 | all artifacts | yes |
+
+### Decisions
+
+- 2026-07-27: Extend the implemented `ReadingElement` grammar rather than
+  invent eighteen isolated dashboard languages.
+- 2026-07-27: Treat raw JSON as collapsed source evidence, never the default
+  reader-facing output.
+- 2026-07-27: Use local historical bundles for path/type discovery only; do not
+  publish private values or infer subject meaning.
+- 2026-07-27: Generated image boards are design contracts, explicitly distinct
+  from shipped application state.
+- 2026-07-27: Advisor required per-engine implementation status, tile-level
+  provenance, normalized corpus evidence, and a full engine-by-workflow matrix;
+  these are now explicit criteria rather than documentation conventions.
+- 2026-07-27: “Collapsed JSON” is not treated as a privacy guarantee. Generated
+  artifacts will contain schema paths/types only and no raw values or binary
+  media; authenticated source inspection remains a separate product surface.
+
+### Verification
+
+- `node --test scripts/readings/engine-output-atlas.test.mjs`: 8/8 passed.
+- `npm test`: 54 files and 529/529 tests passed.
+- `npm run build`: TypeScript and Vite production build passed.
+- `cargo test -p noesis-orchestrator --lib`: 96/96 passed.
+- `cargo test -p noesis-orchestrator --test workflow_integration_tests`: 21/21 passed.
+- Atlas totals: 18 engines, 6 workflows, 108 membership cells, 49 components.
+- Generated boards: two final 1536 × 1024 PNG references via Codex OAuth,
+  `gpt-image-2`, high quality.
+- Cato final trust audit: PASS after workflow, semantic, media, and privacy
+  corrections.
+- `git diff --check`: passed in both Urania and Selemene.
+
+### Changelog
+
+- Added deterministic privacy-safe engine-output schema miner and manifest.
+- Added exhaustive engine/workflow visualization and component contract.
+- Added media, artifact, capture, failure, workflow-ledger, and privacy-safe
+  technical-source renderers.
+- Preserved top-level Raaga audio and Sigil Forge image envelopes.
+- Added live nested Tarot cards with visible reversal orientation.
+- Added Panchanga astronomical scalar facts without inventing cyclic geometry.
+- Unified Selemene API workflow execution with the canonical WorkflowRegistry.
+- Generated and visually inspected final component-family and eighteen-engine
+  reference boards from existing Urania assets.
+- Added a cross-language supported-engine reconciliation contract across
+  Selemene, Urania extractors, and the generated atlas.
+- Added default-deny capture-source filtering and SHA-256 generation metadata.
+
+### Learn
+
+- Presence counts do not prove semantic truth. Engine status must describe the
+  renderer that exists today; specialist targets remain `partial` or
+  `proposed`.
+- Multiple registries require one executable reconciliation gate. Selemene’s
+  runtime, Urania’s named extractors, and the atlas now fail together on drift.
+- Collapsing source data is presentation, not privacy. Capture envelopes and
+  results default-deny unreviewed keys, and all fallbacks share the same filter.
+- Whole-envelope handling is a durable invariant because generated media and
+  failure state live beside `result`, not necessarily inside it.
+- Generative reference boards are quarantined from deterministic product truth.
+  Because the endpoint exposes no pinned `gpt-image-2` version or seed, exact
+  prompts, references, intermediates, and outputs are fingerprinted instead.
+- Visual semantics follow payload relationships. Panchanga remains facts,
+  Tarot reversal stays explicit, and decorative cross-engine edges are removed.
+
+## Iteration 9 — Branded Graph-First UI Realignment Plan (2026-07-27)
+
+### Problem
+
+Urania now has a functioning graph-first shell, chat-to-reading handoff, durable
+reading grammar, settings surface, engine-output atlas, and branded reference
+boards. Those pieces were developed across several passes and are not yet
+captured as one executable frontend realignment sequence. Without a precise
+plan, implementation can drift into generic dashboard composition, duplicate
+the reading renderers, expose raw JSON, or disturb the backend contracts and
+working chat orchestration.
+
+### Vision
+
+A future implementation session can follow one test-first plan to make the
+current product feel like one living celestial instrument. Chat remains the
+gentle onboarding doorway; the constellation remains the primary spatial
+navigation; every result resolves into the shared reading grammar; the library,
+folio, settings, and admin surfaces share the same sacred-technical visual
+system; and technical source evidence remains a deliberately secondary,
+privacy-filtered disclosure.
+
+### Out of Scope
+
+- Runtime source changes in this planning-only iteration.
+- Backend, database, KV, Vectorize, or Selemene contract changes.
+- Inventing engine outputs, relationships, workflow telemetry, or user data.
+- Replacing the Tryambakam Noesis identity with a new visual brand.
+- Shipping generated moodboard images as literal application screenshots.
+
+### Constraints
+
+- The current worktree contains intentional integrated frontend changes and is
+  the authoritative object of this audit.
+- The plan must preserve all existing user edits and modify no runtime file.
+- Every implementation task must name exact paths, tests, code shape, commands,
+  expected outcomes, and an atomic commit.
+- Visual status, provenance, privacy, reduced motion, and narrow viewport
+  behavior are product contracts, not finishing polish.
+- The graph remains the interface at every depth; secondary chrome supports it
+  instead of becoming the dominant navigation model.
+
+### Goal
+
+Create and verify a durable, file-specific, test-first implementation plan that
+maps the current Urania frontend to the established moodboards, brand system,
+reading-element grammar, and engine-output atlas while preserving chat
+onboarding, reading fallback, backend contracts, and privacy boundaries.
+
+### Criteria
+
+- [x] ISC-282: The plan maps every current top-level route and its owning page component.
+- [x] ISC-283: The plan maps graph, chrome, chat, reading, settings, and admin component ownership.
+- [x] ISC-284: The plan maps existing color, typography, spacing, border, glow, and state tokens.
+- [x] ISC-285: The plan catalogs the authoritative moodboard and generated board references by exact path.
+- [x] ISC-286: The plan maps all eighteen engine families and six workflows to reusable UI surfaces.
+- [x] ISC-287: Every planned product surface preserves the graph as the primary spatial interface.
+- [x] ISC-288: The plan specifies the chat-onboarding to canonical-reading handoff and reading-UI fallback.
+- [x] ISC-289: The plan specifies the home-constellation visual realignment without changing its seven parent nodes.
+- [x] ISC-290: The plan specifies node-page hierarchy, child-doorway, status, and result presentation changes.
+- [x] ISC-291: The plan specifies reading-library discovery, filtering, grouping, and empty-state behavior.
+- [x] ISC-292: The plan specifies canonical folio and reading-detail surfaces using the shared reading grammar.
+- [x] ISC-293: The plan specifies settings and authorized admin presentation without weakening access controls.
+- [x] ISC-294: The plan specifies workflow-ledger presentation with provenance and honest proposed/live states.
+- [x] ISC-295: The plan maps engine outputs to scalar, cycle, timeline, relation, matrix, media, and text primitives.
+- [x] ISC-296: The plan makes privacy-filtered technical source a collapsed, explicit disclosure.
+- [x] ISC-297: Every visual task declares mobile, tablet, and wide-screen behavior.
+- [x] ISC-298: Every interactive task declares keyboard, focus, semantic-label, and contrast acceptance checks.
+- [x] ISC-299: Motion tasks declare meaningful transitions and reduced-motion behavior.
+- [x] ISC-300: Data-bearing tasks declare loading, empty, partial, unavailable, capture-gated, and failure states.
+- [x] ISC-301: Route tasks preserve deep links, hash history, browser navigation, and refresh behavior.
+- [x] ISC-302: Every implementation task starts with a failing focused test or auditable visual assertion.
+- [x] ISC-303: Every implementation task names exact files to create or modify.
+- [x] ISC-304: Every implementation task includes concrete code or contract snippets.
+- [x] ISC-305: Every implementation task includes exact commands that an executor can run.
+- [x] ISC-306: Every implementation task names the expected failure and passing result.
+- [x] ISC-307: Every implementation task ends with an atomic commit checkpoint.
+- [x] ISC-308: The plan identifies dependencies and safe parallel execution lanes.
+- [x] ISC-309: Anti: no planned default surface renders raw JSON or private capture values.
+- [x] ISC-310: Anti: no planned surface replaces the brand with generic SaaS cards, glassmorphism, or decorative telemetry.
+- [x] ISC-311: Anti: the plan requires no database, KV, Vectorize, embedding, or Selemene API contract change.
+- [x] ISC-312: Antecedent: the plan is based on inspected current UI code, rendered UI evidence, and authoritative local visual references.
+- [x] ISC-313: The completed plan is saved under `docs/plans/` and passes an explicit completeness check.
+
+### Test Strategy
+
+| ISC | Type | Binary probe | Pass threshold |
+| --- | --- | --- | --- |
+| 282–283 | architecture | route/component matrix in plan | every current surface appears once with an owner |
+| 284–286 | design-system | asset/token/engine tables in plan | exact paths and all 18 engines / 6 workflows present |
+| 287–301 | product contract | task acceptance checks | every relevant behavior and state is testable |
+| 302–308 | executability | inspect each task template | failing test, files, snippet, commands, pass result, commit |
+| 309–311 | anti-criteria | plan text scan | no raw-JSON default, rebrand, or backend mutation |
+| 312 | antecedent | evidence ledger | code, rendered UI, and visual assets all cited |
+| 313 | artifact | file and completeness check | plan exists and all 32 criteria are addressed |
+
+### Features
+
+| Feature | Satisfies | Depends on | Parallelizable |
+| --- | --- | --- | --- |
+| Current-surface architecture audit | 282–283, 287–301, 312 | live source and rendered UI | yes |
+| Brand and moodboard translation map | 284–285, 289–300, 310, 312 | authoritative local assets | yes |
+| Engine-to-component system map | 286, 294–296, 300, 309 | completed atlas and reading grammar | yes |
+| Test-first execution sequence | 302–308, 311 | all audit outputs | no |
+| Completeness and anti-drift verification | 309–313 | finished plan | no |
+
+### Decisions
+
+- 2026-07-27: This iteration writes a plan only; runtime implementation is
+  deferred to the execution mode chosen after review.
+- 2026-07-27: No clean worktree is created because the intentional uncommitted
+  integrated UI is the subject being mapped. The plan artifact and this ISA
+  extension are the only authorized edits in the current worktree.
+- 2026-07-27: Existing shared reading elements remain the canonical output
+  grammar; the engine atlas extends them rather than creating isolated
+  dashboards.
+- 2026-07-27: The generated boards are directional design contracts. Product
+  truth comes from source contracts, authenticated data, and honest status
+  labels.
+- 2026-07-27: Parallel reviews are read-only and converge before the final task
+  ordering is written.
+
+### Verification
+
+- Saved `docs/plans/2026-07-27-urania-graph-first-ui-realignment.md`.
+- Plan validator found 13 tasks, 15 atomic commit checkpoints, and no malformed
+  task; the baseline/harness and engine-registry/artifact pairs are separate
+  buildable commits.
+- Existing/create path validator checked 75 plan references with no missing path.
+- `git diff --check` passed for the plan and this ISA extension.
+- Architecture, brand, and verification audits were dispatched in parallel.
+- All audit blockers were integrated: token/evidence separation, Parchment ink,
+  generated-asset boundaries, engine artifact families, historical grants,
+  Threshold ownership, duplicate-surface retirement, synthetic UI fixtures,
+  Axe scanning, evidence redaction, exact commands, and safe staging.
+- The external Temperance rail produced no terminal index; its required
+  fail-open Codex audits completed successfully.
+
+### Learn
+
+- A visual reference can define composition while remaining untrusted for
+  identifiers, counts, status, and provenance.
+- Evidence color and interaction color must be separate token systems; generic
+  selection must never masquerade as computed or witness state.
+- Revocation semantics are temporal: it blocks future shared generation but
+  does not erase a previously granted historical reading.
+- A test-first visual plan needs characterization gates, per-surface behavior
+  probes, Axe audits, synthetic fixtures, and screenshot evidence—not brittle
+  class snapshots.
+- A dirty integrated worktree needs a reviewed path allowlist and checkpoint
+  commit before task-level commits can be trusted.
+
+## Iteration 10 — Graph-First UI Realignment Execution (2026-07-27)
+
+### Problem
+
+The approved graph-first UI realignment exists as a precise implementation
+plan, but the runtime still carries pre-realignment vocabulary, ambiguous
+interaction/evidence colors, blurred console-card defaults, duplicated overlay
+shells, and uneven loading and reading states. The integrated worktree must be
+preserved before these shared foundations are changed.
+
+### Vision
+
+Urania behaves as one living celestial instrument. The graph remains the
+primary spatial interface; chat gently establishes context; every engine result
+resolves into the same readable Folio grammar; and interaction, evidence,
+privacy, consent, and unavailable states are always visually and textually
+distinct.
+
+### Out of Scope
+
+- No database, KV, Vectorize, embedding, or Selemene API contract changes.
+- No browser-side email authorization or owner/subject identity collapse.
+- No generated image used as runtime data, telemetry, or product truth.
+- No raw private payload as a default reader-facing surface.
+- No unrelated dirty-worktree change is reverted or reformatted.
+
+### Constraints
+
+- Execute `docs/plans/2026-07-27-urania-graph-first-ui-realignment.md`
+  task-by-task with its named tests and atomic checkpoints.
+- Preserve the existing React SPA, hash routing, D1 Folio persistence,
+  relationship consent model, and `ReadingDocument` substrate.
+- The graph is the interface at every depth; chrome and lists are accessible
+  equivalents rather than replacement navigation.
+- Runtime status, identifiers, counts, and provenance come from typed data,
+  never generated references.
+
+### Goal
+
+Implement and verify all thirteen tasks in the approved realignment plan so
+Urania presents chat, constellation navigation, canonical readings, Folio,
+engine/workflow instruments, settings, and dyad readings as one accessible
+branded ecosystem without weakening existing data or authorization contracts.
+
+### Criteria
+
+- [x] ISC-314: Recoverable binary-diff and untracked-file backups exist before runtime edits.
+- [x] ISC-315: The implementation runs on the dedicated `codex/urania-graph-first-ui-realignment` branch.
+- [x] ISC-316: The baseline checkpoint contains exactly the reviewed intentional path allowlist.
+- [x] ISC-317: The baseline harness records known violations and a non-zero production bundle size.
+- [x] ISC-318: Semantic text tokens meet WCAG contrast on Void and instrument surfaces.
+- [x] ISC-319: Evidence colors and interaction colors are structurally distinct.
+- [x] ISC-320: Parchment reading ink and muted text meet WCAG contrast.
+- [x] ISC-321: Typography roles declare readable minimums and sustained-reading measure.
+- [x] ISC-322: Centralized UI copy passes the prohibited-vocabulary gate.
+- [x] ISC-323: Runtime source imports no generated moodboard or page-reference asset.
+- [x] ISC-324: Default instrument panels use structural rules without generic SaaS blur.
+- [x] ISC-325: Meaningful motion collapses under reduced motion and data marks stay static.
+- [x] ISC-326: AsyncBoundary renders ready content without a status shell.
+- [x] ISC-327: AsyncBoundary renders exactly one loading, empty, partial, stale, denied, or error state.
+- [x] ISC-328: InstrumentDialog provides one accessible focus-managed overlay contract.
+- [x] ISC-329: Chat and informational overlays use InstrumentDialog without duplicate shells.
+- [x] ISC-330: Every graph relationship has a named non-visual equivalent.
+- [x] ISC-331: Graph interaction remains keyboard reachable at narrow and wide viewports.
+- [x] ISC-332: Canonical readings render separate Reading, Evidence, and privacy-filtered Source layers.
+- [x] ISC-333: Chat transitions explicitly into the canonical reading without a mutating long-form live region.
+- [x] ISC-334: Home retains exactly seven parent nodes and offers a direct reading doorway.
+- [x] ISC-335: Folio browsing, filtering, grouping, and reading detail use one coherent surface.
+- [x] ISC-336: All eighteen engines map to typed reusable reading instruments.
+- [x] ISC-337: All six workflows expose honest member, state, provenance, and fallback presentation.
+- [x] ISC-338: Node pages distinguish runnable, partial, capture-gated, unavailable, and informational children.
+- [x] ISC-339: Operator evidence contains no personal interpretation or browser-side authorization.
+- [x] ISC-340: Settings preserve owner, subject, consent, relationship, and revocation boundaries.
+- [x] ISC-341: Dyad readings present both subjects symmetrically in the canonical grammar.
+- [x] ISC-342: Deep links, hash history, browser navigation, and refresh behavior remain verified.
+- [x] ISC-343: Desktop, effective-reflow, and mobile visual matrices pass with deterministic fixtures.
+- [x] ISC-344: Accessibility, evidence-redaction, build, focused tests, and bundle budgets pass.
+- [x] ISC-345: Anti: no default surface exposes raw JSON, fictional telemetry, generic SaaS styling, or generated-image truth.
+
+### Test Strategy
+
+| ISC | Type | Check | Threshold | Tool |
+| --- | --- | --- | --- | --- |
+| 314–317 | baseline | backup, branch, allowlist, characterization | exact path match and non-zero bundle | git + Node |
+| 318–325 | design contract | contrast, vocabulary, asset boundary, CSS motion | all focused tests pass | Vitest + Node |
+| 326–331 | component behavior | async, dialog, graph and non-visual paths | exclusive states and keyboard reachability | Vitest + Playwright |
+| 332–341 | product integration | reading, chat, Folio, engines, nodes, settings, dyad | typed fixtures and route assertions pass | Vitest + Playwright |
+| 342–345 | exit gate | navigation, viewports, Axe, redaction, build and budget | zero critical violations | Playwright + npm |
+
+### Features
+
+| Feature | Satisfies | Depends on | Parallelizable |
+| --- | --- | --- | --- |
+| Recoverable integrated baseline | 314–317 | current dirty worktree | no |
+| Semantic visual contract | 318–325 | baseline checkpoint | no |
+| Shared interface primitives | 326–331 | semantic visual contract | yes |
+| Canonical reading ecosystem | 332–341 | shared primitives | yes, file-isolated |
+| Full exit verification | 342–345 | all implementation tasks | no |
+
+### Decisions
+
+- 2026-07-27: Execution follows the approved thirteen-task plan in checkpoint
+  batches; the first review boundary is Tasks 0–2.
+- 2026-07-27: Temperance is used for independent read-only audits until shared
+  semantic foundations are committed; overlapping runtime edits remain on the
+  primary rail.
+- 2026-07-27: A reviewed allowlist is required before the integrated baseline
+  commit because the starting worktree intentionally contains broad prior work.
+- 2026-07-27: The external Temperance rail emitted only two plan descriptors
+  and no terminal index, so the documented fail-open path used three independent
+  read-only Codex audits. Those lanes reported no workspace writes; primary-rail
+  staging remained limited to the named task files.
+- 2026-07-27: The first executing-plans checkpoint stops after Tasks 0–2. Mobile
+  SVG label density and Folio map overlap are carried into the already-planned
+  SemanticGraph and Folio tasks rather than hidden inside the token task.
+- 2026-07-27: The user explicitly resumed Tasks 3–12 to finish the plan.
+  Execution continues in dependency-safe batches: shared primitives 3–5;
+  home/chat/Folio/engine surfaces 6–9; node/settings integration 10–11; then
+  the non-parallel full exit gate 12.
+- 2026-07-27: Tasks 3–5 use non-overlapping Codex write lanes while Temperance
+  external lanes audit their accessibility, graph, and reading-privacy
+  contracts. External failures fail open to read-only Codex review; no external
+  mutation is applied directly to the shared worktree.
+- 2026-07-27: Advisor initially blocked Batch A until exact ownership was
+  proven. Parsed manifests contain 6 Task-3 paths, 8 Task-4 paths, and 14
+  Task-5 paths with pairwise-empty intersections. The dependency graph has no
+  reverse edge from Tasks 6–12 into Tasks 3–5.
+- 2026-07-27: Task 4 may only add to `tokens.ts` and `types/index.ts`; it must
+  not remove or rename `STATE.goldWarm`, `ChildRun`, `RelationshipContext`,
+  `SubjectInput`, or any symbol read by Tasks 3/5. Every lane's actual write
+  list is compared exactly with its manifest before integration.
+- 2026-07-27: Root-cause-at-ingestion: interface drift enters when Modal,
+  constellation, and reading surfaces each encode behavior downstream.
+  Repairing the shared primitives makes their later home/chat/Folio/settings
+  consumers converge; display-down patches would repeat the defect.
+- 2026-07-27: Task-4 read-only audit expanded ownership to `HomePage.tsx` and
+  `CoreGlow.tsx`: the home adapter dropped source purpose before graph entry
+  construction, and the interactive central hub remained mouse-only. Both are
+  repaired test-first before accepting the graph commit.
+- 2026-07-27: Task-5 read-only audit blocked acceptance after focused tests
+  passed: raw-only flat records could bypass Source filtering through Reading,
+  nested capture objects reset the default-deny policy, contextual Markdown
+  headings could duplicate the section heading level, and portable Evidence
+  lacked explicit access-reason/checksum slots. Adversarial tests now own these
+  boundaries before the reading commit.
+- 2026-07-27: Batch-A acceptance is evidence-based: the shared dialog, graph,
+  and reading commits remain atomic; the full browser matrix is read-only and
+  exercises the built Cloudflare Pages runtime at wide, effective-reflow, and
+  mobile widths before Tasks 6–9 are allowed to begin.
+- 2026-07-27: Tasks 6–9 converge on one saved Reading identity. Home and chat
+  are doorways, Folio is recovery and browsing, and engine/workflow output
+  registries are source-shaped instruments rather than raw JSON surfaces.
+- 2026-07-27: Independent Task-9 review blocked analyzed capture payloads that
+  lacked a persisted reading/session identifier and a nested period spiral
+  that hid its planetary value. Adversarial tests now fail both cases closed.
+- 2026-07-27: Tasks 10–11 preserve authority boundaries: operator facts remain
+  endpoint-backed, while dyad access requires a current or historical
+  participant grant. Neither email identity nor an administrative role can
+  substitute for consent.
+- 2026-07-27: The first Batch-B browser gate passed 63/70 checks and exposed
+  two real shared-boundary defects: 401/403 Folio responses lost their typed
+  denied state, and several chrome/reading actions rendered below 44×44.
+  Both repairs were added test-first before the remediation rerun.
+- 2026-07-27: The Task-12 Axe matrix remains blocking for serious and critical
+  findings. It exposed reading-instrument contrast, a transient dialog-motion
+  measurement, and a composing-beat ARIA defect; runtime issues were repaired
+  test-first, while the harness now waits for finite dialog entrance motion
+  before measuring the stable state.
+- 2026-07-27: The checked-in browser evidence is entirely synthetic and
+  allowlisted. It uses only `.test` identities, forwards no mutations, contacts
+  no live corpus or Selemene endpoint, and contains no raw capture, birth,
+  credential, absolute-path, or production-identity material.
+
+### Verification
+
+- ISC-314: `stat` reported a 183,180-byte tracked patch and a 13,297,526-byte
+  untracked archive before runtime edits.
+- ISC-315: `git branch --show-current` returned
+  `codex/urania-graph-first-ui-realignment`.
+- ISC-316: staged-path equality was silent for all 128 reviewed paths;
+  `git diff --cached --check` passed and the staged secret scan returned zero.
+  Baseline commit: `f8ea4c145b621fa8520eb8aafb09ba77c6b0a0d8`.
+- ISC-317: `npm run verify:ui-baseline` passed after transforming 1,619 modules
+  and recorded three known violation groups plus `516660` bundle bytes.
+- ISC-326: server-render verification passes ready children through without a
+  `data-async-state` shell.
+- ISC-327: eight focused tests verify exclusive non-ready states, distinct
+  labels/icons, status/alert live regions, loading-only busy state, and a
+  single recoverable retry callback; independent read-only audit returned PASS.
+- ISC-318–321: five semantic-token tests verify Void/Surface copy, separate
+  evidence and interaction hues, contrast-safe evidence copy, Parchment ink,
+  six typography roles, 12px metadata, and 70ch reading measure.
+- ISC-322: vocabulary tests pass for both daily lexicons and centralized
+  interface copy with no prohibited Folio synonyms.
+- ISC-323: the Node asset-boundary test recursively scanned runtime TypeScript
+  and found no generated or page-reference asset dependency.
+- ISC-324: browser QA found zero visible default backdrop filters across home,
+  Birth Witness, Folio, and Settings at 1440×1000 and 390×844.
+- ISC-325: browser QA found zero running animations under reduced motion across
+  eight route/viewport cases; brand audit returned PASS after motion timing and
+  ambient-animation corrections.
+- Task 1 coverage is explicit rather than inferred from the aggregate count:
+  `semanticTokens.test.ts` maps to ISC-318–321,
+  `vocabulary.test.ts` and `quickReplies.test.ts` map to ISC-322, and
+  `ui-asset-boundaries.test.mjs` maps to ISC-323. Browser evidence maps default
+  materials and reduced motion to ISC-324–325.
+- Task 2 adds eight `AsyncBoundary.test.ts` cases for ISC-326–327; ready,
+  loading, empty, partial, stale, denied, and error states are mutually
+  exclusive, and retry exists only for recoverable error.
+- `npm test` passed 56 files and 543 tests. The standalone generated-asset
+  boundary passed, the production build transformed 1,619 modules, and the
+  current JS+CSS bundle measured 515,753 bytes versus the recorded 516,660-byte
+  starting baseline.
+- Browser QA is reproducible from machine-readable reports and screenshots
+  under the task visualization directory. The first matrix exercised home,
+  Birth Witness, Folio, and Settings at 1440×1000 and 390×844 with console,
+  page, request, response, overflow, blur, metadata, and reduced-motion probes;
+  the final Settings report records the corrected 12px, 9.96:1 labels and zero
+  browser diagnostics.
+- The committed production bundle was then exercised through the actual
+  Cloudflare Pages runtime at `http://127.0.0.1:8794`, not a Vite-only server.
+  `task1-pages-runtime-report.json` records both Settings viewports and six
+  home/Birth Witness/Folio smoke cases at HTTP 200 with zero console, page,
+  request, bad-response, or horizontal-overflow findings. The graph exposes
+  seven home nodes and eight Birth Witness nodes; all Settings APIs returned
+  200 and the four metadata labels remained 12px at 9.96:1.
+- ISC-328–329: `InstrumentDialog.test.ts` and 37 focused chat/dialog tests pass;
+  the real Pages runtime verifies the focus-managed overlay at 1440×1000 and
+  390×844. Commit: `c578660`.
+- ISC-330–331: six graph-entry tests pass. Browser QA verifies every home and
+  Birth Witness relation has the same named list path, every graph target is at
+  least 44px, Tab reaches each destination in order with visible focus, and the
+  semantic CoreGlow control owns its 44px center hit target. Commit: `3c4ce74`.
+- ISC-332: 18 focused reading tests prove Reading/Evidence/Source separation,
+  70ch measure, raw-only suppression, heading offset, honest Evidence fallback,
+  and schema-aware nested capture redaction. Commit: `9599272`.
+- Batch-A browser gate: 105/105 Playwright assertions pass across 1440×1000,
+  720×1000, and 390×844, including reduced motion. It records zero console,
+  page, request, or response diagnostics, zero overflow, zero workspace writes,
+  and zero D1 mutations in
+  `batch-a-visual-gate/report-all.md`.
+- Fresh primary verification after both audit repairs passed 24/24 focused
+  tests and a production build of 1,626 modules; CSS is 48.51 kB and JS is
+  488.45 kB before gzip.
+- ISC-333: `ReadingTransition` and `useThreadScroll` tests prove that composing
+  narration is finite, long-form reading content is outside the live region,
+  following pauses on user scroll, and only “Return to latest” resumes it.
+  Commit: `80ef9b4`.
+- ISC-334: home contracts and live browser evidence retain seven parent nodes,
+  a direct Begin doorway, canonical Folio navigation, and collision-free
+  mobile graph/card geometry. Commit: `f6380c7`.
+- ISC-335: Folio view/layout tests and Pages evidence prove exclusive async
+  states, deterministic map/list equivalence, canonical direct selection,
+  structured Parchment reading detail, and collapsed Source. Commit: `ed51439`.
+- ISC-336–337: the executable atlas reconciles exactly 18 engines and six
+  workflows with typed instruments, written state, provenance, accessible
+  equivalents, and honest fallback/capture gates. Commits: `f9767e2`,
+  `d191cdb`.
+- ISC-338–339: 15 node/operator contract checks prove real capability states,
+  equivalent graph/list doorways, canonical Folio routes, endpoint-backed
+  operator evidence, and no email-derived authority. Commit: `bc4058e`.
+- ISC-340–341: independent read-only review passed 46 focused consent, dyad,
+  provenance, HTTP, and accessibility checks. Settings uses exclusive shared
+  boundaries; foreign/admin access fails closed; revocation blocks future
+  generation while persisted participant grants remain historical. Commit:
+  `cfbc072`.
+- Integrated primary verification after Tasks 10–11 and Batch-B repairs passed
+  75 files and 639 tests, the engine atlas and UI Node contracts passed 21/21,
+  TypeScript/Vite built 1,649 modules, and `git diff --check` was silent.
+- ISC-342: the focused exit suite passed all four hash-route history/deep-link
+  checks; the deterministic route matrix opened every canonical home, node,
+  Folio, selected Reading, Settings, operator, denied, current-grant, and
+  historical-grant URL through the built Pages runtime.
+- ISC-343: all 33 deterministic browser rows passed across desktop, mobile,
+  effective 320px reflow, and reduced-motion contexts. Every row owns a PNG,
+  DOM transcript, request ledger, console ledger, and Axe record in the exact
+  168-file allowlist under `docs/ui/evidence/realignment/`.
+- ISC-344: `npm run verify:ui-realignment -- http://127.0.0.1:8788` passed
+  seven UI contract checks, 103 focused tests, nine engine-atlas checks, all
+  77 test files and 653 tests, Functions typechecking, a production build of
+  1,649 modules, 33 browser rows, four evidence-redaction checks, and
+  `git diff --check`. JS+CSS measured 567,565 bytes against the unexplained
+  568,326-byte ceiling.
+- ISC-345: every matrix row records zero blocking Axe violations and zero
+  forwarded mutations; technical JSON stays collapsed and privacy-filtered,
+  runtime imports exclude generated design boards and fixture modules, and the
+  registry remains exactly eighteen real engines plus six honest workflows.
+  Accessibility remediation commit: `a3395ce`.
+
+### Learn
+
+- Passing source-token assertions did not guarantee computed browser contrast;
+  browser inspection caught translucent metadata combinations that required a
+  second correction.
+- A non-terminal Temperance rail must fail open into explicitly read-only
+  equivalent audits, while preserving path ownership and recording that the
+  external index never arrived.
+- The characterization command intentionally rewrites its JSON measurement.
+  Post-task verification must restore the immutable starting measurement before
+  the working tree is considered clean.
+- Vite preview is not a valid integrated QA target for this Pages application:
+  it omits `/api/*` Functions and can create false UI failures. Browser gates
+  must use `wrangler pages dev dist` or a deployed Pages environment.
+- Static token checks are necessary but insufficient for nested dark
+  instruments: computed Axe contrast found opacity, font-size, and inherited
+  reading-ink combinations that source-level checks could not prove.
+- Accessibility measurements must target the stable interaction state.
+  Finite entrance animations now settle before Axe, while reduced-motion rows
+  still independently prove that meaningful motion collapses.
+- Evidence redaction tests must distinguish an actual sensitive value from a
+  quoted `[MASKED]` sentinel without regex whitespace backtracking; the fixed
+  detector preserves fail-closed scanning for all unmasked values.

@@ -9,10 +9,10 @@
 export const CHROME = {
   /** TopNav: pt-4 + two-tier wordmark + the gold hairline rule. */
   nav: 68,
-  /** Node page: nav + the top-left title block (breadcrumb, title, epithet, rule). */
-  navAndTitle: 172,
-  /** Home: StatFooter only. */
-  footer: 88,
-  /** Node page: PageTabs (>=sm) beside the StatFooter on the split rail. */
-  tabsAndFooter: 112,
+  /** Node page: nav + the top-left title block (breadcrumb, instrument title, epithet, rule). */
+  navAndTitle: 210,
+  /** Home: shell hairline + StatFooter. */
+  footer: 104,
+  /** Node page: shell hairline + PageTabs (>=sm) beside the StatFooter on the split rail. */
+  tabsAndFooter: 130,
 } as const

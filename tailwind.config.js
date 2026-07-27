@@ -16,9 +16,34 @@ export default {
         gold: '#C5A017',
         emerald: '#10B5A7',
         terracotta: '#C65D3B',
-        growth: '#B8E986',
+        primary: '#F0EDE3',
+        secondary: '#C2CBD1',
+        metadata: '#AEBBC4',
+        disabled: '#75838E',
+        evidence: {
+          computed: '#10B5A7',
+          witness: '#7B68EE',
+          unresolved: '#C65D3B',
+        },
+        'evidence-copy': {
+          computed: '#67D4C7',
+          witness: '#AFA6FF',
+          unresolved: '#EE977C',
+        },
+        interaction: {
+          active: '#C5A017',
+          selected: '#89A5FF',
+          flow: '#0B50FB',
+          focus: '#A9B9FF',
+        },
+        reading: {
+          surface: '#F0EDE3',
+          ink: '#171B24',
+          muted: '#4C5661',
+          rule: '#76652A',
+        },
         // State tints (mirror STATE in src/styles/tokens.ts — keep in sync):
-        // Witness Violet (brand accent2) for SELECTED, warm gold for glows.
+        // Witness evidence alias; interaction selection has its own token.
         violetglow: '#7B68EE',
         goldwarm: '#E6B84D',
       },

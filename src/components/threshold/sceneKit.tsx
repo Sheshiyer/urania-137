@@ -113,27 +113,29 @@ export function SplitText({ parts, per, show, delay = 0, className }: SplitTextP
   const shown = { opacity: 1, filter: 'blur(0px) brightness(100%)', transform: 'translateY(0)' } as const
 
   return (
-    <span className={className} aria-label={fullText}>
-      {segments.map((seg, i) => {
-        if (per === 'word' && /^\s+$/.test(seg.ch)) return <span key={i}>{seg.ch}</span>
-        const state = show ? shown : hidden
-        return (
-          <span
-            key={i}
-            aria-hidden="true"
-            className="inline-block will-change-[transform,opacity,filter]"
-            style={{
-              ...state,
-              color: seg.gold ? '#C5A017' : undefined,
-              transition: `opacity ${show ? 0.4 : 0.3}s ${EASE}, filter ${show ? 0.4 : 0.3}s ${EASE}, transform ${show ? 0.4 : 0.3}s ${EASE}`,
-              transitionDelay: `${(delay + i * 0.015) * 1000}ms`,
-              whiteSpace: seg.ch === ' ' ? 'pre' : undefined,
-            }}
-          >
-            {seg.ch === ' ' ? ' ' : seg.ch}
-          </span>
-        )
-      })}
+    <span className={className}>
+      <span className="sr-only">{fullText}</span>
+      <span aria-hidden="true">
+        {segments.map((seg, i) => {
+          if (per === 'word' && /^\s+$/.test(seg.ch)) return <span key={i}>{seg.ch}</span>
+          const state = show ? shown : hidden
+          return (
+            <span
+              key={i}
+              className="inline-block will-change-[transform,opacity,filter]"
+              style={{
+                ...state,
+                color: seg.gold ? '#C5A017' : undefined,
+                transition: `opacity ${show ? 0.4 : 0.3}s ${EASE}, filter ${show ? 0.4 : 0.3}s ${EASE}, transform ${show ? 0.4 : 0.3}s ${EASE}`,
+                transitionDelay: `${(delay + i * 0.015) * 1000}ms`,
+                whiteSpace: seg.ch === ' ' ? 'pre' : undefined,
+              }}
+            >
+              {seg.ch === ' ' ? ' ' : seg.ch}
+            </span>
+          )
+        })}
+      </span>
     </span>
   )
 }

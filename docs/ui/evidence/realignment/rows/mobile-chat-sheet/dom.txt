@@ -1,0 +1,57 @@
+URANIA 137
+NOESIS
+MAP
+FOLIO
+BEGIN
+SETTINGS
+GRAPH
+LIST
+01
+INTEGRATED KUNDALI
+RUNNABLE WITNESS READING
+Generate the integrated-kundali-l0 reading for 1–5 people.
+witness capability of Noesis Reading
+ENTER
+02
+INTEGRATED READING
+RUNNABLE WITNESS READING
+Generate the integrated-reading reading for 1–5 people.
+witness capability of Noesis Reading
+ENTER
+03
+FULL SPECTRUM
+RUNNABLE GUIDED WORKFLOW
+Begin the live full-spectrum workflow.
+workflow capability of Noesis Reading
+ENTER
+04
+CREATIVE EXPRESSION
+RUNNABLE GUIDED WORKFLOW
+Begin the live creative-expression workflow.
+workflow capability of Noesis Reading
+ENTER
+
+Home
+NOESIS READING
+
+Noesis Reading
+
+THE READING
+
+Narrative witness-pipeline reading from the Selemene engines.
+
+DOORWAYS
+4
+RUNNABLE
+4
+V0.5.0 · A3395CE
+
+NOESIS READING · WITNESS DOORWAY · SUBJECTS
+
+INTEGRATED READING
+
+What relationship or pattern would you like this Reading to examine?
+
+YES — ADD ANOTHER
+NO — CONTINUE
+Reader A

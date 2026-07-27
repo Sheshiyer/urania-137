@@ -4,6 +4,9 @@ import { useMe } from './hooks/useMe'
 import { HomePage } from './pages/HomePage'
 import { NodePage } from './pages/NodePage'
 import { ThresholdPage } from './pages/ThresholdPage'
+import { ReadingLibraryPage } from './pages/ReadingLibraryPage'
+import { SettingsPage } from './pages/SettingsPage'
+import { RelationshipReadingPage } from './pages/RelationshipReadingPage'
 import { TopNav } from './components/chrome/TopNav'
 import { importLegacyFolioOnce } from './lib/folioImport'
 import { listSubjects } from './lib/subjectsApi'
@@ -58,8 +61,24 @@ export default function App() {
     <>
       {route.view !== 'threshold' && <TopNav route={route} me={me} />}
       {route.view === 'home' && <HomePage />}
-      {route.view === 'node' && <NodePage key={route.nodeId} nodeId={route.nodeId} />}
+      {route.view === 'node' && (
+        <NodePage
+          key={`${route.nodeId}:${route.childId ?? ''}`}
+          nodeId={route.nodeId}
+          initialChildId={route.childId}
+          me={me}
+        />
+      )}
       {route.view === 'threshold' && <ThresholdPage />}
+      {route.view === 'readings' && <ReadingLibraryPage me={me} readingId={route.readingId} />}
+      {route.view === 'settings' && <SettingsPage me={me} />}
+      {route.view === 'relationship-reading' && (
+        <RelationshipReadingPage
+          relationshipId={route.relationshipId}
+          generationId={route.generationId}
+          me={me}
+        />
+      )}
     </>
   )
 }

@@ -1,0 +1,13 @@
+{
+  "console": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    },
+    {
+      "type": "warning",
+      "text": "Couldn't load preload assets:  "
+    }
+  ],
+  "pageErrors": []
+}

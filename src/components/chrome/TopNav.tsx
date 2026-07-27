@@ -1,70 +1,96 @@
 import { useMemo, useState } from 'react'
-import { Search, Compass, Share2 } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { SELEMENE_NODES } from '../../data/selemeneNodes'
 import { Route, navigate } from '../../hooks/useHashRoute'
 import type { User } from '../../lib/api/contract'
+import { BEGIN_READING_EVENT } from '../../pages/HomePage'
 import { IdentityChip } from './IdentityChip'
 
 /**
- * The console top bar from the reference moodboard: the two-tier URANIA 137 /
- * NOESIS wordmark lockup, a MAP · NODES · PATHS · ARCHIVE nav with diamond
- * separators and a live node search, and the gold hairline with a center
- * diamond that rules the bar off from the field. MAP → home, ARCHIVE → Folio,
- * and search → jump to a node are wired; NODES/PATHS + icons are presentational
- * dressing. Every destination is also reachable by clicking the graph, so the
- * graph stays the interface (ISA ISC-10).
+ * The compact global product routes. Folio has one canonical destination;
+ * Begin returns to the map and opens its real runnable-doorway index.
  */
 export function TopNav({ route, me }: { route: Route; me: User | null }) {
   const activeId = route.view === 'node' ? route.nodeId : null
 
-  const items: { key: string; label: string; onClick?: () => void; active?: boolean }[] = [
+  const requestBeginReading = () => {
+    if (route.view === 'home') {
+      window.dispatchEvent(new Event(BEGIN_READING_EVENT))
+      return
+    }
+    navigate('/')
+    window.setTimeout(() => window.dispatchEvent(new Event(BEGIN_READING_EVENT)), 0)
+  }
+
+  const items: { key: string; label: string; onClick: () => void; active?: boolean }[] = [
     { key: 'map', label: 'Map', onClick: () => navigate('/'), active: route.view === 'home' },
-    { key: 'nodes', label: 'Nodes' },
-    { key: 'paths', label: 'Paths' },
-    { key: 'archive', label: 'Archive', onClick: () => navigate('/node/folio'), active: activeId === 'folio' },
+    { key: 'folio', label: 'Folio', onClick: () => navigate('/readings'), active: route.view === 'readings' },
+    { key: 'begin', label: 'Begin', onClick: requestBeginReading },
+    { key: 'settings', label: 'Settings', onClick: () => navigate('/settings'), active: route.view === 'settings' },
   ]
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40">
-      <div className="flex items-start justify-between px-6 pt-4 sm:px-10">
+      <div className="flex items-start justify-between gap-2 px-4 pt-3 sm:px-10 sm:pt-4">
         {/* Two-tier wordmark lockup (the moodboard header): URANIA 137 over NOESIS */}
         <button
+          type="button"
           onClick={() => navigate('/')}
-          className="pointer-events-auto group flex flex-col items-start text-left"
+          className="pointer-events-auto group flex min-h-11 min-w-11 shrink-0 flex-col items-start justify-center text-left"
           aria-label="Urania 137 — home"
         >
-          <span className="font-serif text-sm font-semibold uppercase tracking-[0.24em] text-parchment transition-colors group-hover:text-gold sm:text-base">
+          <span className="font-serif text-xs font-semibold uppercase tracking-[0.16em] text-parchment transition-colors group-hover:text-gold sm:text-base sm:tracking-[0.24em]">
             Urania <span className="text-gold">137</span>
           </span>
-          <span className="mt-0.5 font-display text-[8px] uppercase tracking-[0.5em] text-gold/70 transition-colors group-hover:text-gold">
+          <span className="mt-0.5 font-display text-[7px] uppercase tracking-[0.38em] text-gold/70 transition-colors group-hover:text-gold sm:text-[8px] sm:tracking-[0.5em]">
             Noesis
           </span>
         </button>
 
         {/* Nav + search + identity */}
-        <div className="pointer-events-auto flex items-center gap-3 pt-1 sm:gap-5">
-          <nav className="hidden items-center gap-4 md:flex" aria-label="Console sections">
+        <div className="pointer-events-auto flex min-w-0 items-center gap-2 sm:gap-4 sm:pt-1">
+          <nav className="hidden items-center gap-3 md:flex" aria-label="Product sections">
             {items.map((it, i) => (
-              <span key={it.key} className="flex items-center gap-4">
-                {i > 0 && <span className="h-1 w-1 rotate-45 border border-gold/40" aria-hidden="true" />}
+              <span key={it.key} className="flex items-center gap-3">
+                {i > 0 && (
+                  <span className="h-1 w-1 rotate-45 border border-gold/40" aria-hidden="true" />
+                )}
                 <button
+                  type="button"
                   onClick={it.onClick}
-                  disabled={!it.onClick}
-                  className={[
-                    'relative font-display text-[11px] uppercase tracking-[0.24em] transition-colors',
-                    it.active ? 'text-gold' : it.onClick ? 'text-silver hover:text-parchment' : 'cursor-default text-silver/45',
-                  ].join(' ')}
+                  aria-current={it.active ? 'page' : undefined}
+                  className={`relative min-h-11 min-w-11 font-display text-[10px] uppercase tracking-[0.18em] transition-colors ${
+                    it.active ? 'text-gold' : 'text-silver hover:text-parchment'
+                  }`}
                 >
                   {it.label}
-                  {it.active && <span className="absolute -bottom-2 left-1/2 h-1 w-1 -translate-x-1/2 rotate-45 bg-gold" aria-hidden="true" />}
+                  {it.active && (
+                    <span
+                      className="absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rotate-45 bg-gold"
+                      aria-hidden="true"
+                    />
+                  )}
                 </button>
               </span>
             ))}
           </nav>
-          <NodeSearch activeId={activeId} />
-          <div className="hidden items-center gap-3 text-silver/50 sm:flex" aria-hidden="true">
-            <Compass className="h-4 w-4" />
-            <Share2 className="h-4 w-4" />
+          <nav className="flex min-w-0 items-center gap-1 md:hidden" aria-label="Product sections">
+            {items.map((it) => (
+              <button
+                key={it.key}
+                type="button"
+                onClick={it.onClick}
+                aria-current={it.active ? 'page' : undefined}
+                className={`min-h-11 min-w-11 px-0.5 font-display text-[8px] uppercase tracking-[0.08em] transition-colors ${
+                  it.active ? 'text-gold' : 'text-silver hover:text-parchment'
+                }`}
+              >
+                {it.label}
+              </button>
+            ))}
+          </nav>
+          <div className="hidden xl:block">
+            <NodeSearch activeId={activeId} />
           </div>
           <IdentityChip me={me} />
         </div>
@@ -72,7 +98,7 @@ export function TopNav({ route, me }: { route: Route; me: User | null }) {
 
       {/* Gold hairline ruling the bar off from the field, with a center diamond
           and end caps — the rule seen across the reference pages. */}
-      <div className="mt-3 flex items-center px-6 sm:px-10" aria-hidden="true">
+      <div className="mt-2 flex items-center px-4 sm:mt-3 sm:px-10" aria-hidden="true">
         <span className="h-1 w-1 rotate-45 border border-gold/50" />
         <span className="h-px flex-1 bg-gradient-to-r from-gold/40 via-gold/15 to-gold/15" />
         <span className="mx-2 h-1.5 w-1.5 rotate-45 border border-gold/70" />
@@ -115,7 +141,7 @@ function NodeSearch({ activeId }: { activeId: string | null }) {
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 120)}
           placeholder="Search nodes…"
-          className="w-24 bg-transparent font-display text-[11px] uppercase tracking-[0.14em] text-parchment placeholder:text-silver/50 focus:outline-none sm:w-32"
+          className="min-h-11 min-w-11 w-24 bg-transparent font-display text-[11px] uppercase tracking-[0.14em] text-parchment placeholder:text-silver/50 focus:outline-none sm:w-32"
           aria-label="Search stellar nodes"
         />
       </div>

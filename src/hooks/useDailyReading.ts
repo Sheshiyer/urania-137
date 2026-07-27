@@ -14,6 +14,16 @@ import { saveReport } from '../lib/folioStore'
 type Fetcher = (input: DailyReadingInput) => Promise<DailyReading>
 type Archiver = (r: { nodeId: string; nodeLabel: string; mode: string; title: string; content: string }) => void | Promise<unknown>
 
+export class DailyFolioSaveError extends Error {
+  readonly reading: DailyReading
+
+  constructor(message: string, reading: DailyReading) {
+    super(message)
+    this.name = 'DailyFolioSaveError'
+    this.reading = reading
+  }
+}
+
 /**
  * Pure orchestration (T-041) — fetch → archive → return. Dependencies are
  * injectable so it unit-tests in node with no React/DOM (T-042). Archives ONLY
@@ -28,13 +38,22 @@ export async function fetchDailyReading(
   archive: Archiver = saveReport,
 ): Promise<DailyReading> {
   const reading = await fetcher(input)
-  await archive({
-    nodeId: 'transit',
-    nodeLabel: 'Sky Weather',
-    mode: 'daily-panchanga',
-    title: `Today · ${input.location.display} · ${input.date}`,
-    content: reading.assembled,
-  })
+  try {
+    await archive({
+      nodeId: 'transit',
+      nodeLabel: 'Sky Weather',
+      mode: 'daily-panchanga',
+      title: `Today · ${input.location.display} · ${input.date}`,
+      content: reading.assembled,
+    })
+  } catch (error) {
+    throw new DailyFolioSaveError(
+      error instanceof Error
+        ? error.message
+        : 'Could not save the daily reading to Folio.',
+      reading,
+    )
+  }
   return reading
 }
 
@@ -44,6 +63,7 @@ export interface UseDailyReadingState {
   location: DailyLocation
   locationSource: LocationSource
   error: string | null
+  saveError: string | null
 }
 
 /**
@@ -62,18 +82,54 @@ export function useDailyReading(birth?: BirthData | null) {
       birth: birth ? { latitude: birth.latitude, longitude: birth.longitude, timezone: birth.timezone, display: birth.name } : null,
       remembered: loadRememberedLocation(),
     })
-    return { status: 'idle', reading: null, location: resolved.location, locationSource: resolved.source, error: null }
+    return {
+      status: 'idle',
+      reading: null,
+      location: resolved.location,
+      locationSource: resolved.source,
+      error: null,
+      saveError: null,
+    }
   })
 
   const run = useCallback(
     async (location: DailyLocation) => {
       const date = todayInTz(location.timezone)
-      setState((s) => ({ ...s, status: 'loading', location, error: null }))
+      setState((s) => ({
+        ...s,
+        status: 'loading',
+        location,
+        error: null,
+        saveError: null,
+      }))
       try {
         const reading = await fetchDailyReading({ date, location, birth: birth ?? undefined })
-        setState((s) => ({ ...s, status: 'complete', reading, location }))
+        setState((s) => ({
+          ...s,
+          status: 'complete',
+          reading,
+          location,
+          saveError: null,
+        }))
       } catch (e) {
-        setState((s) => ({ ...s, status: 'error', error: e instanceof Error ? e.message : 'Could not read the day.' }))
+        if (e instanceof DailyFolioSaveError) {
+          setState((s) => ({
+            ...s,
+            status: 'complete',
+            reading: e.reading,
+            location,
+            error: null,
+            saveError: e.message,
+          }))
+        } else {
+          setState((s) => ({
+            ...s,
+            status: 'error',
+            reading: null,
+            error: e instanceof Error ? e.message : 'Could not read the day.',
+            saveError: null,
+          }))
+        }
       }
     },
     [birth],

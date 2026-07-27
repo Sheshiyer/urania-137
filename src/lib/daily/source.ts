@@ -52,6 +52,8 @@ export interface DailyReading {
   assembled: string
   engines_used: string[]
   meta: DailyReadingMeta
+  /** Present only when the active source returned deterministic engine data. */
+  sourcePayloads?: Array<{ engine_id: string; result: Record<string, unknown> }>
 }
 
 export interface DailyReadingSource {

@@ -31,19 +31,52 @@ export interface ThreadResult {
   kind: 'witness' | 'daily' | 'deterministic'
   /** composing = the engines are running; complete = chapters render; error = retryable failure. */
   status: 'composing' | 'complete' | 'error'
+  /** Native sections came from the source; flat means the chapter is only a presentation wrapper. */
+  structureSource: 'native' | 'flat'
   chapters: ResultChapter[]
+  /** Exact engine/system identifiers supplied by the source response. */
+  systems: string[]
   /** Engine/run failure text (witness report error, det error, daily error). */
   error: string | null
   /** Folio save failure AFTER a complete reading (witness saveError) — the reading stays whole. */
   saveError: string | null
+  /** Recovery re-fires the exact submit request; it never creates a new intent. */
+  retryScope?: 'same-request'
   /** Small provenance line (engines used / daily source), mirroring the modal-era footers. */
   footer?: string
   /** Dropped-engine honesty line (workflows omit failing engines silently). */
   warning?: string
+  /** Structured engine source carried to the canonical reading adapter. */
+  sourcePayload: unknown | null
+  /** Exact body written to the owner-scoped Folio row. */
+  archiveContent?: string
+  /** Exact Folio title when it differs from the conversational heading. */
+  archiveTitle?: string
+  /** Exact Folio mode when it differs from the doorway seed token. */
+  archiveMode?: string
 }
 
-const composing = (kind: ThreadResult['kind']): ThreadResult => ({ kind, status: 'composing', chapters: [], error: null, saveError: null })
-const failed = (kind: ThreadResult['kind'], error: string): ThreadResult => ({ kind, status: 'error', chapters: [], error, saveError: null })
+const composing = (kind: ThreadResult['kind']): ThreadResult => ({
+  kind,
+  status: 'composing',
+  structureSource: 'flat',
+  chapters: [],
+  systems: [],
+  error: null,
+  saveError: null,
+  sourcePayload: null,
+})
+const failed = (kind: ThreadResult['kind'], error: string): ThreadResult => ({
+  kind,
+  status: 'error',
+  structureSource: 'flat',
+  chapters: [],
+  systems: [],
+  error,
+  saveError: null,
+  retryScope: 'same-request',
+  sourcePayload: null,
+})
 
 // ---------------------------------------------------------------------------
 // Witness — useReportGenerator's activeReport
@@ -61,7 +94,21 @@ export function witnessThreadResult(report: GeneratedReport | null, saveError: s
     ? raw.passes.map((p) => ({ id: p.id, title: p.title, body: p.output }))
     : [{ id: 'assembled', title: report.title, body: report.content }]
   const footer = raw?.engines_used?.length ? `Engines: ${raw.engines_used.join(', ')} · register ${raw.register}` : undefined
-  return { kind: 'witness', status: 'complete', chapters, error: null, saveError, footer }
+  return {
+    kind: 'witness',
+    status: 'complete',
+    structureSource: raw?.passes?.length ? 'native' : 'flat',
+    chapters,
+    systems: raw?.engines_used ?? [],
+    error: null,
+    saveError,
+    retryScope: saveError ? 'same-request' : undefined,
+    footer,
+    sourcePayload: null,
+    archiveContent: report.content,
+    archiveTitle: report.title,
+    archiveMode: raw?.mode,
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -72,6 +119,7 @@ export interface DailyRunState {
   status: 'idle' | 'loading' | 'complete' | 'error'
   reading: DailyReading | null
   error: string | null
+  saveError?: string | null
 }
 
 export function dailyThreadResult(state: DailyRunState): ThreadResult | null {
@@ -83,10 +131,17 @@ export function dailyThreadResult(state: DailyRunState): ThreadResult | null {
   return {
     kind: 'daily',
     status: 'complete',
+    structureSource: 'native',
     chapters: reading.passes.map((p) => ({ id: p.id, title: p.title, body: p.output })),
+    systems: reading.engines_used,
     error: null,
-    saveError: null,
+    saveError: state.saveError ?? null,
+    retryScope: state.saveError ? 'same-request' : undefined,
     footer: `${reading.meta.source} · ${reading.engines_used.join(' + ')}`,
+    sourcePayload: reading.sourcePayloads ?? null,
+    archiveContent: reading.assembled,
+    archiveTitle: `Today · ${reading.meta.location} · ${reading.meta.date}`,
+    archiveMode: 'daily-panchanga',
   }
 }
 
@@ -104,11 +159,12 @@ export interface DeterministicRunState {
 
 export function deterministicThreadResult(state: DeterministicRunState, label: string): ThreadResult | null {
   if (state.busy) return composing('deterministic')
-  // The modal era showed the error INSTEAD of the result (a save failure
-  // folds into `error`); preserve that — the retry re-fires the same run.
-  if (state.error) return failed('deterministic', state.error)
-
   const payload = state.workflow ?? state.engine
+  // The modal era showed the error INSTEAD of the result (a save failure
+  // folds into `error`). When the computed payload survived, the error is
+  // specifically the Folio write and the reading must remain available.
+  if (state.error && !payload) return failed('deterministic', state.error)
+
   if (!payload) return null
   const id = state.workflow ? state.workflow.workflow_id : (state.engine as EngineResult).engine_id
 
@@ -126,9 +182,15 @@ export function deterministicThreadResult(state: DeterministicRunState, label: s
   return {
     kind: 'deterministic',
     status: 'complete',
+    structureSource: 'flat',
     chapters: [{ id, title: label, body: deterministicMarkdown(payload) }],
+    systems: state.workflow ? Object.keys(state.workflow.engine_outputs ?? {}) : [id],
     error: null,
-    saveError: null,
+    saveError: state.error,
+    retryScope: state.error ? 'same-request' : undefined,
     warning,
+    sourcePayload: payload,
+    archiveContent: `## ${label} (${id})\n\n${deterministicMarkdown(payload)}\n`,
+    archiveMode: state.workflow ? `workflow:${id}` : `engine:${id}`,
   }
 }

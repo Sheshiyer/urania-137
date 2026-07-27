@@ -1,14 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Send, X } from 'lucide-react'
+import { Send } from 'lucide-react'
 import type { ChildRun, RelationshipContext, SubjectInput } from '../../types'
 import type { ChatBlock, ChatEvent, ChatMsg, ChatSessionState } from '../../types/chat'
 import { toSubmitPayload, type SubmitPayload } from '../../lib/chat/stateMachine'
 import type { ThreadResult } from '../../lib/chat/resultMessages'
+import type { User } from '../../lib/api/contract'
+import type { ReadingSubjectKind } from '../../lib/readings'
 import { createOrResumeSession, completeSession, getSession, replayEvents, streamTurn } from '../../lib/chatApi'
 import { createSubject } from '../../lib/subjectsApi'
+import { useThreadScroll } from '../../hooks/useThreadScroll'
 import { CircleBar, circlePersistIndexes, circleRole } from './CircleBar'
 import { QuickReplies } from './QuickReplies'
 import { ResultThread } from './ResultThread'
+import { InstrumentDialog } from '../ui/InstrumentDialog'
 
 /**
  * ChatSheet (Phase 2 W3-A; Phase 3 in-thread results) — the narrative
@@ -25,9 +29,8 @@ import { ResultThread } from './ResultThread'
  * in-thread error + retry path. Result chapters are presentation only, never
  * persisted as chat turns; the Folio row the hook saved is the durable copy.
  *
- * Shell styling is copied 1:1 from `Modal.tsx` (void backdrop, gold-bordered
- * bottom sheet on mobile / centered panel on ≥sm, sticky header) so the chat
- * reads as the same chrome, not a new surface. No new palette, no new deps.
+ * InstrumentDialog owns the shared modal lifecycle and responsive instrument
+ * chrome; the session, stream, circle, handoff, and retry logic remain local.
  *
  * Stream discipline (docs/chat-protocol.md): deltas accumulate into ONE
  * in-progress narrator message (keyed by `reply_start.msgId`); `reply_end`
@@ -45,6 +48,7 @@ export interface ChatSheetProps {
   childLabel: string
   nodeId: string
   nodeLabel: string
+  owner: User | null
   onClose: () => void
   /** Fired once when the session chapter reaches 'handoff'. */
   onHandoff: (payload: SubmitPayload) => void
@@ -55,6 +59,26 @@ export interface ChatSheetProps {
   result?: ThreadResult | null
   /** Re-fires the same submit call after an in-thread result error. */
   onRetryResult?: () => void
+}
+
+function seedMode(seed: ChildRun): string {
+  if (seed.kind === 'witness') return seed.mode
+  if (seed.kind === 'workflow') return seed.workflowId
+  if (seed.kind === 'engine') return seed.engineId
+  return 'daily-panchanga'
+}
+
+function readingSubject(session: ChatSessionState | null): { id: null; label: string; kind: ReadingSubjectKind } {
+  const subjects = (session?.intake.subjects ?? []) as Partial<SubjectInput>[]
+  const names = subjects.map((subject) => subject.name?.trim()).filter((name): name is string => Boolean(name))
+  const relationship = session?.intake.relationship_context as RelationshipContext | null | undefined
+  const kind: ReadingSubjectKind =
+    names.length > 2 ? 'collective' : names.length === 2 ? 'dyad' : subjects[0]?.role === 'self' ? 'self' : names.length === 1 ? 'person' : 'unknown'
+  return {
+    id: null,
+    label: names.length ? names.join(' + ') : relationship?.mapping_goal || 'Subject not recorded',
+    kind,
+  }
 }
 
 const SEED_KIND_LABEL: Record<ChildRun['kind'], string> = {
@@ -149,14 +173,14 @@ function BlockView({ block }: { block: ChatBlock }) {
       )
     case 'tool_result':
       return (
-        <p className={`text-xs ${block.ok ? 'text-emerald' : 'text-terracotta'}`}>
+        <p className={`text-xs ${block.ok ? 'text-emerald' : 'text-evidence-copy-unresolved'}`}>
           {block.ok ? (block.message ?? 'Recorded.') : (block.message ?? 'That did not validate — the narrator will re-ask.')}
         </p>
       )
   }
 }
 
-export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHandoff, result, onRetryResult }: ChatSheetProps) {
+export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, owner, onClose, onHandoff, result, onRetryResult }: ChatSheetProps) {
   const [session, setSession] = useState<ChatSessionState | null>(null)
   const [msgs, setMsgs] = useState<ChatMsg[]>([])
   const [draft, setDraft] = useState('')
@@ -165,6 +189,16 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
   const [error, setError] = useState<string | null>(null)
   /** One-line in-thread warning for a failed circle persist (W3-A; never blocks). */
   const [circleNotice, setCircleNotice] = useState<string | null>(null)
+  const latestMessage = msgs[msgs.length - 1]
+  const threadRevision = [
+    msgs.length,
+    latestMessage ? msgText(latestMessage).length : 0,
+    streaming ? 'streaming' : 'settled',
+    result?.status ?? 'no-result',
+    result?.chapters.length ?? 0,
+    result?.saveError ?? '',
+  ].join(':')
+  const threadScroll = useThreadScroll({ revision: threadRevision })
 
   const initRef = useRef(false)
   const streamingRef = useRef(false)
@@ -173,7 +207,6 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
   const lastEventIdRef = useRef(0)
   const sessionIdRef = useRef('')
   const shellIdRef = useRef<string | null>(null)
-  const threadRef = useRef<HTMLDivElement | null>(null)
   const composerRef = useRef<HTMLInputElement | null>(null)
 
   // Latest-callback refs so stream handlers never capture stale props/state.
@@ -378,17 +411,6 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
   }, [session])
 
   // -------------------------------------------------------------------------
-  // Auto-scroll (honors prefers-reduced-motion)
-  // -------------------------------------------------------------------------
-
-  useEffect(() => {
-    const el = threadRef.current
-    if (!el) return
-    const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-    el.scrollTo({ top: el.scrollHeight, behavior: reduce ? 'auto' : 'smooth' })
-  }, [msgs, streaming, result])
-
-  // -------------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------------
 
@@ -406,40 +428,30 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4" data-node-id={nodeId}>
-      <div className="absolute inset-0 bg-void/85 backdrop-blur-sm" onClick={onClose} />
-
-      <div className="console-card relative flex max-h-[92vh] w-full max-w-xl flex-col rounded-t-md shadow-2xl shadow-void sm:max-h-[88vh] sm:rounded-sm">
-        {/* Double frame + corner diamonds — the Modal shell's reference card */}
-        <div className="pointer-events-none absolute inset-1.5 border border-gold/10" aria-hidden="true" />
-        <span className="pointer-events-none absolute left-3 top-3 h-1.5 w-1.5 rotate-45 border border-gold/60" aria-hidden="true" />
-        <span className="pointer-events-none absolute right-3 top-3 h-1.5 w-1.5 rotate-45 border border-gold/60" aria-hidden="true" />
-        <span className="pointer-events-none absolute bottom-3 left-3 h-1.5 w-1.5 rotate-45 border border-gold/60" aria-hidden="true" />
-        <span className="pointer-events-none absolute bottom-3 right-3 h-1.5 w-1.5 rotate-45 border border-gold/60" aria-hidden="true" />
-
-        {/* Grab handle (mobile bottom-sheet affordance) */}
-        <div className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-silver/30 sm:hidden" aria-hidden="true" />
-
-        {/* Sticky header — same chrome as Modal, plus the chapter cursor */}
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-gold/15 px-5 py-3.5 sm:px-8 sm:py-5">
-          <div className="min-w-0">
-            <p className="console-eyebrow">
-              {nodeLabel} · {SEED_KIND_LABEL[seed.kind]}
-              {chapter && <span className="text-gold/50"> · {chapter.replace('_', ' ')}</span>}
-            </p>
-            <h2 className="truncate font-serif text-lg uppercase tracking-[0.14em] text-parchment sm:text-xl">{childLabel}</h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="-mr-1 shrink-0 rounded-full p-2 text-silver transition-colors hover:bg-parchment/5 hover:text-parchment"
-            aria-label="Close chat"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+    <InstrumentDialog
+      open
+      title={childLabel}
+      eyebrow={
+        <>
+          {nodeLabel} · {SEED_KIND_LABEL[seed.kind]}
+          {chapter && <span className="text-metadata"> · {chapter.replace('_', ' ')}</span>}
+        </>
+      }
+      onClose={onClose}
+      closeOnOutsideClick
+      closeLabel="Close chat"
+      headerAlign="start"
+      bodyClassName="flex flex-1 flex-col"
+      dataNodeId={nodeId}
+    >
 
         {/* Message thread */}
-        <div ref={threadRef} role="log" aria-live="polite" className="dot-grid min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-5 py-5 sm:px-8">
+        <div
+          ref={threadScroll.threadRef}
+          onScroll={threadScroll.onScroll}
+          aria-label="Conversation"
+          className="dot-grid min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-5 py-5 sm:px-8"
+        >
           {loading && <p className="py-8 text-center text-sm text-silver">Opening the doorway…</p>}
 
           {!loading && msgs.length === 0 && !streaming && (
@@ -469,7 +481,7 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
 
           {/* Typing indicator — shown until the first block of the reply lands */}
           {streaming && (msgs.length === 0 || msgs[msgs.length - 1].role === 'user' || msgs[msgs.length - 1].blocks.length === 0) && (
-            <div className="flex items-center gap-1.5 py-1" aria-label="The narrator is composing">
+            <div className="flex items-center gap-1.5 py-1" role="status" aria-label="The narrator is composing">
               {[0, 1, 2].map((i) => (
                 <span
                   key={i}
@@ -481,7 +493,7 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
           )}
 
           {error && (
-            <p className="rounded-lg border border-terracotta/20 bg-terracotta/10 px-3 py-2 text-sm text-terracotta">{error}</p>
+            <p className="rounded-lg border border-terracotta/20 bg-terracotta/10 px-3 py-2 text-sm text-evidence-copy-unresolved">{error}</p>
           )}
 
           {circleNotice && (
@@ -491,16 +503,45 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
           {/* Phase 3 — the reading arrives in-thread as narrator chapters
               (composing beat → chapters → Folio closing beat / error+retry).
               Presentation only; the durable copy is the Folio row the hook saved. */}
-          {result && <ResultThread result={result} onRetry={onRetryResult} />}
+          {result && (
+            <ResultThread
+              result={result}
+              onRetry={onRetryResult}
+              readingContext={{
+                title: `${nodeLabel} — ${childLabel}`,
+                mode: seedMode(seed),
+                nodeId,
+                nodeLabel,
+                owner: {
+                  id: owner?.id ?? null,
+                  email: owner?.email ?? null,
+                  label: owner?.email ?? 'Authenticated account',
+                },
+                subject: readingSubject(session),
+              }}
+            />
+          )}
 
           {/* Fallback beat only when a handoff left no result feed (e.g. a
               crash between handoff and completion on a remount). */}
           {done && !result && (
-            <p className="py-2 text-center font-display text-[10px] uppercase tracking-[0.25em] text-gold/60">
+            <p role="status" className="py-2 text-center font-display text-[10px] uppercase tracking-[0.25em] text-gold/60">
               ✦ The story has been handed off to the engines ✦
             </p>
           )}
         </div>
+
+        {!threadScroll.following && (
+          <div className="flex shrink-0 justify-center border-t border-gold/10 bg-void px-4 py-2">
+            <button
+              type="button"
+              onClick={threadScroll.returnToLatest}
+              className="min-h-11 border border-gold/30 px-4 font-display text-[9px] uppercase tracking-[0.18em] text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+            >
+              Return to latest{threadScroll.unread ? ' · new' : ''}
+            </button>
+          </div>
+        )}
 
         {/* W3-A circle affordances: subject picker at the add_another gate /
             name slot, quick-reply chips at the persist_offer beat. Renders
@@ -545,7 +586,6 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, onClose, onHand
             <Send className="h-4 w-4" />
           </button>
         </form>
-      </div>
-    </div>
+    </InstrumentDialog>
   )
 }

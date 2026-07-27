@@ -45,7 +45,7 @@ export const TRANSIT_LEXICON: Record<string, TransitEntry> = {
     keynote:
       'Mars’s transit brings heat to the blood, a forward-leaning drive that wants motion and edge.',
     invitation:
-      'You might notice where energy gathers into impulse, and how the body signals its readiness to act.',
+      'You might notice where pressure gathers into impulse, and how the body signals its readiness to act.',
   },
   Jupiter: {
     keynote:

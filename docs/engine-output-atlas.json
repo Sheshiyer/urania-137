@@ -1,0 +1,6826 @@
+{
+  "manifestId": "engine-output-atlas_b89d5b7428cfaf904c5bbebd479762b10fe3473adb1a365f5f9cdeacf2d44798",
+  "schemaVersion": "1.0.0",
+  "title": "Urania Engine Output Atlas",
+  "privacy": {
+    "corpusDisclosure": "paths-types-counts-only",
+    "rawValuesIncluded": false,
+    "absolutePathsIncluded": false,
+    "subjectDirectoryNamesIncluded": false,
+    "binaryDataIncluded": false,
+    "credentialsIncluded": false
+  },
+  "sourceSummary": {
+    "corpusPattern": "723/**/engines.json",
+    "corpusFileCount": 52,
+    "workflowRegistry": "crates/noesis-orchestrator/src/workflow/registry.rs",
+    "sourceContractRoot": "Selemene-engine"
+  },
+  "presentationPolicy": {
+    "defaultPayloadPresentation": "branded-components",
+    "technicalSourceAccess": "collapsed-privacy-filtered-provenance",
+    "expandedRawJsonByDefault": false,
+    "requiredStates": [
+      "loading",
+      "empty",
+      "partial",
+      "error",
+      "stale"
+    ],
+    "requiredDensities": [
+      "thread",
+      "reading",
+      "folio",
+      "compare",
+      "operator"
+    ]
+  },
+  "engines": [
+    {
+      "id": "biofield",
+      "status": "capture-gated",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 46,
+        "resultCount": 46,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 28,
+        "observationCount": 3761,
+        "typeCounts": {
+          "array": 92,
+          "boolean": 46,
+          "number": 874,
+          "object": 552,
+          "string": 2197
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.areas_of_attention",
+          "types": {
+            "array": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.areas_of_attention[*]",
+          "types": {
+            "string": 311
+          },
+          "count": 311
+        },
+        {
+          "path": "$.result.chakra_readings",
+          "types": {
+            "array": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.chakra_readings[*]",
+          "types": {
+            "object": 322
+          },
+          "count": 322
+        },
+        {
+          "path": "$.result.chakra_readings[*].activity_level",
+          "types": {
+            "number": 322
+          },
+          "count": 322
+        },
+        {
+          "path": "$.result.chakra_readings[*].balance",
+          "types": {
+            "number": 322
+          },
+          "count": 322
+        },
+        {
+          "path": "$.result.chakra_readings[*].chakra",
+          "types": {
+            "string": 322
+          },
+          "count": 322
+        },
+        {
+          "path": "$.result.chakra_readings[*].chakra_name",
+          "types": {
+            "string": 322
+          },
+          "count": 322
+        },
+        {
+          "path": "$.result.chakra_readings[*].color_intensity",
+          "types": {
+            "string": 322
+          },
+          "count": 322
+        },
+        {
+          "path": "$.result.chakra_readings[*].element",
+          "types": {
+            "string": 322
+          },
+          "count": 322
+        },
+        {
+          "path": "$.result.chakra_readings[*].location",
+          "types": {
+            "string": 322
+          },
+          "count": 322
+        },
+        {
+          "path": "$.result.computation_mode",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.interpretation",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.is_mock_data",
+          "types": {
+            "boolean": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.metrics",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.metrics.coherence",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.metrics.entropy",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.metrics.fractal_dimension",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.metrics.symmetry",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.metrics.timestamp",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.metrics.vitality_index",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.witness_layer",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.witness_layer.aletheios",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.witness_layer.aletheios.perspective",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.witness_layer.pichet",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.witness_layer.pichet.perspective",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.witness_layer.synthesis",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "ChakraFieldMap",
+        "secondaryComponent": "BiofieldMetricBands",
+        "fallbackComponent": "CaptureConsentGate",
+        "encodingRelationship": "Named chakra measures map to labeled bands; capture quality remains a separate state.",
+        "nonVisualEquivalent": "Chakra metric table plus explicit capture-quality notice.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": true,
+        "creative-expression": false,
+        "daily-practice": false,
+        "decision-support": false,
+        "full-spectrum": true,
+        "self-inquiry": true
+      }
+    },
+    {
+      "id": "biofield-capture",
+      "status": "capture-gated",
+      "provenance": "source-contract",
+      "evidence": {
+        "source": "crates/engine-biofield-capture/src/lib.rs",
+        "envelopeCount": 0,
+        "resultCount": 0,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 13,
+        "observationCount": 18,
+        "typeCounts": {
+          "boolean": 1,
+          "null": 3,
+          "object": 4,
+          "string": 3,
+          "unknown": 7
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.analysis",
+          "types": {
+            "object": 1,
+            "unknown": 1
+          },
+          "count": 2
+        },
+        {
+          "path": "$.result.analysis_version",
+          "types": {
+            "null": 1,
+            "unknown": 1
+          },
+          "count": 2
+        },
+        {
+          "path": "$.result.analysis.*",
+          "types": {
+            "unknown": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.available",
+          "types": {
+            "boolean": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.contract_version",
+          "types": {
+            "null": 1,
+            "unknown": 1
+          },
+          "count": 2
+        },
+        {
+          "path": "$.result.created_at",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.engine_id",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.input",
+          "types": {
+            "object": 1,
+            "unknown": 1
+          },
+          "count": 2
+        },
+        {
+          "path": "$.result.input.*",
+          "types": {
+            "unknown": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.quality_assessment",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.reading_id",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.session_id",
+          "types": {
+            "null": 1,
+            "unknown": 1
+          },
+          "count": 2
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "CapturedFieldReading",
+        "secondaryComponent": "CaptureQualityPanel",
+        "fallbackComponent": "CaptureConsentGate",
+        "encodingRelationship": "Persisted analysis sections map to labeled panels after consent and ownership checks.",
+        "nonVisualEquivalent": "Sectioned capture report with quality and availability fields.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": false,
+        "creative-expression": false,
+        "daily-practice": false,
+        "decision-support": false,
+        "full-spectrum": false,
+        "self-inquiry": false
+      }
+    },
+    {
+      "id": "biorhythm",
+      "status": "partial",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 51,
+        "resultCount": 51,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 68,
+        "observationCount": 6629,
+        "typeCounts": {
+          "array": 102,
+          "boolean": 306,
+          "number": 4641,
+          "object": 714,
+          "string": 866
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.aesthetic",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.aesthetic.cycle_day",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.aesthetic.days_until_critical",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.aesthetic.days_until_peak",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.aesthetic.is_critical",
+          "types": {
+            "boolean": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.aesthetic.percentage",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.aesthetic.phase",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.aesthetic.value",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.critical_days",
+          "types": {
+            "array": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.critical_days[*]",
+          "types": {
+            "string": 152
+          },
+          "count": 152
+        },
+        {
+          "path": "$.result.days_alive",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.emotional",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.emotional.cycle_day",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.emotional.days_until_critical",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.emotional.days_until_peak",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.emotional.is_critical",
+          "types": {
+            "boolean": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.emotional.percentage",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.emotional.phase",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.emotional.value",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.forecast",
+          "types": {
+            "array": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.forecast[*]",
+          "types": {
+            "object": 357
+          },
+          "count": 357
+        },
+        {
+          "path": "$.result.forecast[*].aesthetic",
+          "types": {
+            "number": 357
+          },
+          "count": 357
+        },
+        {
+          "path": "$.result.forecast[*].date",
+          "types": {
+            "string": 357
+          },
+          "count": 357
+        },
+        {
+          "path": "$.result.forecast[*].days_alive",
+          "types": {
+            "number": 357
+          },
+          "count": 357
+        },
+        {
+          "path": "$.result.forecast[*].emotional",
+          "types": {
+            "number": 357
+          },
+          "count": 357
+        },
+        {
+          "path": "$.result.forecast[*].intellectual",
+          "types": {
+            "number": 357
+          },
+          "count": 357
+        },
+        {
+          "path": "$.result.forecast[*].intuitive",
+          "types": {
+            "number": 357
+          },
+          "count": 357
+        },
+        {
+          "path": "$.result.forecast[*].overall_energy",
+          "types": {
+            "number": 357
+          },
+          "count": 357
+        },
+        {
+          "path": "$.result.forecast[*].physical",
+          "types": {
+            "number": 357
+          },
+          "count": 357
+        },
+        {
+          "path": "$.result.forecast[*].spiritual",
+          "types": {
+            "number": 357
+          },
+          "count": 357
+        },
+        {
+          "path": "$.result.intellectual",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intellectual.cycle_day",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intellectual.days_until_critical",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intellectual.days_until_peak",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intellectual.is_critical",
+          "types": {
+            "boolean": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intellectual.percentage",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intellectual.phase",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intellectual.value",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intuitive",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intuitive.cycle_day",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intuitive.days_until_critical",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intuitive.days_until_peak",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intuitive.is_critical",
+          "types": {
+            "boolean": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intuitive.percentage",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intuitive.phase",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.intuitive.value",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.mastery",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.overall_energy",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.passion",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.physical",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.physical.cycle_day",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.physical.days_until_critical",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.physical.days_until_peak",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.physical.is_critical",
+          "types": {
+            "boolean": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.physical.percentage",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.physical.phase",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.physical.value",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.spiritual",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.spiritual.cycle_day",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.spiritual.days_until_critical",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.spiritual.days_until_peak",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.spiritual.is_critical",
+          "types": {
+            "boolean": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.spiritual.percentage",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.spiritual.phase",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.spiritual.value",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.target_date",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.wisdom",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "BiorhythmCycleBands",
+        "secondaryComponent": "ForecastSequence",
+        "fallbackComponent": "UnresolvedFieldState",
+        "encodingRelationship": "Cycle values map to labeled signed scales and forecast points retain date order.",
+        "nonVisualEquivalent": "Cycle and forecast data tables with printed values.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": false,
+        "creative-expression": false,
+        "daily-practice": true,
+        "decision-support": false,
+        "full-spectrum": true,
+        "self-inquiry": false
+      }
+    },
+    {
+      "id": "enneagram",
+      "status": "partial",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 51,
+        "resultCount": 51,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 3,
+        "observationCount": 153,
+        "typeCounts": {
+          "array": 51,
+          "object": 51,
+          "string": 51
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.mode",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.questions",
+          "types": {
+            "array": 51
+          },
+          "count": 51
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "InquiryQuestionDeck",
+        "secondaryComponent": "TypologyFactGrid",
+        "fallbackComponent": "UnresolvedFieldState",
+        "encodingRelationship": "Questions remain ordered prompts; available type facts remain labeled facts.",
+        "nonVisualEquivalent": "Ordered question list followed by a definition list.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": false,
+        "creative-expression": false,
+        "daily-practice": false,
+        "decision-support": true,
+        "full-spectrum": true,
+        "self-inquiry": true
+      }
+    },
+    {
+      "id": "face-reading",
+      "status": "capture-gated",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 46,
+        "resultCount": 46,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 35,
+        "observationCount": 2254,
+        "typeCounts": {
+          "array": 184,
+          "boolean": 46,
+          "number": 230,
+          "object": 414,
+          "string": 1380
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.constitution",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.constitution.body_type",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.constitution.descriptions",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.constitution.descriptions.body_type",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.constitution.descriptions.dosha",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.constitution.descriptions.element",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.constitution.primary_dosha",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.constitution.secondary_dosha",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.constitution.tcm_element",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.elemental_balance",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.elemental_balance.dominant",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.elemental_balance.earth",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.elemental_balance.fire",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.elemental_balance.metal",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.elemental_balance.water",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.elemental_balance.wood",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.health_indicators",
+          "types": {
+            "array": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.health_indicators[*]",
+          "types": {
+            "object": 92
+          },
+          "count": 92
+        },
+        {
+          "path": "$.result.analysis.health_indicators[*].associated_organ",
+          "types": {
+            "string": 92
+          },
+          "count": 92
+        },
+        {
+          "path": "$.result.analysis.health_indicators[*].observation",
+          "types": {
+            "string": 92
+          },
+          "count": 92
+        },
+        {
+          "path": "$.result.analysis.health_indicators[*].zone",
+          "types": {
+            "string": 92
+          },
+          "count": 92
+        },
+        {
+          "path": "$.result.analysis.is_mock_data",
+          "types": {
+            "boolean": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.personality_indicators",
+          "types": {
+            "array": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.analysis.personality_indicators[*]",
+          "types": {
+            "object": 92
+          },
+          "count": 92
+        },
+        {
+          "path": "$.result.analysis.personality_indicators[*].description",
+          "types": {
+            "string": 92
+          },
+          "count": 92
+        },
+        {
+          "path": "$.result.analysis.personality_indicators[*].facial_indicator",
+          "types": {
+            "string": 92
+          },
+          "count": 92
+        },
+        {
+          "path": "$.result.analysis.personality_indicators[*].trait_name",
+          "types": {
+            "string": 92
+          },
+          "count": 92
+        },
+        {
+          "path": "$.result.disclaimer",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.future_capabilities",
+          "types": {
+            "array": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.future_capabilities[*]",
+          "types": {
+            "string": 230
+          },
+          "count": 230
+        },
+        {
+          "path": "$.result.notice",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.traditions",
+          "types": {
+            "array": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.traditions[*]",
+          "types": {
+            "string": 138
+          },
+          "count": 138
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "PhysiognomyObservationMap",
+        "secondaryComponent": "ElementalBalanceBands",
+        "fallbackComponent": "CaptureConsentGate",
+        "encodingRelationship": "Named facial zones link to observations while balance measures use printed scales.",
+        "nonVisualEquivalent": "Facial-zone observation table plus elemental balance table.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": true,
+        "creative-expression": false,
+        "daily-practice": false,
+        "decision-support": false,
+        "full-spectrum": true,
+        "self-inquiry": true
+      }
+    },
+    {
+      "id": "gene-keys",
+      "status": "partial",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 52,
+        "resultCount": 52,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 37,
+        "observationCount": 8528,
+        "typeCounts": {
+          "array": 936,
+          "null": 208,
+          "number": 1040,
+          "object": 728,
+          "string": 5616
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.activation_sequence",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.activation_sequence.evolution",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.activation_sequence.evolution[*]",
+          "types": {
+            "number": 104
+          },
+          "count": 104
+        },
+        {
+          "path": "$.result.activation_sequence.lifes_work",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.activation_sequence.lifes_work[*]",
+          "types": {
+            "number": 104
+          },
+          "count": 104
+        },
+        {
+          "path": "$.result.activation_sequence.purpose",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.activation_sequence.purpose[*]",
+          "types": {
+            "number": 104
+          },
+          "count": 104
+        },
+        {
+          "path": "$.result.activation_sequence.radiance",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.activation_sequence.radiance[*]",
+          "types": {
+            "number": 104
+          },
+          "count": 104
+        },
+        {
+          "path": "$.result.active_keys",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.active_keys[*]",
+          "types": {
+            "object": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.active_keys[*].gift",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.active_keys[*].key_number",
+          "types": {
+            "number": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.active_keys[*].line",
+          "types": {
+            "number": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.active_keys[*].name",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.active_keys[*].shadow",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.active_keys[*].siddhi",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.active_keys[*].source",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.frequency_assessments",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.frequency_assessments[*]",
+          "types": {
+            "object": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.frequency_assessments[*].gene_key",
+          "types": {
+            "number": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.frequency_assessments[*].gift",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.frequency_assessments[*].gift_description",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.frequency_assessments[*].name",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.frequency_assessments[*].recognition_prompts",
+          "types": {
+            "object": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.frequency_assessments[*].recognition_prompts.gift",
+          "types": {
+            "array": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.frequency_assessments[*].recognition_prompts.gift[*]",
+          "types": {
+            "string": 1040
+          },
+          "count": 1040
+        },
+        {
+          "path": "$.result.frequency_assessments[*].recognition_prompts.shadow",
+          "types": {
+            "array": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.frequency_assessments[*].recognition_prompts.shadow[*]",
+          "types": {
+            "string": 1040
+          },
+          "count": 1040
+        },
+        {
+          "path": "$.result.frequency_assessments[*].recognition_prompts.siddhi",
+          "types": {
+            "array": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.frequency_assessments[*].recognition_prompts.siddhi[*]",
+          "types": {
+            "string": 1040
+          },
+          "count": 1040
+        },
+        {
+          "path": "$.result.frequency_assessments[*].shadow",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.frequency_assessments[*].shadow_description",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.frequency_assessments[*].siddhi",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.frequency_assessments[*].siddhi_description",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.frequency_assessments[*].suggested_frequency",
+          "types": {
+            "null": 208
+          },
+          "count": 208
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "GeneKeySequence",
+        "secondaryComponent": "FrequencyTriadCards",
+        "fallbackComponent": "UnresolvedFieldState",
+        "encodingRelationship": "Sequence membership and key positions stay ordered; shadow, gift, and siddhi remain a triad.",
+        "nonVisualEquivalent": "Ordered sequence table with shadow, gift, and siddhi columns.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": false,
+        "creative-expression": false,
+        "daily-practice": false,
+        "decision-support": true,
+        "full-spectrum": true,
+        "self-inquiry": true
+      }
+    },
+    {
+      "id": "human-design",
+      "status": "partial",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 52,
+        "resultCount": 52,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 115,
+        "observationCount": 6301,
+        "typeCounts": {
+          "array": 104,
+          "number": 4056,
+          "object": 1508,
+          "string": 633
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.active_channels",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.active_channels[*]",
+          "types": {
+            "string": 177
+          },
+          "count": 177
+        },
+        {
+          "path": "$.result.authority",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.defined_centers",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.defined_centers[*]",
+          "types": {
+            "string": 248
+          },
+          "count": 248
+        },
+        {
+          "path": "$.result.definition",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.earth",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.earth.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.earth.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.earth.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.jupiter",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.jupiter.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.jupiter.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.jupiter.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.mars",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.mars.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.mars.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.mars.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.mercury",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.mercury.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.mercury.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.mercury.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.moon",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.moon.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.moon.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.moon.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.neptune",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.neptune.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.neptune.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.neptune.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.northnode",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.northnode.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.northnode.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.northnode.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.pluto",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.pluto.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.pluto.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.pluto.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.saturn",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.saturn.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.saturn.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.saturn.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.southnode",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.southnode.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.southnode.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.southnode.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.sun",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.sun.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.sun.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.sun.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.uranus",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.uranus.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.uranus.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.uranus.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.venus",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.venus.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.venus.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.design_activations.venus.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.hd_type",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.earth",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.earth.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.earth.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.earth.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.jupiter",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.jupiter.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.jupiter.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.jupiter.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.mars",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.mars.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.mars.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.mars.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.mercury",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.mercury.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.mercury.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.mercury.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.moon",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.moon.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.moon.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.moon.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.neptune",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.neptune.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.neptune.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.neptune.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.northnode",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.northnode.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.northnode.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.northnode.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.pluto",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.pluto.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.pluto.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.pluto.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.saturn",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.saturn.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.saturn.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.saturn.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.southnode",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.southnode.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.southnode.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.southnode.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.sun",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.sun.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.sun.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.sun.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.uranus",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.uranus.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.uranus.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.uranus.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.venus",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.venus.gate",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.venus.line",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality_activations.venus.longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.profile",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "BodygraphMap",
+        "secondaryComponent": "ActivationTable",
+        "fallbackComponent": "UnresolvedFieldState",
+        "encodingRelationship": "Centers, channels, gates, and activations map to named placements and relationships.",
+        "nonVisualEquivalent": "Center, channel, gate, and activation tables.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": true,
+        "creative-expression": false,
+        "daily-practice": false,
+        "decision-support": true,
+        "full-spectrum": true,
+        "self-inquiry": false
+      }
+    },
+    {
+      "id": "i-ching",
+      "status": "partial",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 46,
+        "resultCount": 46,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 22,
+        "observationCount": 1366,
+        "typeCounts": {
+          "array": 92,
+          "number": 584,
+          "object": 184,
+          "string": 506
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.casting",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.casting.line_values",
+          "types": {
+            "array": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.casting.line_values[*]",
+          "types": {
+            "number": 276
+          },
+          "count": 276
+        },
+        {
+          "path": "$.result.casting.method",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.changing_lines",
+          "types": {
+            "array": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.changing_lines[*]",
+          "types": {
+            "number": 170
+          },
+          "count": 170
+        },
+        {
+          "path": "$.result.primary_hexagram",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.primary_hexagram.chinese_name",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.primary_hexagram.image",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.primary_hexagram.judgment",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.primary_hexagram.meaning",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.primary_hexagram.name",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.primary_hexagram.number",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.relating_hexagram",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.relating_hexagram.chinese_name",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.relating_hexagram.image",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.relating_hexagram.judgment",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.relating_hexagram.meaning",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.relating_hexagram.name",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.relating_hexagram.number",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.seed",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "HexagramChangeMap",
+        "secondaryComponent": "ChangingLineSequence",
+        "fallbackComponent": "UnresolvedFieldState",
+        "encodingRelationship": "Six source lines retain order and changing lines connect primary to relating hexagrams.",
+        "nonVisualEquivalent": "Six-row line table and primary-to-relating summary.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": false,
+        "creative-expression": false,
+        "daily-practice": false,
+        "decision-support": true,
+        "full-spectrum": true,
+        "self-inquiry": false
+      }
+    },
+    {
+      "id": "nadabrahman",
+      "status": "implemented",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 46,
+        "resultCount": 46,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 24,
+        "observationCount": 6942,
+        "typeCounts": {
+          "array": 736,
+          "number": 552,
+          "object": 368,
+          "string": 5286
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.recommendations",
+          "types": {
+            "array": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.recommendations[*]",
+          "types": {
+            "object": 230
+          },
+          "count": 230
+        },
+        {
+          "path": "$.result.recommendations[*].arohanam",
+          "types": {
+            "array": 230
+          },
+          "count": 230
+        },
+        {
+          "path": "$.result.recommendations[*].arohanam[*]",
+          "types": {
+            "string": 1840
+          },
+          "count": 1840
+        },
+        {
+          "path": "$.result.recommendations[*].avarohanam",
+          "types": {
+            "array": 230
+          },
+          "count": 230
+        },
+        {
+          "path": "$.result.recommendations[*].avarohanam[*]",
+          "types": {
+            "string": 1840
+          },
+          "count": 1840
+        },
+        {
+          "path": "$.result.recommendations[*].mood",
+          "types": {
+            "string": 230
+          },
+          "count": 230
+        },
+        {
+          "path": "$.result.recommendations[*].raga_name",
+          "types": {
+            "string": 230
+          },
+          "count": 230
+        },
+        {
+          "path": "$.result.recommendations[*].raga_number",
+          "types": {
+            "number": 230
+          },
+          "count": 230
+        },
+        {
+          "path": "$.result.recommendations[*].reason",
+          "types": {
+            "string": 230
+          },
+          "count": 230
+        },
+        {
+          "path": "$.result.recommendations[*].score",
+          "types": {
+            "number": 230
+          },
+          "count": 230
+        },
+        {
+          "path": "$.result.recommendations[*].therapeutic_qualities",
+          "types": {
+            "array": 230
+          },
+          "count": 230
+        },
+        {
+          "path": "$.result.recommendations[*].therapeutic_qualities[*]",
+          "types": {
+            "string": 640
+          },
+          "count": 640
+        },
+        {
+          "path": "$.result.time_recommendation",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.time_recommendation.dosha_dominance",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.time_recommendation.energy_quality",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.time_recommendation.prahar_name",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.time_recommendation.prahar_number",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.time_recommendation.primary_raga",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.time_recommendation.primary_raga.raga_name",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.time_recommendation.primary_raga.raga_number",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.time_recommendation.primary_raga.reason",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.time_recommendation.time_range",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "RagaRecommendationList",
+        "secondaryComponent": "TimeRecommendationCard",
+        "fallbackComponent": "UnresolvedFieldState",
+        "encodingRelationship": "Recommendations retain named membership and source scores without invented reranking.",
+        "nonVisualEquivalent": "Recommendation table and time-window definition list.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": false,
+        "creative-expression": true,
+        "daily-practice": true,
+        "decision-support": false,
+        "full-spectrum": true,
+        "self-inquiry": false
+      }
+    },
+    {
+      "id": "numerology",
+      "status": "implemented",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 52,
+        "resultCount": 52,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 37,
+        "observationCount": 2201,
+        "typeCounts": {
+          "array": 312,
+          "boolean": 312,
+          "number": 901,
+          "object": 364,
+          "string": 312
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.birthday",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.birthday.is_master",
+          "types": {
+            "boolean": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.birthday.meaning",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.birthday.reduction_chain",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.birthday.reduction_chain[*]",
+          "types": {
+            "number": 90
+          },
+          "count": 90
+        },
+        {
+          "path": "$.result.birthday.value",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.chaldean_name",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.chaldean_name.is_master",
+          "types": {
+            "boolean": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.chaldean_name.meaning",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.chaldean_name.reduction_chain",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.chaldean_name.reduction_chain[*]",
+          "types": {
+            "number": 106
+          },
+          "count": 106
+        },
+        {
+          "path": "$.result.chaldean_name.value",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.expression",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.expression.is_master",
+          "types": {
+            "boolean": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.expression.meaning",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.expression.reduction_chain",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.expression.reduction_chain[*]",
+          "types": {
+            "number": 115
+          },
+          "count": 115
+        },
+        {
+          "path": "$.result.expression.value",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.life_path",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.life_path.is_master",
+          "types": {
+            "boolean": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.life_path.meaning",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.life_path.reduction_chain",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.life_path.reduction_chain[*]",
+          "types": {
+            "number": 96
+          },
+          "count": 96
+        },
+        {
+          "path": "$.result.life_path.value",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality.is_master",
+          "types": {
+            "boolean": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality.meaning",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality.reduction_chain",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.personality.reduction_chain[*]",
+          "types": {
+            "number": 104
+          },
+          "count": 104
+        },
+        {
+          "path": "$.result.personality.value",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.soul_urge",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.soul_urge.is_master",
+          "types": {
+            "boolean": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.soul_urge.meaning",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.soul_urge.reduction_chain",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.soul_urge.reduction_chain[*]",
+          "types": {
+            "number": 78
+          },
+          "count": 78
+        },
+        {
+          "path": "$.result.soul_urge.value",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "NumberReductionMap",
+        "secondaryComponent": "NumerologyFactGrid",
+        "fallbackComponent": "UnresolvedFieldState",
+        "encodingRelationship": "Reduction chains become ordered number paths with master-number state printed explicitly.",
+        "nonVisualEquivalent": "Number table with ordered reduction-chain text.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": true,
+        "creative-expression": true,
+        "daily-practice": false,
+        "decision-support": false,
+        "full-spectrum": true,
+        "self-inquiry": false
+      }
+    },
+    {
+      "id": "panchanga",
+      "status": "implemented",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 52,
+        "resultCount": 52,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 18,
+        "observationCount": 936,
+        "typeCounts": {
+          "number": 624,
+          "object": 52,
+          "string": 260
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.julian_day",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.karana_index",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.karana_name",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.karana_value",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.lunar_longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.nakshatra_index",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.nakshatra_name",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.nakshatra_value",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.solar_longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.tithi_index",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.tithi_name",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.tithi_value",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.vara_index",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.vara_name",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.yoga_index",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.yoga_name",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.yoga_value",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "PanchangaFactGrid",
+        "secondaryComponent": "FieldFactGrid",
+        "fallbackComponent": "UnresolvedFieldState",
+        "encodingRelationship": "Five named limbs remain grouped facts; scalar astronomical fields remain separately labeled facts.",
+        "nonVisualEquivalent": "Five-limb definition table followed by scalar source facts.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": false,
+        "creative-expression": false,
+        "daily-practice": true,
+        "decision-support": false,
+        "full-spectrum": true,
+        "self-inquiry": false
+      }
+    },
+    {
+      "id": "raaga",
+      "status": "partial",
+      "provenance": "source-contract",
+      "evidence": {
+        "source": "packages/noesis-engine-sdk/src/types.ts",
+        "envelopeCount": 0,
+        "resultCount": 0,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 33,
+        "observationCount": 34,
+        "typeCounts": {
+          "array": 6,
+          "boolean": 2,
+          "null": 1,
+          "number": 9,
+          "object": 8,
+          "string": 5,
+          "unknown": 3
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.generated_audio",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.generated_audio.clip_url",
+          "types": {
+            "null": 1,
+            "string": 1
+          },
+          "count": 2
+        },
+        {
+          "path": "$.generated_audio.metadata",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.generated_audio.metadata.*",
+          "types": {
+            "unknown": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.generated_audio.root_hz",
+          "types": {
+            "number": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.generated_audio.strudel_ratios",
+          "types": {
+            "array": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.generated_audio.strudel_ratios[*]",
+          "types": {
+            "number": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.alternate_ragas",
+          "types": {
+            "array": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.alternate_ragas[*]",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.alternate_ragas[*].*",
+          "types": {
+            "unknown": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.arohana_indices",
+          "types": {
+            "array": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.arohana_indices[*]",
+          "types": {
+            "number": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.avarohana_indices",
+          "types": {
+            "array": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.avarohana_indices[*]",
+          "types": {
+            "number": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.dosha_affinities",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.dosha_affinities.*",
+          "types": {
+            "boolean": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.melakarta",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.melakarta.chakra",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.melakarta.ma_type",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.melakarta.name",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.melakarta.num",
+          "types": {
+            "number": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.prahar",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.prahar.is_recommended_time",
+          "types": {
+            "boolean": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.prahar.label",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.prahar.num",
+          "types": {
+            "number": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.root_hz",
+          "types": {
+            "number": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.strudel_ratios",
+          "types": {
+            "array": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.strudel_ratios[*]",
+          "types": {
+            "number": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.swaras",
+          "types": {
+            "array": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.swaras[*]",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.swaras[*].*",
+          "types": {
+            "unknown": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.total_melakartas",
+          "types": {
+            "number": 1
+          },
+          "count": 1
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "RaagaPlayer",
+        "secondaryComponent": "SwaraSequence",
+        "fallbackComponent": "PlayableArtifactState",
+        "encodingRelationship": "Ascending and descending swaras preserve source order; audio availability controls playback.",
+        "nonVisualEquivalent": "Ordered swara table with audio status and download link.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": false,
+        "creative-expression": true,
+        "daily-practice": false,
+        "decision-support": false,
+        "full-spectrum": true,
+        "self-inquiry": false
+      }
+    },
+    {
+      "id": "sacred-geometry",
+      "status": "partial",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 46,
+        "resultCount": 46,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 16,
+        "observationCount": 828,
+        "typeCounts": {
+          "array": 46,
+          "null": 46,
+          "number": 92,
+          "object": 184,
+          "string": 460
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.form",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.form.description",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.form.elements",
+          "types": {
+            "array": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.form.elements[*]",
+          "types": {
+            "string": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.form.id",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.form.name",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.form.numerology",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.form.symbolism",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.intention",
+          "types": {
+            "null": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.meditation",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.meditation.duration_suggestion",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.meditation.prompt",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.seed",
+          "types": {
+            "number": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.svg_preview",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.svg_preview.status",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "SacredGeometryPlate",
+        "secondaryComponent": "GeometryElementIndex",
+        "fallbackComponent": "UnresolvedFieldState",
+        "encodingRelationship": "Declared forms and elements become labeled geometry only when a source artifact exists.",
+        "nonVisualEquivalent": "Form definition list and named element list.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": false,
+        "creative-expression": true,
+        "daily-practice": false,
+        "decision-support": false,
+        "full-spectrum": true,
+        "self-inquiry": false
+      }
+    },
+    {
+      "id": "sigil-forge",
+      "status": "partial",
+      "provenance": "source-contract",
+      "evidence": {
+        "source": "packages/noesis-engine-sdk/src/types.ts",
+        "envelopeCount": 1,
+        "resultCount": 0,
+        "errorCount": 1
+      },
+      "outputSummary": {
+        "pathCount": 26,
+        "observationCount": 27,
+        "typeCounts": {
+          "array": 2,
+          "null": 1,
+          "number": 1,
+          "object": 7,
+          "string": 15,
+          "unknown": 1
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.generated_image",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.generated_image.b64_json",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.generated_image.metadata",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.generated_image.metadata.*",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.generated_image.url",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.charging_suggestions",
+          "types": {
+            "array": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.charging_suggestions[*]",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.charging_suggestions[*].description",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.charging_suggestions[*].name",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.guidance",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.guidance.*",
+          "types": {
+            "unknown": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.image_prompt",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.intention",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.method",
+          "types": {
+            "object": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.method.description",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.method.id",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.method.name",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.method.steps",
+          "types": {
+            "array": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.method.steps[*]",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.processing",
+          "types": {
+            "null": 1,
+            "object": 1
+          },
+          "count": 2
+        },
+        {
+          "path": "$.result.processing.letter_count",
+          "types": {
+            "number": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.processing.original",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.processing.remaining_letters",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.processing.type",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        },
+        {
+          "path": "$.result.provider",
+          "types": {
+            "string": 1
+          },
+          "count": 1
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "SigilConstructionPlate",
+        "secondaryComponent": "ConstructionStepSequence",
+        "fallbackComponent": "GeneratedArtifactState",
+        "encodingRelationship": "Construction steps preserve order and generated imagery appears only when supplied.",
+        "nonVisualEquivalent": "Ordered construction steps with generated-image status.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": false,
+        "creative-expression": true,
+        "daily-practice": false,
+        "decision-support": false,
+        "full-spectrum": true,
+        "self-inquiry": false
+      }
+    },
+    {
+      "id": "tarot",
+      "status": "implemented",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 46,
+        "resultCount": 46,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 22,
+        "observationCount": 2863,
+        "typeCounts": {
+          "array": 184,
+          "boolean": 138,
+          "number": 276,
+          "object": 506,
+          "string": 1759
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.positions",
+          "types": {
+            "array": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.positions[*]",
+          "types": {
+            "object": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.positions[*].card",
+          "types": {
+            "object": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.positions[*].card.arcana",
+          "types": {
+            "string": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.positions[*].card.element",
+          "types": {
+            "string": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.positions[*].card.id",
+          "types": {
+            "string": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.positions[*].card.interpretation",
+          "types": {
+            "object": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.positions[*].card.interpretation.keywords",
+          "types": {
+            "array": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.positions[*].card.interpretation.keywords[*]",
+          "types": {
+            "string": 552
+          },
+          "count": 552
+        },
+        {
+          "path": "$.result.positions[*].card.interpretation.meaning",
+          "types": {
+            "string": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.positions[*].card.isReversed",
+          "types": {
+            "boolean": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.positions[*].card.name",
+          "types": {
+            "string": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.positions[*].card.number",
+          "types": {
+            "number": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.positions[*].card.suit",
+          "types": {
+            "string": 103
+          },
+          "count": 103
+        },
+        {
+          "path": "$.result.positions[*].meaning",
+          "types": {
+            "string": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.positions[*].name",
+          "types": {
+            "string": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.positions[*].position",
+          "types": {
+            "number": 138
+          },
+          "count": 138
+        },
+        {
+          "path": "$.result.spread",
+          "types": {
+            "object": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.spread.description",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.spread.name",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        },
+        {
+          "path": "$.result.spread.type",
+          "types": {
+            "string": 46
+          },
+          "count": 46
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "TarotSpread",
+        "secondaryComponent": "CardMeaningPanel",
+        "fallbackComponent": "UnresolvedFieldState",
+        "encodingRelationship": "Cards retain source position and labels; interpretations stay attached to their cards.",
+        "nonVisualEquivalent": "Ordered spread table with position, card, orientation, and meaning.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": false,
+        "creative-expression": false,
+        "daily-practice": false,
+        "decision-support": true,
+        "full-spectrum": true,
+        "self-inquiry": false
+      }
+    },
+    {
+      "id": "transits",
+      "status": "implemented",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 51,
+        "resultCount": 51,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 32,
+        "observationCount": 18768,
+        "typeCounts": {
+          "array": 204,
+          "boolean": 2712,
+          "null": 40,
+          "number": 4497,
+          "object": 2763,
+          "string": 8552
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.aspects",
+          "types": {
+            "array": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.aspects[*]",
+          "types": {
+            "object": 1437
+          },
+          "count": 1437
+        },
+        {
+          "path": "$.result.aspects[*].aspect_type",
+          "types": {
+            "string": 1437
+          },
+          "count": 1437
+        },
+        {
+          "path": "$.result.aspects[*].is_applying",
+          "types": {
+            "boolean": 1437
+          },
+          "count": 1437
+        },
+        {
+          "path": "$.result.aspects[*].natal_planet",
+          "types": {
+            "string": 1437
+          },
+          "count": 1437
+        },
+        {
+          "path": "$.result.aspects[*].nature",
+          "types": {
+            "string": 1437
+          },
+          "count": 1437
+        },
+        {
+          "path": "$.result.aspects[*].orb",
+          "types": {
+            "number": 1437
+          },
+          "count": 1437
+        },
+        {
+          "path": "$.result.aspects[*].transiting_planet",
+          "types": {
+            "string": 1437
+          },
+          "count": 1437
+        },
+        {
+          "path": "$.result.natal_positions",
+          "types": {
+            "array": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.natal_positions[*]",
+          "types": {
+            "object": 612
+          },
+          "count": 612
+        },
+        {
+          "path": "$.result.natal_positions[*].degree_in_sign",
+          "types": {
+            "number": 612
+          },
+          "count": 612
+        },
+        {
+          "path": "$.result.natal_positions[*].is_retrograde",
+          "types": {
+            "boolean": 612
+          },
+          "count": 612
+        },
+        {
+          "path": "$.result.natal_positions[*].longitude",
+          "types": {
+            "number": 612
+          },
+          "count": 612
+        },
+        {
+          "path": "$.result.natal_positions[*].planet",
+          "types": {
+            "string": 612
+          },
+          "count": 612
+        },
+        {
+          "path": "$.result.natal_positions[*].sign",
+          "types": {
+            "string": 612
+          },
+          "count": 612
+        },
+        {
+          "path": "$.result.period_quality",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.retrograde_planets",
+          "types": {
+            "array": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.retrograde_planets[*]",
+          "types": {
+            "string": 192
+          },
+          "count": 192
+        },
+        {
+          "path": "$.result.sade_sati",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.sade_sati.is_active",
+          "types": {
+            "boolean": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.sade_sati.moon_sign",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.sade_sati.phase",
+          "types": {
+            "null": 40,
+            "string": 11
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.sade_sati.saturn_sign",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.transit_positions",
+          "types": {
+            "array": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.transit_positions[*]",
+          "types": {
+            "object": 612
+          },
+          "count": 612
+        },
+        {
+          "path": "$.result.transit_positions[*].degree_in_sign",
+          "types": {
+            "number": 612
+          },
+          "count": 612
+        },
+        {
+          "path": "$.result.transit_positions[*].is_retrograde",
+          "types": {
+            "boolean": 612
+          },
+          "count": 612
+        },
+        {
+          "path": "$.result.transit_positions[*].longitude",
+          "types": {
+            "number": 612
+          },
+          "count": 612
+        },
+        {
+          "path": "$.result.transit_positions[*].planet",
+          "types": {
+            "string": 612
+          },
+          "count": 612
+        },
+        {
+          "path": "$.result.transit_positions[*].sign",
+          "types": {
+            "string": 612
+          },
+          "count": 612
+        },
+        {
+          "path": "$.result.transit_positions[*].speed",
+          "types": {
+            "number": 612
+          },
+          "count": 612
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "TransitAspectMap",
+        "secondaryComponent": "PlanetPositionTable",
+        "fallbackComponent": "UnresolvedFieldState",
+        "encodingRelationship": "Named planetary relationships become edges with aspect and orb printed explicitly.",
+        "nonVisualEquivalent": "Aspect edge list and natal/transit position tables.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": false,
+        "creative-expression": false,
+        "daily-practice": true,
+        "decision-support": false,
+        "full-spectrum": true,
+        "self-inquiry": false
+      }
+    },
+    {
+      "id": "vedic-clock",
+      "status": "implemented",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 51,
+        "resultCount": 51,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 35,
+        "observationCount": 3920,
+        "typeCounts": {
+          "array": 204,
+          "null": 292,
+          "number": 102,
+          "object": 751,
+          "string": 2571
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.calculated_for",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.current_dosha",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.current_dosha.dosha",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.current_dosha.qualities",
+          "types": {
+            "array": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.current_dosha.qualities[*]",
+          "types": {
+            "string": 216
+          },
+          "count": 216
+        },
+        {
+          "path": "$.result.current_organ",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.current_organ.associated_emotion",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.current_organ.element",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.current_organ.organ",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.current_organ.peak_energy",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.current_organ.recommended_activities",
+          "types": {
+            "array": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.current_organ.recommended_activities[*]",
+          "types": {
+            "string": 255
+          },
+          "count": 255
+        },
+        {
+          "path": "$.result.current_organ.time_window",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.recommendation",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.recommendation.activities",
+          "types": {
+            "array": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.recommendation.activities[*]",
+          "types": {
+            "object": 255
+          },
+          "count": 255
+        },
+        {
+          "path": "$.result.recommendation.activities[*].activity",
+          "types": {
+            "string": 255
+          },
+          "count": 255
+        },
+        {
+          "path": "$.result.recommendation.activities[*].quality",
+          "types": {
+            "string": 255
+          },
+          "count": 255
+        },
+        {
+          "path": "$.result.recommendation.activities[*].reason",
+          "types": {
+            "string": 255
+          },
+          "count": 255
+        },
+        {
+          "path": "$.result.recommendation.dosha",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.recommendation.organ",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.recommendation.panchanga_quality",
+          "types": {
+            "null": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.recommendation.time_window",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.synthesis",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.timezone",
+          "types": {
+            "object": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.timezone.local_hour",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.timezone.offset_minutes",
+          "types": {
+            "number": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.timezone.source",
+          "types": {
+            "string": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.upcoming_transitions",
+          "types": {
+            "array": 51
+          },
+          "count": 51
+        },
+        {
+          "path": "$.result.upcoming_transitions[*]",
+          "types": {
+            "object": 241
+          },
+          "count": 241
+        },
+        {
+          "path": "$.result.upcoming_transitions[*].description",
+          "types": {
+            "string": 241
+          },
+          "count": 241
+        },
+        {
+          "path": "$.result.upcoming_transitions[*].new_dosha",
+          "types": {
+            "null": 153,
+            "string": 88
+          },
+          "count": 241
+        },
+        {
+          "path": "$.result.upcoming_transitions[*].new_organ",
+          "types": {
+            "null": 88,
+            "string": 153
+          },
+          "count": 241
+        },
+        {
+          "path": "$.result.upcoming_transitions[*].time",
+          "types": {
+            "string": 241
+          },
+          "count": 241
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "FieldFactGrid",
+        "secondaryComponent": "TransitionSequence",
+        "fallbackComponent": "UnresolvedFieldState",
+        "encodingRelationship": "The current organ and dosha remain labeled facts; supplied transitions retain chronological order.",
+        "nonVisualEquivalent": "Current-period definition list and upcoming-transition table.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": false,
+        "creative-expression": false,
+        "daily-practice": true,
+        "decision-support": false,
+        "full-spectrum": true,
+        "self-inquiry": false
+      }
+    },
+    {
+      "id": "vimshottari",
+      "status": "implemented",
+      "provenance": "observed-data",
+      "evidence": {
+        "source": "723/**/engines.json",
+        "envelopeCount": 52,
+        "resultCount": 52,
+        "errorCount": 0
+      },
+      "outputSummary": {
+        "pathCount": 52,
+        "observationCount": 7748,
+        "typeCounts": {
+          "array": 416,
+          "number": 1612,
+          "object": 1196,
+          "string": 4524
+        }
+      },
+      "outputPaths": [
+        {
+          "path": "$.result",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.birth_nakshatra",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.birth_nakshatra.moon_longitude",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.birth_nakshatra.name",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.birth_nakshatra.number",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.antardasha",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.antardasha.end",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.antardasha.planet",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.antardasha.start",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.antardasha.years",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.mahadasha",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.mahadasha.end",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.mahadasha.planet",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.mahadasha.start",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.mahadasha.years",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.pratyantardasha",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.pratyantardasha.days",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.pratyantardasha.end",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.pratyantardasha.planet",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.current_period.pratyantardasha.start",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.period_enrichment",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.period_enrichment.antardasha_themes",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.period_enrichment.antardasha_themes[*]",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.period_enrichment.challenges",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.period_enrichment.challenges[*]",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.period_enrichment.combined_description",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.period_enrichment.life_areas",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.period_enrichment.life_areas[*]",
+          "types": {
+            "string": 260
+          },
+          "count": 260
+        },
+        {
+          "path": "$.result.period_enrichment.mahadasha_themes",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.period_enrichment.mahadasha_themes[*]",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.period_enrichment.opportunities",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.period_enrichment.opportunities[*]",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.period_enrichment.pratyantardasha_themes",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.period_enrichment.pratyantardasha_themes[*]",
+          "types": {
+            "string": 208
+          },
+          "count": 208
+        },
+        {
+          "path": "$.result.timeline",
+          "types": {
+            "object": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.timeline.birth_date",
+          "types": {
+            "string": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.timeline.mahadashas",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.timeline.mahadashas[*]",
+          "types": {
+            "object": 520
+          },
+          "count": 520
+        },
+        {
+          "path": "$.result.timeline.mahadashas[*].antardasha_count",
+          "types": {
+            "number": 520
+          },
+          "count": 520
+        },
+        {
+          "path": "$.result.timeline.mahadashas[*].duration_years",
+          "types": {
+            "number": 520
+          },
+          "count": 520
+        },
+        {
+          "path": "$.result.timeline.mahadashas[*].end_date",
+          "types": {
+            "string": 520
+          },
+          "count": 520
+        },
+        {
+          "path": "$.result.timeline.mahadashas[*].planet",
+          "types": {
+            "string": 520
+          },
+          "count": 520
+        },
+        {
+          "path": "$.result.timeline.mahadashas[*].start_date",
+          "types": {
+            "string": 520
+          },
+          "count": 520
+        },
+        {
+          "path": "$.result.timeline.total_years",
+          "types": {
+            "number": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.upcoming_transitions",
+          "types": {
+            "array": 52
+          },
+          "count": 52
+        },
+        {
+          "path": "$.result.upcoming_transitions[*]",
+          "types": {
+            "object": 260
+          },
+          "count": 260
+        },
+        {
+          "path": "$.result.upcoming_transitions[*].date",
+          "types": {
+            "string": 260
+          },
+          "count": 260
+        },
+        {
+          "path": "$.result.upcoming_transitions[*].days_until",
+          "types": {
+            "number": 260
+          },
+          "count": 260
+        },
+        {
+          "path": "$.result.upcoming_transitions[*].from_planet",
+          "types": {
+            "string": 260
+          },
+          "count": 260
+        },
+        {
+          "path": "$.result.upcoming_transitions[*].to_planet",
+          "types": {
+            "string": 260
+          },
+          "count": 260
+        },
+        {
+          "path": "$.result.upcoming_transitions[*].type",
+          "types": {
+            "string": 260
+          },
+          "count": 260
+        }
+      ],
+      "presentation": {
+        "primaryComponent": "DashaTimeline",
+        "secondaryComponent": "PeriodDetailPanel",
+        "fallbackComponent": "UnresolvedFieldState",
+        "encodingRelationship": "Nested periods become ordered intervals with explicit start, end, and planetary labels.",
+        "nonVisualEquivalent": "Hierarchical period table preserving source order.",
+        "defaultFormat": "branded-visual",
+        "expandedRawJsonByDefault": false
+      },
+      "workflowMembership": {
+        "birth-blueprint": true,
+        "creative-expression": false,
+        "daily-practice": false,
+        "decision-support": false,
+        "full-spectrum": true,
+        "self-inquiry": false
+      }
+    }
+  ],
+  "workflows": [
+    {
+      "id": "birth-blueprint",
+      "name": "Birth Blueprint",
+      "description": "Core identity mapping through birth data analysis",
+      "requiredPhase": 0,
+      "engineIds": [
+        "numerology",
+        "human-design",
+        "vimshottari",
+        "biofield",
+        "face-reading"
+      ],
+      "presentation": {
+        "status": "proposed",
+        "runtimeComponent": "SystemRunLedger",
+        "primaryComponent": "CompositeIdentityMap",
+        "secondaryComponent": "ContributingEngineIndex",
+        "fallbackComponent": "CompositePartialState",
+        "encodingRelationship": "Engine results become labeled identity facets without cross-engine scoring.",
+        "nonVisualEquivalent": "Sectioned engine summary with source-path links.",
+        "defaultFormat": "branded-composite",
+        "expandedRawJsonByDefault": false
+      }
+    },
+    {
+      "id": "creative-expression",
+      "name": "Creative Expression",
+      "description": "Creative and aesthetic exploration through symbols",
+      "requiredPhase": 1,
+      "engineIds": [
+        "sigil-forge",
+        "sacred-geometry",
+        "nadabrahman",
+        "numerology",
+        "raaga"
+      ],
+      "presentation": {
+        "status": "proposed",
+        "runtimeComponent": "SystemRunLedger",
+        "primaryComponent": "CreativeArtifactShelf",
+        "secondaryComponent": "ContributingEngineIndex",
+        "fallbackComponent": "CompositePartialState",
+        "encodingRelationship": "Generated and procedural artifacts retain media type, source order, and availability.",
+        "nonVisualEquivalent": "Ordered artifact list with status and download controls.",
+        "defaultFormat": "branded-composite",
+        "expandedRawJsonByDefault": false
+      }
+    },
+    {
+      "id": "daily-practice",
+      "name": "Daily Practice",
+      "description": "Daily rhythm optimization through temporal analysis",
+      "requiredPhase": 0,
+      "engineIds": [
+        "panchanga",
+        "vedic-clock",
+        "biorhythm",
+        "transits",
+        "nadabrahman"
+      ],
+      "presentation": {
+        "status": "proposed",
+        "runtimeComponent": "SystemRunLedger",
+        "primaryComponent": "TemporalPracticeSequence",
+        "secondaryComponent": "ContributingEngineIndex",
+        "fallbackComponent": "CompositePartialState",
+        "encodingRelationship": "Daily cycles and recommendations align on a shared labeled time sequence.",
+        "nonVisualEquivalent": "Chronological table grouped by contributing engine.",
+        "defaultFormat": "branded-composite",
+        "expandedRawJsonByDefault": false
+      }
+    },
+    {
+      "id": "decision-support",
+      "name": "Decision Support",
+      "description": "Multi-system decision mirrors for clarity",
+      "requiredPhase": 1,
+      "engineIds": [
+        "tarot",
+        "i-ching",
+        "human-design",
+        "enneagram",
+        "gene-keys"
+      ],
+      "presentation": {
+        "status": "proposed",
+        "runtimeComponent": "SystemRunLedger",
+        "primaryComponent": "PerspectiveComparison",
+        "secondaryComponent": "ContributingEngineIndex",
+        "fallbackComponent": "CompositePartialState",
+        "encodingRelationship": "Independent systems occupy parallel labeled columns with no invented consensus.",
+        "nonVisualEquivalent": "Side-by-side comparison table with one column per engine.",
+        "defaultFormat": "branded-composite",
+        "expandedRawJsonByDefault": false
+      }
+    },
+    {
+      "id": "full-spectrum",
+      "name": "Full Spectrum",
+      "description": "Complete integration of all consciousness engines",
+      "requiredPhase": 3,
+      "engineIds": [
+        "numerology",
+        "human-design",
+        "vimshottari",
+        "panchanga",
+        "vedic-clock",
+        "biorhythm",
+        "gene-keys",
+        "biofield",
+        "face-reading",
+        "transits",
+        "nadabrahman",
+        "tarot",
+        "i-ching",
+        "enneagram",
+        "sacred-geometry",
+        "sigil-forge",
+        "raaga"
+      ],
+      "presentation": {
+        "status": "proposed",
+        "runtimeComponent": "SystemRunLedger",
+        "primaryComponent": "FullSpectrumConstellation",
+        "secondaryComponent": "ContributingEngineIndex",
+        "fallbackComponent": "CompositePartialState",
+        "encodingRelationship": "All registered engine outputs become named nodes; membership does not imply rank.",
+        "nonVisualEquivalent": "Grouped engine index with explicit present, missing, and error states.",
+        "defaultFormat": "branded-composite",
+        "expandedRawJsonByDefault": false
+      }
+    },
+    {
+      "id": "self-inquiry",
+      "name": "Self-Inquiry",
+      "description": "Deep self-consciousness exploration and shadow work",
+      "requiredPhase": 2,
+      "engineIds": [
+        "gene-keys",
+        "enneagram",
+        "face-reading",
+        "biofield"
+      ],
+      "presentation": {
+        "status": "proposed",
+        "runtimeComponent": "SystemRunLedger",
+        "primaryComponent": "InquiryLayerStack",
+        "secondaryComponent": "ContributingEngineIndex",
+        "fallbackComponent": "CompositePartialState",
+        "encodingRelationship": "Questions and typologies remain separate ordered layers rather than conclusions.",
+        "nonVisualEquivalent": "Heading-structured list preserving engine and question order.",
+        "defaultFormat": "branded-composite",
+        "expandedRawJsonByDefault": false
+      }
+    }
+  ],
+  "membershipMatrix": [
+    {
+      "engineId": "biofield",
+      "workflowId": "birth-blueprint",
+      "member": true
+    },
+    {
+      "engineId": "biofield",
+      "workflowId": "creative-expression",
+      "member": false
+    },
+    {
+      "engineId": "biofield",
+      "workflowId": "daily-practice",
+      "member": false
+    },
+    {
+      "engineId": "biofield",
+      "workflowId": "decision-support",
+      "member": false
+    },
+    {
+      "engineId": "biofield",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "biofield",
+      "workflowId": "self-inquiry",
+      "member": true
+    },
+    {
+      "engineId": "biofield-capture",
+      "workflowId": "birth-blueprint",
+      "member": false
+    },
+    {
+      "engineId": "biofield-capture",
+      "workflowId": "creative-expression",
+      "member": false
+    },
+    {
+      "engineId": "biofield-capture",
+      "workflowId": "daily-practice",
+      "member": false
+    },
+    {
+      "engineId": "biofield-capture",
+      "workflowId": "decision-support",
+      "member": false
+    },
+    {
+      "engineId": "biofield-capture",
+      "workflowId": "full-spectrum",
+      "member": false
+    },
+    {
+      "engineId": "biofield-capture",
+      "workflowId": "self-inquiry",
+      "member": false
+    },
+    {
+      "engineId": "biorhythm",
+      "workflowId": "birth-blueprint",
+      "member": false
+    },
+    {
+      "engineId": "biorhythm",
+      "workflowId": "creative-expression",
+      "member": false
+    },
+    {
+      "engineId": "biorhythm",
+      "workflowId": "daily-practice",
+      "member": true
+    },
+    {
+      "engineId": "biorhythm",
+      "workflowId": "decision-support",
+      "member": false
+    },
+    {
+      "engineId": "biorhythm",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "biorhythm",
+      "workflowId": "self-inquiry",
+      "member": false
+    },
+    {
+      "engineId": "enneagram",
+      "workflowId": "birth-blueprint",
+      "member": false
+    },
+    {
+      "engineId": "enneagram",
+      "workflowId": "creative-expression",
+      "member": false
+    },
+    {
+      "engineId": "enneagram",
+      "workflowId": "daily-practice",
+      "member": false
+    },
+    {
+      "engineId": "enneagram",
+      "workflowId": "decision-support",
+      "member": true
+    },
+    {
+      "engineId": "enneagram",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "enneagram",
+      "workflowId": "self-inquiry",
+      "member": true
+    },
+    {
+      "engineId": "face-reading",
+      "workflowId": "birth-blueprint",
+      "member": true
+    },
+    {
+      "engineId": "face-reading",
+      "workflowId": "creative-expression",
+      "member": false
+    },
+    {
+      "engineId": "face-reading",
+      "workflowId": "daily-practice",
+      "member": false
+    },
+    {
+      "engineId": "face-reading",
+      "workflowId": "decision-support",
+      "member": false
+    },
+    {
+      "engineId": "face-reading",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "face-reading",
+      "workflowId": "self-inquiry",
+      "member": true
+    },
+    {
+      "engineId": "gene-keys",
+      "workflowId": "birth-blueprint",
+      "member": false
+    },
+    {
+      "engineId": "gene-keys",
+      "workflowId": "creative-expression",
+      "member": false
+    },
+    {
+      "engineId": "gene-keys",
+      "workflowId": "daily-practice",
+      "member": false
+    },
+    {
+      "engineId": "gene-keys",
+      "workflowId": "decision-support",
+      "member": true
+    },
+    {
+      "engineId": "gene-keys",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "gene-keys",
+      "workflowId": "self-inquiry",
+      "member": true
+    },
+    {
+      "engineId": "human-design",
+      "workflowId": "birth-blueprint",
+      "member": true
+    },
+    {
+      "engineId": "human-design",
+      "workflowId": "creative-expression",
+      "member": false
+    },
+    {
+      "engineId": "human-design",
+      "workflowId": "daily-practice",
+      "member": false
+    },
+    {
+      "engineId": "human-design",
+      "workflowId": "decision-support",
+      "member": true
+    },
+    {
+      "engineId": "human-design",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "human-design",
+      "workflowId": "self-inquiry",
+      "member": false
+    },
+    {
+      "engineId": "i-ching",
+      "workflowId": "birth-blueprint",
+      "member": false
+    },
+    {
+      "engineId": "i-ching",
+      "workflowId": "creative-expression",
+      "member": false
+    },
+    {
+      "engineId": "i-ching",
+      "workflowId": "daily-practice",
+      "member": false
+    },
+    {
+      "engineId": "i-ching",
+      "workflowId": "decision-support",
+      "member": true
+    },
+    {
+      "engineId": "i-ching",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "i-ching",
+      "workflowId": "self-inquiry",
+      "member": false
+    },
+    {
+      "engineId": "nadabrahman",
+      "workflowId": "birth-blueprint",
+      "member": false
+    },
+    {
+      "engineId": "nadabrahman",
+      "workflowId": "creative-expression",
+      "member": true
+    },
+    {
+      "engineId": "nadabrahman",
+      "workflowId": "daily-practice",
+      "member": true
+    },
+    {
+      "engineId": "nadabrahman",
+      "workflowId": "decision-support",
+      "member": false
+    },
+    {
+      "engineId": "nadabrahman",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "nadabrahman",
+      "workflowId": "self-inquiry",
+      "member": false
+    },
+    {
+      "engineId": "numerology",
+      "workflowId": "birth-blueprint",
+      "member": true
+    },
+    {
+      "engineId": "numerology",
+      "workflowId": "creative-expression",
+      "member": true
+    },
+    {
+      "engineId": "numerology",
+      "workflowId": "daily-practice",
+      "member": false
+    },
+    {
+      "engineId": "numerology",
+      "workflowId": "decision-support",
+      "member": false
+    },
+    {
+      "engineId": "numerology",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "numerology",
+      "workflowId": "self-inquiry",
+      "member": false
+    },
+    {
+      "engineId": "panchanga",
+      "workflowId": "birth-blueprint",
+      "member": false
+    },
+    {
+      "engineId": "panchanga",
+      "workflowId": "creative-expression",
+      "member": false
+    },
+    {
+      "engineId": "panchanga",
+      "workflowId": "daily-practice",
+      "member": true
+    },
+    {
+      "engineId": "panchanga",
+      "workflowId": "decision-support",
+      "member": false
+    },
+    {
+      "engineId": "panchanga",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "panchanga",
+      "workflowId": "self-inquiry",
+      "member": false
+    },
+    {
+      "engineId": "raaga",
+      "workflowId": "birth-blueprint",
+      "member": false
+    },
+    {
+      "engineId": "raaga",
+      "workflowId": "creative-expression",
+      "member": true
+    },
+    {
+      "engineId": "raaga",
+      "workflowId": "daily-practice",
+      "member": false
+    },
+    {
+      "engineId": "raaga",
+      "workflowId": "decision-support",
+      "member": false
+    },
+    {
+      "engineId": "raaga",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "raaga",
+      "workflowId": "self-inquiry",
+      "member": false
+    },
+    {
+      "engineId": "sacred-geometry",
+      "workflowId": "birth-blueprint",
+      "member": false
+    },
+    {
+      "engineId": "sacred-geometry",
+      "workflowId": "creative-expression",
+      "member": true
+    },
+    {
+      "engineId": "sacred-geometry",
+      "workflowId": "daily-practice",
+      "member": false
+    },
+    {
+      "engineId": "sacred-geometry",
+      "workflowId": "decision-support",
+      "member": false
+    },
+    {
+      "engineId": "sacred-geometry",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "sacred-geometry",
+      "workflowId": "self-inquiry",
+      "member": false
+    },
+    {
+      "engineId": "sigil-forge",
+      "workflowId": "birth-blueprint",
+      "member": false
+    },
+    {
+      "engineId": "sigil-forge",
+      "workflowId": "creative-expression",
+      "member": true
+    },
+    {
+      "engineId": "sigil-forge",
+      "workflowId": "daily-practice",
+      "member": false
+    },
+    {
+      "engineId": "sigil-forge",
+      "workflowId": "decision-support",
+      "member": false
+    },
+    {
+      "engineId": "sigil-forge",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "sigil-forge",
+      "workflowId": "self-inquiry",
+      "member": false
+    },
+    {
+      "engineId": "tarot",
+      "workflowId": "birth-blueprint",
+      "member": false
+    },
+    {
+      "engineId": "tarot",
+      "workflowId": "creative-expression",
+      "member": false
+    },
+    {
+      "engineId": "tarot",
+      "workflowId": "daily-practice",
+      "member": false
+    },
+    {
+      "engineId": "tarot",
+      "workflowId": "decision-support",
+      "member": true
+    },
+    {
+      "engineId": "tarot",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "tarot",
+      "workflowId": "self-inquiry",
+      "member": false
+    },
+    {
+      "engineId": "transits",
+      "workflowId": "birth-blueprint",
+      "member": false
+    },
+    {
+      "engineId": "transits",
+      "workflowId": "creative-expression",
+      "member": false
+    },
+    {
+      "engineId": "transits",
+      "workflowId": "daily-practice",
+      "member": true
+    },
+    {
+      "engineId": "transits",
+      "workflowId": "decision-support",
+      "member": false
+    },
+    {
+      "engineId": "transits",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "transits",
+      "workflowId": "self-inquiry",
+      "member": false
+    },
+    {
+      "engineId": "vedic-clock",
+      "workflowId": "birth-blueprint",
+      "member": false
+    },
+    {
+      "engineId": "vedic-clock",
+      "workflowId": "creative-expression",
+      "member": false
+    },
+    {
+      "engineId": "vedic-clock",
+      "workflowId": "daily-practice",
+      "member": true
+    },
+    {
+      "engineId": "vedic-clock",
+      "workflowId": "decision-support",
+      "member": false
+    },
+    {
+      "engineId": "vedic-clock",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "vedic-clock",
+      "workflowId": "self-inquiry",
+      "member": false
+    },
+    {
+      "engineId": "vimshottari",
+      "workflowId": "birth-blueprint",
+      "member": true
+    },
+    {
+      "engineId": "vimshottari",
+      "workflowId": "creative-expression",
+      "member": false
+    },
+    {
+      "engineId": "vimshottari",
+      "workflowId": "daily-practice",
+      "member": false
+    },
+    {
+      "engineId": "vimshottari",
+      "workflowId": "decision-support",
+      "member": false
+    },
+    {
+      "engineId": "vimshottari",
+      "workflowId": "full-spectrum",
+      "member": true
+    },
+    {
+      "engineId": "vimshottari",
+      "workflowId": "self-inquiry",
+      "member": false
+    }
+  ],
+  "components": [
+    {
+      "id": "activation-table",
+      "name": "ActivationTable",
+      "family": "table",
+      "encodingRelationship": "Activation records become labeled rows and columns.",
+      "nonVisualEquivalent": "Accessible activation data table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "biofield-metric-bands",
+      "name": "BiofieldMetricBands",
+      "family": "scale",
+      "encodingRelationship": "Named measures map to labeled bands with printed source values.",
+      "nonVisualEquivalent": "Accessible metric table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "biorhythm-cycle-bands",
+      "name": "BiorhythmCycleBands",
+      "family": "scale",
+      "encodingRelationship": "Signed cycle values map to labeled horizontal scales.",
+      "nonVisualEquivalent": "Accessible cycle data table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "bodygraph-map",
+      "name": "BodygraphMap",
+      "family": "relationship-map",
+      "encodingRelationship": "Centers and channels become named nodes and edges.",
+      "nonVisualEquivalent": "Accessible center and channel tables.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "capture-consent-gate",
+      "name": "CaptureConsentGate",
+      "family": "state",
+      "encodingRelationship": "Consent, device, and availability fields become explicit gate states.",
+      "nonVisualEquivalent": "Accessible capture requirements notice.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "capture-quality-panel",
+      "name": "CaptureQualityPanel",
+      "family": "facts",
+      "encodingRelationship": "Quality fields remain labeled facts without inferred judgment.",
+      "nonVisualEquivalent": "Accessible quality definition list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "captured-field-reading",
+      "name": "CapturedFieldReading",
+      "family": "section-stack",
+      "encodingRelationship": "Persisted analysis objects become named sections after access checks.",
+      "nonVisualEquivalent": "Accessible sectioned capture report.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "card-meaning-panel",
+      "name": "CardMeaningPanel",
+      "family": "facts",
+      "encodingRelationship": "Card meanings remain attached to their source card.",
+      "nonVisualEquivalent": "Accessible card definition list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "chakra-field-map",
+      "name": "ChakraFieldMap",
+      "family": "placement-map",
+      "encodingRelationship": "Named chakras become placements with printed measures.",
+      "nonVisualEquivalent": "Accessible chakra metric table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "changing-line-sequence",
+      "name": "ChangingLineSequence",
+      "family": "sequence",
+      "encodingRelationship": "Changing lines retain source order and labels.",
+      "nonVisualEquivalent": "Accessible ordered line list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "composite-identity-map",
+      "name": "CompositeIdentityMap",
+      "family": "composite",
+      "encodingRelationship": "Contributing engines become labeled facets without synthetic rank.",
+      "nonVisualEquivalent": "Accessible sectioned engine summary.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "composite-partial-state",
+      "name": "CompositePartialState",
+      "family": "state",
+      "encodingRelationship": "Missing and failed contributors remain explicit.",
+      "nonVisualEquivalent": "Accessible contributor status list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "construction-step-sequence",
+      "name": "ConstructionStepSequence",
+      "family": "sequence",
+      "encodingRelationship": "Procedural steps retain source order.",
+      "nonVisualEquivalent": "Accessible ordered instructions list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "contributing-engine-index",
+      "name": "ContributingEngineIndex",
+      "family": "membership",
+      "encodingRelationship": "Workflow membership becomes a named unranked list.",
+      "nonVisualEquivalent": "Accessible engine membership list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "creative-artifact-shelf",
+      "name": "CreativeArtifactShelf",
+      "family": "collection",
+      "encodingRelationship": "Artifacts group by media type and availability.",
+      "nonVisualEquivalent": "Accessible artifact list with controls.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "dasha-timeline",
+      "name": "DashaTimeline",
+      "family": "timeline",
+      "encodingRelationship": "Nested periods become bounded ordered intervals.",
+      "nonVisualEquivalent": "Accessible hierarchical period table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "elemental-balance-bands",
+      "name": "ElementalBalanceBands",
+      "family": "scale",
+      "encodingRelationship": "Element measures map to labeled scales with printed values.",
+      "nonVisualEquivalent": "Accessible elemental balance table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "field-fact-grid",
+      "name": "FieldFactGrid",
+      "family": "facts",
+      "encodingRelationship": "Scalar paths become labeled facts.",
+      "nonVisualEquivalent": "Accessible definition list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "forecast-sequence",
+      "name": "ForecastSequence",
+      "family": "sequence",
+      "encodingRelationship": "Forecast records retain source date order.",
+      "nonVisualEquivalent": "Accessible forecast data table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "frequency-triad-cards",
+      "name": "FrequencyTriadCards",
+      "family": "group",
+      "encodingRelationship": "Shadow, gift, and siddhi remain one labeled triad.",
+      "nonVisualEquivalent": "Accessible three-column frequency table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "full-spectrum-constellation",
+      "name": "FullSpectrumConstellation",
+      "family": "relationship-map",
+      "encodingRelationship": "Registered contributors become named nodes without rank.",
+      "nonVisualEquivalent": "Accessible grouped engine index.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "gene-key-sequence",
+      "name": "GeneKeySequence",
+      "family": "sequence",
+      "encodingRelationship": "Gene Keys retain authored sequence and position.",
+      "nonVisualEquivalent": "Accessible ordered Gene Key table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "generated-artifact-state",
+      "name": "GeneratedArtifactState",
+      "family": "state",
+      "encodingRelationship": "Generated media availability remains explicit.",
+      "nonVisualEquivalent": "Accessible generation status and artifact link.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "geometry-element-index",
+      "name": "GeometryElementIndex",
+      "family": "membership",
+      "encodingRelationship": "Geometry elements remain a named unranked collection.",
+      "nonVisualEquivalent": "Accessible element list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "hexagram-change-map",
+      "name": "HexagramChangeMap",
+      "family": "relationship-map",
+      "encodingRelationship": "Changing lines connect primary and relating hexagrams.",
+      "nonVisualEquivalent": "Accessible line table and relationship summary.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "inquiry-layer-stack",
+      "name": "InquiryLayerStack",
+      "family": "section-stack",
+      "encodingRelationship": "Questions and typologies remain distinct ordered layers.",
+      "nonVisualEquivalent": "Accessible heading-structured question list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "inquiry-question-deck",
+      "name": "InquiryQuestionDeck",
+      "family": "questions",
+      "encodingRelationship": "Questions remain questions in source order.",
+      "nonVisualEquivalent": "Accessible ordered question list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "number-reduction-map",
+      "name": "NumberReductionMap",
+      "family": "sequence",
+      "encodingRelationship": "Reduction chains become ordered number paths.",
+      "nonVisualEquivalent": "Accessible ordered reduction-chain table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "numerology-fact-grid",
+      "name": "NumerologyFactGrid",
+      "family": "facts",
+      "encodingRelationship": "Named numerology results remain labeled facts.",
+      "nonVisualEquivalent": "Accessible numerology definition list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "ordered-collection-list",
+      "name": "OrderedCollectionList",
+      "family": "membership",
+      "encodingRelationship": "Collection members remain named and unranked.",
+      "nonVisualEquivalent": "Accessible named membership list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "panchanga-fact-grid",
+      "name": "PanchangaFactGrid",
+      "family": "facts",
+      "encodingRelationship": "Limb indices, names, and values remain grouped.",
+      "nonVisualEquivalent": "Accessible five-limb data table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "period-detail-panel",
+      "name": "PeriodDetailPanel",
+      "family": "facts",
+      "encodingRelationship": "Selected period boundaries and labels remain source facts.",
+      "nonVisualEquivalent": "Accessible period definition list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "perspective-comparison",
+      "name": "PerspectiveComparison",
+      "family": "comparison",
+      "encodingRelationship": "Independent engine perspectives occupy parallel labeled columns.",
+      "nonVisualEquivalent": "Accessible comparison table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "physiognomy-observation-map",
+      "name": "PhysiognomyObservationMap",
+      "family": "relationship-map",
+      "encodingRelationship": "Facial zones link to their source observations.",
+      "nonVisualEquivalent": "Accessible facial-zone observation table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "planet-position-table",
+      "name": "PlanetPositionTable",
+      "family": "table",
+      "encodingRelationship": "Planet positions become rows with printed coordinates.",
+      "nonVisualEquivalent": "Accessible planet-position table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "playable-artifact-state",
+      "name": "PlayableArtifactState",
+      "family": "media",
+      "encodingRelationship": "Audio readiness controls playback and download states.",
+      "nonVisualEquivalent": "Accessible audio status and download control.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "raaga-player",
+      "name": "RaagaPlayer",
+      "family": "media",
+      "encodingRelationship": "Source ratios and audio references drive playback without reinterpretation.",
+      "nonVisualEquivalent": "Accessible playback controls and audio status.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "raga-recommendation-list",
+      "name": "RagaRecommendationList",
+      "family": "membership",
+      "encodingRelationship": "Recommendations retain source membership and printed scores.",
+      "nonVisualEquivalent": "Accessible recommendation table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "sacred-geometry-plate",
+      "name": "SacredGeometryPlate",
+      "family": "geometry",
+      "encodingRelationship": "A supplied source form becomes a labeled geometric plate.",
+      "nonVisualEquivalent": "Accessible form description and element list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "sigil-construction-plate",
+      "name": "SigilConstructionPlate",
+      "family": "geometry",
+      "encodingRelationship": "A supplied sigil artifact becomes the visual focus.",
+      "nonVisualEquivalent": "Accessible artifact status and construction description.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "swara-sequence",
+      "name": "SwaraSequence",
+      "family": "sequence",
+      "encodingRelationship": "Ascending and descending swaras retain source order.",
+      "nonVisualEquivalent": "Accessible ordered swara table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "system-run-ledger",
+      "name": "SystemRunLedger",
+      "family": "membership",
+      "encodingRelationship": "Declared, returned, failed, capture-gated, and missing contributors remain separate named groups.",
+      "nonVisualEquivalent": "Accessible grouped workflow status list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "tarot-spread",
+      "name": "TarotSpread",
+      "family": "ordered-placement",
+      "encodingRelationship": "Cards retain source position, label, and orientation.",
+      "nonVisualEquivalent": "Accessible ordered spread table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "temporal-practice-sequence",
+      "name": "TemporalPracticeSequence",
+      "family": "timeline",
+      "encodingRelationship": "Contributing temporal outputs align by labeled time.",
+      "nonVisualEquivalent": "Accessible chronological table by engine.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "time-recommendation-card",
+      "name": "TimeRecommendationCard",
+      "family": "facts",
+      "encodingRelationship": "Time-window recommendations remain labeled facts.",
+      "nonVisualEquivalent": "Accessible time recommendation definition list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "transit-aspect-map",
+      "name": "TransitAspectMap",
+      "family": "relationship-map",
+      "encodingRelationship": "Planetary aspects become named edges with printed orbs.",
+      "nonVisualEquivalent": "Accessible aspect edge list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "transition-sequence",
+      "name": "TransitionSequence",
+      "family": "sequence",
+      "encodingRelationship": "Upcoming transitions retain chronological order.",
+      "nonVisualEquivalent": "Accessible upcoming-transition table.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "typology-fact-grid",
+      "name": "TypologyFactGrid",
+      "family": "facts",
+      "encodingRelationship": "Available type fields remain labeled facts.",
+      "nonVisualEquivalent": "Accessible typology definition list.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    },
+    {
+      "id": "unresolved-field-state",
+      "name": "UnresolvedFieldState",
+      "family": "state",
+      "encodingRelationship": "Null, unknown, missing, and unsupported fields stay explicit.",
+      "nonVisualEquivalent": "Accessible unresolved-data notice.",
+      "states": [
+        "loading",
+        "empty",
+        "partial",
+        "error",
+        "stale"
+      ],
+      "densities": [
+        "thread",
+        "reading",
+        "folio",
+        "compare",
+        "operator"
+      ]
+    }
+  ]
+}

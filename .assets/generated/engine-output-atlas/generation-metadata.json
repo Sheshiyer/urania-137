@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0.0",
+  "generator": "codex-gpt-image",
+  "authentication": "Codex OAuth",
+  "imageModel": "gpt-image-2",
+  "imageModelVersion": null,
+  "outerResponsesModel": "gpt-5.5",
+  "size": "1536x1024",
+  "quality": "high",
+  "outputFormat": "png",
+  "seed": null,
+  "reproducibilityBoundary": "The Codex image endpoint exposes neither a pinned gpt-image-2 version nor a seed. Prompts, input references, intermediate images, and final outputs are SHA-256 fingerprinted for reviewable integrity; regeneration is intentionally treated as non-deterministic.",
+  "visualReferenceAssets": [
+    {
+      "path": ".assets/moodboard.png",
+      "sha256": "ca0fd8d63009b72d1a7bd1eac5abc96008e39f9ccf7a2b8274c025ea0f7c4a52"
+    },
+    {
+      "path": ".assets/generated/readings-ecosystem/component-atlas.png",
+      "sha256": "009e22bc39603cd4e5632cb4e2a111aa9ebf4be7679bde8dcca2cc4803e6efa3"
+    },
+    {
+      "path": ".assets/generated/readings-ecosystem/reading-folio.png",
+      "sha256": "cb56e022c386cd1ede1e5f1f555680dffed6cfbfe1fb82749aa83d99f73833fc"
+    }
+  ],
+  "outputs": [
+    {
+      "path": ".assets/generated/engine-output-atlas/engine-component-families.png",
+      "sha256": "e6f75a4f7fcb844f12b77f9162f695e922e9f41dc121d68ce51d4535f35fc747",
+      "promptPath": ".assets/generated/engine-output-atlas/prompts/engine-component-families.txt",
+      "promptSha256": "025fc9a2dd9769c02dc83c9114829685934b8a160ce04d679cfe1606a65f2839"
+    },
+    {
+      "path": ".assets/generated/engine-output-atlas/engine-reading-surfaces-final.png",
+      "sha256": "e4fb62aa95fde2fa9a68a68f212a21977f60be4cc1b239f10c79916f244b62e0",
+      "basePromptPath": ".assets/generated/engine-output-atlas/prompts/engine-reading-surfaces.txt",
+      "basePromptSha256": "6e06deb500a3cc30cda808c78d730f7ced76e024d68d2b3677ad438f90fe8dac",
+      "intermediatePath": ".assets/generated/engine-output-atlas/engine-reading-surfaces-corrected.png",
+      "intermediateSha256": "649ef60a789c8d2e7de173db53220c4a63bb444ba4d7d625841ccd21333186b0",
+      "finalEditPromptPath": ".assets/generated/engine-output-atlas/prompts/engine-reading-surfaces-final-edit.txt",
+      "finalEditPromptSha256": "3a5ee29991765471516db9eebef6f440221773084eedb2a5d3bf6294e7baf8ff"
+    }
+  ]
+}

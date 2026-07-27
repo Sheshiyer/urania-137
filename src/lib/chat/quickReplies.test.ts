@@ -197,7 +197,7 @@ describe('quickRepliesFor', () => {
     expect(quickRepliesFor(s).map((c) => c.input)).toEqual(['yes'])
   })
 
-  it('assembly offers the single growth-green final confirm — and it hands off', () => {
+  it('assembly offers one interaction commitment — and it hands off', () => {
     let s = walkOpening(initialSessionState(KUNDALI, IDS))
     s = fillSubject(s, SUBJECT_A)
     s = applyUserInput(s, 'no').state // gate: no more subjects → language_level
@@ -211,7 +211,7 @@ describe('quickRepliesFor', () => {
     expect(s.chapter).toBe('assembly')
     const r = quickRepliesFor(s)
     expect(r).toHaveLength(1)
-    expect(r[0]).toMatchObject({ input: 'yes', tone: 'growth' })
+    expect(r[0]).toMatchObject({ input: 'yes', tone: 'commit' })
     expect(r[0].label).toContain('engines')
     expect(applyUserInput(s, r[0].input).event).toBe('ready')
   })

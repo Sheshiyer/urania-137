@@ -22,11 +22,64 @@ export const COLORS = {
   gold: '#C5A017',
   emerald: '#10B5A7',
   terracotta: '#C65D3B',
-  /** Growth Light — positive signal / validation (Tryambakam Noesis brand kit). */
-  growth: '#B8E986',
 } as const
 
 export type ColorToken = keyof typeof COLORS
+
+/** Neutral copy hierarchy on the Void instrument field. */
+export const TEXT = {
+  primary: COLORS.parchment,
+  secondary: '#C2CBD1',
+  metadata: '#AEBBC4',
+  disabled: '#75838E',
+} as const
+
+/** Evidence is returned, witnessed, or unresolved—not hovered or selected. */
+export const EVIDENCE = {
+  computed: COLORS.emerald,
+  witness: '#7B68EE',
+  unresolved: COLORS.terracotta,
+} as const
+
+/** Contrast-safe evidence copy; exact evidence hues remain marks and rules. */
+export const EVIDENCE_COPY = {
+  computed: '#67D4C7',
+  witness: '#AFA6FF',
+  unresolved: '#EE977C',
+} as const
+
+/** Interaction accents describe navigation and focus, never analytical truth. */
+export const INTERACTION = {
+  active: COLORS.gold,
+  selected: '#89A5FF',
+  flow: COLORS.indigo,
+  focus: '#A9B9FF',
+} as const
+
+/** Pointer and keyboard targets share this WCAG-aligned minimum. */
+export const INTERACTION_TARGET = {
+  minimumPx: 44,
+} as const
+
+/** Sustained-reading material uses dark ink on Parchment. */
+export const READING = {
+  surface: COLORS.parchment,
+  ink: '#171B24',
+  muted: '#4C5661',
+  rule: '#76652A',
+} as const
+
+export const TYPE = {
+  readingMeasureCh: 70,
+  roles: {
+    display: { family: 'Panchang', minPx: 18, lineHeight: 1.2, weight: 500 },
+    engraving: { family: 'Cinzel', minPx: 16, lineHeight: 1.3, weight: 500 },
+    prose: { family: 'Satoshi', minPx: 16, lineHeight: 1.7, weight: 400 },
+    ui: { family: 'Satoshi', minPx: 14, lineHeight: 1.45, weight: 500 },
+    metadata: { family: 'Satoshi', minPx: 12, lineHeight: 1.5, weight: 500 },
+    data: { family: 'SF Mono', minPx: 12, lineHeight: 1.5, weight: 400 },
+  },
+} as const
 
 /**
  * State accents (moodboard §04 node/connection states + the brand kit's
@@ -37,12 +90,12 @@ export type ColorToken = keyof typeof COLORS
 export const STATE = {
   /** Warmer, brighter gold for glows/blooms than the flat token gold. */
   goldWarm: '#E6B84D',
-  /** ACTIVE (hover) — the moodboard's emerald active node/path. */
-  active: COLORS.emerald,
-  /** SELECTED — Witness Violet, the brand kit's accent2 (#7B68EE). */
-  selected: '#7B68EE',
-  /** FOCUS — the moodboard's indigo focus node. */
-  focus: COLORS.indigo,
+  /** @deprecated Migrate graph consumers to INTERACTION.active. */
+  active: INTERACTION.active,
+  /** @deprecated Migrate graph consumers to INTERACTION.selected. */
+  selected: INTERACTION.selected,
+  /** @deprecated Migrate graph consumers to INTERACTION.focus. */
+  focus: INTERACTION.focus,
 } as const
 
 /** Brand motion spec (Tryambakam Noesis brand kit): out-expo, 1000ms reveal. */

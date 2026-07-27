@@ -17,7 +17,7 @@ export const NAKSHATRA_LEXICON: Record<number, NakshatraEntry> = {
     deity: 'Ashwini Kumaras',
     symbol: "A horse's head",
     guna: 'Deva (divine)',
-    keynote: 'A swift, healing freshness gallops at the very start of things.',
+    keynote: 'A swift freshness gallops at the very start of things.',
     invitation:
       'You might notice a quickening urge to begin, and a readiness in you to mend what feels unwell.',
   },
@@ -46,7 +46,7 @@ export const NAKSHATRA_LEXICON: Record<number, NakshatraEntry> = {
     guna: 'Manushya (human)',
     keynote: 'A fertile, growing sweetness invites the whole world to blossom.',
     invitation:
-      'There may be an ache toward beauty and abundance, and a pull to help things flourish.',
+      'There may be an ache toward beauty, and a pull to help things flourish.',
   },
   4: {
     ruler: 'Mars',
@@ -217,14 +217,14 @@ export const NAKSHATRA_LEXICON: Record<number, NakshatraEntry> = {
     guna: 'Rakshasa (fierce)',
     keynote: 'A rhythmic, prosperous vitality beats out its own music.',
     invitation:
-      'You might notice a pulse of energy and abundance, and a wish to move in rhythm.',
+      'You might notice a strong pulse and a wish to move in rhythm.',
   },
   23: {
     ruler: 'Rahu',
     deity: 'Varuna',
     symbol: 'An empty circle, a hundred healers',
     guna: 'Rakshasa (fierce)',
-    keynote: 'A veiling, healing solitude circles round a hidden mystery.',
+    keynote: 'A veiling solitude circles round a hidden mystery.',
     invitation:
       'There may be a draw toward secrecy and remedy, and a spaciousness that heals in private.',
   },

@@ -3,24 +3,72 @@ import { getNodeById } from '../data/selemeneNodes'
 
 export type Route =
   | { view: 'home' }
-  | { view: 'node'; nodeId: string }
+  | { view: 'node'; nodeId: string; childId?: string }
   | { view: 'threshold' }
+  | { view: 'readings'; readingId: string | null }
+  | { view: 'relationship-reading'; relationshipId: string; generationId: string }
+  | { view: 'settings' }
 
 /** Parse `window.location.hash` into a validated route. Unknown → home. */
-function parseHash(): Route {
-  const hash = typeof window !== 'undefined' ? window.location.hash : ''
+export function parseHash(hash = typeof window !== 'undefined' ? window.location.hash : ''): Route {
   // The Threshold (W2-A): pre-graph onboarding scene — a third top-level view.
   if (hash === '#/threshold') return { view: 'threshold' }
-  const m = hash.match(/^#\/node\/([^/?#]+)/)
+  if (hash === '#/settings') return { view: 'settings' }
+  const relationshipReading = hash.match(
+    /^#\/relationships\/([^/?#]+)\/readings\/([^/?#]+)\/?$/,
+  )
+  if (relationshipReading) {
+    try {
+      return {
+        view: 'relationship-reading',
+        relationshipId: decodeURIComponent(relationshipReading[1]),
+        generationId: decodeURIComponent(relationshipReading[2]),
+      }
+    } catch {
+      return { view: 'home' }
+    }
+  }
+  if (hash === '#/readings' || hash === '#/readings/') return { view: 'readings', readingId: null }
+  const reading = hash.match(/^#\/readings\/([^/?#]+)/)
+  if (reading) {
+    try {
+      return { view: 'readings', readingId: decodeURIComponent(reading[1]) }
+    } catch {
+      return { view: 'home' }
+    }
+  }
+  const m = hash.match(/^#\/node\/([^/?#]+)(?:\/([^/?#]+))?\/?$/)
   if (m) {
-    const id = decodeURIComponent(m[1])
-    if (getNodeById(id)) return { view: 'node', nodeId: id }
+    try {
+      const id = decodeURIComponent(m[1])
+      const node = getNodeById(id)
+      if (node) {
+        if (!m[2]) return { view: 'node', nodeId: id }
+        const childId = decodeURIComponent(m[2])
+        if (node.children?.some((child) => child.id === childId)) {
+          return { view: 'node', nodeId: id, childId }
+        }
+        return { view: 'node', nodeId: id }
+      }
+    } catch {
+      return { view: 'home' }
+    }
   }
   return { view: 'home' }
 }
 
 /** Imperative navigation — updates the hash, which drives the router. */
-export function navigate(to: '/' | '/threshold' | `/node/${string}`) {
+export type AppPath =
+  | '/'
+  | '/threshold'
+  | '/settings'
+  | '/readings'
+  | `/readings/${string}`
+  | `/relationships/${string}/readings/${string}`
+  | `/node/${string}`
+  | `/node/${string}/${string}`
+
+export function navigate(to: AppPath) {
   const next = `#${to}`
   if (window.location.hash !== next) window.location.hash = next
   else window.dispatchEvent(new HashChangeEvent('hashchange'))

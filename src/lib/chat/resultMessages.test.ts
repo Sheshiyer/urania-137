@@ -50,7 +50,13 @@ describe('witnessThreadResult', () => {
 
   it('error → retryable error state carrying the engine message', () => {
     const r = witnessThreadResult(witnessReport({ status: 'error', content: 'engine unreachable' }), null)
-    expect(r).toMatchObject({ kind: 'witness', status: 'error', error: 'engine unreachable', chapters: [] })
+    expect(r).toMatchObject({
+      kind: 'witness',
+      status: 'error',
+      error: 'engine unreachable',
+      chapters: [],
+      retryScope: 'same-request',
+    })
   })
 
   it('complete with passes → ONE chapter per pass (title heading, output body) + engines footer', () => {
@@ -61,12 +67,15 @@ describe('witnessThreadResult', () => {
       { id: 'part-i', title: 'Part I — Structural Field', body: 'A structured witness.' },
     ])
     expect(r?.footer).toBe('Engines: jyotish, numerology · register l0')
+    expect(r?.structureSource).toBe('native')
+    expect(r?.systems).toEqual(['jyotish', 'numerology'])
     expect(r?.saveError).toBeNull()
   })
 
   it('complete without a pass list → single assembled chapter (the modal-era fallback)', () => {
     const r = witnessThreadResult(witnessReport({ status: 'complete', content: '## Reading\n\nWhole cloth.' }), null)
     expect(r?.chapters).toEqual([{ id: 'assembled', title: 'Noesis Reading — integrated-kundali-l0', body: '## Reading\n\nWhole cloth.' }])
+    expect(r?.structureSource).toBe('flat')
     expect(r?.footer).toBeUndefined()
   })
 
@@ -75,6 +84,7 @@ describe('witnessThreadResult', () => {
     expect(r?.status).toBe('complete')
     expect(r?.chapters).toHaveLength(2)
     expect(r?.saveError).toBe('D1 unavailable')
+    expect(r?.retryScope).toBe('same-request')
   })
 })
 
@@ -87,6 +97,18 @@ const dailyReading: DailyReading = {
   assembled: 'Tithi 7…',
   engines_used: ['panchanga', 'transit-overlay'],
   meta: { date: '2026-07-24', location: 'Ujjain, India', hasOverlay: true, source: 'deterministic' },
+  sourcePayloads: [
+    {
+      engine_id: 'panchanga',
+      result: {
+        vara_name: 'Somavara',
+        tithi_name: 'Saptami',
+        nakshatra_name: 'Hasta',
+        yoga_name: 'Siddhi',
+        karana_name: 'Bava',
+      },
+    },
+  ],
 }
 
 describe('dailyThreadResult', () => {
@@ -111,6 +133,24 @@ describe('dailyThreadResult', () => {
       { id: 'native', title: 'How Today Meets Your Pattern', body: 'The transit touches the natal Moon.' },
     ])
     expect(r?.footer).toBe('deterministic · panchanga + transit-overlay')
+    expect(r?.structureSource).toBe('native')
+    expect(r?.systems).toEqual(['panchanga', 'transit-overlay'])
+    expect(r?.sourcePayload).toEqual(dailyReading.sourcePayloads)
+  })
+
+  it('a Folio save failure keeps the computed daily reading available as fallback', () => {
+    const r = dailyThreadResult({
+      status: 'complete',
+      reading: dailyReading,
+      error: null,
+      saveError: 'D1 unavailable',
+    })
+    expect(r).toMatchObject({
+      status: 'complete',
+      saveError: 'D1 unavailable',
+      retryScope: 'same-request',
+    })
+    expect(r?.chapters).toHaveLength(2)
   })
 })
 
@@ -139,7 +179,10 @@ describe('deterministicThreadResult', () => {
     expect(r?.chapters[0].id).toBe('numerology')
     expect(r?.chapters[0].title).toBe('Birth Blueprint')
     expect(r?.chapters[0].body).toBe('```json\n' + JSON.stringify(engine, null, 2) + '\n```')
+    expect(r?.structureSource).toBe('flat')
+    expect(r?.systems).toEqual(['numerology'])
     expect(r?.warning).toBeUndefined()
+    expect(r?.sourcePayload).toEqual(engine)
   })
 
   it('workflow result → single chapter + dropped-engine honesty warning', () => {
@@ -157,6 +200,20 @@ describe('deterministicThreadResult', () => {
     expect(r?.chapters[0].id).toBe('birth-blueprint')
     expect(r?.warning).toContain('numerology')
     expect(r?.warning).toContain('drops it silently')
+  })
+
+  it('a Folio save failure keeps the computed deterministic result available as fallback', () => {
+    const engine = { engine_id: 'numerology', result: { life_path: 7 } }
+    const r = deterministicThreadResult(
+      { ...detBase, engine, error: 'D1 unavailable' },
+      'Numerology',
+    )
+    expect(r).toMatchObject({
+      status: 'complete',
+      saveError: 'D1 unavailable',
+      retryScope: 'same-request',
+    })
+    expect(r?.chapters).toHaveLength(1)
   })
 
   it('workflow with every declared engine present → no warning', () => {

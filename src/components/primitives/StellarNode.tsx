@@ -1,5 +1,9 @@
 import { KeyboardEvent } from 'react'
-import { COLORS, STATE } from '../../styles/tokens'
+import {
+  COLORS,
+  INTERACTION,
+  INTERACTION_TARGET,
+} from '../../styles/tokens'
 import { wrapLabel } from '../../lib/graphUtils'
 import { Glyph } from './Glyph'
 
@@ -55,7 +59,6 @@ function interactionProps(onClick?: () => void, onHoverChange?: (h: boolean) => 
     onMouseLeave: () => onHoverChange?.(false),
     onFocus: () => onHoverChange?.(true),
     onBlur: () => onHoverChange?.(false),
-    className: 'outline-none',
   }
 }
 
@@ -77,27 +80,48 @@ function PlainNode({ x, y, centerY, label, selected, onClick, ariaLabel, classNa
   const color = selected ? COLORS.gold : COLORS.silver
   return (
     <g
-      className={[onClick ? 'cursor-pointer' : '', className ?? ''].join(' ').trim() || undefined}
+      className={['group focus-visible:outline-none', onClick ? 'cursor-pointer' : '', className ?? ''].join(' ').trim() || undefined}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       aria-label={ariaLabel ?? label}
+      aria-pressed={onClick ? Boolean(selected) : undefined}
+      {...interactionProps(onClick)}
     >
-      {onClick && <circle cx={x} cy={y} r={30} fill="transparent" />}
-      <circle cx={x} cy={y} r={selected ? 32 : 22} fill="none" stroke={color} strokeOpacity={selected ? 0.25 : 0.12} strokeWidth={1} className="transition-all duration-300" />
-      <circle cx={x} cy={y} r={selected ? 16 : 10} fill={COLORS.void} stroke={color} strokeWidth={selected ? 2.5 : 1.5} filter={selected ? 'url(#glow)' : undefined} className="transition-all duration-300" />
-      <circle cx={x} cy={y} r={selected ? 7 : 4.5} fill={selected ? COLORS.gold : COLORS.parchment} fillOpacity={selected ? 1 : 0.6} className="transition-all duration-300" />
-      <text
-        x={x}
-        y={y + (y > centerY ? 42 : -34)}
-        textAnchor="middle"
-        fill={selected ? COLORS.parchment : COLORS.silver}
-        fontSize={selected ? 14 : 12}
-        fontWeight={selected ? 600 : 500}
-        letterSpacing="0.14em"
-        className="uppercase transition-all duration-300 font-display"
-      >
-        {label}
-      </text>
+      {onClick && (
+        <circle
+          cx={x}
+          cy={y}
+          r={Math.max(30, INTERACTION_TARGET.minimumPx / 2)}
+          fill="transparent"
+          data-hit-target={INTERACTION_TARGET.minimumPx}
+        />
+      )}
+      <g aria-hidden="true" pointerEvents="none">
+        <circle cx={x} cy={y} r={selected ? 32 : 22} fill="none" stroke={color} strokeOpacity={selected ? 0.25 : 0.12} strokeWidth={1} className="transition-all duration-300 motion-reduce:transition-none" />
+        <circle cx={x} cy={y} r={selected ? 16 : 10} fill={COLORS.void} stroke={color} strokeWidth={selected ? 2.5 : 1.5} filter={selected ? 'url(#glow)' : undefined} className="transition-all duration-300 motion-reduce:transition-none" />
+        <circle cx={x} cy={y} r={selected ? 7 : 4.5} fill={selected ? COLORS.gold : COLORS.parchment} fillOpacity={selected ? 1 : 0.6} className="transition-all duration-300 motion-reduce:transition-none" />
+        <circle
+          cx={x}
+          cy={y}
+          r={34}
+          fill="none"
+          stroke={INTERACTION.focus}
+          strokeWidth={2}
+          className="opacity-0 transition-opacity duration-300 group-focus-visible:opacity-100 motion-reduce:transition-none"
+        />
+        <text
+          x={x}
+          y={y + (y > centerY ? 42 : -34)}
+          textAnchor="middle"
+          fill={selected ? COLORS.parchment : COLORS.silver}
+          fontSize={selected ? 14 : 12}
+          fontWeight={selected ? 600 : 500}
+          letterSpacing="0.14em"
+          className="uppercase transition-all duration-300 font-display motion-reduce:transition-none"
+        >
+          {label}
+        </text>
+      </g>
     </g>
   )
 }
@@ -137,20 +161,30 @@ function PlanetNode({ x, y, centerY, label, epithet, accent, selected, onClick, 
 
   return (
     <g
-      className={['group', onClick ? 'cursor-pointer' : '', className ?? ''].join(' ').trim() || undefined}
+      className={['group focus-visible:outline-none', onClick ? 'cursor-pointer' : '', className ?? ''].join(' ').trim() || undefined}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       aria-label={ariaLabel ?? label}
+      aria-pressed={onClick ? Boolean(selected) : undefined}
       {...interactionProps(onClick, onHoverChange)}
     >
       {/* hit target */}
-      {onClick && <circle cx={x} cy={y} r={r + 16} fill="transparent" />}
+      {onClick && (
+        <circle
+          cx={x}
+          cy={y}
+          r={Math.max(r + 16, INTERACTION_TARGET.minimumPx / 2)}
+          fill="transparent"
+          data-hit-target={INTERACTION_TARGET.minimumPx}
+        />
+      )}
 
+      <g aria-hidden="true" pointerEvents="none">
       {/* per-planet accent halo (the architecture board's colored planets) */}
-      <circle cx={x} cy={y} r={r + 22} fill="url(#accentHalo)" style={{ color: tint }} opacity={selected ? 0.9 : 0.55} className="transition-opacity duration-300 group-hover:opacity-90" />
+      <circle cx={x} cy={y} r={r + 22} fill="url(#accentHalo)" style={{ color: tint }} opacity={selected ? 0.9 : 0.55} className="transition-opacity duration-300 group-hover:opacity-90 motion-reduce:transition-none" />
 
       {/* soft gold bloom */}
-      <circle cx={x} cy={y} r={r + 10} fill="url(#orbGlow)" opacity={selected ? 0.95 : 0.5} className="transition-opacity duration-300 group-hover:opacity-90" />
+      <circle cx={x} cy={y} r={r + 10} fill="url(#orbGlow)" opacity={selected ? 0.95 : 0.5} className="transition-opacity duration-300 group-hover:opacity-90 motion-reduce:transition-none" />
 
       {/* mini orbital system — satellites tinted by the planet's accent */}
       <circle cx={x} cy={y} r={r + 7} fill="none" stroke={tint} strokeOpacity={selected ? 0.45 : 0.25} strokeWidth={0.5} strokeDasharray="2 5" />
@@ -161,11 +195,20 @@ function PlanetNode({ x, y, centerY, label, epithet, accent, selected, onClick, 
       {/* planet body */}
       <circle cx={x} cy={y} r={r} fill={COLORS.void} fillOpacity={0.7} />
       <circle cx={x} cy={y} r={r} fill="url(#orbGlow)" opacity={selected ? 0.4 : 0.18} />
-      {/* SELECTED state — the luminous violet outer ring from the moodboard */}
-      {selected && <circle cx={x} cy={y} r={r + 4} fill="none" stroke={STATE.selected} strokeOpacity={0.75} strokeWidth={1} filter="url(#glow)" />}
-      <circle cx={x} cy={y} r={r} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 1 : 0.85} strokeWidth={selected ? 2 : 1.3} filter="url(#glow)" className="transition-all duration-300 group-hover:stroke-emerald group-focus-visible:stroke-indigo" />
+      {/* SELECTED and FOCUS are interaction states, not evidence colors. */}
+      {selected && <circle cx={x} cy={y} r={r + 4} fill="none" stroke={INTERACTION.selected} strokeOpacity={0.75} strokeWidth={1} filter="url(#glow)" />}
+      <circle
+        cx={x}
+        cy={y}
+        r={r + 9}
+        fill="none"
+        stroke={INTERACTION.focus}
+        strokeWidth={2}
+        className="opacity-0 transition-opacity duration-300 group-focus-visible:opacity-100 motion-reduce:transition-none"
+      />
+      <circle cx={x} cy={y} r={r} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 1 : 0.85} strokeWidth={selected ? 2 : 1.3} filter="url(#glow)" className="transition-all duration-300 group-hover:stroke-interaction-active group-focus-visible:stroke-interaction-focus motion-reduce:transition-none" />
       <circle cx={x} cy={y} r={r - 4} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 0.55 : 0.32} strokeWidth={0.6} />
-      <circle cx={x} cy={y} r={selected ? 5 : 3.5} fill={COLORS.gold} fillOpacity={0.95} filter="url(#glow)" className="group-hover:fill-emerald" />
+      <circle cx={x} cy={y} r={selected ? 5 : 3.5} fill={COLORS.gold} fillOpacity={0.95} filter="url(#glow)" className="group-hover:fill-interaction-active" />
 
       {/* label outside */}
       <text
@@ -174,7 +217,7 @@ function PlanetNode({ x, y, centerY, label, epithet, accent, selected, onClick, 
         fontSize={fontSize}
         fontWeight={selected ? 600 : 500}
         letterSpacing="0.16em"
-        className="uppercase transition-all duration-300 font-display group-hover:fill-parchment"
+        className="uppercase transition-all duration-300 font-display group-hover:fill-parchment motion-reduce:transition-none"
       >
         {lines.map((ln, i) => (
           <tspan key={i} x={labelX} y={firstLineY + i * lineHeight}>
@@ -197,6 +240,7 @@ function PlanetNode({ x, y, centerY, label, epithet, accent, selected, onClick, 
           {epithet}
         </text>
       )}
+      </g>
     </g>
   )
 }
@@ -228,17 +272,27 @@ function OrbNode({ x, y, label, selected, onClick, onHoverChange, ariaLabel, rad
 
   return (
     <g
-      className={['group', onClick ? 'cursor-pointer' : '', className ?? ''].join(' ').trim() || undefined}
+      className={['group focus-visible:outline-none', onClick ? 'cursor-pointer' : '', className ?? ''].join(' ').trim() || undefined}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       aria-label={ariaLabel ?? label}
+      aria-pressed={onClick ? Boolean(selected) : undefined}
       {...interactionProps(onClick, onHoverChange)}
     >
       {/* hit target */}
-      {onClick && <circle cx={x} cy={y} r={r + 6} fill="transparent" />}
+      {onClick && (
+        <circle
+          cx={x}
+          cy={y}
+          r={Math.max(r + 6, INTERACTION_TARGET.minimumPx / 2)}
+          fill="transparent"
+          data-hit-target={INTERACTION_TARGET.minimumPx}
+        />
+      )}
 
+      <g aria-hidden="true" pointerEvents="none">
       {/* soft outer bloom */}
-      <circle cx={x} cy={y} r={r + 12} fill="url(#orbGlow)" opacity={selected ? 1 : 0.55} className="transition-opacity duration-300 group-hover:opacity-90" />
+      <circle cx={x} cy={y} r={r + 12} fill="url(#orbGlow)" opacity={selected ? 1 : 0.7} className="transition-opacity duration-300 group-hover:opacity-95 motion-reduce:transition-none" />
 
       {/* satellites */}
       {sats.map((s, i) => (
@@ -249,23 +303,37 @@ function OrbNode({ x, y, label, selected, onClick, onHoverChange, ariaLabel, rad
       <circle cx={x} cy={y} r={r} fill={COLORS.void} fillOpacity={0.78} />
       <circle cx={x} cy={y} r={r - 1} fill="url(#orbGlow)" opacity={selected ? 0.45 : 0.22} />
 
-      {/* SELECTED state — the luminous violet outer ring from the moodboard */}
-      {selected && <circle cx={x} cy={y} r={r + 7} fill="none" stroke={STATE.selected} strokeOpacity={0.7} strokeWidth={0.9} filter="url(#glow)" />}
+      {/* sun heart — the reference orbs are small suns; the glow concentrates
+          center-upper so the label zone in the lower half stays legible */}
+      <circle cx={x} cy={y - r * 0.12} r={r * 0.6} fill="url(#sunCore)" opacity={selected ? 1 : 0.85} className="transition-opacity duration-300 group-hover:opacity-100 motion-reduce:transition-none" />
+
+      {/* SELECTED and FOCUS are interaction states, not evidence colors. */}
+      {selected && <circle cx={x} cy={y} r={r + 7} fill="none" stroke={INTERACTION.selected} strokeOpacity={0.7} strokeWidth={0.9} filter="url(#glow)" />}
+      <circle
+        cx={x}
+        cy={y}
+        r={r + 11}
+        fill="none"
+        stroke={INTERACTION.focus}
+        strokeWidth={2}
+        className="opacity-0 transition-opacity duration-300 group-focus-visible:opacity-100 motion-reduce:transition-none"
+      />
 
       {/* faint outer + bright main + faint inner ring (the reference's clean double ring).
-          Hover flips the main ring emerald (ACTIVE); keyboard focus flips indigo (FOCUS). */}
-      <circle cx={x} cy={y} r={r + 3.5} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 0.4 : 0.16} strokeWidth={0.6} />
-      <circle cx={x} cy={y} r={r} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 1 : 0.92} strokeWidth={selected ? 2.2 : 1.5} filter="url(#glow)" className="transition-all duration-300 group-hover:stroke-emerald group-focus-visible:stroke-indigo" />
-      <circle cx={x} cy={y} r={r - 4.5} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 0.5 : 0.3} strokeWidth={0.6} />
+          Hover uses ACTIVE; keyboard focus uses FOCUS. */}
+      <circle cx={x} cy={y} r={r + 3.5} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 0.45 : 0.22} strokeWidth={0.6} />
+      <circle cx={x} cy={y} r={r} fill="none" stroke={COLORS.gold} strokeOpacity={1} strokeWidth={selected ? 2.2 : 1.7} filter="url(#glow)" className="transition-all duration-300 group-hover:stroke-interaction-active group-focus-visible:stroke-interaction-focus motion-reduce:transition-none" />
+      <circle cx={x} cy={y} r={r - 4.5} fill="none" stroke={COLORS.gold} strokeOpacity={selected ? 0.55 : 0.38} strokeWidth={0.6} />
 
       {/* glyph in the upper half */}
       {hasGlyph && <Glyph id={glyph} cx={x} cy={y - r * 0.32} size={r * 0.3} opacity={selected ? 1 : 0.85} />}
 
-      {/* label */}
+      {/* label — the references set orb names bright against the dark lower half */}
       <text
         textAnchor="middle"
         className="uppercase font-display pointer-events-none"
         fill={selected ? '#fff' : COLORS.parchment}
+        fillOpacity={selected ? 1 : 0.92}
         fontSize={fontSize}
         fontWeight={600}
         letterSpacing="0.12em"
@@ -276,6 +344,7 @@ function OrbNode({ x, y, label, selected, onClick, onHoverChange, ariaLabel, rad
           </tspan>
         ))}
       </text>
+      </g>
     </g>
   )
 }

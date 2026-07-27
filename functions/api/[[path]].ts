@@ -2,13 +2,38 @@ import type { Env } from '../lib/env'
 import type { ApiError, FolioListResponse, ImportResponse, MeResponse, ReadingDTO } from '../../src/lib/api/contract'
 import { AccessVerifyError, extractIdentity, verifyAccessJwt, type AccessJwtClaims } from '../lib/cf-access'
 import { maybeInjectDevIdentity } from '../lib/dev-identity'
-import { upsertUser, listReadings, createReading, setReadingFavorite, deleteReading, bulkImportReadings } from '../lib/db'
+import {
+  upsertUser,
+  listReadings,
+  getReadingById,
+  createReading,
+  setReadingFavorite,
+  deleteReading,
+  bulkImportReadings,
+} from '../lib/db'
 import { forwardToEngineFromEnv } from '../lib/engine-proxy'
+import { validateInterpretationRequest } from '../lib/agents/evidence'
+import { interpretReading } from '../lib/agents/interpret'
+import { createLlmProxyModel } from '../lib/agents/model'
 import { isStorySeed, initialSessionState, toSubmitPayload, type StorySeed } from '../lib/chat/stateMachine'
 import { createChatSession, findLatestOpenSession, getChatSession, listChatTurnEvents, listChatTurns, saveChatSession } from '../lib/chat/store'
 import { createSseStream, encodeEventFrame, numberTurnEvents } from '../lib/chat/sse'
 import { orchestrateTurn } from '../lib/chat/turn'
 import type { ChatEvent, ChatSessionState, SubjectInput } from '../lib/chat/types'
+import {
+  acceptRelationshipInvitation,
+  createRelationshipInvitation,
+  declineRelationshipInvitation,
+  listRelationships,
+  RelationshipError,
+  revokeRelationship,
+} from '../lib/relationships'
+import {
+  generateConsentedSynastry,
+  generateSynastryThroughSelemene,
+  listGrantedSynastryReadings,
+  SynastryError,
+} from '../lib/synastry'
 import {
   createSubject,
   deleteSubject,
@@ -38,6 +63,25 @@ const badRequest = (message: string): Response =>
 
 const notFound = (message: string): Response =>
   json({ error: 'NOT_FOUND', message } satisfies ApiError, 404)
+
+function relationshipFailure(error: unknown): Response {
+  if (error instanceof SynastryError) {
+    return json({ error: error.code, message: error.message }, error.status)
+  }
+  if (!(error instanceof RelationshipError)) throw error
+  const status = {
+    INVALID_INPUT: 400,
+    SUBJECT_NOT_OWNED: 404,
+    INVITATION_NOT_FOUND: 404,
+    INVITATION_EMAIL_MISMATCH: 403,
+    INVITATION_EXPIRED: 410,
+    INVALID_TRANSITION: 409,
+    RELATIONSHIP_NOT_FOUND: 404,
+    NOT_PARTICIPANT: 404,
+    CONSENT_REQUIRED: 403,
+  }[error.code]
+  return json({ error: error.code, message: error.message }, status)
+}
 
 /** Parse a JSON request body; null on any parse failure (caller → 400). */
 async function readJson(request: Request): Promise<unknown | null> {
@@ -183,6 +227,142 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
   if (pathname === '/api/selemene' || pathname.startsWith('/api/selemene/')) {
     return forwardToEngineFromEnv(ctx.request, ctx.env, selemeneTimeoutMs(ctx.env))
   }
+
+  // Cross-account relationships are always actor-scoped. Admin claims and
+  // client-supplied subject bodies have no bearing on these routes.
+  if (pathname === '/api/relationships' && (method === 'GET' || method === 'POST')) {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    const actor = { userId: u.user.id, email: u.user.email }
+    try {
+      if (method === 'GET') {
+        return json({ relationships: await listRelationships(ctx.env.DB, actor) })
+      }
+      const body = await readJson(ctx.request)
+      const value = typeof body === 'object' && body !== null
+        ? body as Record<string, unknown>
+        : null
+      if (
+        !value ||
+        typeof value.subjectId !== 'string' ||
+        typeof value.inviteeEmail !== 'string' ||
+        (value.expiresAt !== undefined && typeof value.expiresAt !== 'number')
+      ) {
+        return badRequest(
+          'POST /api/relationships expects { subjectId, inviteeEmail, expiresAt? }',
+        )
+      }
+      const created = await createRelationshipInvitation(ctx.env.DB, actor, {
+        subjectId: value.subjectId,
+        inviteeEmail: value.inviteeEmail,
+        ...(value.expiresAt === undefined ? {} : { expiresAt: value.expiresAt }),
+      })
+      return json(created, 201)
+    } catch (error) {
+      return relationshipFailure(error)
+    }
+  }
+
+  if (
+    (pathname === '/api/relationships/accept' ||
+      pathname === '/api/relationships/decline') &&
+    method === 'POST'
+  ) {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    const body = await readJson(ctx.request)
+    const value = typeof body === 'object' && body !== null
+      ? body as Record<string, unknown>
+      : null
+    if (
+      !value ||
+      typeof value.inviteToken !== 'string' ||
+      (pathname.endsWith('/accept') && typeof value.subjectId !== 'string')
+    ) {
+      return badRequest(
+        pathname.endsWith('/accept')
+          ? 'POST /api/relationships/accept expects { inviteToken, subjectId }'
+          : 'POST /api/relationships/decline expects { inviteToken }',
+      )
+    }
+    const actor = { userId: u.user.id, email: u.user.email }
+    try {
+      const relationship = pathname.endsWith('/accept')
+        ? await acceptRelationshipInvitation(
+            ctx.env.DB,
+            actor,
+            value.inviteToken,
+            value.subjectId as string,
+          )
+        : await declineRelationshipInvitation(ctx.env.DB, actor, value.inviteToken)
+      return json({ relationship })
+    } catch (error) {
+      return relationshipFailure(error)
+    }
+  }
+
+  const relationshipReadingsId =
+    /^\/api\/relationships\/([^/]+)\/readings$/.exec(pathname)?.[1]
+  if (relationshipReadingsId && method === 'GET') {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    let relationshipId: string
+    try {
+      relationshipId = decodeURIComponent(relationshipReadingsId)
+    } catch {
+      return badRequest('malformed relationship id')
+    }
+    try {
+      const readings = await listGrantedSynastryReadings(
+        ctx.env.DB,
+        u.user.id,
+        relationshipId,
+      )
+      return json({ readings })
+    } catch (error) {
+      return relationshipFailure(error)
+    }
+  }
+
+  const relationshipAction =
+    /^\/api\/relationships\/([^/]+)\/(revoke|generate)$/.exec(pathname)
+  if (relationshipAction && method === 'POST') {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    let relationshipId: string
+    try {
+      relationshipId = decodeURIComponent(relationshipAction[1])
+    } catch {
+      return badRequest('malformed relationship id')
+    }
+    try {
+      if (relationshipAction[2] === 'revoke') {
+        const relationship = await revokeRelationship(
+          ctx.env.DB,
+          u.user.id,
+          relationshipId,
+        )
+        return json({ relationship })
+      }
+      const body = await readJson(ctx.request)
+      const generated = await generateConsentedSynastry({
+        db: ctx.env.DB,
+        actorUserId: u.user.id,
+        relationshipId,
+        request: body,
+        generate: (payload) =>
+          generateSynastryThroughSelemene(payload, {
+            baseUrl: ctx.env.SELEMENE_API_URL,
+            apiKey: ctx.env.SELEMENE_API_KEY,
+            timeoutMs: selemeneTimeoutMs(ctx.env),
+          }),
+      })
+      return json(generated, 201)
+    } catch (error) {
+      return relationshipFailure(error)
+    }
+  }
+
   if (pathname === '/api/folio' && method === 'GET') {
     // T-041 — list the caller's readings with server-side ?search=/?favorites=
     // filters; response is the frozen FolioListResponse.
@@ -267,6 +447,37 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
     const deleted = await deleteReading(ctx.env.DB, u.user.id, id)
     if (!deleted) return notFound('reading not found')
     return json({})
+  }
+
+  // -----------------------------------------------------------------------
+  // Grounded reading interpretation — deliberately separate from onboarding
+  // turns and report generation. The client supplies only a reading id,
+  // explicit interpretive route, concern, and bounded ephemeral history. The
+  // source reading is loaded server-side through the owner-scoped Folio DAL.
+  // Model failure returns a typed degraded interpretation rather than
+  // manufacturing a report or mutating chat/report persistence.
+  // -----------------------------------------------------------------------
+  if (pathname === '/api/chat/interpret' && method === 'POST') {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    const body = await readJson(ctx.request)
+    const parsed = validateInterpretationRequest(body)
+    if (!parsed.ok) {
+      return badRequest(`POST /api/chat/interpret ${parsed.error}`)
+    }
+    const reading = await getReadingById(
+      ctx.env.DB,
+      u.user.id,
+      parsed.value.readingId,
+    )
+    if (!reading) return notFound('reading not found')
+
+    const interpretation = await interpretReading({
+      request: parsed.value,
+      reading,
+      model: createLlmProxyModel(ctx.env),
+    })
+    return json(interpretation)
   }
 
   // -----------------------------------------------------------------------

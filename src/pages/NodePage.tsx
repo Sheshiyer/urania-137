@@ -1,14 +1,13 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getNodeById } from '../data/selemeneNodes'
-import { GraphOrbital, SelemeneChild, AssetGenerateRequest, BirthData } from '../types'
+import { SelemeneChild, AssetGenerateRequest, BirthData } from '../types'
 import { useReportGenerator } from '../hooks/useReportGenerator'
 import { useEngineStatus } from '../hooks/useEngineStatus'
 import { useDeterministicRun } from '../hooks/useDeterministicRun'
 import { useDailyReading } from '../hooks/useDailyReading'
 import { ConstellationGraph } from '../components/ConstellationGraph'
-import { Modal } from '../components/Modal'
+import { InstrumentDialog } from '../components/ui/InstrumentDialog'
 import { EngineStatusPanel } from '../components/panels/EngineStatusPanel'
-import { FolioPanel } from '../components/panels/FolioPanel'
 import { MirrorPanel } from '../components/panels/MirrorPanel'
 import { SankalpaPanel } from '../components/panels/SankalpaPanel'
 import { PageHeader } from '../components/layout/PageHeader'
@@ -27,6 +26,8 @@ import {
   witnessThreadResult,
   type ThreadResult,
 } from '../lib/chat/resultMessages'
+import type { User } from '../lib/api/contract'
+import { presentChild, presentNode } from '../lib/nodePresentation'
 
 /** Phase 3: only the INFO modal remains — run children go through the chat. */
 type ModalView = 'info' | null
@@ -37,18 +38,6 @@ type LastSubmit =
   | { kind: 'deterministic'; birth: BirthData; intention?: string }
   | { kind: 'daily'; location: DailyLocation | null }
 
-/** Evenly distribute a node's children around its ring (clockwise from top). */
-function childOrbitals(kids: SelemeneChild[], color: string): GraphOrbital[] {
-  return kids.map((c, i) => ({
-    id: c.id,
-    label: c.label,
-    angle: (i / Math.max(kids.length, 1)) * 360,
-    subCount: 0,
-    color: color as GraphOrbital['color'],
-    glyph: c.glyph,
-  }))
-}
-
 /**
  * A parent-node page (`#/node/:id`): the node re-centers as a golden astrolabe
  * and its children orbit as labelled orbs. Clicking a run child opens the
@@ -57,8 +46,17 @@ function childOrbitals(kids: SelemeneChild[], color: string): GraphOrbital[] {
  * reading renders in-thread as narrator chapters (Phase 3) while the Folio
  * save happens inside the hooks, unchanged.
  */
-export function NodePage({ nodeId }: { nodeId: string }) {
+export function NodePage({
+  nodeId,
+  initialChildId,
+  me,
+}: {
+  nodeId: string
+  initialChildId?: string
+  me: User | null
+}) {
   const node = getNodeById(nodeId)!
+  const presentation = presentNode(node)
   const [selectedChild, setSelectedChild] = useState<SelemeneChild | null>(null)
   const [modalView, setModalView] = useState<ModalView>(null)
   const [chatChild, setChatChild] = useState<SelemeneChild | null>(null)
@@ -70,10 +68,17 @@ export function NodePage({ nodeId }: { nodeId: string }) {
   const engineStatus = useEngineStatus(node.id === 'engine')
   const det = useDeterministicRun()
   const daily = useDailyReading()
+  const initialChildOpenedRef = useRef<string | null>(null)
 
   const openChild = (childId: string) => {
     const child = node.children?.find((c) => c.id === childId)
     if (!child) return
+    // Supported saved/search/favorite doorways all converge on the canonical
+    // Folio. The Folio owns filtering and detail; node modals never duplicate it.
+    if (node.id === 'folio' && child.action) {
+      navigate('/readings')
+      return
+    }
     // An open chat session for this child is already on screen — reselecting
     // must not remount/duplicate it (the backend create-or-resume dedupes by
     // seed anyway; this guard keeps the client from even re-dispatching).
@@ -81,6 +86,7 @@ export function NodePage({ nodeId }: { nodeId: string }) {
     setSelectedChild(child)
     // Info children (no run) keep the info modal.
     if (child.info || !child.run) {
+      setChatChild(null)
       setModalView('info')
       return
     }
@@ -88,10 +94,17 @@ export function NodePage({ nodeId }: { nodeId: string }) {
     // ChildRun; any previous run's presentation state is cleared so a fresh
     // story never shows a stale result.
     det.reset()
+    setModalView(null)
     setResultChildId(null)
     lastSubmitRef.current = null
     setChatChild(child)
   }
+
+  useEffect(() => {
+    if (!initialChildId || initialChildOpenedRef.current === initialChildId) return
+    initialChildOpenedRef.current = initialChildId
+    openChild(initialChildId)
+  }, [initialChildId])
 
   const closeModal = () => {
     setModalView(null)
@@ -155,19 +168,16 @@ export function NodePage({ nodeId }: { nodeId: string }) {
           : dailyThreadResult(daily)
       : null
 
-  const kids = node.children ?? []
-  const runnable = kids.filter((c) => c.run).length
   const nodeStats = [
-    { label: 'Sub-Nodes', value: String(kids.length) },
-    { label: 'Live Paths', value: String(runnable || kids.length) },
-    { label: 'Resonance', value: `${62 + ((node.label.length * 7) % 34)}.${(kids.length * 3) % 10}%` },
+    { label: 'Doorways', value: String(presentation.childCount) },
+    { label: 'Runnable', value: String(presentation.runnableCount) },
   ]
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-void">
       <ConstellationGraph
         wrapperClassName="fixed inset-0"
-        orbitals={childOrbitals(kids, node.color)}
+        orbitals={presentation.orbitals}
         selectedId={selectedChild?.id ?? null}
         onSelect={openChild}
         centerLabel={node.label}
@@ -180,7 +190,7 @@ export function NodePage({ nodeId }: { nodeId: string }) {
       <PageFrame />
       <BottomChrome>
         <StatFooter stats={nodeStats} />
-        <PageTabs />
+        <PageTabs nodeId={node.id} />
       </BottomChrome>
 
       {/* Narrative chat onboarding — every run child. The reading renders
@@ -192,6 +202,7 @@ export function NodePage({ nodeId }: { nodeId: string }) {
           childLabel={chatChild.label}
           nodeId={node.id}
           nodeLabel={node.label}
+          owner={me}
           onClose={closeChat}
           onHandoff={handleChatHandoff}
           result={result}
@@ -200,19 +211,27 @@ export function NodePage({ nodeId }: { nodeId: string }) {
       )}
 
       {/* Live panels — including the doors into the rest of the product */}
-      <Modal isOpen={modalView === 'info'} title={selectedChild?.label ?? node.label} onClose={closeModal}>
+      <InstrumentDialog
+        open={modalView === 'info'}
+        title={selectedChild?.label ?? node.label}
+        description={selectedChild ? presentChild(selectedChild, node.label).purpose : node.description}
+        onClose={closeModal}
+        dataNodeId={selectedChild?.id}
+      >
         {selectedChild?.id === 'noesis-mirror' ? (
           <MirrorPanel />
         ) : selectedChild?.id === 'sankalpa' ? (
           <SankalpaPanel />
         ) : node.id === 'engine' ? (
           <EngineStatusPanel child={selectedChild} status={engineStatus} />
-        ) : node.id === 'folio' ? (
-          <FolioPanel child={selectedChild} />
         ) : (
-          <p className="leading-relaxed text-silver">{node.description}</p>
+          <p className="leading-relaxed text-silver">
+            {selectedChild
+              ? presentChild(selectedChild, node.label).purpose
+              : node.description}
+          </p>
         )}
-      </Modal>
+      </InstrumentDialog>
     </div>
   )
 }

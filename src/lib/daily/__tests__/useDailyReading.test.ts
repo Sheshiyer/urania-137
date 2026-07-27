@@ -1,5 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
-import { fetchDailyReading } from '../../../hooks/useDailyReading'
+import {
+  DailyFolioSaveError,
+  fetchDailyReading,
+} from '../../../hooks/useDailyReading'
 import type { DailyReading, DailyReadingInput } from '../source'
 
 const input: DailyReadingInput = {
@@ -35,5 +38,19 @@ describe('fetchDailyReading orchestration (T-041 / T-042)', () => {
       }, archive),
     ).rejects.toThrow('engine 500')
     expect(archive).not.toHaveBeenCalled()
+  })
+
+  it('preserves the computed reading when only Folio persistence fails', async () => {
+    const failure = await fetchDailyReading(
+      input,
+      async () => fakeReading,
+      async () => {
+        throw new Error('D1 unavailable')
+      },
+    ).catch((error: unknown) => error)
+
+    expect(failure).toBeInstanceOf(DailyFolioSaveError)
+    expect((failure as DailyFolioSaveError).reading).toEqual(fakeReading)
+    expect((failure as Error).message).toContain('D1 unavailable')
   })
 })

@@ -27,6 +27,25 @@
 
 Both doors are **nodes, not menu items**: Folio Archive → Noesis Mirror, Engine Status → Sankalpa Desktop. See **[`docs/integrated-product-map.md`](./docs/integrated-product-map.md)** for who owns which engine, where the consent boundary sits, and the two gates a witness mode must pass before it's exposed.
 
+### One reading, two views
+
+Chat is the threshold and the Folio is the durable reading surface. Both now
+render the same canonical `ReadingDocument`: source-supplied passes remain real
+sections, while older flat archive rows remain visibly unstructured rather than
+receiving invented hierarchy. The architecture, 723 corpus map, identity model,
+semantic visual grammar, vocabulary law, and staged learning loop are documented
+in **[`docs/living-readings-ecosystem.md`](./docs/living-readings-ecosystem.md)**.
+Deterministic readings now project their real panchanga, number, position,
+relation, period, cycle, spread, and question structures through the typed
+**[`reading element library`](./docs/reading-element-library.md)** while keeping
+the exact source payload inspectable.
+
+Grounded post-reading conversation now has a separate, ownership-scoped
+interpretation kernel and `POST /api/chat/interpret` contract. Its named agent
+postures, evidence lineage, honest fallback, relationship to Selemene's Witness
+Dyad, and staged path toward durable agents are documented in
+**[`docs/chat-interpretation-architecture.md`](./docs/chat-interpretation-architecture.md)**.
+
 ## The idea
 
 Everything is the graph. A central **NOESIS** core is ringed by seven parent nodes; each node is a doorway into its own page of sub-criteria, drawn as a dense golden sacred-geometry mandala in the **Tryambakam Noesis** visual identity (void-black canvas, sacred-gold wireframe, glowing radial edges, nebula, art-deco frames). The taxonomy is the "137 jobs across 7 departments / second brain" concept from the source reel by [@alassafi.ai](https://instagram.com/alassafi.ai).
@@ -36,7 +55,7 @@ Everything is the graph. A central **NOESIS** core is ringed by seven parent nod
 - **One node, one URL** → hash routing with zero router dependency; every page is deep-linkable.
 - **The narrative chat is the leaf** → clicking a sub-node opens a story-driven onboarding chat (one question at a time, a narrator persona, every answer landing as an exact intake slot) that hands off to the **live public API**; the reading then arrives **in the thread** as narrator chapters and is saved to the Folio.
 - **Engine Status is live** → real `/health`, `/health/ready`, and engine roster telemetry (no mock data).
-- **Folio Archive is real** → every generated report persists to a **per-user Cloudflare D1 store** behind a login identity, with search, favorites, and Markdown/DOCX/PDF export.
+- **Folio Archive is real** → every completed reading persists to a **per-user Cloudflare D1 store** behind a login identity, with a structured reader, search, favorites, and Markdown/DOCX/PDF export.
 - **The graph is the interface** — the top nav is an additive convenience; every destination is also a node you can click.
 - **`prefers-reduced-motion`** skips the entrance bloom and renders the static console.
 
@@ -58,7 +77,10 @@ Every child is wired to a capability the engine **actually serves** — verified
 
 ## Visual direction
 
-Brand-aligned design references were locked before implementation; the built app matches them one-to-one. The moodboard anchors palette, typography, and composition:
+Brand-aligned design references were locked before implementation. They are
+directional composition contracts—not runtime data, telemetry, or proof that a
+surface is implemented. The moodboard anchors palette, typography, and
+composition:
 
 <div align="center">
 
@@ -83,6 +105,18 @@ The multi-page architecture — overview, a parent cluster, and the narrative ch
 </div>
 
 The full set of per-node design references lives in [`.assets/page-references/`](./.assets/page-references/).
+Implemented truth lives in typed runtime components, executable registries, and
+the evidence produced by `npm run verify:ui-realignment`.
+
+The living-reading component family and full folio composition are anchored by:
+
+<div align="center">
+
+![Living reading component atlas](./.assets/generated/readings-ecosystem/component-atlas.png)
+
+![Complete reading folio](./.assets/generated/readings-ecosystem/reading-folio.png)
+
+</div>
 
 ## Quick start
 
@@ -100,6 +134,26 @@ npm run dev                      # build (tsc + vite) then wrangler pages dev �
 There is no separate Vite dev server: `wrangler pages dev` is the single local
 entrypoint, so the SPA and the API always run together exactly as they do on
 Cloudflare Pages.
+
+### Graph-first UI exit gate
+
+The deterministic UI gate uses synthetic `.test` identities and fulfilled
+network fixtures. It never mutates local D1 or calls live Selemene.
+
+```bash
+# terminal one
+npm run build
+npx wrangler pages dev dist --port 8788
+
+# terminal two
+npm run verify:ui-realignment -- http://127.0.0.1:8788
+```
+
+The gate runs component and contract suites, the 18-engine/6-workflow atlas,
+Functions type checks, production build and bundle budget, the
+desktop/mobile/effective-reflow/reduced-motion visual matrix, Axe, and evidence
+redaction. Traceability and bounded artifacts live under
+[`docs/ui/`](./docs/ui/).
 
 ### Local environment (`.dev.vars`, gitignored — never commit)
 
@@ -152,10 +206,13 @@ graph TD
     RT --> NP["NodePage — variant=node"]
     HP --> G["ConstellationGraph (shared renderer)"]
     NP --> G
+    RT --> FL["ReadingLibraryPage — canonical Folio"]
+    RT --> ST["SettingsPage — identity + consent"]
+    RT --> RR["RelationshipReadingPage — participant grant"]
     NP --> K[Click a sub-node orb]
     K -->|run| C["ChatSheet — narrative onboarding (SSE)"]
     K -->|engine| ES["EngineStatusPanel — live /health + roster"]
-    K -->|folio| FP["FolioPanel — per-user D1 archive"]
+    K -->|folio| FL
     C --> CT["/api/chat/* — D1 sessions + narrator turns"]
     C -->|handoff| P["fetch same-origin /api/selemene/*"]
     P --> PX["Pages Function: inject X-API-Key server-side"]
@@ -168,8 +225,9 @@ graph TD
 - `src/styles/tokens.ts` — the single source of colour + typography truth.
 - `primitives/` — `StellarNode` (plain / ornate orb / home planet), `CoreGlow` (ornate astrolabe hub with flower-of-life), `Glyph` (sacred-geometry icon set), `CompassStar`.
 - `chrome/` — `TopNav`, `StatFooter`, `PageTabs` (the console dressing).
-- `panels/` — `EngineStatusPanel` (live telemetry), `FolioPanel` (persisted archive).
-- `App` → `useHashRoute` → `HomePage` / `NodePage`; `NodePage` owns the chat sheet and the info modal.
+- `panels/` — `EngineStatusPanel` (endpoint-backed operator evidence).
+- `readings/` — canonical Reading, Evidence, and collapsed privacy-filtered Source instruments.
+- `App` → `useHashRoute` → graph, Folio, Settings, and participant-granted relationship pages; `NodePage` owns the chat sheet and the info dialog.
 
 ## Project structure
 
@@ -177,7 +235,8 @@ graph TD
 urania-137
 ├── .assets/
 │   ├── moodboard.png                     # Brand + composition moodboard
-│   └── page-references/                   # Per-node design references (design targets)
+│   ├── page-references/                   # Directional design contracts
+│   └── generated/                         # Directional component boards, never runtime truth
 ├── docs/
 │   ├── auth/                              # CF-Access contracts + phase-gate evidence
 │   ├── integrated-product-map.md
@@ -189,17 +248,18 @@ urania-137
 ├── scripts/verify/                        # runnable gates (taxonomy, daily, V5, phase exits)
 ├── src/
 │   ├── App.tsx                            # Router: TopNav + HomePage / NodePage
-│   ├── pages/  (HomePage, NodePage)        # The two views
+│   ├── pages/                              # Graph, Folio, Settings, dyad reading views
 │   ├── components/
 │   │   ├── ConstellationGraph.tsx         # Shared renderer (variant: home | node)
-│   │   ├── Modal.tsx                       # Info-panel shell (run children use chat)
+│   │   ├── ui/InstrumentDialog.tsx         # Shared focus-managed overlay
 │   │   ├── chat/    (ChatSheet, ResultThread) # Narrative onboarding + in-thread results
 │   │   ├── chrome/   (TopNav, StatFooter, PageTabs)
-│   │   ├── panels/   (EngineStatusPanel, FolioPanel)
+│   │   ├── panels/   (EngineStatusPanel)
+│   │   ├── readings/ (canonical document + engine/workflow instruments)
 │   │   ├── layout/   (PageHeader, PageFrame)
 │   │   └── primitives/ (StellarNode, CoreGlow, Glyph, CompassStar)
 │   ├── data/selemeneNodes.ts              # Seven surfaces, their modes and children
-│   ├── hooks/  (useHashRoute, useNodeGraph, useReportGenerator, useEngineStatus, useFolio)
+│   ├── hooks/  (hash route, graph geometry, reading generation, Folio)
 │   ├── lib/    (selemeneApi.ts, folioStore.ts, api/contract.ts, graphUtils.ts)
 │   ├── styles/tokens.ts                   # Design tokens (single source of truth)
 │   └── types/index.ts

@@ -1,0 +1,70 @@
+[
+  {
+    "method": "GET",
+    "path": "https://api.fontshare.com/v2/css",
+    "status": 204,
+    "external": true,
+    "forwarded": false
+  },
+  {
+    "method": "GET",
+    "path": "https://fonts.googleapis.com/css2",
+    "status": 204,
+    "external": true,
+    "forwarded": false
+  },
+  {
+    "method": "GET",
+    "path": "/api/subjects",
+    "status": 200,
+    "expected": false,
+    "mutating": false,
+    "forwarded": false
+  },
+  {
+    "method": "GET",
+    "path": "/api/subjects",
+    "status": 200,
+    "expected": false,
+    "mutating": false,
+    "forwarded": false
+  },
+  {
+    "method": "GET",
+    "path": "/api/relationships",
+    "status": 500,
+    "expected": true,
+    "mutating": false,
+    "forwarded": false
+  },
+  {
+    "method": "GET",
+    "path": "/api/me",
+    "status": 200,
+    "expected": false,
+    "mutating": false,
+    "forwarded": false
+  },
+  {
+    "method": "GET",
+    "path": "/api/subjects",
+    "status": 200,
+    "expected": false,
+    "mutating": false,
+    "forwarded": false
+  },
+  {
+    "method": "GET",
+    "path": "https://api.fontshare.com/v2/css",
+    "status": 204,
+    "external": true,
+    "forwarded": false
+  },
+  {
+    "method": "GET",
+    "path": "https://fonts.googleapis.com/css2",
+    "status": 204,
+    "external": true,
+    "forwarded": false
+  }
+]

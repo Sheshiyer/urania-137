@@ -18,9 +18,8 @@
  *
  * Tones map onto the console grammar (see QuickReplies.tsx):
  *  - primary  — gold filled: doorway/surface/mode confirmations.
- *  - growth   — growth green filled: the FINAL assembly confirm (the
- *    validation moment of the whole flow, brand-kit signal colour).
- *  - affirm   — growth outline: 'yes' at gates.
+ *  - commit   — selected interaction filled: the final assembly commitment.
+ *  - affirm   — focus interaction outline: 'yes' at gates.
  *  - ghost    — parchment outline: 'no' / skip / use-default escapes.
  *  - choice   — gold-tinted pill: closed-enum options.
  */
@@ -28,7 +27,7 @@
 import type { RelationshipContext, SubjectInput } from '../../types'
 import type { ChatSessionState } from '../../types/chat'
 
-export type QuickReplyTone = 'primary' | 'growth' | 'affirm' | 'ghost' | 'choice'
+export type QuickReplyTone = 'primary' | 'commit' | 'affirm' | 'ghost' | 'choice'
 
 export interface QuickReply {
   /** Chip label shown to the caller. */
@@ -195,7 +194,7 @@ export function quickRepliesFor(session: ChatSessionState): QuickReply[] {
       // via the machine's documented cast (see stateMachine.ts).
       const kind = (session.seed as { kind: string }).kind
       const label = kind === 'threshold' ? 'Confirm — hold this pattern' : 'Confirm — hand off to the engines'
-      return [{ label, input: 'yes', tone: 'growth' }]
+      return [{ label, input: 'yes', tone: 'commit' }]
     }
     default:
       return [] // awakening / handoff / complete
