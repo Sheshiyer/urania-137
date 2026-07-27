@@ -10,6 +10,7 @@ import { SystemStack } from './SystemStack'
 import { TimingSpine } from './TimingSpine'
 import { ReadingBody } from './ReadingBody'
 import { ReadingElementField, ReadingSourcePayload } from './elements'
+import { hasKnownReadingComposition } from './elements/ReadingComposition'
 import { CompareField } from './CompareField'
 
 export interface ReadingFolioEvidenceContext {
@@ -47,6 +48,7 @@ export function ReadingFolio({
   )
   const rawElements = document.elements.filter((element) => element.kind === 'raw')
   const hasVisualElements = visualElements.length > 0
+  const hasKnownComposition = hasKnownReadingComposition(visualElements)
   const rawOnlyFlatDocument = document.structureSource === 'flat'
     && rawElements.length > 0
     && !hasVisualElements
@@ -91,7 +93,9 @@ export function ReadingFolio({
             </p>
           </header>
 
-          <ReadingAtlas document={document} />
+          {(document.structureSource === 'native' || !hasKnownComposition) && (
+            <ReadingAtlas document={document} />
+          )}
           {participantGrantedDyad && <CompareField document={document} />}
           {hasVisualElements && <ReadingElementField elements={visualElements} />}
 

@@ -7,6 +7,7 @@ import {
   type ReadingAdapterContext,
   type ReadingDocument,
   type ReadingEvidenceKind,
+  type ReadingOrigin,
   type ReadingParticipantRef,
   type ReadingRelation,
 } from './types'
@@ -18,6 +19,7 @@ export interface ThreadReadingContext extends ReadingAdapterContext {
   mode: string
   nodeId: string
   nodeLabel: string
+  origin?: Extract<ReadingOrigin, 'live-chat' | 'live-engine'>
   createdAt?: number
 }
 
@@ -156,7 +158,7 @@ export function threadResultToReadingDocument(
   return {
     id: `thread:${context.nodeId}:${context.mode}:${context.createdAt ?? 'current'}`,
     title: context.title,
-    origin: 'live-chat',
+    origin: context.origin ?? 'live-chat',
     createdAt: context.createdAt ?? null,
     mode: context.mode,
     nodeId: context.nodeId,

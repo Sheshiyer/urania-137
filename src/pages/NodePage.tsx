@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { getNodeById } from '../data/selemeneNodes'
-import { SelemeneChild, AssetGenerateRequest, BirthData } from '../types'
+import { SelemeneChild, AssetGenerateRequest } from '../types'
 import { useReportGenerator } from '../hooks/useReportGenerator'
 import { useEngineStatus } from '../hooks/useEngineStatus'
-import { useDeterministicRun } from '../hooks/useDeterministicRun'
-import { useDailyReading } from '../hooks/useDailyReading'
 import { ConstellationGraph } from '../components/ConstellationGraph'
 import { InstrumentDialog } from '../components/ui/InstrumentDialog'
 import { EngineStatusPanel } from '../components/panels/EngineStatusPanel'
@@ -18,33 +16,41 @@ import { BottomChrome } from '../components/chrome/BottomChrome'
 import { CHROME } from '../components/chrome/insets'
 import { navigate } from '../hooks/useHashRoute'
 import { ChatSheet } from '../components/chat/ChatSheet'
-import { useChatHandoff } from '../hooks/useChatHandoff'
-import type { DailyLocation } from '../lib/daily/source'
-import {
-  dailyThreadResult,
-  deterministicThreadResult,
-  witnessThreadResult,
-  type ThreadResult,
-} from '../lib/chat/resultMessages'
+import { witnessThreadResult, type ThreadResult } from '../lib/chat/resultMessages'
+import type { SubmitPayload } from '../lib/chat/stateMachine'
 import type { User } from '../lib/api/contract'
 import { presentChild, presentNode } from '../lib/nodePresentation'
+import { resolveNodeEntry } from '../lib/nodeEntry'
+import {
+  NativeRunDialog,
+  type NativeRun,
+} from '../components/readings/NativeRunDialog'
 
-/** Phase 3: only the INFO modal remains — run children go through the chat. */
+/** Informational children retain the shared read-only instrument dialog. */
 type ModalView = 'info' | null
 
-/** The last handoff the chat fired — the retry affordance re-fires exactly this. */
-type LastSubmit =
-  | { kind: 'witness'; request: AssetGenerateRequest }
-  | { kind: 'deterministic'; birth: BirthData; intention?: string }
-  | { kind: 'daily'; location: DailyLocation | null }
+/** The witness handoff remains retryable inside its narrative thread. */
+type LastSubmit = { kind: 'witness'; request: AssetGenerateRequest }
+
+function isNativeRunChild(
+  child: SelemeneChild | null,
+): child is SelemeneChild & { run: NativeRun } {
+  return Boolean(
+    child?.run
+    && (
+      child.run.kind === 'engine'
+      || child.run.kind === 'workflow'
+      || child.run.kind === 'daily'
+    ),
+  )
+}
 
 /**
  * A parent-node page (`#/node/:id`): the node re-centers as a golden astrolabe
- * and its children orbit as labelled orbs. Clicking a run child opens the
- * narrative ChatSheet seeded with its ChildRun; on handoff the SAME submit
- * hooks the modal era used fire against the live Selemene engine, and the
- * reading renders in-thread as narrator chapters (Phase 3) while the Folio
- * save happens inside the hooks, unchanged.
+ * and its children orbit as labelled orbs. Clicking a child opens the
+ * interface declared by that capability. Witness readings retain narrator
+ * chapters; deterministic and daily runs open a native instrument surface,
+ * while every completion path retains its existing Folio persistence hook.
  */
 export function NodePage({
   nodeId,
@@ -60,44 +66,36 @@ export function NodePage({
   const [selectedChild, setSelectedChild] = useState<SelemeneChild | null>(null)
   const [modalView, setModalView] = useState<ModalView>(null)
   const [chatChild, setChatChild] = useState<SelemeneChild | null>(null)
+  const [nativeChild, setNativeChild] = useState<SelemeneChild | null>(null)
   /** Which child the in-flight/last result belongs to — guards against a stale
    *  result surfacing inside a different child's fresh story. */
   const [resultChildId, setResultChildId] = useState<string | null>(null)
   const lastSubmitRef = useRef<LastSubmit | null>(null)
   const { generateReport, activeReport, saveError } = useReportGenerator()
   const engineStatus = useEngineStatus(node.id === 'engine')
-  const det = useDeterministicRun()
-  const daily = useDailyReading()
   const initialChildOpenedRef = useRef<string | null>(null)
 
   const openChild = (childId: string) => {
     const child = node.children?.find((c) => c.id === childId)
     if (!child) return
-    // Supported saved/search/favorite doorways all converge on the canonical
-    // Folio. The Folio owns filtering and detail; node modals never duplicate it.
-    if (node.id === 'folio' && child.action) {
-      navigate('/readings')
-      return
-    }
-    // An open chat session for this child is already on screen — reselecting
-    // must not remount/duplicate it (the backend create-or-resume dedupes by
-    // seed anyway; this guard keeps the client from even re-dispatching).
-    if (chatChild?.id === childId) return
+    const entry = resolveNodeEntry(node.id, child)
+    if (entry === 'folio') return navigate('/readings')
+    if (entry === 'chat' && chatChild?.id === childId) return
+    if (
+      (entry === 'deterministic' || entry === 'daily')
+      && nativeChild?.id === childId
+    ) return
+
     setSelectedChild(child)
-    // Info children (no run) keep the info modal.
-    if (child.info || !child.run) {
-      setChatChild(null)
-      setModalView('info')
-      return
-    }
-    // Every run child opens the narrative chat sheet, seeded with its
-    // ChildRun; any previous run's presentation state is cleared so a fresh
-    // story never shows a stale result.
-    det.reset()
+    setChatChild(null)
+    setNativeChild(null)
     setModalView(null)
     setResultChildId(null)
     lastSubmitRef.current = null
-    setChatChild(child)
+
+    if (entry === 'info') setModalView('info')
+    else if (entry === 'chat') setChatChild(child)
+    else setNativeChild(child)
   }
 
   useEffect(() => {
@@ -116,44 +114,28 @@ export function NodePage({
     setSelectedChild(null)
     setResultChildId(null)
     lastSubmitRef.current = null
-    det.reset()
   }
 
-  /**
-   * Chat handoff (Phase 3) — the chat STAYS OPEN and the result renders in
-   * the thread. Every sink is the exact hook call the retired modal forms
-   * made; nothing about generateReport / det.run / daily.run / Folio
-   * saveReport is reimplemented. The sinks only record which child + payload
-   * the run belongs to so the result feed and the retry path stay coherent.
-   */
-  const handleChatHandoff = useChatHandoff({
-    witness: (request) => {
-      setResultChildId(chatChild?.id ?? null)
-      lastSubmitRef.current = { kind: 'witness', request }
-      void generateReport(node, request)
-    },
-    birth: (birth, intention) => {
-      if (!chatChild?.run) return
-      setResultChildId(chatChild.id)
-      lastSubmitRef.current = { kind: 'deterministic', birth, intention }
-      void det.run(node, chatChild.label, chatChild.run, birth, intention)
-    },
-    daily: (location) => {
-      setResultChildId(chatChild?.id ?? null)
-      lastSubmitRef.current = { kind: 'daily', location: location ?? null }
-      if (location) daily.changeLocation(location)
-      else void daily.run(daily.location)
-    },
-  })
+  const closeNative = () => {
+    setNativeChild(null)
+    setSelectedChild(null)
+  }
+
+  /** Only witness capabilities can mount ChatSheet, so only witness payloads
+   * may cross this handoff. The discriminant check keeps a malformed resumed
+   * session from invoking a deterministic path through narration. */
+  const handleChatHandoff = (payload: SubmitPayload) => {
+    if (!('mode' in payload)) return
+    setResultChildId(chatChild?.id ?? null)
+    lastSubmitRef.current = { kind: 'witness', request: payload }
+    void generateReport(node, payload)
+  }
 
   /** Re-fire the exact submit call that produced an in-thread error. */
   const retryResult = () => {
     const last = lastSubmitRef.current
     if (!last || !chatChild?.run) return
-    if (last.kind === 'witness') void generateReport(node, last.request)
-    else if (last.kind === 'deterministic') void det.run(node, chatChild.label, chatChild.run, last.birth, last.intention)
-    else if (last.location) daily.changeLocation(last.location)
-    else void daily.run(daily.location)
+    void generateReport(node, last.request)
   }
 
   // Map the active hook's state to the in-thread result feed — but only while
@@ -161,11 +143,7 @@ export function NodePage({
   const last = lastSubmitRef.current
   const result: ThreadResult | null =
     chatChild && resultChildId === chatChild.id && last
-      ? last.kind === 'witness'
-        ? witnessThreadResult(activeReport, saveError)
-        : last.kind === 'deterministic'
-          ? deterministicThreadResult(det, chatChild.label)
-          : dailyThreadResult(daily)
+      ? witnessThreadResult(activeReport, saveError)
       : null
 
   const nodeStats = [
@@ -193,9 +171,8 @@ export function NodePage({
         <PageTabs nodeId={node.id} />
       </BottomChrome>
 
-      {/* Narrative chat onboarding — every run child. The reading renders
-          in-thread after handoff; keyed so a new child always starts fresh. */}
-      {chatChild?.run && (
+      {/* Witness narration is capability-specific, not the universal entry. */}
+      {chatChild?.run?.kind === 'witness' && (
         <ChatSheet
           key={chatChild.id}
           seed={chatChild.run}
@@ -210,7 +187,17 @@ export function NodePage({
         />
       )}
 
-      {/* Live panels — including the doors into the rest of the product */}
+      {isNativeRunChild(nativeChild) && (
+        <NativeRunDialog
+          key={nativeChild.id}
+          node={node}
+          child={nativeChild}
+          owner={me}
+          onClose={closeNative}
+        />
+      )}
+
+      {/* Read-only information panels. */}
       <InstrumentDialog
         open={modalView === 'info'}
         title={selectedChild?.label ?? node.label}

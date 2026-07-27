@@ -116,6 +116,8 @@ describe('source-shaped engine artifacts', () => {
     expect(html).toContain('data-engine-artifact="dosha-clock"')
     expect(html).toContain('Current source window')
     expect(html).toContain('<dl')
+    expect(html).toContain('text-parchment')
+    expect(html).not.toContain('text-reading-ink')
     expect(html).not.toContain('Next transition')
   })
 

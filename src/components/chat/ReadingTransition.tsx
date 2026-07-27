@@ -41,6 +41,7 @@ export function ReadingTransition({
   result,
   readingContext,
   onRetry,
+  surface = 'thread',
   canonicalEntry,
   bindingTimedOut,
   onRetryBinding,
@@ -48,6 +49,7 @@ export function ReadingTransition({
   result: ThreadResult
   readingContext: ThreadReadingContext
   onRetry?: () => void
+  surface?: 'thread' | 'instrument'
   /** Deterministic test/host override; undefined uses the live Folio binding. */
   canonicalEntry?: ReadingDTO | null
   bindingTimedOut?: boolean
@@ -150,7 +152,7 @@ export function ReadingTransition({
         <ReadingPreview document={previewDocument} />
         <div className="space-y-3 border-l border-terracotta/45 bg-terracotta/10 p-3 text-evidence-copy-unresolved">
           <p role="status" className="text-sm">
-            The reading could not be confirmed in Folio yet. It remains available in this thread.
+              The reading could not be confirmed in Folio yet. It remains available in this {surface}.
           </p>
           <button
             type="button"

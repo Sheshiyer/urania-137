@@ -88,6 +88,66 @@ describe('ReadingFolio element integration', () => {
     expect(html).toContain('The five limbs')
     expect(html).toContain('The Day-Lord')
     expect(html).toContain('Source-authored narrative.')
+    expect(html).toContain('data-engine-composition="panchanga"')
+  })
+
+  it('retains the source-supplied atlas for native section Folios', () => {
+    const document: ReadingDocument = {
+      ...base,
+      structureSource: 'native',
+      body: null,
+      sections: [{
+        id: 'source-section',
+        title: 'Source section',
+        body: 'Source-authored narrative.',
+        evidenceKind: 'deterministic',
+      }],
+      elements: [{
+        id: 'panchanga:five-limbs',
+        title: 'The five limbs',
+        kind: 'fact-grid',
+        layout: 'limbs',
+        sourceSystem: 'panchanga',
+        sourcePath: '[0].result',
+        evidenceKind: 'deterministic',
+        confidence: 'derived',
+        facts: [{ id: 'vara', label: 'Vara', value: 'Somavara' }],
+      }],
+    }
+
+    const html = renderToStaticMarkup(createElement(ReadingFolio, { document }))
+
+    expect(html).toContain('Reading atlas')
+    expect(html).toContain('Section structure')
+    expect(html).toContain('data-engine-composition="panchanga"')
+  })
+
+  it('leads a flat known-Engine Folio with composition instead of an unstructured atlas', () => {
+    const document: ReadingDocument = {
+      ...base,
+      elements: [
+        {
+          id: 'numerology:codes',
+          title: 'Number codes',
+          kind: 'number-codes',
+          sourceSystem: 'numerology',
+          sourcePath: 'result',
+          evidenceKind: 'deterministic',
+          confidence: 'derived',
+          codes: [{ id: 'life-path', label: 'Life Path', value: '7', reduction: ['34', '7'] }],
+        },
+      ],
+    }
+
+    const html = renderToStaticMarkup(createElement(ReadingFolio, { document }))
+    const readingLayer = html.slice(
+      html.indexOf('data-reading-layer="reading"'),
+      html.indexOf('data-reading-layer="evidence"'),
+    )
+
+    expect(readingLayer).toContain('data-engine-composition="numerology"')
+    expect(readingLayer).not.toContain('Unstructured source')
+    expect(readingLayer).not.toContain('Flat reading record')
   })
 
   it('renders a Parchment folio with distinct Reading, Evidence, and collapsed Source layers', () => {

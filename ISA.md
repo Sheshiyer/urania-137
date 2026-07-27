@@ -1,15 +1,15 @@
 ---
-task: "Repair Urania role-aware journeys, viewport shell, and structured reading presentation"
+task: "Repair capability entry and imported archive visibility"
 slug: 20260726-urania-living-readings-ecosystem
 project: Urania 137
 effort: deep
 effort_source: classifier
-phase: complete
-progress: 42/42
+phase: plan
+progress: 0/46
 mode: interactive
 started: 2026-07-14T16:00:00Z
-updated: 2026-07-27T16:38:00+05:30
-iteration: 11
+updated: 2026-07-27T18:18:00+05:30
+iteration: 14
 ---
 
 ## Problem
@@ -2526,3 +2526,624 @@ authorization.
 - Persistence fidelity and reader clarity are compatible only when the
   archive/source channel and presentation channel are separated before the
   reading adapter, not repaired after rendering.
+
+## Iteration 12 — Engine Output Design-to-Code Integration Audit (2026-07-27)
+
+### Problem
+
+The engine-output atlas, generated reference boards, graph-first plans, typed
+reading renderers, and browser evidence were created across several iterations.
+Their completion claims have not yet been reconciled in one current, one-to-one
+reference-to-code map that distinguishes design intent, reusable grammar,
+engine-specific composition, route consumption, rendered evidence, and open
+GitHub/planning work.
+
+### Vision
+
+A maintainer can open one durable audit and see, for every engine and workflow,
+the exact visual reference, payload relationship, owning React component,
+consumer path, evidence, honest integration state, remaining issue, and next
+action. The result makes “implemented” falsifiable and reveals whether the
+remaining work is renderer construction, composition, route integration,
+visual fidelity, evidence, or issue hygiene.
+
+### Out of Scope
+
+- No application runtime, engine contract, database, or authorization change.
+- No redesign or new visual reference generation.
+- No GitHub issue, label, project, milestone, or pull-request mutation.
+- No claim that a generated board is literal shipped application behavior.
+- No private reading values, credentials, or capture payloads in the report.
+
+### Constraints
+
+- The graph remains the primary interface at every depth.
+- Reference boards are design contracts; source and browser evidence determine
+  shipped integration.
+- Shared visual grammars and engine-specific compositions must be scored
+  separately.
+- Every percentage must publish its denominator and scoring rule.
+- GitHub and repository planning state must be captured from the same audit run.
+
+### Goal
+
+Produce and verify a one-to-one Engine output design-to-code integration audit
+that quantifies current coverage, identifies every remaining gap, and reconciles
+those gaps with open GitHub issues and repository planning without modifying
+product code or remote state.
+
+### Criteria
+
+- [x] ISC-388: The audit inventories every canonical Engine output visual reference.
+- [x] ISC-389: The audit inventories both generated Engine output reference boards.
+- [x] ISC-390: The manifest still declares exactly eighteen engines.
+- [x] ISC-391: The manifest still declares exactly six workflows.
+- [x] ISC-392: Every engine has exactly one primary audit row.
+- [x] ISC-393: Every workflow has exactly one primary audit row.
+- [x] ISC-394: Every row names its expected visual composition.
+- [x] ISC-395: Every row names its owning implementation component.
+- [x] ISC-396: Every row names its consumer route or reading surface.
+- [x] ISC-397: Every row names source, test, screenshot, or runtime evidence.
+- [x] ISC-398: Every row receives one explicit integration status.
+- [x] ISC-399: Shared grammar coverage is separated from engine composition coverage.
+- [x] ISC-400: Implemented atlas claims are checked against current source.
+- [x] ISC-401: Partial, proposed, and capture-gated claims remain visibly distinct.
+- [x] ISC-402: Integration percentage publishes its denominator and weighting.
+- [x] ISC-403: The audit captures every currently open GitHub issue.
+- [x] ISC-404: The audit captures repository planning artifacts relevant to Engine outputs.
+- [x] ISC-405: Remaining gaps are reconciled against issues and plans.
+- [x] ISC-406: Untracked implementation gaps are explicitly identified.
+- [x] ISC-407: Remaining actions are prioritized by dependency and user impact.
+- [x] ISC-408: The report links exact repository paths for every code claim.
+- [x] ISC-409: The report contains a component-to-reference concept map.
+- [x] ISC-410: Anti: the audit performs no GitHub mutation.
+- [x] ISC-411: Anti: the audit performs no product runtime change.
+- [x] ISC-412: Antecedent: references, code, and planning are inspected before scoring.
+
+### Test Strategy
+
+| ISC | Type | Check | Threshold | Tool |
+| --- | --- | --- | --- | --- |
+| 388–389 | references | enumerate canonical docs, images, and provenance | all authoritative files present | filesystem + image inspection |
+| 390–393 | inventory | validate manifest counts and one-row coverage | 18 engines, 6 workflows | Node + report parser |
+| 394–401 | mapping | cross-check expected composition, symbols, consumers, evidence, status | no unmapped row | CodeGraph + source + tests |
+| 402 | metric | recompute published coverage from row scores | exact denominator and result | Node |
+| 403–405 | planning | compare open GitHub items with repository plans and audit gaps | every open item classified | `gh` + filesystem |
+| 406–409 | synthesis | inspect gap, priority, path links, and concept map sections | all sections present | report read-back |
+| 410–411 | anti | inspect remote and worktree diff scope | no remote mutation, docs/ISA only | `gh` read-only + git diff |
+| 412 | antecedent | confirm source snapshots precede scoring | evidence ledger present | report read-back |
+
+### Features
+
+| Feature | Satisfies | Depends on | Parallelizable |
+| --- | --- | --- | --- |
+| Canonical reference inventory | 388–389, 412 | atlas and assets | yes |
+| Engine/workflow source mapping | 390–401, 408 | manifest, CodeGraph, source | yes |
+| Coverage model | 398–402 | complete mapping | no |
+| GitHub and plan reconciliation | 403–407 | current remote and local plans | yes |
+| Durable audit and concept map | 405–412 | all evidence lanes | no |
+
+### Decisions
+
+- 2026-07-27: “Integrated” requires reference, contract, renderer, consumer,
+  accessible equivalent, and verification evidence; names in a plan alone do
+  not count.
+- 2026-07-27: Product code and GitHub state remain read-only. Only this ISA and
+  the durable audit report may change.
+- 2026-07-27: Advisor required a frozen denominator and a four-tier
+  reachability rubric: 0 absent, 1 declared only, 2 wired/tested, 3
+  runtime-verified. Reference coverage, code presence, and runtime verification
+  will be published separately.
+- 2026-07-27: `EngineReading` and `WorkflowReading` have no live product caller.
+  The current product path is `ReadingTransition` or Folio selection →
+  `ReadingFolio` → `ReadingElementField`; atlas-specific shells therefore count
+  as declared/tested infrastructure, not live route integration.
+
+### Changelog
+
+- Conjectured: the generated atlas registry and its named Engine/workflow
+  shells represented the presentation path shipped to users.
+- Refuted by: the caller graph, current route consumers, and browser-evidence
+  corpus show that those shells are unmounted and completed visual proof is
+  nearly absent.
+- Learned: the live product is semantically integrated through
+  `ReadingFolio → ReadingElementField`, while exact visual composition and
+  runtime proof are separate, much less complete layers.
+- Criterion now: future completion reporting must publish reference coverage,
+  live semantic reachability, exact composition coverage, and populated
+  browser proof as separate denominators.
+
+### Verification
+
+- ISC-388–389 and ISC-412: 20 governing reference/provenance files were
+  frozen before scoring; all 15 scoped images were inspected at original
+  resolution and all five final generation hashes matched.
+- ISC-390–393: a report parser independently reconciled the executable atlas
+  to 18 engines, 6 workflows, and 49 component contracts, then found exactly
+  18 engine rows, 6 workflow rows, and 49 component rows.
+- ISC-394–401 and ISC-408–409: CodeGraph and source inspection traced every
+  envelope through `extractReadingElements → ReadingFolio →
+  ReadingElementField`, located all live consumers, separated the unmounted
+  atlas shell, and recorded exact code ownership plus the concept map.
+- ISC-402: the frozen tier reconciliation is T1=11, T2=37, and T3=1. The
+  report separately publishes 18/18 live semantic paths, 38/49 wired/tested
+  contracts, 0/6 named workflow composites, 1/18 populated browser DOM
+  artifacts, and 0/18 completed-output screenshots.
+- ISC-403–407: an authenticated read-only GitHub query returned exactly 16
+  open issues, all in the Cloudflare milestone, zero Project items, and zero
+  open pull requests. All 16 are mapped against local completion evidence,
+  current planning gaps, and prioritized actions.
+- ISC-410–411: no GitHub mutation or product-code change occurred. Worktree
+  scope is `ISA.md` plus the new durable audit report.
+- Focused renderer/registry verification passed 60/60 tests; the executable
+  atlas suite passed 9/9; the full application suite passed 681/681 across 83
+  files; the production build passed with 1,654 transformed modules.
+- `git diff --check` passed. Existing parent Astro config and Vite chunk-size
+  warnings remain non-blocking and were not caused by this audit.
+- ReReadCheck confirmed all five explicit asks: review all scoped design visual
+  references; map them one-to-one to codebase components; quantify integration;
+  enumerate remaining GitHub issues; and reconcile current planning.
+
+### Learn
+
+- A complete typed renderer grammar can coexist with incomplete product
+  composition and almost no screenshot proof; those claims must never share a
+  single blended percentage.
+- Exact component-name matching is a traceability convenience, not evidence of
+  live reachability. Caller paths and populated browser artifacts are the
+  stronger completion probes.
+- Issue hygiene can conceal current risk: all 16 open tickets describe already
+  completed migration work, while the real Engine reachability and evidence
+  gaps have no issue coverage.
+- The next implementation loop should begin with the live canonical route and
+  an 18-engine proof matrix, not with more generated visual boards.
+
+## Iteration 13 — Canonical Engine Composition Pass (2026-07-27)
+
+### Problem
+
+The live `ReadingFolio → ReadingElementField` path renders all known semantic
+elements, but it treats them as an undifferentiated auto-fit card grid. The
+executable Engine registry, six workflow composition contracts, family
+hierarchy, primary/secondary relationships, status, and provenance are still
+absent from the product path. Flat Engine readings also spend the first
+viewport on an “Unstructured source” atlas, leaving the actual output below
+the fold.
+
+### Vision
+
+Every returned Engine or workflow opens as a source-honest instrument with a
+clear composition hierarchy: the primary relationship leads, secondary
+evidence supports it, unresolved states remain named, and the exact source is
+still available in the collapsed Source layer. All eighteen Engines and six
+workflows share one canonical compositor. The resulting desktop and mobile
+screenshots are ready for the principal’s visual review without claiming that
+human visual acceptance has already occurred.
+
+### Out of Scope
+
+- No new Engine fields, inferred relationships, computed values, or synthetic
+  telemetry.
+- No database, Folio persistence, authorization, Selemene, capture, or API
+  contract change.
+- No new design reference, motion library, animation system, or generated
+  asset.
+- No claim that the composition passes human visual review in this iteration.
+- No implementation of source layers that the audit classified as genuinely
+  missing, such as Bodygraph activations or Gene Keys frequency records.
+
+### Constraints
+
+- The graph remains the primary doorway at every depth.
+- `ReadingFolio → ReadingElementField` remains the only product presentation
+  path for Engine and workflow output.
+- Geometry may encode only explicit membership, order, source slots, or state.
+- Reading, Evidence, and collapsed privacy-filtered Source remain distinct.
+- Every visual grouping retains semantic headings and a non-visual equivalent.
+- Existing responsive, reduced-motion, authorization, and privacy contracts
+  must remain intact.
+
+### Goal
+
+Implement and verify an Engine-aware and workflow-aware composition layer
+inside the canonical Reading path, covering all eighteen Engine contracts and
+all six workflow compositions while preserving source order, privacy,
+accessibility, and responsive containment. Produce deterministic desktop and
+mobile screenshots for the user’s visual review.
+
+### Criteria
+
+- [x] ISC-413: The live `ReadingElementField` mounts the compositor that consumes the executable Engine registry.
+- [x] ISC-414: The live `ReadingElementField` mounts the compositor that consumes the executable workflow registry.
+- [x] ISC-415: All eighteen registered Engine IDs render an Engine composition wrapper.
+- [x] ISC-416: Each Engine wrapper publishes its registered family.
+- [x] ISC-417: Each Engine wrapper publishes its registered status.
+- [x] ISC-418: Each Engine wrapper publishes its registered provenance.
+- [x] ISC-419: Each Engine wrapper names its primary atlas component.
+- [x] ISC-419.1: Every composed wrapper is a labelled semantic region.
+- [x] ISC-420: Matching primary-kind elements occupy the primary composition slot.
+- [x] ISC-421: Remaining Engine elements occupy a source-ordered supporting slot.
+- [x] ISC-422: Unknown source systems retain the generic semantic-element fallback.
+- [x] ISC-423: Raw elements retain privacy-filtered rendering outside composed Engine slots.
+- [x] ISC-424: All six registered workflow IDs render a named workflow composition wrapper.
+- [x] ISC-425: The Birth Blueprint wrapper identifies `CompositeIdentityMap`.
+- [x] ISC-426: The Creative Expression wrapper identifies `CreativeArtifactShelf`.
+- [x] ISC-427: The Daily Practice wrapper identifies `TemporalPracticeSequence`.
+- [x] ISC-428: The Decision Support wrapper identifies `PerspectiveComparison`.
+- [x] ISC-429: The Full Spectrum wrapper identifies `FullSpectrumConstellation`.
+- [x] ISC-430: The Self-Inquiry wrapper identifies `InquiryLayerStack`.
+- [x] ISC-431: Workflow Engine groups preserve their declared registry order.
+- [x] ISC-432: Every input element receives exactly one composition owner.
+- [x] ISC-432.1: Returned undeclared workflow Engines remain visible after declared groups.
+- [x] ISC-433: Flat known-Engine Folios omit the misleading unstructured-source atlas.
+- [x] ISC-434: Native section Folios retain the source-supplied Reading atlas.
+- [x] ISC-435: The unmounted `EngineReading` and `WorkflowReading` shells gain no product caller.
+- [x] ISC-436: Anti: no composed surface exposes raw JSON in the Reading layer.
+- [x] ISC-437: Anti: the composition pass invents no cross-Engine causal relationship.
+- [x] ISC-438: Anti: no API, database, authorization, or persistence file changes.
+- [x] ISC-439: Anti: no animation dependency or layout-animating behavior is added.
+- [x] ISC-440: Focused composition and Folio tests pass.
+- [x] ISC-441: The complete application test suite passes.
+- [x] ISC-442: The production TypeScript/Vite build passes.
+- [x] ISC-443: Desktop and mobile browser probes show composed output without viewport overflow.
+- [x] ISC-444: Antecedent: deterministic screenshots expose the completed composition for human visual review.
+
+### Test Strategy
+
+| ISC | Type | Check | Threshold | Tool |
+| --- | --- | --- | --- | --- |
+| 413–414 | source | canonical field mounts the registry-aware compositor | exact live call path present | source read |
+| 415–423 | component | render all Engine, unknown, and raw groups | every wrapper/slot/fallback asserted | Vitest SSR |
+| 424–432.1 | workflow | render six named workflow variants, ownership, and order | six wrappers; stable order; no duplicate output | Vitest SSR |
+| 433–434 | Folio | compare flat Engine and native section output | conditional atlas behavior exact | Vitest SSR |
+| 435 | architecture | inspect callers after implementation | no new product caller | CodeGraph/source |
+| 436–439 | anti | inspect rendered markup, diff scope, dependencies | zero prohibited drift | tests + git diff |
+| 440 | focused | composition/Folio suite | all pass | Vitest |
+| 441 | regression | application suite | all pass | `npm test` |
+| 442 | build | production compile and bundle | exit zero | `npm run build` |
+| 443 | browser | desktop/mobile layout and Axe | no root overflow; zero serious/critical | Playwright |
+| 444 | review artifact | read back deterministic PNG paths | desktop and mobile images exist | filesystem + image inspection |
+
+### Features
+
+| Feature | Description | Satisfies | Depends on | Parallelizable |
+| --- | --- | --- | --- | --- |
+| Engine compositor | Registry-aware primary/supporting layout for eighteen Engines | 413–423 | existing registry and element renderers | no |
+| Workflow compositor | Six named layouts using explicit membership and source order | 414, 424–432 | Engine compositor | no |
+| Folio hierarchy | Put known output before misleading flat-source atlas | 433–434 | compositors | no |
+| Composition verification | SSR, full-suite, build, browser, and screenshots | 435–444 | all implementation | no |
+
+### Decisions
+
+- 2026-07-27: The composition pass extends the canonical live path instead of
+  mounting the parallel `EngineReading` / `WorkflowReading` architecture.
+- 2026-07-27: Registry primary/secondary metadata controls hierarchy, while the
+  existing element renderers remain the only value projection layer.
+- 2026-07-27: Workflow compositions may vary layout and grouping only; they
+  cannot manufacture relationships between returned Engines.
+- 2026-07-27: Human visual acceptance is explicitly reserved for the user.
+  This iteration ends at deterministic review-ready screenshots.
+- 2026-07-27: The E3 delegation floor is intentionally relaxed. The component,
+  Folio, and verification edits share one sequential presentation path; two
+  write agents would overlap the same files and create merge risk.
+- 2026-07-27: FirstPrinciples/Deconstruct reduced the composition to four
+  irreducible inputs: explicit element kind, explicit source system, registry
+  contract, and stable source order. No new payload model is required.
+- 2026-07-27: SystemsThinking/FindLeverage selected the live registry
+  information flow as the highest feasible intervention. The compositor will
+  make registry intent visible where the user already reads output, rather
+  than changing routes or mounting another shell.
+- 2026-07-27: IterativeDepth applied literal, stakeholder, failure, and
+  experiential lenses. It added review screenshots, unknown/raw preservation,
+  anti-causality, mobile containment, and explicit human-review boundaries to
+  the test surface.
+- 2026-07-27: Premortem risks are nested-card density, mobile overflow,
+  workflow order drift, swallowed unknown/raw elements, and accidental
+  creation of a third presentation path. Each has a named SSR or browser
+  probe in ISC-420–444.
+- 2026-07-27: Advisor required explicit single ownership and accessible DOM
+  order. Workflow composition owns its ledger and recognized Engine groups;
+  each Engine group owns its source-ordered elements; unknown/raw groups remain
+  separate fallbacks. Primary/supporting is a stable partition by original
+  array index, and tests assert one rendered element per input.
+- 2026-07-27: Direct screenshot inspection found unreadable inherited dark ink
+  inside `DoshaClock` console cards. The card now uses parchment/metadata
+  tokens, and the repaired desktop artifact was recaptured before handoff.
+- 2026-07-27: The post-deliverable Advisor returned a conditional pass after
+  receiving the concrete diff, inventory, test counts, route evidence,
+  screenshot paths, and known gaps. Its required fixes produced an 18-way
+  missing-specialization runtime probe, an explicit bounded completion
+  definition, and a final test/build run after fixture deletion.
+
+### Changelog
+
+- Conjectured: `ReadingElementField` should directly import both registries to
+  prove canonical-path consumption.
+  Refuted by: the dispatcher would then mix composition policy with atomic
+  element rendering and duplicate registry ownership.
+  Learned: the canonical field can mount one registry-aware compositor while
+  keeping the atomic dispatcher exhaustive and reusable.
+  Criterion now: ISC-413 and ISC-414 require the live field to mount the
+  compositor that consumes both registries.
+
+### Verification
+
+- ISC-413: source read — `ReadingElementField` renders `ReadingComposition`,
+  whose source imports `ENGINE_VISUAL_REGISTRY`.
+- ISC-414: source read — the same canonical compositor imports and consumes
+  `WORKFLOW_VISUAL_REGISTRY`.
+- ISC-415: Vitest SSR — all 18 registry entries emit one
+  `data-engine-composition` wrapper.
+- ISC-416: Vitest SSR — every wrapper publishes its exact
+  `data-engine-family`.
+- ISC-417: Vitest SSR — every wrapper publishes its exact
+  `data-engine-status`.
+- ISC-418: Vitest SSR — every wrapper publishes its exact
+  `data-engine-provenance`.
+- ISC-419: Vitest SSR — every wrapper publishes the registered primary atlas
+  component.
+- ISC-419.1: DOM snapshot + SSR — all Engine/workflow wrappers are labelled
+  semantic regions.
+- ISC-420: Vitest SSR — the registry-matching element occupies the primary
+  composition slot.
+- ISC-421: Vitest SSR — supporting items retain original relative order.
+- ISC-422: Vitest SSR — unknown source systems render once in the unclassified
+  fallback.
+- ISC-423: Vitest SSR — raw output renders once through the privacy-filtered
+  technical-source fallback.
+- ISC-424: Vitest SSR — all six workflow IDs emit one named composition.
+- ISC-425: Vitest SSR — Birth Blueprint publishes `CompositeIdentityMap`.
+- ISC-426: Vitest SSR — Creative Expression publishes
+  `CreativeArtifactShelf`.
+- ISC-427: Vitest SSR + browser — Daily Practice publishes
+  `TemporalPracticeSequence`.
+- ISC-428: Vitest SSR — Decision Support publishes `PerspectiveComparison`.
+- ISC-429: Vitest SSR — Full Spectrum publishes
+  `FullSpectrumConstellation`.
+- ISC-430: Vitest SSR — Self-Inquiry publishes `InquiryLayerStack`.
+- ISC-431: Vitest SSR + browser DOM — declared Engine order is stable;
+  populated Daily Practice rendered `panchanga → vedic-clock → biorhythm`.
+- ISC-432: Vitest SSR — rendered element count equals input element count.
+- ISC-432.1: Vitest SSR — undeclared recognized Engines follow declared
+  groups and remain visible.
+- ISC-433: Folio SSR — flat known Engine output omits `Unstructured Source`.
+- ISC-434: Folio SSR — native section documents retain their supplied atlas.
+- ISC-435: CodeGraph/source — legacy `WorkflowReading` has no caller and
+  `EngineReading` remains called only by that legacy shell.
+- ISC-436: SSR + browser DOM — composed Reading markup exposes no open raw JSON;
+  technical source remains privacy-filtered and progressively disclosed.
+- ISC-437: source read — layouts encode membership/order only and contain no
+  cross-Engine edge or causal vocabulary.
+- ISC-438: `git diff --check` + scope inspection — no API, database,
+  authorization, or persistence source file changed.
+- ISC-439: dependency/source inspection — no package or motion dependency
+  changed and no layout animation was added.
+- ISC-440: focused Vitest — compositor/Folio suite passed 29/29; the
+  post-contrast artifact/compositor suite passed 23/23.
+- ISC-441: final regression after fixture deletion — 84/84 test files and
+  688/688 tests passed.
+- ISC-442: final build after fixture deletion — TypeScript/Vite passed with
+  1,657 modules transformed.
+- ISC-443: browser probes — 1440×1000 and 390×844 composed routes both reported
+  zero root overflow; the 36-row matrix passed Axe and reflow assertions.
+- ISC-444: image inspection — deterministic review artifacts exist in
+  `docs/ui/evidence/composition-pass/`, including Engine, workflow, Vedic Clock,
+  Biorhythm, and mobile detail frames.
+
+### Verification Summary
+
+- Coverage: 34/34 passed (34 tool-verified, 0 deferred).
+- CheckCompleteness: PASS at the E3 project minimum; all required sections are
+  present, the 34-criterion floor is met, and anti/antecedent probes exist.
+- Capability invocation: ISA, FirstPrinciples, SystemsThinking,
+  IterativeDepth, Advisor, and ReReadCheck all fired.
+- Thinking floor: E3 hard floor met with five closed-enumeration capabilities.
+- Delegation floor: intentionally relaxed with the overlap calculation recorded
+  above.
+- Doctrine: live UI probes, pre- and post-deliverable Advisor calls, complete
+  regression/build gates, and direct file/image read-backs all fired.
+
+### Deliverable Compliance
+
+- D1 — Implement requested Engine/workflow composition pass: PASS. The
+  canonical Reading path consumes all 18 Engine and six workflow contracts.
+- D2 — Produce deterministic screenshots for user visual review: PASS. Desktop
+  and mobile composed-output frames are present and inspected.
+
+### Re-read Check
+
+- “lets do the composition pass”: addressed through the canonical
+  `ReadingComposition` implementation, Folio hierarchy correction, stable
+  ownership/order, and 18/18 plus 6/6 contract tests.
+- “ill do the visual review”: respected. The workflow registry remains
+  `proposed`, no visual acceptance is claimed, and the review frames are
+  explicitly handed to the user.
+
+### Learning
+
+- I should have framed the browser directly on the composed regions before
+  trusting full-page screenshots; the Folio owns an inner scroll surface, so
+  above-fold captures can conceal the actual artifact.
+- A smarter pass would have included a populated Vedic Clock contrast probe in
+  the first screenshot checklist. Direct visual inspection caught a defect
+  that semantic DOM, Axe, and tests did not.
+- The preflight gates were useful: registry ownership prevented duplicate
+  rendering, and the post-deliverable Advisor forced a sharper bounded
+  completion claim plus an 18-way missing-source runtime probe.
+- Verification Doctrine materially improved the result by separating
+  all-contract runtime safety from the much smaller populated visual-proof
+  set.
+
+## Iteration 14 — Capability entry and imported archive visibility
+
+### Problem
+
+Urania currently sends every runnable constellation child through the narrator
+chat sheet even when the child explicitly names a deterministic Engine,
+workflow, or daily instrument. Separately, the consented 723 pilot tooling
+prepares a Selemene PostgreSQL living-archive transaction, but the production
+user cannot currently see that archive: the migration, protected API, admin
+navigation, and imported record are not one verified deployed path. A successful
+compute or prepared SQL file is being mistaken for a visible reading.
+
+### Vision
+
+Each node opens through the interface native to its capability: witness modes
+retain the narrator threshold, deterministic Engines and workflows open their
+instrument intake directly, daily readings open their location-aware surface,
+and informational or archive nodes retain their existing destinations. The
+admin operator can then open Selemene's Living Archive and see the one
+consented, checksum-locked 723 pilot with owner, subject, source, artifact, and
+editorial provenance kept distinct.
+
+### Out of Scope
+
+- Bulk-importing the full 723 corpus without alias, consent, and editorial review.
+- Relabeling the authenticated owner as the subject of every imported reading.
+- Copying Selemene PostgreSQL archive rows into Urania's flat D1 Folio table.
+- Replacing witness narration where the selected capability is genuinely narrative.
+- Redesigning either application's visual language during this repair.
+- Publishing or approving historical reading copy during import.
+
+### Constraints
+
+- Preserve all pre-existing composition-pass edits in the Urania worktree.
+- Preserve all unrelated and pre-existing changes in the Selemene worktree.
+- Keep existing Selemene Engine/workflow request and Folio-save hooks.
+- Apply database changes additively and prove them with read-after-write queries.
+- Keep living-archive endpoints behind `admin:analytics:read`.
+- Treat one verified solo pilot as the maximum authorized import scope.
+- Do not expose private reading bodies, birth data, or secrets in logs.
+- Execute sequentially because overlapping dirty worktrees make write delegation unsafe.
+
+### Goal
+
+Restore capability-appropriate node entry in Urania and complete the protected,
+reversible path that makes the consented 723 pilot visible in Selemene's admin
+Living Archive.
+
+### Criteria
+
+- [x] ISC-445: Engine children resolve to the native deterministic entry mode.
+- [x] ISC-446: Workflow children resolve to the native deterministic entry mode.
+- [x] ISC-447: Daily children resolve to the native daily entry mode.
+- [x] ISC-448: Witness children resolve to the narrative chat entry mode.
+- [x] ISC-449: Informational children retain the information-dialog entry mode.
+- [x] ISC-450: Folio action children retain direct canonical Folio navigation.
+- [x] ISC-451: Deep-linked children use the same capability entry classifier.
+- [x] ISC-452: Selecting a native Engine creates no chat session request.
+- [x] ISC-453: Native deterministic entry reuses the existing birth intake form.
+- [x] ISC-454: Native deterministic submission reuses the existing execution hook.
+- [x] ISC-455: Native deterministic results retain canonical composed reading output.
+- [x] ISC-456: Native deterministic completion retains Folio persistence.
+- [x] ISC-457: Witness submission retains in-thread narrative reading output.
+- [x] ISC-458: Closing one entry clears selection and stale result state.
+- [x] ISC-459: Entry classification is a pure exhaustively tested function.
+- [x] ISC-460: A regression test fails against the every-run-child chat rule.
+- [x] ISC-461: Browser evidence shows Numerology without the narrator sheet.
+- [x] ISC-462: Anti: entry behavior does not depend on a rollback environment flag.
+- [x] ISC-463: Selemene exposes a protected living-readings list endpoint.
+- [x] ISC-464: Selemene exposes a protected living-reading detail endpoint.
+- [x] ISC-465: The list endpoint requires `admin:analytics:read`.
+- [x] ISC-466: The detail endpoint requires `admin:analytics:read`.
+- [x] ISC-467: A basic viewer receives forbidden from the list endpoint.
+- [x] ISC-468: A basic viewer receives forbidden from the detail endpoint.
+- [x] ISC-469: Admin navigation exposes the Living Archive destination.
+- [x] ISC-470: The Living Archive renders active imported reading rows.
+- [x] ISC-471: Reading detail renders owner and subject as separate relations.
+- [x] ISC-472: Reading detail renders source and import-run provenance.
+- [x] ISC-473: Reading detail renders artifact metadata and editorial history.
+- [x] ISC-474: PostgreSQL migration 036 applies to the target archive database.
+- [x] ISC-475: The consented Shesh pilot import reaches completed state.
+- [x] ISC-476: A post-import SELECT returns exactly one active pilot reading.
+- [x] ISC-477: The active pilot reading belongs to the configured owner email.
+- [x] ISC-478: The pilot subject remains its independently verified corpus subject.
+- [x] ISC-479: Re-running the pilot import creates no duplicate reading.
+- [x] ISC-480: Pilot artifact checksums match their frozen source files.
+- [x] ISC-481: Deleted archive records remain excluded from the active list.
+- [x] ISC-482: Anti: no private artifact body appears in command output.
+- [x] ISC-483: Anti: no archive row is copied into Urania's flat D1 Folio.
+- [x] ISC-484: Anti: no unreviewed 723 subject or relationship is bulk-imported.
+- [x] ISC-485: Focused Urania node-entry tests pass.
+- [x] ISC-486: Complete Urania tests and production build pass.
+- [x] ISC-487: Focused Selemene living-archive tests pass.
+- [x] ISC-488: Selemene API and admin-web compile checks pass.
+- [x] ISC-489: Live or local authenticated probe returns the imported pilot row.
+- [DEFERRED-VERIFY] ISC-490: Antecedent: operator browser evidence shows the pilot archive entry.
+
+### Features
+
+| Feature | Description | Satisfies | Depends on | Parallelizable |
+| --- | --- | --- | --- | --- |
+| Capability entry classifier | Route each child to chat, deterministic, daily, info, or navigation from its declared capability | 445–462 | existing `SelemeneChild.run` union | no |
+| Selemene archive visibility | Finish protected list/detail API and Living Archive admin surface | 463–473 | migration 036 and existing dirty work | no |
+| Consented pilot completion | Apply one checksum-locked solo pilot idempotently and verify ownership | 474–484 | archive schema and object storage | no |
+| Repair verification | Tests, builds, database selects, and browser evidence | 485–490 | all implementation | no |
+
+### Test Strategy
+
+| ISC | Type | Check | Threshold | Tool |
+| --- | --- | --- | --- | --- |
+| 445–451, 459–460 | unit | classify representative child run kinds | exact five-way mapping | Vitest |
+| 452–458, 461 | browser/integration | open Numerology and witness children | native has no chat; witness retains chat | Browser + network |
+| 463–468 | API/auth | list/detail route and viewer denial | 200 for admin fixture; 403 for viewer | Rust tests |
+| 469–473 | frontend | navigation, table, and detail contract | every provenance layer rendered | admin-web tests/typecheck |
+| 474–480 | migration/data | apply, import, rerun, and SELECT | one active reading; zero duplicates | PostgreSQL + checksums |
+| 481–484 | anti | inspect query and mutation scope | zero deleted, private-body, D1, or bulk drift | tests + diff + SELECT |
+| 485–488 | regression | focused/full suites and builds | all commands exit zero | Vitest/Cargo/Next/Vite |
+| 489–490 | live proof | authenticated API and browser row | exact pilot ID visible | curl/Browser |
+
+### Decisions
+
+- 2026-07-27: RootCauseAnalysis/KepnerTregoe separated two failures that share
+  one mental model but have different mechanisms: an over-broad UI routing rule
+  and an incomplete archive delivery boundary.
+- 2026-07-27: SystemsThinking/Iceberg identified the structural generator as
+  treating every computed output as both conversational and already archived.
+- 2026-07-27: The first safe import remains the already consented, verified
+  Shesh solo pilot. The full 723 corpus requires later alias and editorial work.
+- 2026-07-27: Urania D1 remains the live self-service Folio; historical archive
+  truth remains in Selemene PostgreSQL rather than being duplicated.
+- 2026-07-27: The E3 delegation floor is relaxed because the developer
+  instruction prohibits subagents and both target worktrees already contain
+  overlapping uncommitted changes.
+- 2026-07-27: Advisor's first review assumed mixed-capability children and a
+  backfill. Direct union and database evidence refuted both assumptions; the
+  retained gates were exhaustive classification, uniqueness, consent,
+  migration ordering, and authorization.
+
+### Verification
+
+- ISC-445–462: `src/lib/nodeEntry.test.ts` passes all six capability-classifier
+  cases. The complete Urania Vitest suite passes 694/694, and `npm run build`
+  transforms 1,658 modules successfully. Browser evidence in
+  `docs/ui/evidence/node-entry-import-visibility/` shows Numerology opening the
+  native instrument while Integrated Reading retains the witness threshold.
+- ISC-463–473, 487–489: the isolated Selemene delivery branch
+  `codex/selemene-living-archive-visibility` passes three repository/schema
+  tests, two API authorization tests, three admin source-contract tests,
+  admin TypeScript, Next production build, and Rust API compilation. Railway
+  deployment `13c373a9-485f-46f9-adde-8fbc79f8d641` reports `SUCCESS`; its live
+  health endpoint reports version 3.3.1 with 18 Engines and 6 workflows.
+  Vercel production deployment `68GfTvYQ6ZMiYCC6ghmVFgGas6Z7` is aliased to
+  `https://144.tryambakam.space`.
+- ISC-474–484: production PostgreSQL contains migration 036 and exactly one
+  active completed pilot,
+  `sheshnarayan-cumbipuram-nateshan-l0-2026-07-09`, with two artifacts, one
+  evidence row, independently related owner and subject, and `owner_only`
+  editorial visibility. The importer passes 7/7 tests including checksum lock,
+  rerun idempotency, compensation, and deletion audit boundaries. Remote
+  Urania D1 returns zero matching pilot rows.
+- ISC-490: `[DEFERRED-VERIFY]` follow-up
+  `owner-visual-review-living-archive-2026-07-27`. The user explicitly retained
+  the visual-review pass; the automated browser proved the Access gate remains
+  active, and no authentication control was bypassed.
+
+### Learning Inventory
+
+- Inner scroll surfaces require targeted composition screenshots | TYPE:
+  project verification | KEEP: yes — recorded in this ISA and audit.
+- Dark instrument cards need explicit contrast tokens | TYPE: implementation
+  pattern | KEEP: yes — encoded in `DoshaClock` and its regression test.
+- Semantic completeness must remain separate from visual proof | TYPE:
+  reporting doctrine | KEEP: yes — encoded in the audit scoring model.

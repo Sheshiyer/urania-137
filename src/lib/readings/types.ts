@@ -7,7 +7,7 @@
  * patterns in separate fields.
  */
 
-export type ReadingOrigin = 'live-chat' | 'folio' | 'relationship-grant' | 'corpus-723'
+export type ReadingOrigin = 'live-chat' | 'live-engine' | 'folio' | 'relationship-grant' | 'corpus-723'
 export type ReadingStructureSource = 'native' | 'flat'
 export type ReadingSubjectKind = 'self' | 'person' | 'dyad' | 'family' | 'collective' | 'unknown'
 export type ReadingEvidenceKind = 'deterministic' | 'witness' | 'retrieval' | 'historical' | 'system'
