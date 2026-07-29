@@ -4,11 +4,11 @@ slug: 20260729-contextual-readings-release
 project: Urania 137
 effort: advanced
 effort_source: classifier
-phase: execute
-progress: 1/16
+phase: complete
+progress: 16/16
 mode: interactive
 started: 2026-07-28T11:28:00Z
-updated: 2026-07-29T06:35:00Z
+updated: 2026-07-29T07:16:00Z
 iteration: 20
 ---
 
@@ -4499,21 +4499,21 @@ flow at the live URL.
 ### Criteria
 
 - [x] ISC-719: A browser screenshot captures the pre-release production surface.
-- [ ] ISC-720: One feature commit contains the contextual-reading release files.
-- [ ] ISC-721: Package and lockfile both declare version `0.6.0`.
-- [ ] ISC-722: The complete Urania Vitest suite exits successfully.
-- [ ] ISC-723: The production Vite build exits successfully.
-- [ ] ISC-724: The Cloudflare Functions TypeScript check exits successfully.
-- [ ] ISC-725: Production D1 reports migration `0008` applied.
-- [ ] ISC-726: The feature branch remote points at the release commit.
-- [ ] ISC-727: Remote `main` fast-forwards to the release commit.
-- [ ] ISC-728: Annotated tag `v0.6.0` resolves to the release commit.
-- [ ] ISC-729: GitHub exposes a published `v0.6.0` release.
-- [ ] ISC-730: Cloudflare production reports the release commit as source.
-- [ ] ISC-731: Live HTML references the newly deployed hashed assets.
-- [ ] ISC-732: Browser evidence shows the released Folio and conversation flow.
-- [ ] ISC-733: Anti: AgentScope canary and premium assets remain inactive.
-- [ ] ISC-734: Anti: `_PROJECT-STATUS.md` is absent from the release commit.
+- [x] ISC-720: One feature commit contains the contextual-reading release files.
+- [x] ISC-721: Package and lockfile both declare version `0.6.0`.
+- [x] ISC-722: The complete Urania Vitest suite exits successfully.
+- [x] ISC-723: The production Vite build exits successfully.
+- [x] ISC-724: The Cloudflare Functions TypeScript check exits successfully.
+- [x] ISC-725: Production D1 reports migration `0008` applied.
+- [x] ISC-726: The feature branch remote points at the release commit.
+- [x] ISC-727: Remote `main` fast-forwards to the release commit.
+- [x] ISC-728: Annotated tag `v0.6.0` resolves to the release commit.
+- [x] ISC-729: GitHub exposes a published `v0.6.0` release.
+- [x] ISC-730: Cloudflare production reports the release commit as source.
+- [x] ISC-731: Live HTML references the newly deployed hashed assets.
+- [x] ISC-732: Browser evidence shows the released Folio and conversation flow.
+- [x] ISC-733: Anti: AgentScope canary and premium assets remain inactive.
+- [x] ISC-734: Anti: `_PROJECT-STATUS.md` is absent from the release commit.
 
 ### Test Strategy
 
@@ -4557,6 +4557,18 @@ flow at the live URL.
 - 2026-07-29 12:00: Cloudflare reports `Git Provider: No`, confirming the Pages
   project is direct-upload only and cannot race the explicit deployment after
   the main push.
+- 2026-07-29 12:40: Rollback is Pages-only. Migration 0008 contains only one
+  new table and two new indexes; the previous production app does not reference
+  them. The retained rollback target is deployment
+  `2cf55770-bbba-4c27-9e3c-23ec023eae5e` at commit `c2c7673`; rebuilding and
+  direct-uploading that commit to branch `main` restores the previous app
+  without restoring D1, while any v0.6.0 interpretation rows remain preserved.
+- 2026-07-29 12:40: Post-release Advisor review found no P0. Its remaining P1
+  is that no synthetic production interpretation was written because that
+  would persist test content in the owner's Folio and consume a live provider
+  call. Direct production SQL proves the table and indexes exist with zero
+  rows; clean tests prove write/read/idempotency behavior. A real user-authored
+  first interpretation is the non-synthetic operational confirmation.
 
 ### Changelog
 
@@ -4570,3 +4582,53 @@ flow at the live URL.
 - ISC-719: browser screenshot — `/tmp/urania-live-before-release.png` captures
   the custom production hostname resolving to its existing Cloudflare Access
   boundary before the v0.6.0 release.
+- ISC-720: Git commit — `a988fcd5f3c5915ff0fe84a7cae7f8678ccb674e`
+  contains exactly forty explicitly staged release paths; `_PROJECT-STATUS.md`
+  remains untracked and absent.
+- ISC-721: version read-back — `package.json` and the root package entries in
+  `package-lock.json` report `0.6.0`.
+- ISC-722: clean-checkout test — detached worktree at `a988fcd` reports
+  `92 passed` test files and `761 passed` assertions.
+- ISC-723: clean-checkout build — Vite transformed 1660 modules and wrote
+  `index-CpEZfJz8.js` plus `index-j1CNTCU6.css` successfully.
+- ISC-724: clean-checkout TypeScript — `npm run typecheck:functions` exits zero
+  from the detached release worktree.
+- ISC-725: remote D1 migration — a mode-0600, SHA-256-recorded pre-release
+  export was captured; Wrangler then applied `0008_reading_interpretations.sql`
+  and reports `No migrations to apply`.
+- ISC-726–727: remote Git — both
+  `refs/heads/codex/urania-role-aware-flow-repair` and `refs/heads/main`
+  resolve to `a988fcd5f3c5915ff0fe84a7cae7f8678ccb674e`; PR 174 is merged and all
+  three fresh CI runs pass.
+- ISC-730: Cloudflare Pages — production deployment
+  `e6ba661a-73b3-4a3c-be8f-8b3ce688d70c` reports branch `main` and source
+  `a988fcd`.
+- ISC-731: live asset probe — deployment HTML references
+  `assets/index-CpEZfJz8.js` and `assets/index-j1CNTCU6.css`; both return 200
+  with the exact clean-build byte sizes.
+- ISC-732: authenticated browser — the custom production hostname visibly
+  reports `v0.6.0 · a988fcd`, lists twelve canonical Folio readings, opens the
+  Panchanga reading with evidence and checksum, then continues its canonical
+  ID into the Witness chat exposing Pattern/Embodied/Synthesis/Navigate and
+  interpretation depth L0–L5.
+- ISC-733: runtime audit — release paths contain no premium or NotebookLM asset
+  pack and no AgentScope runtime environment variables; the only AgentScope
+  path is the inert integration plan, while canary remains unactivated.
+- ISC-734: Git object probe — `_PROJECT-STATUS.md` is absent from commit
+  `a988fcd` and remains the sole untracked local path.
+- ISC-728: remote tag object — GitHub tag object
+  `55aa4711bd915095ec854f3f7a79523439260d48` peels to commit
+  `a988fcd5f3c5915ff0fe84a7cae7f8678ccb674e` and records Cloudflare deployment
+  `e6ba661a-73b3-4a3c-be8f-8b3ce688d70c`.
+- ISC-729: GitHub release — `v0.6.0 — Contextual Readings` is published,
+  non-draft, non-prerelease, and records the production and rollback
+  deployments.
+- Operational schema probe: production D1 `sqlite_master` returns
+  `reading_interpretations` plus both indexes from APAC primary, with
+  `changes: 0`; the table currently contains zero rows.
+- Operational cache/binding probe: HTML, JS, and CSS all serve
+  `max-age=0, must-revalidate`; no service worker or Workbox registration
+  exists. Production exposes encrypted `CHAT_PROXY_TOKEN` and
+  `SELEMENE_API_KEY`, while the authenticated Folio proves Access and D1
+  bindings. A scoped error tail observed no runtime errors during the API
+  smoke window; the longer soak remains an owned operational follow-up.
