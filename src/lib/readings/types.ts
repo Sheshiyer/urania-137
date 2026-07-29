@@ -316,6 +316,22 @@ export interface ReadingArchiveState {
   favorite: boolean
 }
 
+/**
+ * Task 5 — additive, optional projection of a server-persisted
+ * `reading_interpretations` row (migration 0008). Never required: existing
+ * `ReadingDocument` payloads without a linked interpretation remain valid.
+ */
+export interface ReadingLinkedInterpretation {
+  id: string
+  readingId: string
+  route: string
+  interpretationDepth: number
+  consciousnessLevel: number
+  question: string
+  answer: string
+  createdAt: number
+}
+
 export interface ReadingDocument {
   id: string
   title: string
@@ -348,6 +364,8 @@ export interface ReadingDocument {
   sourcePayload: unknown | null
   bridgeQuestion: string | null
   archive: ReadingArchiveState
+  /** Additive, optional: linked interpretations persisted via migration 0008. */
+  linkedInterpretations?: ReadingLinkedInterpretation[]
 }
 
 export interface ReadingAdapterContext {

@@ -1,15 +1,15 @@
 ---
-task: "Repair capability entry and imported archive visibility"
-slug: 20260726-urania-living-readings-ecosystem
+task: "Cut and publish Urania 137 contextual-readings release"
+slug: 20260729-contextual-readings-release
 project: Urania 137
-effort: deep
+effort: advanced
 effort_source: classifier
-phase: complete
-progress: 45/46
+phase: execute
+progress: 1/16
 mode: interactive
-started: 2026-07-14T16:00:00Z
-updated: 2026-07-27T18:57:37+05:30
-iteration: 14
+started: 2026-07-28T11:28:00Z
+updated: 2026-07-29T06:35:00Z
+iteration: 20
 ---
 
 ## Problem
@@ -3163,3 +3163,1410 @@ Living Archive.
   pattern | KEEP: yes — encoded in `DoshaClock` and its regression test.
 - Semantic completeness must remain separate from visual proof | TYPE:
   reporting doctrine | KEEP: yes — encoded in the audit scoring model.
+
+## Iteration 15 — Selemene control plane and client feedback loop
+
+### Problem
+
+An authenticated visit to `144.tryambakam.space` showed Vercel's platform-level
+`404: NOT_FOUND`, even though that hostname is intended to be the protected
+Selemene administration surface. At the same time Urania, Sankalpa, and Raycast
+Noesis all execute Selemene capabilities, but they do not consistently identify
+themselves when they call the Engine. Their successful Engine and workflow
+outputs are persisted centrally without client provenance, while each client
+also maintains a local cache whose role is not explicitly subordinate to the
+Selemene record. The result is a weak feedback loop: Selemene performs the work
+but its admin surface cannot reliably say which extension produced it.
+
+### Vision
+
+`144.tryambakam.space` is a protected operator control plane and nothing else.
+Its root always resolves to the Selemene admin shell after Cloudflare Access;
+no consumer interface is hosted there. Urania, Sankalpa, and Raycast Noesis are
+thin, purpose-specific Selemene clients: they use Selemene authentication,
+Engine/workflow contracts, persistence, history, and observability, then add
+their own interaction and presentation layers. Every persisted result carries
+bounded client provenance so the admin readings view closes the loop from
+client action to Engine output.
+
+### Out of Scope
+
+- Moving Urania, Sankalpa, or Raycast UI code into the Selemene repository.
+- Removing local/offline caches that preserve responsive or offline client UX.
+- Exposing any Selemene admin endpoint through the three client applications.
+- Replacing Cloudflare Access or weakening the existing owner-only policy.
+- Migrating historical rows whose source client cannot be proven.
+- Turning client provenance into an authentication or authorization signal.
+- Rebuilding the retired `48.tryambakam.space` witness service.
+- Claiming the user's visual acceptance of any client or admin composition.
+
+### Principles
+
+- Selemene owns canonical compute, workflow orchestration, persisted readings,
+  history synchronization, usage telemetry, and admin observability.
+- Client applications own interaction, presentation, and bounded offline
+  continuity; their caches are replicas or fallbacks, never system authority.
+- `144.tryambakam.space` is an operator surface, not a fourth consumer client.
+- Client provenance is descriptive and untrusted; authentication remains the
+  sole authority for user identity, permissions, and billing.
+- Existing request bodies remain backward compatible when client context is
+  absent.
+- No secret, birth datum, reading body, or personally identifying value belongs
+  in the client-provenance envelope.
+
+### Constraints
+
+- Preserve the dirty original Selemene, Sankalpa, and Raycast worktrees.
+- Build Selemene changes from the already deployed living-archive feature head.
+- Keep Urania's server-side API-key proxy; no Engine secret enters the browser.
+- Keep Sankalpa's renderer-to-main-process trust boundary and explicit consent.
+- Keep Raycast credentials in Raycast's secure password preference.
+- Apply schema changes additively and tolerate old requests without provenance.
+- Keep the current `/admin` Next.js base path and root redirect contract.
+- Do not infer authenticated custom-domain success from an unauthenticated curl.
+
+### Goal
+
+Reassert a healthy admin-only production root at `144.tryambakam.space`, define
+and implement one bounded Selemene client-context contract for Engine and
+workflow calls, attach it from Urania, Sankalpa, and Raycast Noesis, persist and
+display the source client in Selemene admin readings, and verify every touched
+repository plus the live deployment boundaries.
+
+### Root Cause Analysis — Kepner-Tregoe
+
+| Dimension | IS | IS NOT | Distinction |
+| --- | --- | --- | --- |
+| 144 access | Cloudflare returns the expected Access login challenge before authentication | An unprotected public admin shell | Access policy and DNS proxy are active |
+| production artifact | Direct deployment `/` returns `307 /admin/login`; `/admin/dashboard` returns `200` | Missing Next root route or failed Vercel build | The deployed application is healthy |
+| screenshot failure | Vercel platform `NOT_FOUND` on the custom hostname after authentication | Application-styled Next 404 | The custom hostname lacked a usable deployment match at that observed moment |
+| client compute | All three clients call Selemene Engine contracts | Three independent Engine implementations | Compute ownership is already mostly central |
+| client feedback | Selemene auto-persists successful outputs | Provenance-complete history | Persistence discards the existing client/device context fields |
+| admin observability | Admin readings expose user, Engine, workflow, and result | Source application identification | The feedback loop stops before client attribution |
+
+The most probable 144 cause is transient/stale custom-domain attachment during
+the preceding production rollout, not missing application code. Reasserting the
+alias and adding a production root probe prevents recurrence. The separate
+architectural cause is concrete: `calculate_handler` and
+`execute_workflow_by_id` construct `NewReading` with all client/device fields
+set to `None`, while clients send no common context.
+
+### SystemsThinking — Iceberg
+
+1. **Event:** an operator sees a Vercel 404 and cannot inspect imported or live
+   Selemene state.
+2. **Pattern:** client features reach the same Engine through different
+   adapters, then cache locally while central rows lose their source.
+3. **Structure:** request contracts have no shared client-context envelope,
+   persistence hard-codes provenance to `None`, and deployment checks validate
+   a direct URL more often than the protected custom hostname.
+4. **Mental model:** each surface has been treated as a small standalone product
+   integrating with Selemene, rather than as an extension of Selemene.
+
+### SystemsThinking — Causal Loop
+
+**Question:** Why does Selemene lose authority even when clients call it?
+
+- Shared client contract →(+) attributable persisted outputs.
+- Attributable outputs →(+) admin observability.
+- Admin observability →(+) confidence in Selemene as system authority.
+- Confidence in Selemene →(−) duplicated client-local authority.
+- Duplicated client-local authority →(−) shared contract adoption.
+- Local-first resilience →(+) client usefulness.
+- Central-only dependence →(−) local-first resilience.
+
+R1 “Authority compounds” is reinforcing: shared contracts make outputs visible,
+which encourages further centralization. B1 “Offline resilience” prevents
+removing local caches. The intervention is therefore not to delete caches, but
+to make Selemene canonical and label caches explicitly as replicas/fallbacks.
+
+### FirstPrinciples — Deconstruct, Challenge, Reconstruct
+
+**Irreducible requirements:** admin actions require protected operator access;
+Engine/workflow execution must be authenticated; successful results need one
+durable canonical record; client UX may remain local-first; provenance must not
+grant authority or expose private data.
+
+**Soft constraints challenged:** `/admin` does not need to be typed manually;
+the retired Witness gateway does not need to remain Raycast's default Engine
+route; a local cache does not need to be the authoritative archive; client
+source does not require a new analytics service when the readings pipeline
+already persists every successful execution.
+
+**Reconstruction:** keep one Selemene control/data plane, add a small optional
+client context to existing execution requests, store that context with the
+reading, expose it only through existing user/admin history contracts, and let
+each client retain its own UI and bounded cache.
+
+### Criteria
+
+- [x] ISC-491: Unauthenticated 144 root returns the Cloudflare Access challenge.
+- [x] ISC-492: Current direct production root redirects into the admin base path.
+- [x] ISC-493: Current production deployment owns the 144 custom-domain alias.
+- [x] ISC-494: A release probe fails if the direct production root returns 404.
+- [x] ISC-495: The 144 hostname exposes no unprotected Selemene data-plane route.
+- [x] ISC-496: Selemene defines one optional bounded client-context request contract.
+- [x] ISC-497: Engine calculation requests accept that client-context contract.
+- [x] ISC-498: Workflow execution requests accept that client-context contract.
+- [x] ISC-499: Invalid or oversized client-context values fail validation.
+- [x] ISC-500: Successful Engine readings persist their source client.
+- [x] ISC-501: Successful workflow readings persist their source client.
+- [x] ISC-502: Existing event, device, platform, and version fields are populated.
+- [x] ISC-503: Requests without client context preserve their existing behavior.
+- [x] ISC-504: Client provenance cannot alter authentication or authorization.
+- [x] ISC-505: Admin readings responses expose source-client provenance.
+- [x] ISC-506: Admin readings accept an optional source-client filter.
+- [x] ISC-507: The admin readings table displays source client.
+- [x] ISC-508: The admin reading detail displays bounded client provenance.
+- [x] ISC-509: Urania Engine calls attach source `urania`.
+- [x] ISC-510: Urania continues using its server-side Selemene credential proxy.
+- [x] ISC-511: Sankalpa Engine calls attach source `sankalpa`.
+- [x] ISC-512: Sankalpa keeps Engine calls in the Electron main process.
+- [x] ISC-513: Raycast Engine calls attach source `raycast-noesis`.
+- [x] ISC-514: Raycast workflow calls attach source `raycast-noesis`.
+- [x] ISC-515: Raycast defaults Engine execution to canonical Selemene.
+- [x] ISC-516: Local Urania, Sankalpa, and Raycast caches remain non-authoritative.
+- [x] ISC-517: Anti: no client exposes or proxies Selemene admin endpoints.
+- [x] ISC-518: Anti: no client provenance contains secrets or personal reading data.
+- [x] ISC-519: Anti: source-client labels cannot grant roles, quota, or ownership.
+- [x] ISC-520: Selemene focused provenance tests pass.
+- [x] ISC-521: Selemene API, data layer, SDK, and admin builds pass.
+- [x] ISC-522: Urania focused tests and production build pass.
+- [x] ISC-523: Sankalpa gateway tests, typecheck, and build pass.
+- [x] ISC-524: Raycast API tests, lint, and build pass.
+- [x] ISC-525: Migration applies and reads source-client values back correctly.
+- [x] ISC-526: Production Selemene health remains green after deployment.
+- [x] ISC-527: Production Vercel deployment root passes the redirect probe.
+- [ ] ISC-528 [DEFERRED-VERIFY: #908]: Authenticated 144 root reaches the Selemene admin shell.
+- [x] ISC-529: Architecture and remaining GitHub planning are reconciled explicitly.
+
+### Features
+
+| Feature | Description | Satisfies | Depends on |
+| --- | --- | --- | --- |
+| Admin root release gate | Reassert the 144 alias and verify root/base-path behavior | 491–495, 527–528 | Vercel + Cloudflare Access |
+| Selemene client context | Optional validated provenance on Engine/workflow requests | 496–504 | existing execution contracts |
+| Persisted source attribution | Store source and existing device fields with each reading | 500–506, 519–521, 525 | migration 037 + readings repository |
+| Admin feedback view | Filter and render reading source in the protected admin UI | 505–508 | admin readings API |
+| Three client adapters | Attach the same source contract from Urania, Sankalpa, Raycast | 509–518, 522–524 | each existing Selemene adapter |
+| Architecture reconciliation | Record the control-plane boundary and map open planning | 529 | code and GitHub read-back |
+
+### Test Strategy
+
+| ISC | Type | Check | Threshold |
+| --- | --- | --- | --- |
+| 491–495 | live/config | Access challenge, Vercel inspect/curl, route inventory | no public admin bypass; no root 404 |
+| 496–504 | Rust unit/API | deserialize, normalize, validate, persist | exact bounded mapping; backward compatible |
+| 505–508 | Rust/TypeScript | response/filter contracts and rendered table/detail | source visible and filterable |
+| 509–518 | TypeScript unit/source | inspect outgoing Engine/workflow bodies and boundaries | exact three source labels; no admin routes |
+| 520–525 | repository suites | focused + compile/build/migration round trip | all exit zero |
+| 526–528 | production | health, deployment root, authenticated admin | healthy, 307/200, admin shell |
+| 529 | planning audit | compare implementation with open epics/issues | no duplicate or falsely closed work |
+
+### Decisions
+
+- Preserve the `/admin` base path because the direct production root already
+  redirects correctly; deleting it would create broad link and asset churn
+  without addressing the observed custom-domain mismatch.
+- Treat the screenshot as valid historical evidence but not current-state proof:
+  Vercel now reports a ready production deployment with the 144 alias, and its
+  protected-curl bypass proves the root redirect and dashboard artifact.
+- Use an optional request body envelope, not authority-bearing headers, so
+  Urania's secure streaming proxy can forward it unchanged and clients cannot
+  confuse provenance with authentication.
+- Store and display the value as `claimed_source_client`: the public data-plane
+  caller self-asserts it, so even an allowlisted value is never authoritative.
+- Protect the entire `144.tryambakam.space` hostname with Cloudflare Access.
+  The Selemene data plane remains independently reachable at
+  `selemene.tryambakam.space`; no path exception weakens the admin host.
+- Keep Witness as an explicit Raycast compatibility route without silently
+  selecting it when Selemene credentials are absent.
+- Reuse the existing readings/history-sync pipeline rather than create a second
+  telemetry store. Source attribution belongs beside the durable output.
+- Keep local caches for offline continuity while documenting Selemene as the
+  canonical record.
+- Execute repository writes sequentially. The original Selemene, Sankalpa, and
+  Raycast worktrees contain unrelated user changes, so shared-write delegation
+  would create unsafe overlap.
+
+### Verification
+
+- ISC-491–495 and ISC-527: live probes — `144.tryambakam.space/` and a fake
+  `/api/v1/engines` path both return the Cloudflare Access 302; Vercel
+  deployment `dpl_25HUCZpMNhLeTVwNzu8rrDVvBMWC` is Ready, owns the custom
+  alias, and its credentialed release probe returns
+  `307 location: /admin/login`. Uncredentialed requests to the raw Vercel
+  origin return the Vercel SSO 302 for root, readings, and dashboard, so the
+  protected artifact probes cannot be used as an origin bypass.
+- ISC-496–504 and ISC-520: Rust contract tests — 14 focused API tests pass,
+  including known-source acceptance, unknown-source rejection, length bounds,
+  legacy payload compatibility, and proof that client context never enters
+  Engine options.
+- ISC-500–506 and ISC-525: production migration/read-back — migration 037
+  created a nullable indexed `claimed_source_client`; a production transaction
+  inserted and selected `raycast-noesis`, then rolled back. A disposable
+  authenticated Urania request subsequently returned 200 and persisted
+  `claimed_source_client=urania`; a forged source returned 422, an invalid API
+  key returned 401, and production filter counts proved all/legacy/Urania as
+  2/1/1 before cleanup returned both probe-user and probe-reading counts to zero.
+  A second live matrix returned 200 and exact persisted attribution for
+  Urania, Sankalpa, and Raycast Noesis, rejected an invalid source variant for
+  each with 422, proved source counts 1/1/1, and again cleaned both tables to
+  zero probe rows.
+- ISC-505–508 and ISC-521: admin/backend builds — `cargo check` passes for
+  noesis-api/noesis-data; the Engine SDK passes 34 tests, typecheck, and build;
+  admin-web passes typecheck and production Next build. Its focused contract
+  test confirms both source displays remain escaped React text nodes, retain
+  the `Legacy / unknown` fallback, and forward the admin filter.
+- ISC-509–510 and ISC-522: Urania test/build — both client-context tests pass
+  and the production Vite bundle builds; the same-origin secret-hiding proxy
+  remains the sole transport.
+- ISC-511–512 and ISC-523: Sankalpa test/build — 9 gateway tests, renderer and
+  Electron typechecks, and the full production build pass.
+- ISC-513–515 and ISC-524: Raycast test/build — the full 76-test suite,
+  targeted routing tests, Raycast lint, and extension build pass.
+- ISC-517–519: source audit — client metadata contains only fixed source,
+  platform, and bounded version hints; no client gained admin routes and no
+  authorization path reads the claimed source. A disposable authenticated
+  non-admin identity returned 403 from both admin readings and admin system
+  health through the Railway origin, while its session reported
+  `has_admin_access=false`; cleanup left zero probe users.
+- ISC-526: live release — Railway deployment
+  `2c382871-d846-4182-aca8-f4319248ee13` is SUCCESS; `/health/live` returns
+  version 3.3.1 with 18 engines and 6 workflows.
+- ISC-528: deferred to the user's authenticated functional smoke in rollout
+  issue #908 because the Chrome control connection was unavailable; sign-in
+  must prove the 144 root reaches the admin shell before the separate
+  user-owned visual review. This is the remaining end-to-end production
+  auth-gate verification, not a cosmetic check: direct protected artifact
+  probes confirm `/admin/readings` and `/admin/dashboard` each return 200, but
+  they do not substitute for the authenticated Cloudflare session.
+- ISC-529: GitHub reconciliation — draft PRs Selemene #907, Sankalpa #13, and
+  Urania #174 link the implementation; #893 and #895 now carry current-state
+  notes; #908 owns client releases, live source verification, telemetry, and
+  eventual Witness retirement.
+- E4 CheckCompleteness: pass — all twelve required sections are populated; the
+  529 stable criteria exceed the 128 floor; anti-criteria and experiential
+  antecedents are present; Iteration 15 has zero untracked hard failures.
+- Rule 2a audit: pass with zero critical findings and no implementation
+  blockers. The registered `Cato` agent type was attempted twice but rejected
+  by the collaboration runtime as unknown, so an independent read-only audit
+  ran through the available fallback and explicitly accepted ISC-528 as the
+  single tracked user-session verification.
+- ReReadCheck: the final evidence was compared against the user's exact request:
+  144 is reserved for protected admin actions, while Urania, Sankalpa, and
+  Raycast Noesis execute through Selemene and feed canonical reading provenance
+  back into its infrastructure.
+
+### Changelog
+
+- Conjectured: the screenshot meant the admin application route itself was
+  missing or its `/admin` base path was incorrect.
+- Refuted by: Vercel project inspection and protected direct curl showed the
+  current artifact already redirected root into `/admin/login`; the observed
+  page was a historical custom-alias deployment miss.
+- Learned: the reliable repair is to reassert the alias and make the redirect
+  an executable release gate, while keeping the admin host and Selemene data
+  plane as separate security boundaries.
+- Criterion now: a release is incomplete if the direct root is not a 307 to
+  `/admin/login`, if `144` lacks the Access challenge, or if Selemene health
+  does not remain green after the matching backend deployment.
+
+## Iteration 16 — Light composition and responsive evidence surfaces
+
+### Problem
+
+The Folio Parchment layer owns the right components and source-shaped engine
+elements, but a prose-width constraint is applied to the complete structured
+composition. Viewport breakpoints then create three-column grids inside that
+narrow parent. The Live Status dialog has the same containment error: desktop
+viewport breakpoints create four columns inside a small modal, while invalid
+reading-surface token utilities expose the gold grid background as a solid
+mustard block. The result is structurally complete but visually compressed,
+low-contrast, and difficult to read.
+
+### Vision
+
+Parchment behaves as a generous reading material: prose keeps a calm 70ch
+measure while structured engine output expands to the available reading track.
+Dark instrument cards sit within that sheet with deliberate spacing and no
+collisions. The provenance rail reads as a vertical ledger. Live Status becomes
+a compact, high-contrast operational instrument whose cells wrap naturally at
+every supported viewport without hiding evidence.
+
+### Out of Scope
+
+- No new engine, workflow, report, or fabricated reading data.
+- No global rebrand or replacement of the dark Noesis shell.
+- No change to Folio persistence, consent, redaction, or source semantics.
+- No deployment to production before the user's separate visual review.
+- No replacement of the existing dialog accessibility primitives.
+
+### Principles
+
+- Parchment is a material boundary, not a global width constraint.
+- Prose measure and structured-composition measure are separate concerns.
+- Responsive rules answer the available parent width, not only viewport width.
+- Content must wrap or reflow; important evidence must never be clipped.
+- Light sheets and dark instruments retain explicit, accessible contrast.
+- Fix shared layout causes before tuning individual cards.
+
+### Constraints
+
+- Preserve the React, Vite, Tailwind, Vitest, and Playwright stack.
+- Preserve all source-shaped reading elements and the 18-engine roster.
+- Retain the 70ch prose token for narrative reading.
+- Retain existing Folio Reading, Evidence, and Source layer semantics.
+- Preserve keyboard dialog behavior, focus management, and body-scroll lock.
+- Use only existing design tokens or valid scoped additions.
+
+### Goal
+
+Deliver a composition pass that makes the selected Folio reading and Live
+Status evidence panel readable, contained, and intentional from 320px through
+1440px, with focused unit contracts, responsive browser evidence, and a clear
+handoff for the user's final visual review.
+
+### Criteria
+
+- [x] ISC-530: The Folio reading canvas fills its available main-column width.
+- [x] ISC-531: Narrative prose remains limited to the existing 70ch measure.
+- [x] ISC-532: Full Spectrum engine output renders at no more than two columns.
+- [x] ISC-533: Creative Expression engine output renders at no more than two columns.
+- [x] ISC-534: Engine cards retain a comfortable readable width at desktop.
+- [x] ISC-535: No three-column viewport breakpoint compresses a narrow Folio parent.
+- [x] ISC-536: Structured composition shrink boundaries use `min-width: 0`.
+- [x] ISC-537: The selected Folio route has no horizontal overflow at 320px.
+- [x] ISC-538: The selected Folio route has no horizontal overflow at 768px.
+- [x] ISC-539: The selected Folio route has no horizontal overflow at 1024px.
+- [x] ISC-540: The selected Folio route has no horizontal overflow at 1440px.
+- [x] ISC-541: Long Folio identifiers wrap within the provenance rail.
+- [x] ISC-542: Long checksums wrap within the provenance rail.
+- [x] ISC-543: Long account identities wrap within the provenance rail.
+- [x] ISC-544: Provenance labels remain legible without three-line compression.
+- [x] ISC-545: The canonical reading action remains fully visible.
+- [x] ISC-546: Canonical record identity remains readable rather than truncated.
+- [x] ISC-547: Live Status health cells use a valid reading-surface token.
+- [x] ISC-548: Live Status never exposes a solid mustard grid background.
+- [x] ISC-549: Operator evidence titles meet dark-surface contrast requirements.
+- [x] ISC-550: The Live Status health summary renders at no more than two columns.
+- [x] ISC-551: Infrastructure evidence renders at no more than two columns.
+- [x] ISC-552: Infrastructure names and states never collide.
+- [x] ISC-553: The loaded-engine value wraps without overlapping adjacent metrics.
+- [x] ISC-554: Roster rows contain every engine label and status.
+- [x] ISC-555: The modal body scrolls vertically when content exceeds its height.
+- [x] ISC-556: Live Status uses enough desktop width for operational evidence.
+- [x] ISC-557: Parchment body text meets WCAG AA contrast.
+- [x] ISC-558: Dark instrument text meets WCAG AA contrast.
+- [x] ISC-559: Responsive metadata remains readable without 8px labels.
+- [x] ISC-560: Parchment-to-instrument transitions use deliberate spacing and rules.
+- [x] ISC-561: Existing focus-visible states remain intact.
+- [x] ISC-562: Escape, focus trap, and focus restoration remain intact.
+- [x] ISC-563: Reading/Evidence/Source semantic ownership remains unchanged.
+- [x] ISC-564: Every declared engine remains represented.
+- [x] ISC-565: Every existing workflow visual mapping remains represented.
+- [x] ISC-566: The privacy-filtered Source layer remains collapsed by default.
+- [x] ISC-567 [ANTI]: No reading or engine content is fabricated.
+- [x] ISC-568 [ANTI]: No returned engine is hidden to simplify the layout.
+- [x] ISC-569 [ANTI]: No important evidence is clipped with overflow hiding.
+- [x] ISC-570 [ANTI]: No global recolor or brand-system replacement is introduced.
+- [x] ISC-571: Focused component and contract tests pass.
+- [x] ISC-572: TypeScript typechecking passes.
+- [x] ISC-573: The complete unit suite passes.
+- [x] ISC-574: The production build passes.
+- [x] ISC-575: Browser evidence covers the Folio route at 1440px.
+- [x] ISC-576: Browser evidence covers the Folio route at mobile width.
+- [x] ISC-577: Browser evidence covers Live Status at 1440px.
+- [x] ISC-578: Browser evidence covers Live Status at mobile width.
+- [x] ISC-579: Browser verification reports no serious console or Axe failures.
+- [ ] ISC-580: The result is handed to the user for independent visual review.
+
+### Features
+
+| Feature | Description | Satisfies | Depends on |
+| --- | --- | --- | --- |
+| Fluid Parchment composition | Full reading track with prose-only measure | 530–540, 557, 560 | ReadingCanvas + composition grids |
+| Vertical provenance ledger | Parent-width-safe facts and canonical action | 541–546, 563, 566 | TrustPanel + reference card |
+| Responsive Live Status | Valid surface tokens and two-column evidence | 547–556, 561–562 | EngineStatusPanel + OperatorField |
+| Responsive exit gate | Static contracts and four-width browser checks | 571–579 | Vitest + visual matrix |
+
+### Test Strategy
+
+| ISC | Type | Check | Threshold |
+| --- | --- | --- | --- |
+| 530–536 | source/render | canvas and workflow grid contracts | full track; prose 70ch; max two columns |
+| 537–546 | browser/render | root, layer, rail, values, action containment | `scrollWidth <= clientWidth + 1` |
+| 547–560 | unit/browser | computed surfaces, contrast, wrapping, modal bounds | no collisions; ≥4.5:1 text contrast |
+| 561–566 | interaction/SSR | keyboard lifecycle and Folio layer semantics | unchanged accessible behavior |
+| 567–570 | source audit | data, visibility, overflow, and token diff review | zero anti-criterion violations |
+| 571–574 | repository gates | focused tests, typecheck, suite, build | all exit zero |
+| 575–579 | Playwright | 320/768/1024/1440 evidence and Axe | contained, clean, usable |
+| 580 | handoff | user reviews generated screenshots | explicit visual-review boundary |
+
+### Decisions
+
+- Keep 70ch as the prose measure but remove it as the width of the complete
+  `ReadingCanvas`; this separates reading rhythm from structured data layout.
+- Cap dense workflow compositions at two columns because a three-column grid
+  cannot meet readable card widths alongside the 22rem trust rail.
+- Stack trust facts vertically inside the rail; viewport `sm` breakpoints cannot
+  reliably describe a narrow nested parent.
+- Correct `bg-reading-paper` to the defined `bg-reading-surface` token instead
+  of masking the resulting gold grid with ad-hoc colors.
+- Keep dark engine instruments inside Parchment; the pass repairs hierarchy,
+  measure, and containment without flattening the established semantic contrast.
+- Extend responsive evidence at exact requested widths rather than treating
+  screenshots as unasserted documentation.
+
+### Verification
+
+- Folio composition: named CSS container keeps narrative prose at 70ch while
+  Full Spectrum uses one column below 48rem and exactly two above it; nested
+  supporting elements stay one column and fill their Engine track.
+- Provenance: facts stack vertically with `overflow-wrap:anywhere`; the rail
+  stacks below Reading through 1440px and becomes a sticky 22rem ledger on the
+  1920px evidence row.
+- Live Status: engine-only dialog sizing reaches 48rem, the body owns vertical
+  scrolling, health/infrastructure/roster grids respond to the operator
+  container, all 18 canonical engines remain present, and all status copy uses
+  dark-surface contrast tokens. Deep-link dismissal removes the child hash and
+  restores focus to Live Status in both graph and compact list lenses; browser
+  Back also clears modal state while preserving the active Graph Lens. The
+  return-focus contract resolves the equivalent destination when a responsive
+  list-to-graph transition replaces the original control.
+- Typography/contrast: affected Reading metadata now has a 12px floor; the
+  rich browser payload surfaced and repaired dark artifact token misuse plus
+  a computed 3.8:1 fact-label failure. Twenty-two static contrast contracts
+  cover the dark instrument set, with Axe retaining the runtime numeric gate.
+- Repository: 87 Vitest files and 709 tests pass; application and function
+  TypeScript gates pass; production Vite build passes; UI contract, privacy
+  evidence, and home contracts pass.
+- Browser: 48 deterministic Playwright rows pass, including 320, 768, 1024,
+  1440, and 1920 Reading composition evidence plus compact/tablet/landscape/
+  desktop Live Status evidence. Seven representative rich engine artifacts,
+  the 18-engine roster, root/layer/cell overflow, modal reachability, deep-link
+  focus restoration, responsive lens replacement, browser-history return, body
+  scroll lock, unexpected console/HTTP failures, and serious/critical Axe
+  findings are asserted in-browser.
+- ISC-580 remains intentionally open for the user's independent visual review.
+
+### Changelog
+
+- Conjectured: the light version primarily needed color and typography tuning.
+- Refuted by: source tracing matched the screenshots to a full-canvas 70ch cap,
+  viewport-driven nested grids, invalid surface tokens, and fixed rail columns.
+- Learned: the visual degradation is a shared composition-system failure, not
+  a collection of isolated card defects.
+- Criterion now: structured reading and operator evidence must prove parent-safe
+  containment at 320, 768, 1024, and 1440 before visual review.
+
+## Iteration 17 — Archive invitation and conversation continuity
+
+### Problem
+
+The `/723` corpus contains hundreds of completed Solo and Synastry artifacts,
+but the protected operator journey is not complete. Selemene has an
+uncommitted metadata-only Living Archive list/detail surface, Urania's Folio is
+correctly owner-scoped to its own D1 rows, and neither system has a
+completed-reading invitation grant. The narrator UI exists in Urania, but it is
+only revealed after selecting a low-level witness doorway; the visible
+“Begin in chat” affordance instead lands on a parent constellation. The pieces
+exist, but the operator and recipient cannot experience one continuous reading
+journey.
+
+### Vision
+
+An authorized operator opens Living Archive and immediately understands which
+readings are complete, who or what each reading concerns, and whether a
+recipient link is ready. Selecting a reading preserves its canonical identity
+while revealing the readable artifact, provenance, and one primary “Invite
+recipient” action. The recipient opens a bounded, revocable link into Urania,
+encounters the completed reading first, and can continue with the narrator in
+the same reading context. At every depth the graph remains the interface:
+reading, invite, evidence, and conversation are visible relationship nodes,
+not features hidden in menus.
+
+### Out of Scope
+
+- No copy of the `/723` archive into Urania's flat D1 Folio.
+- No client-side proxy of protected Selemene administrator endpoints.
+- No public exposure of filesystem locators, artifact checksums, owner UUIDs,
+  or administrative provenance.
+- No bulk email campaign, mailing-list feature, or contact management.
+- No fabricated reading body when a publishable artifact is unavailable.
+- No replacement of Urania's graph, Folio, narrator, or reading grammar.
+
+### Constraints
+
+- Selemene remains authoritative for imported archive metadata, artifacts,
+  invitation issuance, revocation, and audit.
+- Urania remains the recipient reading and conversation surface.
+- Operator presentation is not authorization; every archive mutation is
+  server-authorized.
+- Invitation tokens are opaque capabilities, stored only as digests, scoped to
+  one reading, expiring, revocable, and never logged in plaintext.
+- A recipient payload is privacy-filtered and excludes administrator-only
+  provenance even when the operator detail includes it.
+- Existing user-owned Folio and relationship consent contracts remain intact.
+- All changes preserve keyboard reachability and mobile containment.
+
+### Goal
+
+Ship a coherent protected-admin-to-recipient flow in which authorized
+operators can browse the completed `/723` archive, open a canonical reading,
+issue and revoke an expiring recipient link for that already-completed
+reading, and hand the recipient into a first-class Urania reading and chat
+journey without copying archive rows or weakening authority boundaries.
+
+### RootCauseAnalysis — Kepner-Tregoe
+
+| Dimension | IS | IS NOT | Distinction | Change |
+| --- | --- | --- | --- | --- |
+| What | Imported `/723` reading | Urania owner Folio row | Archive metadata and artifact body live outside Urania | Archive ingestion stopped at protected provenance |
+| Where | Living Archive and low-level node doorway | Folio detail and home map | Operator, recipient, and narrator surfaces own different routes | Navigation evolved independently per capability |
+| When | Returning to completed work | Creating a fresh witness reading | No grant is created at completion or selection | Completion persisted identity but not distribution |
+| Extent | Hundreds of local artifacts, one visible Urania Folio row | Newly generated self-service rows | Corpus breadth is invisible to owner-scoped Folio by design | Correct authorization was mistaken for a complete journey |
+
+Surviving contributing factors are: the archive stopped at metadata-only
+operator review; completed-reading distribution has no domain object; and chat
+is mounted from doorway selection rather than represented as a stable product
+route. Fixing only table styling, a copy button, or the chat modal cannot
+explain all three distinctions.
+
+### SystemsThinking — Iceberg
+
+- **Event:** the operator cannot see the `/723` body, invite its recipient, or
+  find chat from the visible reading journey.
+- **Pattern:** each correct subsystem exposes its own doorway, so new
+  capabilities become isolated surfaces rather than relations around one
+  reading identity.
+- **Structure:** Selemene owns archive authority, Urania owns recipient
+  experience, and no capability grant connects them; hash routes represent
+  graph nodes and Folio but not conversation.
+- **Mental model:** “a feature exists if a component or endpoint exists.” The
+  product requires the stronger model: a capability exists only when the right
+  actor can discover, enter, complete, and recover it.
+- **Structural intervention:** make the canonical reading ID the shared spine;
+  attach operator invite issuance, recipient redemption, and conversation as
+  explicit bounded transitions.
+
+### FirstPrinciples — Deconstruct and Reconstruct
+
+The irreducible jobs are: enumerate completed readings, select one immutable
+reading identity, grant bounded recipient access, render its real body, and
+continue a conversation without changing that identity. An operator dashboard,
+copy button, modal chat, and filesystem are implementation forms, not
+requirements. The reconstructed flow keeps only two hard authority surfaces:
+Selemene issues a privacy-filtered reading capability; Urania consumes that
+capability and owns the recipient encounter. Administrative provenance never
+crosses the boundary.
+
+### Criteria
+
+- [x] ISC-581: Authorized operators can reach Living Archive from protected navigation.
+- [x] ISC-582: Living Archive returns the complete paginated `/723` archive total.
+- [x] ISC-583: Archive search matches reading title.
+- [x] ISC-584: Archive search matches subject name.
+- [x] ISC-585: Archive search matches owner email.
+- [x] ISC-586: Archive filters distinguish Solo and Synastry reading types.
+- [x] ISC-587: Archive summary shows total completed readings.
+- [x] ISC-588: Each archive row shows title, subject, type, state, and captured date.
+- [x] ISC-589: Selecting a row produces a stable reading-specific URL.
+- [x] ISC-590: Browser history reopens and closes the selected reading predictably.
+- [x] ISC-591: Detail renders the real readable artifact when available.
+- [x] ISC-592: Detail reports an explicit unavailable state instead of fabricating content.
+- [x] ISC-593: Detail preserves owner, subject, source, and producer as separate facts.
+- [x] ISC-594: One primary Invite recipient action is visible on completed reading detail.
+- [x] ISC-595: Invite creation requires a server-authorized operator permission.
+- [x] ISC-596: Invite creation accepts an expiry from a bounded allowlist.
+- [x] ISC-597: Invite creation is scoped to exactly one canonical reading.
+- [x] ISC-598: Invite tokens contain at least 256 bits of randomness.
+- [x] ISC-599: Only an invite-token digest is persisted.
+- [x] ISC-600: Invite plaintext is returned only in the creation response.
+- [x] ISC-601: Invite access fails after expiry.
+- [x] ISC-602: Invite access fails after revocation.
+- [x] ISC-603: Invite creation and revocation append auditable events.
+- [x] ISC-604: Admin detail lists active, expired, and revoked invite states.
+- [x] ISC-605: Operator can copy the complete recipient URL.
+- [x] ISC-606: Clipboard failure exposes a selectable fallback URL.
+- [x] ISC-607: Recipient URL resolves without protected admin authority.
+- [x] ISC-608: Recipient payload contains the canonical reading identity.
+- [x] ISC-609: Recipient payload contains the real privacy-filtered reading body.
+- [x] ISC-610: Recipient payload excludes owner UUID and email.
+- [x] ISC-611: Recipient payload excludes filesystem and object-storage locators.
+- [x] ISC-612: Recipient payload excludes administrative checksums and import metadata.
+- [x] ISC-613: The system exposes a stable public reading-invite route outside protected admin.
+- [x] ISC-614: The invite route renders the shared reading before asking for conversation input.
+- [x] ISC-615: The invite route exposes a visible Continue in conversation relation.
+- [x] ISC-616: “Begin in chat” opens a real conversational surface.
+- [x] ISC-617: Conversation has a stable route independent of a transient modal.
+- [x] ISC-618: Conversation resumed from a reading retains that canonical reading ID.
+- [x] ISC-619: Fresh conversation still requires an explicit Selemene doorway.
+- [x] ISC-620: Closing conversation returns to the reading or graph origin.
+- [x] ISC-621: Completion continues to link one canonical Folio reading.
+- [x] ISC-622: Antecedent: reading, invite, evidence, and conversation are visible relations around the selected reading.
+- [x] ISC-623: Anti: operator presentation never grants cross-user API authority.
+- [x] ISC-624: Anti: no protected Selemene administrator endpoint is proxied through Urania.
+- [x] ISC-625: Anti: no `/723` archive row is copied into Urania D1.
+- [x] ISC-626: Anti: no invitation grants access to a different reading ID.
+
+### Features
+
+| Feature | Description | Satisfies | Depends on | Parallelizable |
+| --- | --- | --- | --- | --- |
+| Archive operator flow | Searchable, typed, deep-linkable completed-reading browse/detail | 581–593 | existing Living Archive query/detail | yes |
+| Completed-reading invitation | Expiring digest-only grants with copy, audit, list, and revoke | 594–606, 623, 626 | archive identity + authorization | yes |
+| Recipient reading contract | Privacy-filtered capability resolution and real artifact body | 607–612, 624–625 | publishable artifact resolver | no |
+| First-class conversation | Stable routes and reading-context handoff in Urania | 613–622 | recipient contract + ChatSheet | yes |
+
+### Test Strategy
+
+| ISC | Type | Check | Threshold | Tool |
+| --- | --- | --- | --- | --- |
+| 581–593 | admin UI/API | list, search, filters, deep link, readable detail | all named fields and states | Vitest + browser |
+| 594–606 | API/security | create, digest storage, expiry, revoke, audit, copy | zero plaintext persistence | Rust integration + UI contract |
+| 607–612 | capability boundary | redeem valid/expired/revoked token; inspect payload | only bounded reading fields | Rust integration + curl |
+| 613–622 | Urania route/UI | invite, chat, context, close/back, canonical handoff | stable route and identity | Vitest + browser |
+| 623–626 | anti-regression | authorization, proxy, D1, cross-reading probes | zero violations | source audit + negative tests |
+
+### Decisions
+
+- 2026-07-28: The `/723` archive remains in Selemene; Urania will not gain an
+  administrator list or proxy because operator presentation is not authority.
+- 2026-07-28: A completed-reading invitation is a new bounded capability, not
+  a relationship-consent invitation and not a public artifact URL.
+- 2026-07-28: The recipient URL must fail closed when a real readable artifact
+  cannot be resolved. Metadata-only success would misrepresent delivery.
+- 2026-07-28: Chat becomes a stable product route. Modal presentation may
+  remain as responsive rendering, but route and reading context own recovery.
+- 2026-07-28: Refero flow lookup was attempted but the connected subscription
+  was inactive; existing Urania/Selemene interface grammars remain the visual
+  reference rather than inventing a third aesthetic.
+
+### Verification
+
+- ISC-581–593: migration 001–037 applied to disposable PostgreSQL 16; the
+  v2 importer rolled back an injected pre-COMMIT failure to 0/0, converged to
+  53 readings, 55 unique subject links, 2 relationships, and 4 relationship
+  members, rejected stored-row drift, and reran idempotently. Real API and
+  Chromium proved 53/53 complete, title/subject/owner search, 51 Solo/2
+  Synastry filtering, stable UUID detail, full responsive containment, and
+  the two visible Synastry participant/relationship contracts.
+- ISC-594–606: real API creation returned 201 with a 43-character URL-safe
+  256-bit token; PostgreSQL retained only its 64-character SHA-256 digest.
+  Bounded expiry rejected 0/721 hours, invitation history showed active,
+  expired, and revoked states, and responsive Chromium proved create/copy,
+  selectable fallback, long-link containment, and exact revoke.
+- ISC-607–612: unauthenticated active redemption returned 200 and
+  `Cache-Control: no-store`; concurrent reusable redemption returned 200/200,
+  then the same token returned 404 after revocation. Expired, revoked,
+  wrong-reading, and malformed tokens returned the same unavailable envelope.
+  The real privacy-filtered payload contained the checksum-matching artifact
+  body and omitted owner, locator, checksum, import, and token fields.
+- ISC-613–622: Urania passed 715 tests, production build, 17 UI contracts, and
+  five real Chromium desktop/mobile stories for direct `#/chat`, doorway
+  chooser, canonical reading identity, bounded Folio return, malformed
+  doorway recovery, and close/back behavior with no unexpected console or
+  network errors. Multi-turn, invalid-turn, retry, save-failure, and expired
+  binding behavior remain covered by the state-machine and transition suites.
+- ISC-623–626: protected archive list/detail returned 401 without credentials
+  and 403 to a valid basic-only JWT; valid admin access passed. No protected
+  endpoint was proxied through Urania, no archive row entered D1, and
+  cross-reading token reuse failed with the same 404 body.
+- Coverage: 46/46 passed; all 46 have tool-verified live or executable-test
+  evidence.
+
+### Changelog
+
+- 2026-07-28 | conjectured: correct Synastry typing and two returned rows were
+  sufficient proof that relationship readings were modeled completely.
+  refuted by: advisor review and the real API showed each Synastry row carried
+  one combined group subject and no relationship label.
+  learned: relationship readings require distinct candidate identities,
+  explicit membership roles, and a visible relationship on both list and
+  stable detail; type alone is not a relationship model.
+  criterion now: ISC-588 and ISC-593 require two subject links plus the
+  relationship label/kind for every bounded Synastry row, proven in the real
+  API and browser.
+
+## Iteration 18 — AgentScope Context Orchestration Plan (2026-07-28)
+
+### Problem
+
+Urania and Selemene already contain engine execution, the Witness Dyad, a
+multi-pass report pipeline, provenance-oriented reading agents, Folio storage,
+relationship modeling, provider routing, and substantial planning. The missing
+capability is not “agents” in the abstract: calculated engine results, selected
+personal context, interpretation, and reading-aware conversation still move
+through separate contracts. Introducing AgentScope without a strict fit analysis
+could duplicate this infrastructure, create a second memory authority, or place
+a Python orchestration runtime inside Cloudflare-facing paths where it does not
+belong.
+
+### Vision
+
+AgentScope is used only where its abstractions measurably improve the existing
+Dyad orchestration: observable multi-agent turns, explicit state transitions,
+tool and model adapters, structured message flow, evaluation, and replay. The
+canonical reading identity, deterministic engine results, context provenance,
+Folio authority, and graph-first Urania experience remain native Noesis
+contracts. A future reader can see exactly which AgentScope ideas are adopted,
+which are adapted behind a boundary, and which are rejected as duplicate
+infrastructure.
+
+### Out of Scope
+
+- No AgentScope dependency or runtime is added during this planning iteration.
+- No existing Dyad, Witness pipeline, agent kernel, Folio, or provider router is replaced.
+- No deterministic or stochastic engine result is regenerated by an agent.
+- No NotebookLM premium-asset path is moved online.
+- No Python service is placed inside Urania’s Cloudflare Pages runtime.
+- No framework-owned memory becomes the canonical source of user reading history.
+
+### Principles
+
+- Framework adoption follows capability gaps, never repository popularity.
+- Calculations complete before agent interpretation begins.
+- Provenance is a first-class data contract, not prompt prose.
+- AgentScope may orchestrate agents; Noesis continues to own reading truth.
+- The graph remains the interface at every depth, including orchestration state.
+- Every new runtime boundary must fail closed without degrading stored readings.
+
+### Constraints
+
+- Urania remains React/Vite/Cloudflare Pages with D1-backed product state.
+- Selemene remains the authoritative Rust engine and operational API surface.
+- Existing TypeScript Witness and narrow interpretation agents remain reusable.
+- A Python AgentScope runtime, if adopted, must be isolated behind an authenticated service boundary.
+- Context selection must be bounded by reading identity, owner, subject, relationship, and explicit level.
+- Agent transcripts and model output never overwrite source engine envelopes.
+
+### Goal
+
+Produce a source-evidenced, implementation-ready plan that maps AgentScope’s
+current capabilities onto the existing Urania/Selemene/Dyad architecture,
+selects the smallest valuable integration boundary, preserves calculation and
+context provenance, and decomposes adoption into reversible TDD phases with
+exact ownership and verification.
+
+### Criteria
+
+- [x] ISC-627: The official AgentScope repository and current documentation are inspected.
+- [x] ISC-628: AgentScope language, package, release, and runtime requirements are recorded.
+- [x] ISC-629: AgentScope agent abstractions are mapped from official source.
+- [x] ISC-630: AgentScope tool execution abstractions are mapped from official source.
+- [x] ISC-631: AgentScope message, memory, and hook abstractions are mapped from official source.
+- [x] ISC-632: AgentScope multi-agent workflow abstractions are mapped from official source.
+- [x] ISC-633: AgentScope state, session, or persistence abstractions are mapped from official source.
+- [x] ISC-634: AgentScope tracing, evaluation, or observability abstractions are mapped from official source.
+- [x] ISC-635: Python-runtime compatibility with Urania and Selemene boundaries is determined.
+- [x] ISC-636: Existing Selemene Witness Dyad orchestration is traced.
+- [x] ISC-637: Existing Urania grounded interpretation-agent orchestration is traced.
+- [x] ISC-638: Existing Witness multi-pass asset orchestration is traced.
+- [x] ISC-639: Existing Folio and reading-context authority is traced.
+- [x] ISC-640: Existing provenance and source-immutability invariants are inventoried.
+- [x] ISC-641: AgentScope capability gaps and infrastructure overlaps are classified.
+- [x] ISC-642: Three integration approaches are compared with explicit trade-offs.
+- [x] ISC-643: One minimum viable integration approach is recommended.
+- [x] ISC-644: Rejected AgentScope adoption surfaces are named with rationale.
+- [x] ISC-645: The target calculation-to-conversation architecture is diagrammed.
+- [x] ISC-646: A versioned context packet contract is specified.
+- [x] ISC-647: A versioned provenance envelope contract is specified.
+- [x] ISC-648: AgentScope adapter ownership boundaries are specified.
+- [x] ISC-649: Timeout, retry, fallback, and degradation behavior is specified.
+- [x] ISC-650: Model-provider routing ownership is specified without duplication.
+- [x] ISC-651: Session and transcript persistence ownership is specified.
+- [x] ISC-652: Graph-first orchestration status and recovery surfaces are specified.
+- [x] ISC-653: Privacy and context-selection boundaries are specified.
+- [x] ISC-654: Adoption is decomposed into reversible migration phases.
+- [x] ISC-655: Every migration task names exact files or new module locations.
+- [x] ISC-656: Every migration task uses failing-test-first sequencing.
+- [x] ISC-657: Every phase names executable verification commands and expected evidence.
+- [x] ISC-658: Anti: AgentScope cannot overwrite canonical engine results or Folio identity.
+
+### Features
+
+| Feature | Description | Satisfies | Depends on | Parallelizable |
+| --- | --- | --- | --- | --- |
+| AgentScope capability study | Official-source abstraction, runtime, and operational analysis | 627–634 | none | yes |
+| Existing orchestration map | Trace Dyad, agents, Witness, Folio, and provenance contracts | 635–640 | none | yes |
+| Integration decision | Compare approaches, overlaps, rejected surfaces, and recommendation | 641–644 | capability study + orchestration map | no |
+| Target contracts | Architecture, context packet, provenance, ownership, failure semantics | 645–653 | integration decision | no |
+| Executable migration plan | Reversible phases with exact files, TDD, and verification | 654–658 | target contracts | no |
+
+### Test Strategy
+
+| ISC | Type | Check | Threshold | Tool |
+| --- | --- | --- | --- | --- |
+| 627–634 | external-source audit | AgentScope claims cite official repository or documentation | every claim source-backed | web + temporary clone |
+| 635–640 | local architecture audit | each current capability has a real definition and caller edge | no label-only inference | CodeGraph + source inspection |
+| 641–644 | decision audit | options distinguish adoption, adapter, and rejection | three alternatives, one recommendation | evidence matrix |
+| 645–653 | contract review | every data and ownership edge is explicit | zero dual authorities | schema and sequence review |
+| 654–658 | plan lint | exact paths, TDD order, commands, rollback, anti-criteria | all tasks executable | writing-plans checklist |
+
+### Decisions
+
+- 2026-07-28: This iteration is research and planning only. Existing dirty
+  worktrees remain untouched except for the project ISA and the new plan
+  document.
+- 2026-07-28: The writing-plans skill normally prefers a dedicated worktree.
+  Creating one would hide a review-only document from the active shared state;
+  this iteration keeps documentation in the current worktree and performs no
+  implementation.
+- 2026-07-28 16:13: AgentScope 2.0 will first inform executor-neutral lifecycle
+  and replay contracts, then pilot as an optional remote TaskExecutor behind
+  the existing AtomicTask, FactLock, grounding, repair, and service interfaces.
+- 2026-07-28 16:13: The host revalidates the immutable FactLock hash and every
+  claim/source reference after remote execution; an incomplete terminal event
+  sequence or provenance projection fails closed to the in-process executor.
+- 2026-07-28 16:13: AgentScope Agent Service, storage, teams, workspaces, and
+  Studio are confined to a credential-isolated evaluation lab until measured
+  scale or quality evidence justifies a separately approved expansion.
+
+### Changelog
+
+- 2026-07-28 | conjectured: AgentScope should become the new orchestration
+  layer around the existing Dyad and contextual reading flow.
+  refuted by: CodeGraph and source inspection found the extracted
+  `@witness/orchestration` package already owns AtomicTask DAGs, FactLock
+  injection, GroundingProvider, sparse contradiction repair, metrics,
+  observers, and a swappable TaskExecutor/service boundary.
+  learned: AgentScope's minimum valuable seam is executor and lifecycle
+  instrumentation, while the existing Noesis orchestration contract remains
+  the authority and comparison baseline.
+  criterion now: ISC-643 and ISC-648 require the recommended adapter boundary,
+  return-side invariants, and explicit rejection of full-service replacement.
+
+### Verification
+
+- ISC-627: Official repository, stable release, and documentation pages were inspected.
+- ISC-628: The plan records AgentScope 2.0.5, Python 3.11+, and an exact frozen lock.
+- ISC-629: `Agent`, `reply_stream`, structured output, and custom model boundaries are mapped.
+- ISC-630: Tool execution is constrained by default-deny permissions and explicit allowlists.
+- ISC-631: Messages, events, middleware, ephemeral state, and redacted replay are mapped.
+- ISC-632: Agent Teams and Agent Service are compared against the fixed native Dyad DAG.
+- ISC-633: AgentScope state remains ephemeral; Urania Folio remains persistent authority.
+- ISC-634: Lifecycle events are adopted while Noesis conformance/evaluation remains authoritative.
+- ISC-635: The Python runtime is isolated behind an authenticated internal service boundary.
+- ISC-636: Selemene calculation, Rust Witness, persistence, and provider fallback were traced.
+- ISC-637: Urania's grounded `/api/chat/interpret` flow and claim validator were traced.
+- ISC-638: `@witness/orchestration`, inference adapters, and three-pass graphs were traced.
+- ISC-639: D1 Folio, canonical reading recovery, evidence, sources, and conversation were traced.
+- ISC-640: FactLock, result hashes, source IDs, claims, and immutable reading rows are inventoried.
+- ISC-641: The plan distinguishes useful executor capabilities from duplicated infrastructure.
+- ISC-642: Full service, executor adapter, and concept/event-only approaches are compared.
+- ISC-643: Concept/event contracts first, optional remote `TaskExecutor` second, is recommended.
+- ISC-644: Agent Service ownership, dynamic fixed-Dyad teams, memory, and Studio are rejected.
+- ISC-645: Mermaid diagrams calculation-to-conversation and lifecycle/recovery flow.
+- ISC-646: `ContextPacketV1` specifies bounded, owner-scoped, additive L0–L5 context.
+- ISC-647: `ProvenanceEnvelopeV1` specifies lineage, hashes, events, claims, and terminal state.
+- ISC-648: The authority constitution assigns exactly one owner to every material concern.
+- ISC-649: The failure matrix covers timeout, retry ownership, cancellation, fallback, and stale data.
+- ISC-650: The existing Witness provider gateway remains the sole provider/model policy owner.
+- ISC-651: AgentScope sessions are ephemeral; Noesis stores executor-neutral provenance and Folio state.
+- ISC-652: Domain graph nodes expose execution status, failure, fallback, and recovery.
+- ISC-653: Context is server-selected, authorization-bounded, redacted, capped, and hash-addressed.
+- ISC-654: Thirteen tasks stage native contracts, optional worker, shadow, canary, and convergence.
+- ISC-655: Every task names verified existing paths or explicit new module locations.
+- ISC-656: Every task section contains failing-first evidence before implementation or promotion.
+- ISC-657: Every implementation phase includes executable commands and expected evidence.
+- ISC-658: The “must not own” constitution forbids source-result or Folio-identity overwrite.
+
+## Iteration 19 — AgentScope Context Orchestration Execution (2026-07-28)
+
+### Problem
+
+The approved AgentScope plan is implementation-ready, but its thirteen tasks
+span three repositories whose live worktrees already contain substantial,
+uncommitted work. Ordinary isolated worktrees would omit those required
+changes, while parallel writes into the same live repository could corrupt
+someone else's work. The integration also crosses TypeScript, Cloudflare/D1,
+Python/AgentScope, and Rust boundaries, so a locally green feature can still
+create a second truth authority or weaken provenance at the return boundary.
+
+### Vision
+
+Calculated readings become the immutable center of a contextual journey:
+authorized L0–L5 context is assembled server-side, the existing Dyad interprets
+it through a replaceable executor, every claim retains source lineage, the
+Folio stores linked interpretations, and the chat/graph surfaces make the run
+recoverable. AgentScope adds structured execution and replay without becoming
+the calculation, provider, memory, orchestration, or persistence authority.
+
+### Out of Scope
+
+- No production deployment or live canary activation in this iteration.
+- No migration of premium NotebookLM asset generation.
+- No synchronous autoresearch inside ordinary reading requests.
+- No AgentScope Agent Service, Studio, workspace, or long-term memory adoption.
+- No replacement of Selemene calculations or the native Witness executor.
+- No Codex coding or audit subagents; the user required OmniRoute external rails.
+- No commits of unrelated pre-existing worktree changes.
+
+### Principles
+
+- Calculation truth is immutable before interpretation begins.
+- Provenance crosses every process boundary as data, never prompt implication.
+- One concern has one authority even when execution is distributed.
+- Native behavior stays continuously testable throughout migration.
+- Context depth expands evidence, while consciousness level changes register.
+- Graph-visible lifecycle state describes domain events, not framework brands.
+- Failure closes toward the native path and never toward silent acceptance.
+
+### Constraints
+
+- Selemene remains the engine and Rust persistence authority.
+- Urania remains reading identity, Folio, authorization, chat, and UI authority.
+- `@witness/orchestration` remains FactLock, DAG, grounding, repair, and validation authority.
+- AgentScope is pinned exactly to 2.0.5 in an isolated Python 3.11+ service.
+- The browser may send IDs, question, and selected depth; it may not send trusted source payloads.
+- All coding patches originate through Temperance/OmniRoute `command-code`.
+- Live-repository write waves are serialized whenever their target files overlap.
+- Existing dirty changes are preserved and incorporated rather than reverted.
+
+### Risks
+
+- A remote executor can return plausible prose carrying a changed FactLock unless
+  the host performs return-side validation before contradiction repair.
+- An isolated HEAD-based worktree can silently erase the semantic dependencies
+  currently present only in uncommitted files.
+- AgentScope 2.0.5 may not support the workstation's Python 3.14 even though its
+  declared floor is 3.11; the worker must therefore use a locked 3.11 runtime.
+- Provider fallback can duplicate model calls if retry ownership exists in both
+  the gateway and AgentScope.
+- A D1 interpretation write can corrupt reading identity if it updates rather
+  than references the immutable source row.
+- Shadow evaluation can produce false confidence if it checks prose quality but
+  omits FactLock, terminal-event, and claim-source coverage.
+
+### Goal
+
+Implement and locally verify Tasks 1–12 of the approved AgentScope integration
+plan, then implement Task 13's disabled Rust shadow seam only if all preceding
+gates pass. The resulting system must preserve immutable calculation and Folio
+truth, expose versioned context/execution/provenance contracts, maintain native
+fallback, and demonstrate that accepted code came from OmniRoute rather than
+Codex coding rails.
+
+### Criteria
+
+#### Execution governance
+
+- [ ] ISC-659: Every accepted coding patch has an external OmniRoute run or session identifier.
+- [ ] ISC-659.1: Every coding task prompt records the plan path and wave identifier.
+- [x] ISC-660: Every accepted coding batch uses an external OmniRoute rail, never a Codex coding rail.
+- [x] ISC-661: Unrelated pre-existing worktree changes remain byte-identical after integration.
+- [x] ISC-661.1: Pre-build tracked patches and untracked manifests have recovery copies.
+- [x] ISC-662: The orchestration baseline passes 29 Node tests before implementation.
+- [x] ISC-663: The Urania agent-kernel baseline passes 11 Vitest assertions before implementation.
+- [x] ISC-664: The Selemene Witness contract baseline passes before implementation.
+- [x] ISC-665: The default executor mode remains `native`.
+- [x] ISC-665.1: Native authority assertions pass after every coding wave.
+- [x] ISC-666: Anti: no production deployment command executes during this iteration.
+
+#### Task 1 — executor-neutral contracts
+
+- [x] ISC-667: `ContextPacketV1` is exported from `@witness/orchestration`.
+- [x] ISC-668: `ExecutionEnvelopeV1` is exported from `@witness/orchestration`.
+- [x] ISC-669: `ProvenanceEnvelopeV1` is exported from `@witness/orchestration`.
+- [x] ISC-670: Canonical context hashes are byte-stable in tests.
+- [x] ISC-670.1: Canonical FactLock hashes are byte-stable in tests.
+
+#### Task 2 — return-side validation
+
+- [x] ISC-671: A fully valid executor candidate passes host validation.
+- [x] ISC-672: A candidate carrying a changed FactLock hash is rejected.
+- [x] ISC-673: A candidate missing terminal provenance is rejected.
+- [x] ISC-674: The legacy `TaskExecutor` passes the shared conformance suite.
+
+#### Task 3 — replayable lifecycle
+
+- [x] ISC-675: `NoesisAgentEventV1` represents start, delta, end, interruption, and error states.
+- [x] ISC-676: Replaying a valid event stream reconstructs one final `TaskResult`.
+- [x] ISC-677: Retry attempts remain distinct during event replay.
+- [x] ISC-678: Anti: persisted lifecycle events contain no thinking blocks.
+
+#### Task 4 — additive context
+
+- [x] ISC-679: L0 returns source rendering without invoking an LLM.
+- [x] ISC-680: Each higher interpretation depth includes the preceding permitted layers.
+- [x] ISC-681: Relationship context fails closed without an active grant.
+- [x] ISC-682: `interpretationDepth` never derives from `consciousnessLevel`.
+
+#### Task 5 — linked Folio interpretations
+
+- [x] ISC-683: Migration `0008` creates a reading-linked interpretation table.
+- [x] ISC-684: Saving an interpretation leaves its source reading row unchanged.
+- [x] ISC-685: The readings repository retrieves interpretations by canonical reading ID.
+- [x] ISC-686: Repeating one idempotency key creates one interpretation row.
+
+#### Task 6 — contextual interpretation endpoint
+
+- [x] ISC-687: The contextual interpretation endpoint validates its public request schema.
+- [x] ISC-688: The endpoint loads trusted source payloads by reading ID server-side.
+- [x] ISC-689: Every returned claim references an allowed source ID.
+- [x] ISC-690: L0 endpoint responses bypass model-provider calls.
+
+#### Task 7 — reading-aware conversation
+
+- [x] ISC-691: `ConversationPage` renders the canonical reading beside its chat surface.
+- [x] ISC-692: Chat interpretation requests carry the canonical reading ID.
+- [x] ISC-693: Selected prior-reading context respects the configured history cap.
+- [x] ISC-694: Anti: conversation rendering never falls back to mock reading prose.
+
+#### Task 8 — isolated AgentScope worker
+
+- [x] ISC-695: The worker dependency specification pins `agentscope==2.0.5`.
+- [x] ISC-696: `uv sync --frozen` succeeds from the committed lockfile.
+- [x] ISC-697: The worker health test passes.
+- [x] ISC-697.1: The worker execute test passes.
+- [x] ISC-697.2: The worker cancellation test passes.
+- [x] ISC-698: Anti: the worker exposes no persistent memory or write tools.
+
+#### Task 9 — provider gateway
+
+- [x] ISC-699: The internal model gateway rejects requests without internal authentication.
+- [x] ISC-700: Provider selection remains inside the existing Witness routing factory.
+- [x] ISC-701: AgentScope receives no provider credential material.
+- [x] ISC-702: AgentScope performs zero independent model retries.
+
+#### Task 10 — remote executor
+
+- [x] ISC-703: Executor routing supports native, shadow, and canary modes.
+- [x] ISC-704: Canary output reaches callers only after host validation.
+- [x] ISC-705: Timeout or invalid output returns the native executor result.
+- [x] ISC-706: Unknown AgentScope event fields survive under namespaced extensions.
+
+#### Task 11 — provenance-first shadow evaluation
+
+- [x] ISC-707: The shadow corpus covers L0–L5, Panchanga, Tarot, I Ching, history, and research.
+- [x] ISC-708: Shadow evaluation reports zero FactLock mutations.
+- [x] ISC-709: Shadow evaluation reports complete terminal-event coverage.
+- [x] ISC-709.1: Shadow evaluation reports complete claim-source coverage.
+- [x] ISC-710: Shadow evaluation records latency and cost budgets without auto-promotion.
+- [x] ISC-710.1: A native shadow baseline is recorded before provider-gateway changes.
+
+#### Task 12 — canary recovery
+
+- [x] ISC-711: Canary routing produces deterministic decisions from its configured inputs.
+- [ ] ISC-712: Every routing decision is recorded in executor-neutral provenance.
+- [x] ISC-713: Recovery UI exposes an explicit retry action.
+- [x] ISC-713.1: Recovery UI exposes native fallback without AgentScope branding.
+- [x] ISC-714: Native rollback succeeds without schema or source-reading restoration.
+
+#### Task 13 — disabled Rust convergence seam
+
+- [ ] ISC-715: The Rust Witness client starts in shadow-only mode.
+- [ ] ISC-715.1: The disabled Rust seam passes a no-side-effect compatibility test.
+- [ ] ISC-716: The existing Witness response contract remains byte-shape compatible.
+- [ ] ISC-717: A remote-client failure preserves the local Rust Witness response.
+- [x] ISC-718: Anti: assets, premium generation, autoresearch, and calculation routes remain unchanged.
+
+### Test Strategy
+
+| ISC range | Probe type | Threshold | Tool |
+| --- | --- | --- | --- |
+| 659–666 | execution provenance | command-code runs only; baselines retained; no deploy | Temperance indexes, git diff, test logs |
+| 667–678 | package contract | schemas, validation, and replay all pass | orchestration Node tests + TypeScript |
+| 679–694 | product integration | context, D1, endpoint, and chat behavior pass | Vitest + migration probe + browser test |
+| 695–706 | runtime boundary | pinned worker, gateway, adapter, fallback pass | uv/pytest + Node conformance tests |
+| 707–714 | promotion safety | corpus thresholds and rollback evidence pass | shadow evaluator + browser recovery story |
+| 715–718 | Rust compatibility | disabled shadow seam preserves native response | Cargo contract tests + source diff audit |
+
+### Features
+
+| Feature | Description | Satisfies | Depends on | Parallelizable |
+| --- | --- | --- | --- | --- |
+| Execution governance | Preserve shared dirty state and prove OmniRoute authorship | 659–666 | none | no |
+| Executor contracts | Context, execution, provenance, return validation, replay | 667–678 | governance | no |
+| Urania context | Additive context assembly and linked interpretations | 679–690 | executor contracts | partially |
+| Conversation flow | Canonical reading-aware chat and visible context selection | 691–694 | Urania context | no |
+| AgentScope lab | Exact worker, provider gateway, and remote executor | 695–706 | executor contracts | partially |
+| Shadow promotion | Corpus, canary routing, recovery, and rollback proof | 707–714 | all preceding features | no |
+| Rust convergence | Disabled compatibility-preserving shadow client | 715–718 | shadow promotion | no |
+
+### Decisions
+
+- 2026-07-28 16:32: The user's explicit “not the codex rails” instruction
+  overrides the Algorithm's normal Forge/Cato producer-auditor bindings.
+  `command-code` supplies implementation; a separate OmniRoute vendor supplies
+  the final cross-vendor audit.
+- 2026-07-28 16:34: Parallel git worktrees were rejected for initial coding
+  because the three live repositories contain uncommitted dependencies that
+  isolated HEAD-based worktrees would omit. External write waves target the
+  live repositories and are serialized per overlapping file set.
+- 2026-07-28 16:36: External workers may not commit. The primary session
+  integrates, audits, and verifies the combined diff while preserving unrelated
+  changes.
+- 2026-07-28 16:38: Task 13 may be implemented only after Tasks 1–12 pass their
+  local promotion gate. It remains disabled and is not deployed.
+- 2026-07-28 16:46: SystemsThinking identified rules and information flow as the
+  highest feasible leverage points: the authority constitution, versioned
+  envelopes, host validation, and replay arrive before the Python runtime.
+- 2026-07-28 16:47: FirstPrinciples classified AgentScope itself as a soft
+  implementation choice. Immutable calculation truth, owner-scoped context,
+  cross-process serialization, and native fallback are the hard constraints.
+- 2026-07-28 16:48: The provenance fault tree exposes four single-event cut
+  sets—browser-supplied truth, unvalidated remote return, source-row overwrite,
+  and overlapping dirty-tree edits. Tasks 1–6 plus serialized write waves must
+  eliminate each before canary work begins.
+- 2026-07-28 16:53: Advisor blocked BUILD until dirty-tree recovery,
+  implementation provenance, native-authority assertions, additive contract
+  staging, pre-gateway baseline capture, and per-wave rollback evidence exist.
+  These are now explicit ISCs 659.1, 661.1, 665.1, 710.1, and 715.1.
+- 2026-07-28 16:54: refined: execution waves are reordered to A0 recovery and
+  authority baseline; A1 additive contracts/validation/replay; A2 Urania
+  consumers plus isolated Python lab; B0 native corpus baseline; B1 provider
+  gateway and conversation; C remote executor/evaluation/canary; D disabled
+  Rust seam with an inertness test.
+- 2026-07-28 17:02: Root-cause-at-ingestion: the divergent state begins after a
+  calculation, before a server-authoritative context packet exists. Fixing that
+  boundary once applies to Panchanga, Tarot, I Ching, prior readings, and chat;
+  execution traces data authority upward from storage rather than patching UI
+  output downward.
+- 2026-07-28 17:12: The OmniRoute analogical/meta review confirmed
+  `TaskExecutor` as the ports-and-adapters boundary and refined shadow execution
+  to dual-write/single-read: persist native and AgentScope provenance, serve
+  only native output, and never let shadow failure degrade the native record.
+- 2026-07-28 17:19: Laguna reached its turn cap on the broad Wave A1 task and
+  then failed at the provider rail on the narrowed contract task. The coding
+  rail remains OmniRoute `command-code`; subsequent accepted patches may use
+  Kimi Code as the recorded external-model fallback, never a Codex rail.
+- 2026-07-28 17:27: The authenticated `command-code` account exhausted its
+  credits after partial Task 1 implementation. Execution stayed off Codex:
+  OmniRoute's GitHub-hosted Claude Sonnet 5 route completed the bounded patch,
+  with external session IDs retained as implementation provenance.
+- 2026-07-28 21:18: OmniRoute Spark 5.3 and Claude completed the bounded
+  implementation and audit lanes. GitHub DNS, inactive Augment, and offline
+  route failures required small primary-session integration corrections; no
+  Codex coding or audit subagent rail was introduced.
+- 2026-07-28 21:18: Task 13 remains deliberately unimplemented because the
+  shadow report sets `promotionAllowed=false`, requires human review, and has
+  no recorded operations approval. A scoped Selemene search found no
+  AgentScope or executor-mode references, so the disabled gate has no dangling
+  convergence seam.
+- 2026-07-28 21:18: ISC-712 remains open until the request execution seam
+  persists every safe routing decision inside executor-neutral provenance.
+  Safe startup and API routing metadata are implemented, but they are not
+  represented as proof of per-request persistence.
+- 2026-07-28 21:18: The independent OmniRoute audit reported no P0/P1
+  findings. Production promotion remains an operator-owned process requiring
+  shadow review, security and operations sign-off, rollback rehearsal, and
+  explicit canary approval.
+- 2026-07-28 21:18: Premium NotebookLM assets, synchronous autoresearch, and
+  all calculation engines remain outside this execution slice and unchanged.
+  The remaining seven open ISCs are explicit provenance completeness or
+  future human-gated Rust convergence work, not hidden implementation claims.
+
+### Changelog
+
+- 2026-07-28 | conjectured: isolated worktrees are always the safest place for parallel implementation
+  refuted by: all three repositories contain required uncommitted changes that would be absent from HEAD-based worktrees
+  learned: dirty shared-state integrations require serialized live-repository waves plus explicit ownership and before/after audits
+  criterion now: ISC-661 requires unrelated pre-existing changes to remain byte-identical
+- 2026-07-28 | conjectured: a passing shadow corpus is sufficient authorization to add the Rust convergence seam
+  refuted by: the evaluator explicitly reports `promotionAllowed=false` and requires human review plus operations approval
+  learned: promotion evidence and promotion authority are separate concerns; correct execution stops at the gate
+  criterion now: ISC-715–717 remain open until the recorded human promotion precondition is satisfied
+
+### Verification
+
+- ISC-662: Node baseline — `@witness/orchestration` reports 29 tests passed, 0 failed after `npm ci`.
+- ISC-663: Vitest baseline — `agent-kernel.test.ts` reports 11 tests passed, 0 failed.
+- ISC-664: Cargo baseline — existing `witness_interpret_contract_unchanged` and Witness prompt tests pass.
+- ISC-661.1: Recovery probe — `/tmp/noesis-agentscope-recovery.Y2iRMD/README.md`
+  records three HEADs plus SHA-256-verified binary patches and the overlapping
+  Urania untracked archive. Tracked patches and overlapping untracked files were
+  restored into disposable clones/directories and compared byte-for-byte; the
+  Wave A1 target collision audit found only the recovered dirty `types.ts`.
+- ISC-667–670.1: OmniRoute sessions
+  `34cc1166-6d68-4ae6-9e50-dc73b36ef524` and
+  `fdb6d01b-f5e7-4557-a324-3d78c99c9491` completed Task 1. Independent
+  verification reports 58/58 orchestration tests passing and clean TypeScript;
+  the contract suite covers exported schemas, canonical context hashing, and
+  canonical FactLock hashing.
+- ISC-671–674: OmniRoute session
+  `f3bd0913-c18e-46f7-9e40-0c935c257c09` completed the Task 2 validator and
+  legacy adapter. Independent verification reports 20/20 focused conformance
+  tests, 78/78 complete orchestration tests, and clean TypeScript. The suite
+  rejects changed FactLock hashes and missing terminal provenance before
+  assembly, while the valid legacy executor completes through the same gate.
+- ISC-675–678: OmniRoute session
+  `e2e2b154-2717-4d8d-8557-f0681c5e5493` completed the Task 3 replay
+  lifecycle. Independent verification reports 29/29 focused replay tests,
+  107/107 complete orchestration tests, clean TypeScript, and a clean targeted
+  diff check. Replay distinguishes attempts, fails closed on malformed event
+  sequences, yields a `TaskResult` only for complete streams, and recursively
+  rejects thinking or credential-bearing event payload keys.
+- ISC-687–690: OmniRoute session
+  `6aaab2c4-9da1-45c8-b284-7eeb8d8dfa9b` completed the Task 6 native API
+  seam. Independent verification reports 24/24 focused endpoint tests,
+  131/131 complete orchestration tests, clean TypeScript, and a clean targeted
+  diff check. The endpoint rejects browser-supplied facts, performs
+  owner-scoped server lookup, validates claim sources, and makes zero executor
+  calls for L0.
+- ISC-679–686: OmniRoute session
+  `a177bef8-35d6-4a1b-ae4d-4947fe4205ed` completed the Task 4–5 Urania
+  context and linked-interpretation slice. Independent verification reports
+  30/30 focused tests, clean function and root TypeScript checks, a successful
+  production build, and a clean targeted diff check. All migrations applied in
+  a disposable SQLite database; a repeated owner/idempotency pair yielded one
+  interpretation row while the source reading title and content remained
+  byte-for-byte unchanged.
+- ISC-695–698: OmniRoute sessions
+  `99d21460-4d09-4e2d-bda2-f828c95551eb`,
+  `485d3d39-58fc-40cb-8792-a2e046b9379d`, and
+  `a9df5f9f-d345-430c-aa72-4a008542223f` completed and hardened the isolated
+  Task 8 AgentScope lab. Independent verification proves frozen dependency
+  installation, `agentscope.__version__ == 2.0.5`, and 13/13 Python tests for
+  health, bounded execution, timeout, cancellation, inert authority
+  references, and empty tools/offloader state. Generated environments,
+  caches, bytecode, coverage, and local secret files are ignored while source
+  and the lockfile remain visible.
+- ISC-691–694: Urania's complete Vitest suite reports 92 files and 761 tests
+  passing; its production build and function typecheck pass. Browser validation
+  against the local Cloudflare runtime opened canonical reading
+  `2ceacf42-527e-41c4-934c-4bf0132bd76a` from the Folio, continued it into
+  conversation, preserved reading identity and context fields, and showed no
+  mock prose on desktop or mobile.
+- ISC-699–706: Witness TypeScript compilation passes. Focused routing and
+  remote-executor suites report 42/42 tests passing, including internal
+  authentication, credential isolation, no executor-owned provider retry,
+  deterministic modes, host validation, native fallback, circuit breaking,
+  FactLock/context/provenance echo checks, and namespaced extensions.
+- ISC-708–710: The pinned AgentScope 2.0.5 lab reports 20/20 Python tests
+  passing. Shadow evaluation reports 69/69 checks, all ten hard gates green,
+  zero FactLock mutations, complete terminal and claim-source coverage, twenty
+  corpus cases, 3420 ms p95 latency, approximately 0.09 cost, and
+  `promotionAllowed=false`.
+- ISC-711, ISC-713–714: Routing tests prove absent or invalid configuration
+  fails closed to native, zero-percent canary is the default, and the SHA-256
+  bucket is stable. Browser recovery injected a secret-bearing 503 followed by
+  success: reader-safe retry and native continuation retained prior turns,
+  emitted four unique idempotency keys across four requests, preserved semantic
+  fields, leaked no internal terms, and produced no page errors.
+- ISC-718 and Task 13 gate: Scoped Selemene search found no AgentScope,
+  `WITNESS_EXECUTOR_MODE`, or `witness_orchestration` references. Existing
+  living-reading invitation tests report 3/3 Node and 2/2 Rust assertions
+  passing, and the admin web TypeScript check passes without any Task 13 edits.
+- Final audit: OmniRoute Claude session `53035` reviewed routing, remote
+  execution, event projection, API exposure, startup configuration, recovery
+  UI, tests, and runbook and reported no P0/P1 findings. It independently
+  confirmed native defaults, secret isolation, provenance integrity,
+  concurrency guards, reader-safe errors, and manual promotion gates.
+- Regression note: Witness's complete suite reports 768/770 passing. The two
+  failures are the unchanged, pre-existing batch-output-quality vocabulary and
+  sentence-ending checks in untracked files last modified on 2026-07-02 and
+  2026-06-25; no accepted patch touches those files. All targeted task suites,
+  TypeScript builds, and diff checks pass.
+
+## Iteration 20 — Contextual Readings Release Cut (2026-07-29)
+
+### Problem
+
+The contextual reading, Folio, invitation, and recovery work was verified only
+inside dirty local worktrees. The active Urania branch still pointed at its
+remote commit, while the release files remained uncommitted; consequently no
+tag or Cloudflare production deployment could contain the new UI.
+
+### Vision
+
+One release identifier names the same immutable source across GitHub, the
+package version, the production D1 schema, and Cloudflare Pages. An authorized
+reader opening Urania immediately encounters the released Folio-to-conversation
+flow instead of the previous production surface.
+
+### Out of Scope
+
+- No AgentScope canary or Rust convergence activation.
+- No premium NotebookLM asset generation or archive-content publication.
+- No unrelated generated project-status snapshot in release history.
+
+### Constraints
+
+- Production remains the `urania-137` Cloudflare Pages project on branch `main`.
+- Migration `0008_reading_interpretations.sql` must precede code that writes interpretations.
+- Existing dirty work must be staged by explicit path, never broad inclusion.
+- The release must fast-forward from the current `origin/main` ancestry.
+- Cloudflare Access remains enabled on the custom domain.
+
+### Goal
+
+Publish Urania 137 v0.6.0 from an auditable Git commit, migrate production D1,
+deploy that exact source to Cloudflare Pages, and prove the released reading
+flow at the live URL.
+
+### Criteria
+
+- [x] ISC-719: A browser screenshot captures the pre-release production surface.
+- [ ] ISC-720: One feature commit contains the contextual-reading release files.
+- [ ] ISC-721: Package and lockfile both declare version `0.6.0`.
+- [ ] ISC-722: The complete Urania Vitest suite exits successfully.
+- [ ] ISC-723: The production Vite build exits successfully.
+- [ ] ISC-724: The Cloudflare Functions TypeScript check exits successfully.
+- [ ] ISC-725: Production D1 reports migration `0008` applied.
+- [ ] ISC-726: The feature branch remote points at the release commit.
+- [ ] ISC-727: Remote `main` fast-forwards to the release commit.
+- [ ] ISC-728: Annotated tag `v0.6.0` resolves to the release commit.
+- [ ] ISC-729: GitHub exposes a published `v0.6.0` release.
+- [ ] ISC-730: Cloudflare production reports the release commit as source.
+- [ ] ISC-731: Live HTML references the newly deployed hashed assets.
+- [ ] ISC-732: Browser evidence shows the released Folio and conversation flow.
+- [ ] ISC-733: Anti: AgentScope canary and premium assets remain inactive.
+- [ ] ISC-734: Anti: `_PROJECT-STATUS.md` is absent from the release commit.
+
+### Test Strategy
+
+| ISC range | Probe type | Threshold | Tool |
+| --- | --- | --- | --- |
+| 719 | browser baseline | screenshot captured before release | Playwright |
+| 720–721 | source/version | commit and two version fields agree | Git + Node |
+| 722–724 | build quality | zero failed tests or type errors | Vitest + TypeScript + Vite |
+| 725 | data migration | no pending `0008` migration | Wrangler D1 |
+| 726–729 | release provenance | branch, main, tag, and release agree | Git + GitHub CLI |
+| 730–732 | production proof | source commit, assets, and flow visible | Wrangler + curl + Playwright |
+| 733–734 | regression boundary | gated configuration and local snapshot excluded | Git + environment audit |
+
+### Features
+
+| Feature | Description | Satisfies | Depends on | Parallelizable |
+| --- | --- | --- | --- | --- |
+| Release source | Commit the bounded contextual-reading implementation | 720–721, 734 | none | no |
+| Quality gate | Re-run tests, builds, and function checks | 722–724, 733 | release source | partially |
+| Data upgrade | Apply the additive interpretation migration | 725 | quality gate | no |
+| Release provenance | Push branch/main, tag, and GitHub release | 726–729 | quality gate | no |
+| Production promotion | Deploy and visibly verify exact release | 730–732 | data upgrade, release provenance | no |
+
+### Decisions
+
+- 2026-07-29 11:50: The unchanged UI is not a rendering regression. Git proves
+  the active branch equals its remote while forty intended release paths remain
+  dirty; Cloudflare production therefore cannot contain the implementation.
+- 2026-07-29 11:50: Release v0.6.0 is a minor upgrade because it adds Folio
+  interpretations, canonical reading-aware conversation, and recovery actions
+  without intentionally breaking existing public request contracts.
+- 2026-07-29 11:50: Delegation is omitted because commit, migration, tag, and
+  production promotion form one ordered mutation chain. Parallel actors cannot
+  safely advance the same branch or deployment target.
+- 2026-07-29 12:00: Advisor review blocked the initial order because it tested
+  a dirty tree and would have deployed a non-release build artifact. The
+  corrected order is explicit staging and commit; isolated clean-checkout
+  install/test/build/typecheck; remote D1 backup and migration; branch and
+  fast-forward main push; deployment of that clean artifact; live verification;
+  then annotated tag and GitHub release publication.
+- 2026-07-29 12:00: Cloudflare reports `Git Provider: No`, confirming the Pages
+  project is direct-upload only and cannot race the explicit deployment after
+  the main push.
+
+### Changelog
+
+- 2026-07-29 | conjectured: local implementation completion implied the visible UI had advanced
+  refuted by: Git showed no new commit and Cloudflare production still referenced an earlier source
+  learned: implementation and production release require one shared, tool-proven done condition
+  criterion now: ISC-720–732 bind source, schema, release, deployment, and visual proof
+
+### Verification
+
+- ISC-719: browser screenshot — `/tmp/urania-live-before-release.png` captures
+  the custom production hostname resolving to its existing Cloudflare Access
+  boundary before the v0.6.0 release.

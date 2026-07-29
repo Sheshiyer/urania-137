@@ -57,6 +57,14 @@ test('canonical detail carries trust context while Source stays collapsed', () =
   assert.doesNotMatch(source, /<details[^>]*\sopen(?:=|\s|>)/)
 })
 
+test('Folio begins and continues through the stable conversation route', () => {
+  assert.match(page, /buildConversationPath\(\{\s*returnTo:\s*['"]\/readings['"]\s*\}\)/)
+  assert.match(page, /data-reading-relation="continue-in-conversation"/)
+  assert.match(page, /readingId:\s*selected\.id/)
+  assert.match(page, /returnTo:\s*`\/readings\/\$\{encodeURIComponent\(selected\.id\)\}`/)
+  assert.doesNotMatch(page, /href="#\/node\/witness"/)
+})
+
 test('production Folio contains no generated-board fixture contract', () => {
   const body = [page, map, trust, copy].join('\n')
   assert.doesNotMatch(body, /generated[-_ ]board/i)

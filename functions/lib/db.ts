@@ -9,6 +9,9 @@ import type { D1Database, D1PreparedStatement } from '@cloudflare/workers-types'
 import type { ReadingDTO } from '../../src/lib/api/contract'
 import { sha256Hex } from './cf-access'
 
+/** Shared D1 handle type re-exported for lib modules that only need the type. */
+export type { D1Database } from '@cloudflare/workers-types'
+
 /** Row shape of the `users` table (migration 0001). */
 export interface UserRow {
   id: string

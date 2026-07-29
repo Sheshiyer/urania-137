@@ -1,9 +1,12 @@
 import { SELEMENE_NODES } from '../../data/selemeneNodes'
+import { buildConversationPath } from '../../hooks/useHashRoute'
 import { InstrumentDialog } from '../ui/InstrumentDialog'
 
 export interface BeginReadingDialogProps {
   open: boolean
   onClose: () => void
+  conversationOnly?: boolean
+  onSelect?: (nodeId: string, childId: string) => void
 }
 
 const RUNNABLE_LENSES = SELEMENE_NODES.map((node) => ({
@@ -15,7 +18,23 @@ const RUNNABLE_LENSES = SELEMENE_NODES.map((node) => ({
  * A direct index of capabilities Urania can actually run. The taxonomy remains
  * the source of truth: reference-only children never become false doorways.
  */
-export function BeginReadingDialog({ open, onClose }: BeginReadingDialogProps) {
+export function BeginReadingDialog({
+  open,
+  onClose,
+  conversationOnly = false,
+  onSelect,
+}: BeginReadingDialogProps) {
+  const lenses = conversationOnly
+    ? RUNNABLE_LENSES
+        .map((node) => ({
+          ...node,
+          runnableChildren: node.runnableChildren.filter(
+            (child) => child.run?.kind === 'witness',
+          ),
+        }))
+        .filter((node) => node.runnableChildren.length > 0)
+    : RUNNABLE_LENSES
+
   return (
     <InstrumentDialog
       open={open}
@@ -27,7 +46,7 @@ export function BeginReadingDialog({ open, onClose }: BeginReadingDialogProps) {
       bodyClassName="max-h-[min(68vh,760px)] overflow-y-auto"
     >
       <div className="grid gap-5 sm:grid-cols-2">
-        {RUNNABLE_LENSES.map((node) => (
+        {lenses.map((node) => (
           <section
             key={node.id}
             data-parent-lens={node.id}
@@ -49,9 +68,21 @@ export function BeginReadingDialog({ open, onClose }: BeginReadingDialogProps) {
               {node.runnableChildren.map((child) => (
                 <li key={child.id}>
                   <a
-                    href={`#/node/${encodeURIComponent(node.id)}/${encodeURIComponent(child.id)}`}
+                    href={`#${
+                      conversationOnly
+                        ? buildConversationPath({ nodeId: node.id, childId: child.id })
+                        : `/node/${encodeURIComponent(node.id)}/${encodeURIComponent(child.id)}`
+                    }`}
                     data-reading-doorway={`${node.id}:${child.id}`}
-                    onClick={onClose}
+                    data-conversation-doorway={conversationOnly ? 'true' : undefined}
+                    onClick={(event) => {
+                      if (onSelect) {
+                        event.preventDefault()
+                        onSelect(node.id, child.id)
+                        return
+                      }
+                      onClose()
+                    }}
                     className="group flex min-h-11 items-center justify-between gap-4 border border-gold/15 bg-void/35 px-3.5 py-2.5 text-left transition-colors hover:border-gold/45 hover:bg-gold/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
                   >
                     <span className="font-display text-xs uppercase tracking-[0.16em] text-silver transition-colors group-hover:text-parchment">

@@ -3,12 +3,11 @@ import { Search } from 'lucide-react'
 import { SELEMENE_NODES } from '../../data/selemeneNodes'
 import { Route, navigate } from '../../hooks/useHashRoute'
 import type { User } from '../../lib/api/contract'
-import { BEGIN_READING_EVENT } from '../../pages/HomePage'
 import { IdentityChip } from './IdentityChip'
 
 /**
  * The compact global product routes. Folio has one canonical destination;
- * Begin returns to the map and opens its real runnable-doorway index.
+ * Begin opens the stable conversation route and its real doorway index.
  */
 export function TopNav({
   route,
@@ -22,19 +21,10 @@ export function TopNav({
   const activeId = route.view === 'node' ? route.nodeId : null
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const requestBeginReading = () => {
-    if (route.view === 'home') {
-      window.dispatchEvent(new Event(BEGIN_READING_EVENT))
-      return
-    }
-    navigate('/')
-    window.setTimeout(() => window.dispatchEvent(new Event(BEGIN_READING_EVENT)), 0)
-  }
-
   const items: { key: string; label: string; onClick: () => void; active?: boolean }[] = [
     { key: 'map', label: 'Map', onClick: () => navigate('/'), active: route.view === 'home' },
     { key: 'folio', label: 'Folio', onClick: () => navigate('/readings'), active: route.view === 'readings' },
-    { key: 'begin', label: 'Begin', onClick: requestBeginReading },
+    { key: 'begin', label: 'Begin', onClick: () => navigate('/chat'), active: route.view === 'chat' },
     { key: 'settings', label: 'Settings', onClick: () => navigate('/settings'), active: route.view === 'settings' },
   ]
   if (operator) {

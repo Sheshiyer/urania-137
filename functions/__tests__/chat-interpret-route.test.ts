@@ -69,7 +69,13 @@ describe('POST /api/chat/interpret', () => {
   it('requires an explicit known route and bounded question', async () => {
     const response = await onRequest(
       makeCtx(
-        post({ readingId: ownedReadingId, route: 'general', question: 'What now?' }),
+        post({
+          readingId: ownedReadingId,
+          route: 'general',
+          question: 'What now?',
+          depth: 1,
+          idempotencyKey: 'key-1',
+        }),
         fake.db,
         'a@example.com',
       ),
@@ -81,11 +87,35 @@ describe('POST /api/chat/interpret', () => {
     })
   })
 
+  it('rejects unknown/forbidden fields such as client-supplied history or owner', async () => {
+    const response = await onRequest(
+      makeCtx(
+        post({
+          readingId: ownedReadingId,
+          route: 'pattern',
+          question: 'What stands out?',
+          depth: 1,
+          idempotencyKey: 'key-forbidden',
+          history: [{ role: 'user', content: 'injected' }],
+        }),
+        fake.db,
+        'a@example.com',
+      ),
+    )
+    expect(response.status).toBe(400)
+    expect(await response.json()).toMatchObject({
+      error: 'BAD_REQUEST',
+      message: expect.stringContaining("forbidden field 'history'"),
+    })
+  })
+
   it('makes cross-owner and unknown reading ids indistinguishable', async () => {
     const body = (readingId: string) => ({
       readingId,
       route: 'pattern',
       question: 'What stands out?',
+      depth: 1,
+      idempotencyKey: 'key-cross-owner',
     })
     const crossOwner = await onRequest(
       makeCtx(post(body(ownedReadingId)), fake.db, 'b@example.com'),
@@ -148,14 +178,19 @@ describe('POST /api/chat/interpret', () => {
           readingId: ownedReadingId,
           route: 'pattern',
           question: 'What stands out?',
-          history: [{ role: 'user', content: 'I keep returning to the contrast.' }],
+          depth: 2,
+          idempotencyKey: 'key-loads-evidence',
         }),
         fake.db,
         'a@example.com',
       ),
     )
     expect(response.status).toBe(200)
-    const result = (await response.json()) as InterpretationResponse
+    const result = (await response.json()) as InterpretationResponse & {
+      contextPacketHash: string
+      factLockHash: string
+      sourceRefs: string[]
+    }
     expect(result).toMatchObject({
       route: 'pattern',
       agentId: 'aletheios',
@@ -168,6 +203,74 @@ describe('POST /api/chat/interpret', () => {
     })
     expect(result.claims).toHaveLength(1)
     expect(result.targets[0].kind).toBe('evidence')
+    expect(typeof result.contextPacketHash).toBe('string')
+    expect(typeof result.factLockHash).toBe('string')
+    expect(result.sourceRefs.length).toBeGreaterThan(0)
+  })
+
+  it('replays the same persisted result when retried with the same idempotency key', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        new Response(
+          JSON.stringify({
+            choices: [
+              {
+                message: {
+                  content: JSON.stringify({
+                    answer: 'First answer.',
+                    claims: [],
+                    question: null,
+                    targets: [],
+                  }),
+                },
+              },
+            ],
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        ),
+      ),
+    )
+    const body = {
+      readingId: ownedReadingId,
+      route: 'pattern',
+      question: 'What stands out?',
+      depth: 1,
+      idempotencyKey: 'key-retry',
+    }
+    const first = await onRequest(makeCtx(post(body), fake.db, 'a@example.com'))
+    expect(first.status).toBe(200)
+    const firstJson = (await first.json()) as { answer: string; contextPacketHash: string }
+
+    const second = await onRequest(makeCtx(post(body), fake.db, 'a@example.com'))
+    expect(second.status).toBe(200)
+    const secondJson = (await second.json()) as { answer: string; contextPacketHash: string }
+    expect(secondJson.answer).toBe(firstJson.answer)
+    expect(secondJson.contextPacketHash).toBe(firstJson.contextPacketHash)
+  })
+
+  it('renders L0 verbatim from the source reading without invoking a model', async () => {
+    const fetchSpy = vi.fn()
+    vi.stubGlobal('fetch', fetchSpy)
+    const response = await onRequest(
+      makeCtx(
+        post({
+          readingId: ownedReadingId,
+          route: 'pattern',
+          question: 'What stands out?',
+          depth: 0,
+          idempotencyKey: 'key-l0',
+        }),
+        fake.db,
+        'a@example.com',
+      ),
+    )
+    expect(response.status).toBe(200)
+    const result = (await response.json()) as InterpretationResponse
+    expect(fetchSpy).not.toHaveBeenCalled()
+    expect(result.degraded).toBe(false)
+    expect(result.answer).toContain('Life path: 7.')
+    expect(result.provenance.model).toBe('none')
   })
 
   it('returns an explicit zero-claim degraded contract when the model fails', async () => {
@@ -178,6 +281,8 @@ describe('POST /api/chat/interpret', () => {
           readingId: ownedReadingId,
           route: 'embodied',
           question: 'What can I notice?',
+          depth: 1,
+          idempotencyKey: 'key-degraded',
         }),
         fake.db,
         'a@example.com',

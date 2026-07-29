@@ -24,13 +24,20 @@ const runtime = Object.values(sources).join('\n')
 test('home copy and direct reading doorway are wired to the grounded vocabulary', () => {
   assert.match(sources.home, /UI_COPY\.promise/)
   assert.match(sources.home, /UI_COPY\.beginReading/)
-  assert.match(sources.home, /<BeginReadingDialog/)
+  assert.match(sources.home, /navigate\(['"]\/chat['"]\)/)
+  assert.match(sources.app, /<ConversationPage/)
   assert.match(
     sources.home,
     /wrapperClassName="absolute inset-0"/,
     'the graph must occupy its measured route field instead of the viewport',
   )
   assert.match(sources.threshold, /UI_COPY\.thresholdGrounding/)
+})
+
+test('global Begin opens conversation without replacing graph-first node navigation', () => {
+  assert.match(sources.topNav, /label:\s*['"]Begin['"][\s\S]*navigate\(['"]\/chat['"]\)/)
+  assert.match(sources.node, /navigate\(`\/node\/\$\{node\.id\}`\)/)
+  assert.match(sources.app, /route\.view === ['"]chat['"]/)
 })
 
 test('interactive chrome owns flow space while decorative framing may remain fixed', () => {

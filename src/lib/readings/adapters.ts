@@ -13,6 +13,7 @@ import {
 } from './types'
 import type { RelationshipStatus } from '../relationshipsApi'
 import type { GrantedSynastryReading } from './relationshipReadings'
+import type { ReadingLinkedInterpretation } from './types'
 
 export interface ThreadReadingContext extends ReadingAdapterContext {
   title: string
@@ -337,4 +338,17 @@ export function readingDocumentToSaveRequest(document: ReadingDocument): SaveRea
     title: document.title,
     content: entry,
   }
+}
+
+/**
+ * Task 5 — additive: attach server-persisted linked interpretations to a
+ * `ReadingDocument` without touching any other field. Returns a new object;
+ * documents that already omit `linkedInterpretations` are unaffected by this
+ * helper existing (nothing calls it unless a caller opts in).
+ */
+export function withLinkedInterpretations(
+  document: ReadingDocument,
+  linkedInterpretations: ReadingLinkedInterpretation[],
+): ReadingDocument {
+  return { ...document, linkedInterpretations }
 }

@@ -1,6 +1,8 @@
 import { projectReadingEvidence } from './evidence'
 import { buildInterpretationPrompts } from './prompt'
-import { resolveInterpretationAgent } from './registry'
+import { isInterpretationRoute, resolveInterpretationAgent } from './registry'
+import type { InterpretationDepth } from '../context/types'
+import { isValidInterpretationDepth } from '../context/layer-policy'
 import type {
   InterpretationClaim,
   InterpretationClaimStatus,
@@ -11,6 +13,89 @@ import type {
   InterpretationTarget,
   ReadingEvidenceSource,
 } from './types'
+
+const MAX_READING_ID = 256
+const MAX_QUESTION = 2_000
+const MAX_IDEMPOTENCY_KEY = 200
+
+/**
+ * The public request contract for `/api/chat/interpret`: a strict, minimal
+ * whitelist. The browser may only supply a reading id, a named interpretive
+ * route, a bounded question, a requested L0-L5 depth, and an idempotency key.
+ * It can NEVER supply reading text, context packets, fact locks, prior
+ * interpretations, prompt history, provider/model/tool selection, or a user
+ * identity — any of those fields, or any unknown field, causes outright
+ * rejection rather than silent stripping, so a client cannot smuggle
+ * fabricated facts into the pipeline.
+ */
+export interface MinimalInterpretationRequest {
+  readingId: string
+  route: InterpretationRequest['route']
+  question: string
+  depth: InterpretationDepth
+  idempotencyKey: string
+}
+
+const MINIMAL_REQUEST_ALLOWED_KEYS = new Set(['readingId', 'route', 'question', 'depth', 'idempotencyKey'])
+
+export type MinimalRequestValidation =
+  | { ok: true; value: MinimalInterpretationRequest }
+  | { ok: false; error: string }
+
+/**
+ * Validates the untrusted browser request body against the minimal public
+ * contract. Rejects (never strips) unknown fields, so any attempt to attach
+ * client-authored facts/history/provenance is an explicit 400, not a
+ * silently-ignored extra key.
+ */
+export function validateMinimalInterpretationRequest(value: unknown): MinimalRequestValidation {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return { ok: false, error: 'expects a JSON object body' }
+  }
+  const body = value as Record<string, unknown>
+  for (const key of Object.keys(body)) {
+    if (!MINIMAL_REQUEST_ALLOWED_KEYS.has(key)) {
+      return { ok: false, error: `contains unknown/forbidden field '${key}'` }
+    }
+  }
+  if (
+    typeof body.readingId !== 'string' ||
+    body.readingId.trim().length === 0 ||
+    body.readingId.length > MAX_READING_ID
+  ) {
+    return { ok: false, error: 'readingId must be a non-empty bounded string' }
+  }
+  if (!isInterpretationRoute(body.route)) {
+    return { ok: false, error: 'route must be one of: pattern, embodied, synthesis, navigate' }
+  }
+  if (
+    typeof body.question !== 'string' ||
+    body.question.trim().length === 0 ||
+    body.question.length > MAX_QUESTION
+  ) {
+    return { ok: false, error: 'question must be a non-empty string of at most 2000 characters' }
+  }
+  if (!isValidInterpretationDepth(body.depth)) {
+    return { ok: false, error: 'depth must be an integer between 0 and 5' }
+  }
+  if (
+    typeof body.idempotencyKey !== 'string' ||
+    body.idempotencyKey.trim().length === 0 ||
+    body.idempotencyKey.length > MAX_IDEMPOTENCY_KEY
+  ) {
+    return { ok: false, error: 'idempotencyKey must be a non-empty bounded string' }
+  }
+  return {
+    ok: true,
+    value: {
+      readingId: body.readingId.trim(),
+      route: body.route,
+      question: body.question.trim(),
+      depth: body.depth,
+      idempotencyKey: body.idempotencyKey.trim(),
+    },
+  }
+}
 
 interface CandidateResponse {
   answer: string

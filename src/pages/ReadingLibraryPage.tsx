@@ -23,7 +23,7 @@ import {
   type FolioView,
 } from '../lib/readings/folioView'
 import { useFolioState } from '../hooks/useFolio'
-import { navigate } from '../hooks/useHashRoute'
+import { buildConversationPath, navigate } from '../hooks/useHashRoute'
 import { PageFrame } from '../components/layout/PageFrame'
 import { AsyncBoundary } from '../components/ui/AsyncBoundary'
 import {
@@ -100,7 +100,7 @@ function ReadyFolio({
       {selected && document ? (
         <div className="grid min-w-0 gap-7 2xl:grid-cols-[minmax(0,1fr)_22rem]">
           <section className="min-w-0" aria-labelledby="opened-reading-title">
-            <div className="mb-3 flex items-end justify-between gap-3">
+            <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
               <div>
                 <p className="console-eyebrow">Canonical record</p>
                 <h2
@@ -110,14 +110,27 @@ function ReadyFolio({
                   Reading
                 </h2>
               </div>
-              <button
-                type="button"
-                onClick={() => navigate('/readings')}
-                className="inline-flex min-h-11 cursor-pointer items-center gap-2 font-display text-xs uppercase tracking-[0.18em] text-secondary transition-colors duration-300 hover:text-interaction-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-interaction-focus"
-              >
-                <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-                Browse Folio
-              </button>
+              <div className="flex flex-wrap items-center gap-3">
+                <a
+                  href={`#${buildConversationPath({
+                    readingId: selected.id,
+                    returnTo: `/readings/${encodeURIComponent(selected.id)}`,
+                  })}`}
+                  data-reading-relation="continue-in-conversation"
+                  className="inline-flex min-h-11 cursor-pointer items-center gap-2 font-display text-xs uppercase tracking-[0.18em] text-gold transition-colors duration-300 hover:text-parchment focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-interaction-focus"
+                >
+                  <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" />
+                  Continue in conversation
+                </a>
+                <button
+                  type="button"
+                  onClick={() => navigate('/readings')}
+                  className="inline-flex min-h-11 cursor-pointer items-center gap-2 font-display text-xs uppercase tracking-[0.18em] text-secondary transition-colors duration-300 hover:text-interaction-active focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-interaction-focus"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+                  Browse Folio
+                </button>
+              </div>
             </div>
             <div className="console-card min-w-0 p-3 sm:p-6">
               <ReadingFolio
@@ -220,7 +233,7 @@ export function ReadingLibraryPage({
               Folio map
             </a>
             <a
-              href="#/node/witness"
+              href={`#${buildConversationPath({ returnTo: '/readings' })}`}
               className="btn-primary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-parchment"
             >
               <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" />

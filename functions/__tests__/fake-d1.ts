@@ -8,14 +8,48 @@
  * counted in meta.changes, scoping enforced per row.
  */
 import type { ReadingRow, UserRow } from '../lib/db'
+import type { ReadingInterpretationRow } from '../lib/interpretations/db'
 
 const ok = (changes: number) => ({ success: true, meta: { changes, duration: 0, last_row_id: 0, served_by: 'fake' } })
 
 export function makeFakeD1() {
   const users = new Map<string, UserRow>()
   const readings = new Map<string, ReadingRow>()
+  const interpretations = new Map<string, ReadingInterpretationRow>()
 
   function run(sql: string, args: unknown[]) {
+    if (sql.startsWith('INSERT INTO reading_interpretations')) {
+      const [
+        id, reading_id, owner_user_id, idempotency_key, route,
+        interpretation_depth, consciousness_level, question, answer,
+        context_packet_hash, fact_lock_hash, source_refs_json, provenance_json, created_at,
+      ] = args as [
+        string, string, string, string, string,
+        number, number, string, string,
+        string, string, string, string | null, number,
+      ]
+      const conflict = [...interpretations.values()].some(
+        (row) => row.owner_user_id === owner_user_id && row.idempotency_key === idempotency_key,
+      )
+      if (conflict) return ok(0) // ON CONFLICT(owner_user_id, idempotency_key) DO NOTHING
+      interpretations.set(id, {
+        id,
+        reading_id,
+        owner_user_id,
+        idempotency_key,
+        route,
+        interpretation_depth,
+        consciousness_level,
+        question,
+        answer,
+        context_packet_hash,
+        fact_lock_hash,
+        source_refs_json,
+        provenance_json,
+        created_at,
+      })
+      return ok(1)
+    }
     if (sql.startsWith('INSERT INTO users')) {
       const [id, email, now] = args as [string, string, number]
       const existing = users.get(id)
@@ -63,10 +97,41 @@ export function makeFakeD1() {
       const row = readings.get(args[0] as string)
       return row && row.user_id === args[1] ? { ...row } : null
     }
+    if (
+      sql.startsWith('SELECT') &&
+      sql.includes('FROM reading_interpretations') &&
+      sql.includes('WHERE owner_user_id = ?1 AND idempotency_key = ?2')
+    ) {
+      const [ownerUserId, idempotencyKey] = args as [string, string]
+      const row = [...interpretations.values()].find(
+        (item) => item.owner_user_id === ownerUserId && item.idempotency_key === idempotencyKey,
+      )
+      return row ? { ...row } : null
+    }
+    if (
+      sql.startsWith('SELECT') &&
+      sql.includes('FROM reading_interpretations') &&
+      sql.includes('WHERE id = ?1 AND owner_user_id = ?2')
+    ) {
+      const [id, ownerUserId] = args as [string, string]
+      const row = interpretations.get(id)
+      return row && row.owner_user_id === ownerUserId ? { ...row } : null
+    }
     throw new Error(`fake D1: unsupported first() SQL: ${sql}`)
   }
 
   function all(sql: string, args: unknown[]): unknown[] {
+    if (
+      sql.startsWith('SELECT') &&
+      sql.includes('FROM reading_interpretations') &&
+      sql.includes('WHERE reading_id = ?1 AND owner_user_id = ?2')
+    ) {
+      const [readingId, ownerUserId] = args as [string, string]
+      return [...interpretations.values()]
+        .filter((row) => row.reading_id === readingId && row.owner_user_id === ownerUserId)
+        .sort((a, b) => b.created_at - a.created_at)
+        .map((row) => ({ ...row }))
+    }
     if (sql.includes('FROM readings') && sql.includes('ORDER BY created_at DESC')) {
       const [userId, favFlag, term] = args as [string, number, string]
       const needle = term.toLowerCase()
@@ -105,7 +170,7 @@ export function makeFakeD1() {
     },
   }
 
-  return { db, users, readings }
+  return { db, users, readings, interpretations }
 }
 
 export type FakeD1 = ReturnType<typeof makeFakeD1>

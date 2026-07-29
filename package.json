@@ -1,7 +1,7 @@
 {
   "name": "urania-137",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.6.0",
   "type": "module",
   "description": "Selemene report frontend with a stellar node branching architecture viewer.",
   "scripts": {
@@ -27,7 +27,8 @@
     "verify:ui-contracts": "node --test scripts/verify/ui-realignment-contracts.test.mjs",
     "verify:ui-evidence": "node --test scripts/verify/ui-evidence-redaction.test.mjs",
     "verify:ui-visual": "node scripts/verify/ui-visual-matrix.mjs",
-    "verify:ui-realignment": "node scripts/verify/ui-realignment.mjs"
+    "verify:ui-realignment": "node scripts/verify/ui-realignment.mjs",
+    "readings:import-archive": "node scripts/readings/import-archive.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

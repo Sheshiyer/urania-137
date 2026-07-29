@@ -12,9 +12,16 @@ import {
   bulkImportReadings,
 } from '../lib/db'
 import { forwardToEngineFromEnv } from '../lib/engine-proxy'
-import { validateInterpretationRequest } from '../lib/agents/evidence'
-import { interpretReading } from '../lib/agents/interpret'
+import { validateMinimalInterpretationRequest } from '../lib/agents/interpret'
 import { createLlmProxyModel } from '../lib/agents/model'
+import {
+  createNativeOrchestrationTransport,
+  delegateInterpretation,
+} from '../lib/agents/orchestration-client'
+import {
+  getReadingInterpretationByIdempotencyKey,
+  saveReadingInterpretation,
+} from '../lib/interpretations/db'
 import { isStorySeed, initialSessionState, toSubmitPayload, type StorySeed } from '../lib/chat/stateMachine'
 import { createChatSession, findLatestOpenSession, getChatSession, listChatTurnEvents, listChatTurns, saveChatSession } from '../lib/chat/store'
 import { createSseStream, encodeEventFrame, numberTurnEvents } from '../lib/chat/sse'
@@ -483,23 +490,66 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
     const u = await requireUser(ctx.env, auth.claims)
     if (!u.ok) return u.response
     const body = await readJson(ctx.request)
-    const parsed = validateInterpretationRequest(body)
+    const parsed = validateMinimalInterpretationRequest(body)
     if (!parsed.ok) {
       return badRequest(`POST /api/chat/interpret ${parsed.error}`)
     }
-    const reading = await getReadingById(
-      ctx.env.DB,
-      u.user.id,
-      parsed.value.readingId,
-    )
+    const { readingId, route, question, depth, idempotencyKey } = parsed.value
+
+    const reading = await getReadingById(ctx.env.DB, u.user.id, readingId)
     if (!reading) return notFound('reading not found')
 
-    const interpretation = await interpretReading({
-      request: parsed.value,
-      reading,
-      model: createLlmProxyModel(ctx.env),
+    const existing = await getReadingInterpretationByIdempotencyKey(
+      ctx.env.DB,
+      u.user.id,
+      idempotencyKey,
+    )
+    if (existing) {
+      return json({
+        answer: existing.answer,
+        route: existing.route,
+        depth: existing.interpretation_depth,
+        contextPacketHash: existing.context_packet_hash,
+        factLockHash: existing.fact_lock_hash,
+        sourceRefs: JSON.parse(existing.source_refs_json) as string[],
+        provenance: existing.provenance_json ? JSON.parse(existing.provenance_json) : null,
+      })
+    }
+
+    const transport = createNativeOrchestrationTransport(createLlmProxyModel(ctx.env))
+    const delegated = await delegateInterpretation(
+      {
+        readingId,
+        ownerRef: u.user.id,
+        route,
+        question,
+        depth,
+        reading,
+        readingCreatedAt: reading.createdAt,
+      },
+      transport,
+    )
+
+    const saved = await saveReadingInterpretation(ctx.env.DB, u.user.id, {
+      readingId,
+      idempotencyKey,
+      route,
+      interpretationDepth: depth,
+      consciousnessLevel: 1,
+      question,
+      answer: delegated.response.answer,
+      contextPacketHash: delegated.contextPacketHash,
+      factLockHash: delegated.factLockHash,
+      sourceRefs: delegated.sourceRefs,
+      provenance: delegated.response.provenance,
     })
-    return json(interpretation)
+
+    return json({
+      ...delegated.response,
+      contextPacketHash: saved.context_packet_hash,
+      factLockHash: saved.fact_lock_hash,
+      sourceRefs: JSON.parse(saved.source_refs_json) as string[],
+    })
   }
 
   // -----------------------------------------------------------------------

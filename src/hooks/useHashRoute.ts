@@ -4,16 +4,68 @@ import { getNodeById } from '../data/selemeneNodes'
 export type Route =
   | { view: 'home' }
   | { view: 'node'; nodeId: string; childId?: string }
+  | {
+      view: 'chat'
+      nodeId: string | null
+      childId: string | null
+      readingId: string | null
+      returnTo: ConversationReturnPath
+    }
   | { view: 'threshold' }
   | { view: 'readings'; readingId: string | null }
   | { view: 'relationship-reading'; relationshipId: string; generationId: string }
   | { view: 'settings' }
+
+export type ConversationReturnPath =
+  | '/'
+  | '/readings'
+  | `/readings/${string}`
+
+function conversationReturnPath(value: string | null): ConversationReturnPath {
+  if (value === '/' || value === '/readings') return value
+  if (value && /^\/readings\/[^?#]+$/.test(value)) {
+    return value as `/readings/${string}`
+  }
+  return '/'
+}
+
+function conversationContext(query: string | undefined) {
+  const params = new URLSearchParams(query ?? '')
+  const reading = params.get('reading')
+  return {
+    readingId: reading?.trim() ? reading : null,
+    returnTo: conversationReturnPath(params.get('return')),
+  }
+}
 
 /** Parse `window.location.hash` into a validated route. Unknown → home. */
 export function parseHash(hash = typeof window !== 'undefined' ? window.location.hash : ''): Route {
   // The Threshold (W2-A): pre-graph onboarding scene — a third top-level view.
   if (hash === '#/threshold') return { view: 'threshold' }
   if (hash === '#/settings') return { view: 'settings' }
+  const chat = hash.match(
+    /^#\/chat(?:\/([^/?#]+)\/([^/?#]+))?(?:\?([^#]*))?\/?$/,
+  )
+  if (chat) {
+    const context = conversationContext(chat[3])
+    if (!chat[1] || !chat[2]) {
+      return { view: 'chat', nodeId: null, childId: null, ...context }
+    }
+    try {
+      const nodeId = decodeURIComponent(chat[1])
+      const childId = decodeURIComponent(chat[2])
+      const node = getNodeById(nodeId)
+      const child = node?.children?.find((candidate) => candidate.id === childId)
+      // ChatSheet is currently the narrative witness surface. Deterministic,
+      // daily, reference-only, and unknown children return to the real chooser.
+      if (child?.run?.kind === 'witness') {
+        return { view: 'chat', nodeId, childId, ...context }
+      }
+      return { view: 'chat', nodeId: null, childId: null, ...context }
+    } catch {
+      return { view: 'chat', nodeId: null, childId: null, ...context }
+    }
+  }
   const relationshipReading = hash.match(
     /^#\/relationships\/([^/?#]+)\/readings\/([^/?#]+)\/?$/,
   )
@@ -60,6 +112,10 @@ export function parseHash(hash = typeof window !== 'undefined' ? window.location
 /** Imperative navigation — updates the hash, which drives the router. */
 export type AppPath =
   | '/'
+  | '/chat'
+  | `/chat?${string}`
+  | `/chat/${string}/${string}`
+  | `/chat/${string}/${string}?${string}`
   | '/threshold'
   | '/settings'
   | '/readings'
@@ -67,6 +123,28 @@ export type AppPath =
   | `/relationships/${string}/readings/${string}`
   | `/node/${string}`
   | `/node/${string}/${string}`
+
+export function buildConversationPath({
+  nodeId,
+  childId,
+  readingId,
+  returnTo = '/',
+}: {
+  nodeId?: string
+  childId?: string
+  readingId?: string | null
+  returnTo?: ConversationReturnPath
+} = {}): AppPath {
+  const doorway =
+    nodeId && childId
+      ? `/${encodeURIComponent(nodeId)}/${encodeURIComponent(childId)}`
+      : ''
+  const params = new URLSearchParams()
+  if (readingId) params.set('reading', readingId)
+  if (returnTo !== '/') params.set('return', returnTo)
+  const query = params.toString()
+  return `/chat${doorway}${query ? `?${query}` : ''}` as AppPath
+}
 
 export function navigate(to: AppPath) {
   const next = `#${to}`

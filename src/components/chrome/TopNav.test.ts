@@ -69,6 +69,24 @@ describe('TopNav target geometry', () => {
     expect(reader).not.toContain('Operator')
     expect(operator).toContain('Operator')
   })
+
+  it('marks Begin as the active product route for conversation', () => {
+    const html = renderToStaticMarkup(
+      createElement(TopNav, {
+        route: {
+          view: 'chat',
+          nodeId: null,
+          childId: null,
+          readingId: null,
+          returnTo: '/',
+        },
+        me: null,
+        operator: false,
+      }),
+    )
+
+    expect(html).toMatch(/<button[^>]*aria-current="page"[^>]*>Begin/)
+  })
 })
 
 describe('shared action target geometry', () => {

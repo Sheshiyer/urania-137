@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { SELEMENE_NODES } from '../data/selemeneNodes'
 import { GraphOrbital } from '../types'
 import { ConstellationGraph } from '../components/ConstellationGraph'
@@ -8,14 +7,11 @@ import { BottomChrome } from '../components/chrome/BottomChrome'
 import { CHROME } from '../components/chrome/insets'
 import { navigate } from '../hooks/useHashRoute'
 import { UI_COPY } from '../content/uiCopy'
-import { BeginReadingDialog } from '../components/readings/BeginReadingDialog'
 import { HomeJourneyRail } from '../components/home/HomeJourneyRail'
 import {
   INITIAL_EXPERIENCE,
   type ExperienceState,
 } from '../lib/experience'
-
-export const BEGIN_READING_EVENT = 'urania:begin-reading'
 
 const overviewOrbitals: GraphOrbital[] = SELEMENE_NODES.map((node) => ({
   id: node.id,
@@ -46,14 +42,6 @@ export function HomePage({
 }: {
   experience?: ExperienceState
 }) {
-  const [beginOpen, setBeginOpen] = useState(false)
-
-  useEffect(() => {
-    const open = () => setBeginOpen(true)
-    window.addEventListener(BEGIN_READING_EVENT, open)
-    return () => window.removeEventListener(BEGIN_READING_EVENT, open)
-  }, [])
-
   return (
     <div className="relative h-full min-h-[30rem] overflow-hidden bg-void">
       <ConstellationGraph
@@ -75,7 +63,7 @@ export function HomePage({
         </p>
         <button
           type="button"
-          onClick={() => setBeginOpen(true)}
+          onClick={() => navigate('/chat')}
           className="pointer-events-auto mt-3 min-h-11 border border-gold/55 bg-void/90 px-5 py-3 font-display text-[10px] uppercase tracking-[0.23em] text-gold transition-colors hover:bg-gold hover:text-void focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
         >
           {UI_COPY.beginReading}
@@ -84,14 +72,12 @@ export function HomePage({
 
       <HomeJourneyRail
         experience={experience}
-        onBegin={() => setBeginOpen(true)}
+        onBegin={() => navigate('/chat')}
       />
 
       <BottomChrome>
         <StatFooter stats={HOME_TAXONOMY} />
       </BottomChrome>
-
-      <BeginReadingDialog open={beginOpen} onClose={() => setBeginOpen(false)} />
     </div>
   )
 }

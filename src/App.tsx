@@ -7,6 +7,7 @@ import { ThresholdPage } from './pages/ThresholdPage'
 import { ReadingLibraryPage } from './pages/ReadingLibraryPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { RelationshipReadingPage } from './pages/RelationshipReadingPage'
+import { ConversationPage } from './pages/ConversationPage'
 import { TopNav } from './components/chrome/TopNav'
 import { AppShell } from './components/layout/AppShell'
 import { importLegacyFolioOnce } from './lib/folioImport'
@@ -149,6 +150,16 @@ export default function App() {
               key={route.nodeId}
               nodeId={route.nodeId}
               initialChildId={route.childId}
+              me={me}
+            />
+          )}
+          {route.view === 'chat' && (
+            <ConversationPage
+              key={`${route.nodeId ?? 'choose'}:${route.childId ?? 'doorway'}:${route.readingId ?? 'new'}`}
+              nodeId={route.nodeId}
+              childId={route.childId}
+              readingId={route.readingId}
+              returnTo={route.returnTo}
               me={me}
             />
           )}
