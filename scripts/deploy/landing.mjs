@@ -185,8 +185,6 @@ export function buildDeployCommand({ wranglerBin, project, branch, sha }) {
     '--commit-hash',
     sha,
     '--commit-dirty=false',
-    '--config',
-    'wrangler.toml',
   ]
 }
 

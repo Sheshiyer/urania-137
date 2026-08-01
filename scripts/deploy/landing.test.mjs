@@ -123,8 +123,6 @@ test('builds a direct-upload command rooted in the isolated stage', () => {
       '--commit-hash',
       sourceSha,
       '--commit-dirty=false',
-      '--config',
-      'wrangler.toml',
     ],
   )
 })
