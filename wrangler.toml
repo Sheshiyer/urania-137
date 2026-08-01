@@ -24,6 +24,15 @@ pages_build_output_dir = "dist"
 # (11a62a84…, a different app in the same team) and is the aud that Access
 # will actually issue JWTs with for sessions on this hostname. Fail-closed is
 # preserved: requests without a valid Access JWT for this AUD still get 401.
+#
+# PUBLIC LANDING REQUIREMENT (2026-07):
+# The Zero Trust Access Application covering urania.tryambakam.space must
+# ALLOW PUBLIC / BYPASS for the hostname so the static SPA shell (our
+# non-login landing with the video bg) is served without the CF login page.
+# APIs remain strictly protected by the Worker (authenticate() + cf-access.ts).
+# The CTA is the only thing that should cause a protected /api call or
+# the reauth redirect. If the domain still shows the Zero Trust page on
+# first load, edit the Access policy in the dashboard (not this file).
 # SELEMENE_API_KEY (secret, rotation deferred by the owner 2026-07-23 — set it
 # via scripts/deploy/t067-prod-secrets.sh when rotated), never here.
 # DEV_IDENTITY_EMAIL must never appear in this file or in Pages production env.

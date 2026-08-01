@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useHashRoute } from './hooks/useHashRoute'
+import { useHashRoute, navigate } from './hooks/useHashRoute'
 import { useMe } from './hooks/useMe'
 import { HomePage } from './pages/HomePage'
 import { NodePage } from './pages/NodePage'
@@ -8,6 +8,7 @@ import { ReadingLibraryPage } from './pages/ReadingLibraryPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { RelationshipReadingPage } from './pages/RelationshipReadingPage'
 import { ConversationPage } from './pages/ConversationPage'
+import { LandingPage } from './pages/LandingPage'
 import { TopNav } from './components/chrome/TopNav'
 import { AppShell } from './components/layout/AppShell'
 import { importLegacyFolioOnce } from './lib/folioImport'
@@ -33,6 +34,33 @@ import {
  */
 export default function App() {
   const route = useHashRoute()
+
+  // PUBLIC NON-LOGIN LANDING (the reference video scroll experience).
+  // Root (#/ or empty hash) ALWAYS shows the public landing.
+  // Login / CF Access challenge must ONLY happen as the final CTA.
+  //
+  // IMPORTANT for CF Zero Trust:
+  //   The Access Application policy for urania.tryambakam.space (and pages.dev)
+  //   must be configured to ALLOW PUBLIC access to the hostname / static shell.
+  //   (Bypass or "Everyone" allow, no require on the application level.)
+  //   The Worker still enforces auth on every /api/* via cf-access.ts.
+  //   When the user clicks the final CTA we navigate to /console (home),
+  //   the gated code runs, useMe calls /api/me, Worker returns 401 for
+  //   unauthed, and the reauth logic does the full navigation that triggers
+  //   the CF login page.
+  //   If the edge still challenges the initial HTML load, the landing never
+  //   gets a chance to render — that is a policy setting, not code.
+  if (route.view === 'landing') {
+    return (
+      <LandingPage
+        onEnter={() => {
+          // Entering the console is the ONLY place auth/login is triggered.
+          navigate('/console')
+        }}
+      />
+    )
+  }
+
   // Signed-in identity for the app chrome (T-024/T-025): CF Access owns the
   // session cookie, so useMe just reads GET /api/me once on mount.
   const { me, loading: meLoading } = useMe()

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getNodeById } from '../data/selemeneNodes'
 
 export type Route =
+  | { view: 'landing' }
   | { view: 'home' }
   | { view: 'node'; nodeId: string; childId?: string }
   | {
@@ -38,8 +39,12 @@ function conversationContext(query: string | undefined) {
   }
 }
 
-/** Parse `window.location.hash` into a validated route. Unknown → home. */
+/** Parse `window.location.hash` into a validated route. Unknown → landing (public non-auth front door). */
 export function parseHash(hash = typeof window !== 'undefined' ? window.location.hash : ''): Route {
+  // Public non-login landing (the Cortex reference flow). Root or explicit landing.
+  if (!hash || hash === '#' || hash === '#/' || hash === '#/landing') return { view: 'landing' }
+  if (hash === '#/console') return { view: 'home' }
+
   // The Threshold (W2-A): pre-graph onboarding scene — a third top-level view.
   if (hash === '#/threshold') return { view: 'threshold' }
   if (hash === '#/settings') return { view: 'settings' }
@@ -112,6 +117,8 @@ export function parseHash(hash = typeof window !== 'undefined' ? window.location
 /** Imperative navigation — updates the hash, which drives the router. */
 export type AppPath =
   | '/'
+  | '/landing'
+  | '/console'
   | '/chat'
   | `/chat?${string}`
   | `/chat/${string}/${string}`
