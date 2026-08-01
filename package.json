@@ -8,6 +8,7 @@
     "dev": "npm run build && wrangler pages dev dist",
     "build": "tsc && vite build",
     "test": "vitest run",
+    "test:node": "node --test scripts/readings/*.test.mjs scripts/verify/release-attestation.test.mjs scripts/verify/migration-chain.test.mjs scripts/verify/ui-*.test.mjs",
     "test:cf": "vitest run functions",
     "test:daily": "vitest run src/lib/daily",
     "verify:daily-contracts": "node scripts/verify/daily-contracts.mjs",
@@ -28,6 +29,10 @@
     "verify:ui-evidence": "node --test scripts/verify/ui-evidence-redaction.test.mjs",
     "verify:ui-visual": "node scripts/verify/ui-visual-matrix.mjs",
     "verify:ui-realignment": "node scripts/verify/ui-realignment.mjs",
+    "verify:d1-schema": "node scripts/verify/d1-schema.mjs",
+    "verify:bundle": "node scripts/verify/bundle-budget.mjs",
+    "verify:audit": "env -u npm_config_allow_scripts npm --userconfig=/dev/null audit --audit-level=high",
+    "verify:ci": "npm test && npm run test:node && npm run typecheck:functions && npm run verify:delink && npm run verify:cf-contracts && npm run verify:daily-contracts && npm run verify:ui-home && npm run verify:ui-contracts && npm run verify:ui-evidence && npm run verify:d1-schema && npm run build && npm run verify:bundle && npm run verify:audit",
     "readings:import-archive": "node scripts/readings/import-archive.mjs"
   },
   "dependencies": {
@@ -50,7 +55,7 @@
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.0",
     "vite": "^6.0.0",
-    "vitest": "^2.1.9",
+    "vitest": "^4.1.10",
     "wrangler": "^4.112.0"
   }
 }

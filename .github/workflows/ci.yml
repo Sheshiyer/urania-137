@@ -4,36 +4,133 @@ on:
   push:
   pull_request:
 
-# Cancel superseded runs on the same ref (e.g. rapid pushes / PR updates).
+permissions:
+  contents: read
+
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Typecheck & build
+  unit-contracts:
+    name: Unit & contracts
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Setup Node
-        uses: actions/setup-node@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Test (unit + V8 CF-Access suites)
+      - run: npm ci
+      - name: Vitest suites
         run: npm test
+      - name: Node contract suites
+        run: npm run test:node
+      - name: Static and Cloudflare contracts
+        run: |
+          npm run verify:delink
+          npm run verify:cf-contracts
+          npm run verify:daily-contracts
+          npm run verify:ui-home
+          npm run verify:ui-contracts
+          npm run verify:ui-evidence
+      - name: Upload failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-contract-failure-${{ github.sha }}
+          path: |
+            npm-debug.log
+            .wrangler/logs
+          if-no-files-found: ignore
+          retention-days: 7
 
-      - name: V7 static delink gate (no Vercel remnants)
-        run: node scripts/verify/delink-check.mjs
+  typecheck-build:
+    name: Typecheck & build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Typecheck application and Functions
+        run: |
+          npx tsc --noEmit
+          npm run typecheck:functions
+      - name: Build immutable assets
+        run: npm run build
+      - name: Enforce bundle budgets
+        run: npm run verify:bundle
+      - name: Upload build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ github.sha }}
+          path: dist
+          if-no-files-found: ignore
+          retention-days: 7
 
-      - name: Type check
-        run: npx tsc --noEmit
+  d1-migration-smoke:
+    name: D1 migration smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Validate chain and populated upgrade
+        run: |
+          node --test scripts/verify/migration-chain.test.mjs
+          npm run verify:d1-schema
+      - name: Upload Wrangler diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: d1-migration-failure-${{ github.sha }}
+          path: .wrangler/logs
+          if-no-files-found: ignore
+          retention-days: 7
 
-      - name: Build
-        run: npx vite build
+  security-audit:
+    name: Security audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Reject high and critical advisories
+        run: npm audit --audit-level=high
+
+  production-gate:
+    name: Production gate
+    if: always()
+    needs:
+      - unit-contracts
+      - typecheck-build
+      - d1-migration-smoke
+      - security-audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Require every production check
+        env:
+          UNIT_CONTRACTS: ${{ needs.unit-contracts.result }}
+          TYPECHECK_BUILD: ${{ needs.typecheck-build.result }}
+          D1_MIGRATIONS: ${{ needs.d1-migration-smoke.result }}
+          SECURITY_AUDIT: ${{ needs.security-audit.result }}
+        run: |
+          test "$UNIT_CONTRACTS" = success
+          test "$TYPECHECK_BUILD" = success
+          test "$D1_MIGRATIONS" = success
+          test "$SECURITY_AUDIT" = success

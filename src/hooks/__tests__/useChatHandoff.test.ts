@@ -11,11 +11,11 @@ import { DAILY_LOCATION_STORAGE_KEY } from '../../lib/daily/location'
  * carries the chat-resolved place (or `undefined` for "use my default").
  */
 
-const makeSinks = (): HandoffSinks & { [K in keyof HandoffSinks]: ReturnType<typeof vi.fn> } => ({
-  witness: vi.fn(),
-  birth: vi.fn(),
-  daily: vi.fn(),
-})
+const makeSinks = () => ({
+  witness: vi.fn<HandoffSinks['witness']>(),
+  birth: vi.fn<HandoffSinks['birth']>(),
+  daily: vi.fn<HandoffSinks['daily']>(),
+}) satisfies HandoffSinks
 
 const witnessPayload = {
   mode: 'natal-interpretation',
