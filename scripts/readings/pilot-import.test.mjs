@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import test from 'node:test'
@@ -14,8 +15,16 @@ import { buildPilotSoftDeleteSql, buildPilotUpsertSql } from './lib/pilot-sql.mj
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const descriptorPath = path.join(here, 'pilots/sheshnarayan-l0.json')
-const corpusRoot =
-  '/Volumes/madara/2026/twc-vault/01-Projects/tryambakam-noesis/723'
+const corpusRoot = path.resolve(
+  process.env.URANIA_CORPUS_ROOT ?? path.resolve(here, '../../../723'),
+)
+const corpusAvailable = existsSync(corpusRoot)
+const corpusTest = (name, fn) =>
+  test(name, { skip: corpusAvailable ? false : 'requires the sibling 723 corpus' }, fn)
+
+if (process.env.URANIA_REQUIRE_EXTERNAL_READING_SOURCES === '1' && !corpusAvailable) {
+  throw new Error(`required external corpus is unavailable: ${corpusRoot}`)
+}
 
 async function prepared() {
   return preparePilot(await loadPilotDescriptor(descriptorPath), { corpusRoot })
@@ -71,7 +80,7 @@ function fixtures(options = {}) {
   return { objects, objectStore, archive, getRecord: () => record }
 }
 
-test('freezes one verified owner-subject reading and both artifact checksums', async () => {
+corpusTest('freezes one verified owner-subject reading and both artifact checksums', async () => {
   const pilot = await prepared()
   assert.equal(pilot.ownerEmail, 'sheshnarayan.iyer@gmail.com')
   assert.equal(pilot.subject.reconciliationState, 'verified')
@@ -105,7 +114,7 @@ test('rejects a pilot descriptor without the explicit owner-consent basis', asyn
   )
 })
 
-test('imports once and reuses the completed graph and objects on rerun', async () => {
+corpusTest('imports once and reuses the completed graph and objects on rerun', async () => {
   const pilot = await prepared()
   const fake = fixtures()
   const first = await executePilotImport(pilot, fake)
@@ -117,14 +126,14 @@ test('imports once and reuses the completed graph and objects on rerun', async (
   assert.equal(fake.objects.size, 2)
 })
 
-test('database failure compensates every object created by the attempt', async () => {
+corpusTest('database failure compensates every object created by the attempt', async () => {
   const pilot = await prepared()
   const fake = fixtures({ failCommit: true })
   await assert.rejects(executePilotImport(pilot, fake), /injected database failure/)
   assert.equal(fake.objects.size, 0)
 })
 
-test('database failure never removes a checksum-matching pre-existing object', async () => {
+corpusTest('database failure never removes a checksum-matching pre-existing object', async () => {
   const pilot = await prepared()
   const first = pilot.artifacts[0]
   const fake = fixtures({
@@ -144,7 +153,7 @@ test('database failure never removes a checksum-matching pre-existing object', a
   assert.ok(fake.objects.has(first.objectKey))
 })
 
-test('deletion removes object bytes while preserving run and source audit boundaries', async () => {
+corpusTest('deletion removes object bytes while preserving run and source audit boundaries', async () => {
   const pilot = await prepared()
   const fake = fixtures()
   await executePilotImport(pilot, fake)
@@ -158,7 +167,7 @@ test('deletion removes object bytes while preserving run and source audit bounda
   assert.equal(fake.getRecord().state, 'deleted')
 })
 
-test('generated SQL is idempotent, metadata-only, and preserves audit rows on deletion', async () => {
+corpusTest('generated SQL is idempotent, metadata-only, and preserves audit rows on deletion', async () => {
   const pilot = await prepared()
   const sql = buildPilotUpsertSql(pilot, { bucket: 'tryambakam-noesis-readings' })
   assert.match(sql, /ON CONFLICT \(owner_user_id, idempotency_key\)/)
