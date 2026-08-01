@@ -1,41 +1,36 @@
 #!/usr/bin/env node
 /**
- * Release workflow — version bump + GitHub release (+ optional CF Pages deploy).
+ * Urania release preparation and dispatch.
  *
- *   node scripts/release.mjs [patch|minor|major|X.Y.Z] [--dry-run] [--deploy] [--yes]
+ * Local code never deploys, tags, pushes, or creates a release. It either:
+ *   --prepare <patch|minor|major>  update package metadata for review, or
+ *   --version <X.Y.Z>             prove the already-committed version and,
+ *                                 with --dispatch --yes, request release.yml.
  *
- * What it does (non-dry run):
- *   1. Guards: clean tracked tree, target tag absent, `gh auth status` ok.
- *   2. Bumps the semver in package.json (default patch; explicit X.Y.Z validated).
- *   3. Generates release notes from `git log <last-tag>..HEAD --oneline`,
- *      grouped by conventional-commit prefix (feat/fix/docs/chore/test/other).
- *   4. Commits package.json + package-lock.json (chore(release): vX.Y.Z),
- *      creates annotated tag vX.Y.Z, pushes the current branch and the tag.
- *   5. Creates the GitHub release with the notes.
- *   6. --deploy: runs the production deploy and appends the deployment URL to
- *      the release notes via `gh release edit`.
- *
- * The pure helpers are exported for unit tests; main only runs when the file
- * is executed directly.
+ * Production mutation belongs to the Environment-approved GitHub workflow.
  */
-import { execSync, spawnSync } from 'node:child_process'
-import { readFileSync, writeFileSync, existsSync } from 'node:fs'
-import { createInterface } from 'node:readline/promises'
+import { spawnSync } from 'node:child_process'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
 
 export const PROD_URL = 'https://urania.tryambakam.space'
-const DEPLOY_CMD =
-  'npm run build && wrangler pages deploy dist --project-name urania-137 --branch main --commit-dirty=true'
 const FULL_HISTORY_CAP = 50
-
 const SEMVER_RE = /^\d+\.\d+\.\d+$/
+const SHA_RE = /^[a-f0-9]{40}$/
 const CONVENTIONAL_RE = /^(\w+)(\([^)]*\))?!?:\s*/
+const RELEASE_PHASES = [
+  'preflight',
+  'verify',
+  'backup',
+  'deploy',
+  'smoke',
+  'attest',
+  'draft',
+  'verify-draft',
+  'publish',
+]
 
-// ---------------------------------------------------------------------------
-// Pure helpers (unit-tested from src/lib/__tests__/release.test.ts)
-// ---------------------------------------------------------------------------
-
-/** Compute the next version. `bump` is patch|minor|major or an explicit X.Y.Z. */
+/** Compute the next version for preparation only. */
 export function computeNextVersion(current, bump = 'patch') {
   if (!SEMVER_RE.test(current)) throw new Error(`Current version "${current}" is not valid semver`)
   if (SEMVER_RE.test(bump)) return bump
@@ -52,7 +47,6 @@ export function computeNextVersion(current, bump = 'patch') {
   }
 }
 
-/** Group `git log --oneline` lines by conventional-commit prefix. */
 export function groupCommits(oneline) {
   const groups = { feat: [], fix: [], docs: [], chore: [], test: [], other: [] }
   for (const line of oneline.split('\n')) {
@@ -61,11 +55,9 @@ export function groupCommits(oneline) {
     const space = trimmed.indexOf(' ')
     const hash = space === -1 ? trimmed : trimmed.slice(0, space)
     const subject = space === -1 ? '' : trimmed.slice(space + 1)
-    const m = subject.match(CONVENTIONAL_RE)
-    // Object.hasOwn — NOT truthiness: a subject like "constructor: …" would
-    // otherwise resolve groups.constructor (a function) and crash on .push.
-    const kind = m && Object.hasOwn(groups, m[1]) ? m[1] : 'other'
-    const clean = m ? subject.slice(m[0].length) : subject
+    const match = subject.match(CONVENTIONAL_RE)
+    const kind = match && Object.hasOwn(groups, match[1]) ? match[1] : 'other'
+    const clean = match ? subject.slice(match[0].length) : subject
     groups[kind].push({ hash, subject: clean || subject })
   }
   return groups
@@ -80,7 +72,6 @@ const GROUP_TITLES = [
   ['other', 'Other'],
 ]
 
-/** Render the release notes markdown. `groups` comes from groupCommits. */
 export function buildReleaseNotes(version, groups, { deployedUrl = null } = {}) {
   const lines = [`## Urania 137 — v${version}`, '', `**Production:** ${PROD_URL}`, '']
   let any = false
@@ -89,20 +80,14 @@ export function buildReleaseNotes(version, groups, { deployedUrl = null } = {}) 
     if (items.length === 0) continue
     any = true
     lines.push(`### ${title}`, '')
-    for (const c of items) lines.push(`- ${c.subject} (${c.hash})`)
+    for (const commit of items) lines.push(`- ${commit.subject} (${commit.hash})`)
     lines.push('')
   }
   if (!any) lines.push('_No commits since the previous tag._', '')
   if (deployedUrl) lines.push(`**Deployed:** ${deployedUrl}`, '')
-  return lines.join('\n').trimEnd() + '\n'
+  return `${lines.join('\n').trimEnd()}\n`
 }
 
-/**
- * Sync the version fields of a parsed package-lock.json to `next` (the root
- * "version" plus packages[""].version). Returns the same object for chaining;
- * callers write it back. Keeps the lockfile from drifting when only
- * package.json is bumped.
- */
 export function syncLockfileVersion(lock, next) {
   if (lock && typeof lock === 'object') {
     if (typeof lock.version === 'string') lock.version = next
@@ -112,155 +97,256 @@ export function syncLockfileVersion(lock, next) {
   return lock
 }
 
-// ---------------------------------------------------------------------------
-// Main
-// ---------------------------------------------------------------------------
-
-function sh(cmd, opts = {}) {
-  return execSync(cmd, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'], ...opts }).trim()
-}
-
-function fail(msg) {
-  console.error(`\nrelease: ✗ ${msg}`)
-  process.exit(1)
-}
-
-function runInherited(argv, opts = {}) {
-  const res = spawnSync(argv[0], argv.slice(1), { stdio: 'inherit', ...opts })
-  if (res.status !== 0) fail(`command failed (${res.status}): ${argv.join(' ')}`)
-  return res
-}
-
-function parseArgs(argv) {
-  const args = { bump: 'patch', dryRun: false, deploy: false, yes: false }
-  for (const a of argv) {
-    if (a === '--dry-run') args.dryRun = true
-    else if (a === '--deploy') args.deploy = true
-    else if (a === '--yes' || a === '-y') args.yes = true
-    else if (['patch', 'minor', 'major'].includes(a) || SEMVER_RE.test(a)) args.bump = a
-    else fail(`unknown argument: ${a}`)
+export function parseReleaseArgs(argv) {
+  const args = { mode: null, bump: null, version: null, readinessRunId: null, dryRun: false, dispatch: false, yes: false }
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index]
+    if (arg === '--prepare') {
+      const bump = argv[++index]
+      if (!['patch', 'minor', 'major'].includes(bump)) throw new Error('--prepare requires patch|minor|major')
+      if (args.mode) throw new Error('choose exactly one of --prepare or --version')
+      args.mode = 'prepare'
+      args.bump = bump
+    } else if (arg === '--version') {
+      const version = argv[++index]
+      if (!SEMVER_RE.test(version ?? '')) throw new Error('--version requires X.Y.Z semver')
+      if (args.mode) throw new Error('choose exactly one of --prepare or --version')
+      args.mode = 'publish'
+      args.version = version
+    } else if (arg === '--dry-run') args.dryRun = true
+    else if (arg === '--readiness-run-id') {
+      const runId = argv[++index]
+      if (!/^\d+$/.test(runId ?? '')) throw new Error('--readiness-run-id requires a numeric workflow run id')
+      args.readinessRunId = runId
+    }
+    else if (arg === '--dispatch') args.dispatch = true
+    else if (arg === '--yes' || arg === '-y') args.yes = true
+    else if (['patch', 'minor', 'major'].includes(arg) || SEMVER_RE.test(arg)) {
+      throw new Error(`implicit bump "${arg}" is unsafe; use --prepare or --version`)
+    } else throw new Error(`unknown argument: ${arg}`)
   }
+  if (!args.mode) throw new Error('choose exactly one of --prepare or --version')
+  if (args.mode === 'prepare' && args.dispatch) throw new Error('--dispatch is valid only with --version')
+  if (args.dryRun && args.dispatch) throw new Error('--dry-run and --dispatch are mutually exclusive')
   return args
 }
 
-async function confirm(question) {
-  const rl = createInterface({ input: process.stdin, output: process.stdout })
-  try {
-    const answer = await rl.question(`${question} [y/N] `)
-    return /^y(es)?$/i.test(answer.trim())
-  } finally {
-    rl.close()
+export function parsePorcelainStatus(output) {
+  return output
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => (line.startsWith(' ') ? line.slice(1) : line))
+}
+
+export function validateLocalPreflight(input) {
+  const issues = []
+  if (parsePorcelainStatus(input.porcelain).length > 0) issues.push('working-tree-dirty')
+  if (input.branch !== 'main') issues.push('local-branch-must-be-main')
+  if (!SHA_RE.test(input.head) || input.head !== input.originMain) issues.push('head-must-equal-origin-main')
+  if (input.ahead !== 0 || input.behind !== 0) issues.push('branch-must-not-be-ahead-or-behind')
+  if (input.ciConclusion !== 'success') issues.push('production-gate-not-successful')
+  if (input.localTagExists || input.remoteTagExists) issues.push('tag-already-exists')
+  if (!input.backupReceiptValid) issues.push('backup-receipt-invalid')
+  if (input.requestedVersion !== input.packageVersion) issues.push('requested-version-must-match-package')
+  return [...new Set(issues)]
+}
+
+export function validateActionsPreflight(input) {
+  const issues = []
+  if (!SHA_RE.test(input.requestedSha)) issues.push('requested-sha-invalid')
+  if (input.githubSha !== input.requestedSha) issues.push('github-sha-must-match-requested-sha')
+  if (input.originMain !== input.requestedSha) issues.push('requested-sha-must-equal-origin-main')
+  if (input.ciConclusion !== 'success') issues.push('production-gate-not-successful')
+  if (input.localTagExists || input.remoteTagExists) issues.push('tag-already-exists')
+  if (!input.backupReceiptValid) issues.push('backup-receipt-invalid')
+  if (input.requestedVersion !== input.packageVersion) issues.push('requested-version-must-match-package')
+  return [...new Set(issues)]
+}
+
+export function validateReleasePhases(phases) {
+  if (
+    phases.length !== RELEASE_PHASES.length ||
+    RELEASE_PHASES.some((phase, index) => phases[index] !== phase)
+  ) {
+    return ['release-phase-order-invalid']
+  }
+  return []
+}
+
+export function publicationCleanupCommands(tag) {
+  if (!/^v\d+\.\d+\.\d+$/.test(tag)) throw new Error(`invalid release tag: ${tag}`)
+  return [['gh', 'release', 'delete', tag, '--cleanup-tag', '--yes']]
+}
+
+export function validateBackupReceipt(receipt, expectedSha) {
+  return Boolean(
+    receipt &&
+      typeof receipt === 'object' &&
+      receipt.gitSha === expectedSha &&
+      receipt.restoreVerified === true &&
+      typeof receipt.databaseId === 'string' &&
+      receipt.databaseId.length > 0 &&
+      typeof receipt.sha256 === 'string' &&
+      /^[a-f0-9]{64}$/.test(receipt.sha256),
+  )
+}
+
+function run(argv, { allowFailure = false, input } = {}) {
+  const result = spawnSync(argv[0], argv.slice(1), {
+    encoding: 'utf8',
+    input,
+    stdio: input === undefined ? ['ignore', 'pipe', 'pipe'] : ['pipe', 'pipe', 'pipe'],
+  })
+  if (!allowFailure && result.status !== 0) {
+    throw new Error(`${argv.join(' ')} failed: ${(result.stderr || result.stdout || '').trim()}`)
+  }
+  return { status: result.status ?? 1, stdout: (result.stdout || '').trim(), stderr: (result.stderr || '').trim() }
+}
+
+function packageFiles() {
+  return {
+    packageUrl: new URL('../package.json', import.meta.url),
+    lockUrl: new URL('../package-lock.json', import.meta.url),
   }
 }
 
-async function main() {
-  const args = parseArgs(process.argv.slice(2))
+function readPackage() {
+  return JSON.parse(readFileSync(packageFiles().packageUrl, 'utf8'))
+}
 
-  // --- guards -------------------------------------------------------------
-  const dirty = sh('git status --porcelain')
-    .split('\n')
-    .filter((l) => l && !l.startsWith('??'))
-  if (dirty.length > 0) {
-    fail(
-      `tracked working tree is dirty — commit or stash first:\n${dirty.map((l) => `    ${l}`).join('\n')}`,
-    )
+function updatePackageVersion(next) {
+  const { packageUrl, lockUrl } = packageFiles()
+  const pkg = JSON.parse(readFileSync(packageUrl, 'utf8'))
+  pkg.version = next
+  writeFileSync(packageUrl, `${JSON.stringify(pkg, null, 2)}\n`)
+  if (existsSync(lockUrl)) {
+    const lock = syncLockfileVersion(JSON.parse(readFileSync(lockUrl, 'utf8')), next)
+    writeFileSync(lockUrl, `${JSON.stringify(lock, null, 2)}\n`)
   }
+}
 
-  const ghAuth = spawnSync('gh', ['auth', 'status'], { stdio: 'pipe' })
-  if (ghAuth.status !== 0) fail('`gh auth status` failed — authenticate the GitHub CLI first (gh auth login)')
+function readReceipt(path) {
+  if (!path || !existsSync(path)) return null
+  try {
+    return JSON.parse(readFileSync(path, 'utf8'))
+  } catch {
+    return null
+  }
+}
 
-  const branch = sh('git rev-parse --abbrev-ref HEAD')
-  const pkgPath = new URL('../package.json', import.meta.url)
-  const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'))
-  const next = computeNextVersion(pkg.version, args.bump)
-  const tag = `v${next}`
+function checkConclusion(ownerRepo, sha) {
+  const response = run(
+    [
+      'gh',
+      'api',
+      `repos/${ownerRepo}/commits/${sha}/check-runs`,
+      '--jq',
+      '[.check_runs[] | select(.name == "Production gate")][0].conclusion // "missing"',
+    ],
+    { allowFailure: true },
+  )
+  return response.status === 0 ? response.stdout || 'missing' : 'unavailable'
+}
 
-  if (sh(`git tag -l "${tag}"`)) fail(`tag ${tag} already exists — pick a higher version`)
+export function collectLocalPreflight(version, env = process.env) {
+  run(['git', 'fetch', '--quiet', 'origin', 'main', '--tags'])
+  const porcelain = run(['git', 'status', '--porcelain=v1', '-uall']).stdout
+  const branch = run(['git', 'branch', '--show-current']).stdout || 'HEAD'
+  const head = run(['git', 'rev-parse', 'HEAD']).stdout
+  const originMain = run(['git', 'rev-parse', 'refs/remotes/origin/main']).stdout
+  const [behindText = '0', aheadText = '0'] = run([
+    'git',
+    'rev-list',
+    '--left-right',
+    '--count',
+    'refs/remotes/origin/main...HEAD',
+  ]).stdout.split(/\s+/)
+  const tag = `v${version}`
+  const localTagExists = run(['git', 'tag', '--list', tag]).stdout === tag
+  const remoteTagExists = run(
+    ['git', 'ls-remote', '--exit-code', '--tags', 'origin', `refs/tags/${tag}`, `refs/tags/${tag}^{}`],
+    { allowFailure: true },
+  ).status === 0
+  const ownerRepo = run(['gh', 'repo', 'view', '--json', 'nameWithOwner', '--jq', '.nameWithOwner']).stdout
+  const ciConclusion = checkConclusion(ownerRepo, head)
+  const receipt = readReceipt(env.URANIA_BACKUP_RECEIPT)
+  return {
+    porcelain,
+    branch,
+    head,
+    originMain,
+    ahead: Number(aheadText),
+    behind: Number(behindText),
+    ciConclusion,
+    localTagExists,
+    remoteTagExists,
+    backupReceiptValid: validateBackupReceipt(receipt, head),
+    packageVersion: readPackage().version,
+    requestedVersion: version,
+  }
+}
 
-  const lastTag = sh("git tag -l 'v*' --sort=-v:refname").split('\n')[0] || null
-  const logCmd = lastTag ? `git log ${lastTag}..HEAD --oneline` : `git log --oneline -n ${FULL_HISTORY_CAP}`
-  const oneline = sh(logCmd)
-  const groups = groupCommits(oneline)
-  const notes = buildReleaseNotes(next, groups)
+function releaseNotes(version) {
+  const tags = run(['git', 'tag', '--list', 'v*', '--sort=-v:refname']).stdout.split('\n').filter(Boolean)
+  const lastTag = tags[0] ?? null
+  const logArgs = lastTag
+    ? ['git', 'log', `${lastTag}..HEAD`, '--oneline']
+    : ['git', 'log', '--oneline', '-n', String(FULL_HISTORY_CAP)]
+  return buildReleaseNotes(version, groupCommits(run(logArgs).stdout))
+}
 
-  // --- plan ----------------------------------------------------------------
-  console.log(`\nrelease: plan`)
-  console.log(`  current version : v${pkg.version}`)
-  console.log(`  next version    : v${next}  (${args.bump})`)
-  console.log(`  tag             : ${tag}  (annotated)`)
-  console.log(`  branch          : ${branch}`)
-  console.log(`  notes from      : ${lastTag ? `${lastTag}..HEAD` : `full history (capped at ${FULL_HISTORY_CAP})`}`)
-  console.log(`\n--- release notes ---\n${notes}----------------------`)
-  console.log(`\n  commands:`)
-  console.log(`    git add package.json package-lock.json && git commit -m "chore(release): ${tag}"`)
-  console.log(`    git tag -a ${tag} -m "Urania 137 ${tag}"`)
-  console.log(`    git push origin ${branch} && git push origin ${tag}`)
-  console.log(`    gh release create ${tag} --title "${tag}" --notes-file -`)
-  if (args.deploy) console.log(`    ${DEPLOY_CMD}`)
+async function main() {
+  const args = parseReleaseArgs(process.argv.slice(2))
+  const pkg = readPackage()
 
-  if (args.dryRun) {
-    console.log('\nrelease: dry run — no side effects.')
+  if (args.mode === 'prepare') {
+    const dirty = parsePorcelainStatus(run(['git', 'status', '--porcelain=v1', '-uall']).stdout)
+    if (dirty.length > 0) throw new Error(`working tree is dirty:\n${dirty.map((line) => `  ${line}`).join('\n')}`)
+    const next = computeNextVersion(pkg.version, args.bump)
+    console.log(JSON.stringify({ mode: 'prepare', currentVersion: pkg.version, nextVersion: next, dryRun: args.dryRun }, null, 2))
+    if (!args.dryRun) updatePackageVersion(next)
     return
   }
 
-  // --- confirm --------------------------------------------------------------
-  if (!args.yes) {
-    if (!process.stdin.isTTY) fail('non-interactive shell — re-run with --yes to confirm the push')
-    const ok = await confirm(`\nRelease ${tag} (commit, tag, push, GitHub release)?`)
-    if (!ok) fail('aborted by operator')
+  const preflight = collectLocalPreflight(args.version)
+  const issues = validateLocalPreflight(preflight)
+  const plan = {
+    mode: 'publish',
+    version: args.version,
+    tag: `v${args.version}`,
+    sha: preflight.head,
+    dryRun: args.dryRun,
+    dispatch: args.dispatch,
+    readinessRunId: args.readinessRunId ?? process.env.URANIA_READINESS_RUN_ID ?? null,
+    issues,
+    notes: releaseNotes(args.version),
   }
-
-  // --- execute --------------------------------------------------------------
-  pkg.version = next
-  writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
-  const staged = ['package.json']
-  const lockPath = new URL('../package-lock.json', import.meta.url)
-  if (existsSync(lockPath)) {
-    const lock = syncLockfileVersion(JSON.parse(readFileSync(lockPath, 'utf8')), next)
-    writeFileSync(lockPath, JSON.stringify(lock, null, 2) + '\n')
-    staged.push('package-lock.json')
+  console.log(JSON.stringify(plan, null, 2))
+  if (issues.length > 0) throw new Error(`release preflight failed: ${issues.join(', ')}`)
+  if (!args.dispatch) return
+  if (!args.yes) throw new Error('--dispatch requires --yes; review --dry-run output first')
+  const readinessRunId = args.readinessRunId ?? process.env.URANIA_READINESS_RUN_ID
+  if (!/^\d+$/.test(readinessRunId ?? '')) {
+    throw new Error('--dispatch requires --readiness-run-id or URANIA_READINESS_RUN_ID')
   }
-  runInherited(['git', 'add', ...staged])
-  runInherited(['git', 'commit', '-m', `chore(release): ${tag}`])
-  runInherited(['git', 'tag', '-a', tag, '-m', `Urania 137 ${tag}`])
-  runInherited(['git', 'push', 'origin', branch])
-  runInherited(['git', 'push', 'origin', tag])
-
-  const rel = spawnSync('gh', ['release', 'create', tag, '--title', tag, '--notes-file', '-'], {
-    input: notes,
-    encoding: 'utf8',
-  })
-  if (rel.status !== 0) fail(`gh release create failed:\n${rel.stderr}`)
-  const releaseUrl = sh(`gh release view ${tag} --json url -q .url`)
-
-  // --- optional deploy --------------------------------------------------------
-  let deployedUrl = null
-  if (args.deploy) {
-    runInherited(['npm', 'run', 'build'])
-    const dep = spawnSync(
-      'wrangler',
-      ['pages', 'deploy', 'dist', '--project-name', 'urania-137', '--branch', 'main', '--commit-dirty=true'],
-      { encoding: 'utf8', stdio: ['inherit', 'pipe', 'inherit'] },
-    )
-    if (dep.status !== 0) fail('wrangler pages deploy failed')
-    const m = (dep.stdout || '').match(/https:\/\/\S+/)
-    deployedUrl = m ? m[0] : PROD_URL
-    console.log(`release: deployed → ${deployedUrl}`)
-    const edit = spawnSync('gh', ['release', 'edit', tag, '--notes', buildReleaseNotes(next, groups, { deployedUrl })], {
-      encoding: 'utf8',
-    })
-    if (edit.status !== 0) console.error('release: warning — gh release edit failed; notes not updated with deploy URL')
-  }
-
-  // --- summary ----------------------------------------------------------------
-  console.log(`\nrelease: ✓ done`)
-  console.log(`  version : ${tag}`)
-  console.log(`  tag     : ${tag} (pushed to origin)`)
-  console.log(`  release : ${releaseUrl}`)
-  if (deployedUrl) console.log(`  deploy  : ${deployedUrl}`)
+  run([
+    'gh',
+    'workflow',
+    'run',
+    'release.yml',
+    '-f',
+    `sha=${preflight.head}`,
+    '-f',
+    `version=${args.version}`,
+    '-f',
+    `readiness_run_id=${readinessRunId}`,
+  ])
 }
 
 const invokedAs = process.argv[1] ? pathToFileURL(process.argv[1]).href : ''
 if (import.meta.url === invokedAs) {
-  main().catch((err) => fail(err?.message ?? String(err)))
+  main().catch((error) => {
+    console.error(`release: ✗ ${error instanceof Error ? error.message : String(error)}`)
+    process.exitCode = 1
+  })
 }

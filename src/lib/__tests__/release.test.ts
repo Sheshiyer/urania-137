@@ -3,8 +3,14 @@ import {
   buildReleaseNotes,
   computeNextVersion,
   groupCommits,
+  parseReleaseArgs,
+  parsePorcelainStatus,
   PROD_URL,
+  publicationCleanupCommands,
   syncLockfileVersion,
+  validateActionsPreflight,
+  validateLocalPreflight,
+  validateReleasePhases,
 } from '../../../scripts/release.mjs'
 
 /**
@@ -109,5 +115,127 @@ describe('buildReleaseNotes', () => {
 
   it('notes when there is nothing since the previous tag', () => {
     expect(buildReleaseNotes('0.2.0', groupCommits(''))).toContain('_No commits since the previous tag._')
+  })
+})
+
+describe('release arguments', () => {
+  it('keeps version preparation separate from exact publication', () => {
+    expect(parseReleaseArgs(['--prepare', 'minor', '--dry-run'])).toMatchObject({
+      mode: 'prepare',
+      bump: 'minor',
+      dryRun: true,
+    })
+    expect(parseReleaseArgs(['--version', '0.7.0', '--readiness-run-id', '12345', '--dry-run'])).toMatchObject({
+      mode: 'publish',
+      version: '0.7.0',
+      readinessRunId: '12345',
+      dryRun: true,
+    })
+  })
+
+  it('rejects implicit and conflicting bumps', () => {
+    expect(() => parseReleaseArgs(['minor'])).toThrow(/--prepare/)
+    expect(() => parseReleaseArgs(['--prepare', 'minor', '--version', '0.7.0'])).toThrow(/exactly one/)
+    expect(() => parseReleaseArgs(['--version', 'banana'])).toThrow(/semver/)
+  })
+})
+
+describe('release preflight', () => {
+  const cleanLocal = {
+    porcelain: '',
+    branch: 'main',
+    head: 'a'.repeat(40),
+    originMain: 'a'.repeat(40),
+    ahead: 0,
+    behind: 0,
+    ciConclusion: 'success',
+    localTagExists: false,
+    remoteTagExists: false,
+    backupReceiptValid: true,
+    packageVersion: '0.7.0',
+    requestedVersion: '0.7.0',
+  }
+
+  it('treats untracked files as dirty', () => {
+    expect(parsePorcelainStatus(' M tracked.ts\n?? untracked.txt\n')).toEqual([
+      'M tracked.ts',
+      '?? untracked.txt',
+    ])
+    expect(validateLocalPreflight({ ...cleanLocal, porcelain: '?? secret.txt\n' })).toContain(
+      'working-tree-dirty',
+    )
+  })
+
+  it('requires attached synchronized main and exact committed version', () => {
+    expect(validateLocalPreflight(cleanLocal)).toEqual([])
+    expect(
+      validateLocalPreflight({
+        ...cleanLocal,
+        branch: 'HEAD',
+        originMain: 'b'.repeat(40),
+        ahead: 1,
+        ciConclusion: 'failure',
+        remoteTagExists: true,
+        backupReceiptValid: false,
+        requestedVersion: '0.8.0',
+      }),
+    ).toEqual(
+      expect.arrayContaining([
+        'local-branch-must-be-main',
+        'head-must-equal-origin-main',
+        'branch-must-not-be-ahead-or-behind',
+        'production-gate-not-successful',
+        'tag-already-exists',
+        'backup-receipt-invalid',
+        'requested-version-must-match-package',
+      ]),
+    )
+  })
+
+  it('allows an exact detached Actions checkout only for the requested main SHA', () => {
+    const input = {
+      requestedSha: 'a'.repeat(40),
+      githubSha: 'a'.repeat(40),
+      originMain: 'a'.repeat(40),
+      ciConclusion: 'success',
+      backupReceiptValid: true,
+      packageVersion: '0.7.0',
+      requestedVersion: '0.7.0',
+    }
+    expect(validateActionsPreflight(input)).toEqual([])
+    expect(validateActionsPreflight({ ...input, githubSha: 'b'.repeat(40) })).toContain(
+      'github-sha-must-match-requested-sha',
+    )
+    expect(validateActionsPreflight({ ...input, originMain: 'c'.repeat(40) })).toContain(
+      'requested-sha-must-equal-origin-main',
+    )
+    expect(validateActionsPreflight({ ...input, remoteTagExists: true })).toContain('tag-already-exists')
+  })
+})
+
+describe('publication order and cleanup', () => {
+  it('requires verification and attestation before draft publication', () => {
+    expect(
+      validateReleasePhases([
+        'preflight',
+        'verify',
+        'backup',
+        'deploy',
+        'smoke',
+        'attest',
+        'draft',
+        'verify-draft',
+        'publish',
+      ]),
+    ).toEqual([])
+    expect(validateReleasePhases(['preflight', 'draft', 'deploy', 'publish'])).toContain(
+      'release-phase-order-invalid',
+    )
+  })
+
+  it('defines compensating cleanup for a staged release', () => {
+    expect(publicationCleanupCommands('v0.7.0')).toEqual([
+      ['gh', 'release', 'delete', 'v0.7.0', '--cleanup-tag', '--yes'],
+    ])
   })
 })
