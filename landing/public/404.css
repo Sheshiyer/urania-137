@@ -1,0 +1,31 @@
+:root {
+  color-scheme: dark;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  display: grid;
+  min-height: 100vh;
+  margin: 0;
+  place-items: center;
+  background: #050714;
+  color: #f0ede3;
+}
+
+main {
+  width: min(100% - 3rem, 42rem);
+}
+
+p {
+  color: #aebbc4;
+  line-height: 1.7;
+}
+
+a {
+  color: #e6b84d;
+}
+
+a:focus-visible {
+  outline: 3px solid #a9b9ff;
+  outline-offset: 5px;
+}

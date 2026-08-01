@@ -1,0 +1,6 @@
+# Static-only public landing project. The deploy helper stages this file beside
+# dist/landing in a fresh directory, so repository-root functions and bindings
+# can never be discovered by Wrangler.
+name = "urania-137-landing"
+compatibility_date = "2026-07-01"
+pages_build_output_dir = "dist/landing"

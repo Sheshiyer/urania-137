@@ -33,6 +33,7 @@ dist-ssr
 # Cloudflare
 .wrangler/
 .dev.vars
+.release/
 
 # CodeGraph local index
 .codegraph/

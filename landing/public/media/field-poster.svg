@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" role="img" aria-labelledby="title description">
+  <title id="title">Urania stellar field</title>
+  <desc id="description">A dark indigo field with fine golden orbital geometry.</desc>
+  <defs>
+    <radialGradient id="field" cx="70%" cy="42%" r="58%">
+      <stop offset="0" stop-color="#263c9b" stop-opacity=".58"/>
+      <stop offset=".3" stop-color="#2d0050" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#050714" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+    <pattern id="points" width="86" height="86" patternUnits="userSpaceOnUse">
+      <circle cx="4" cy="4" r="1" fill="#f0ede3" opacity=".28"/>
+    </pattern>
+  </defs>
+  <rect width="1400" height="900" fill="#050714"/>
+  <rect width="1400" height="900" fill="url(#field)"/>
+  <rect width="1400" height="900" fill="url(#points)" opacity=".45"/>
+  <g transform="translate(980 380)" fill="none" stroke="#c5a017">
+    <circle r="330" opacity=".18"/>
+    <circle r="230" opacity=".24"/>
+    <circle r="130" opacity=".36"/>
+    <path d="M-330 0H330M0-330V330M-233-233 233 233M233-233-233 233" opacity=".13"/>
+    <path d="M0-230 199 115-199 115ZM0 230 199-115-199-115Z" opacity=".3"/>
+  </g>
+  <circle cx="980" cy="380" r="24" fill="#a9b9ff" opacity=".34" filter="url(#glow)"/>
+  <circle cx="980" cy="380" r="3" fill="#f0ede3"/>
+  <g fill="#f0ede3">
+    <circle cx="805" cy="190" r="2" opacity=".8"/>
+    <circle cx="1168" cy="530" r="2.5" opacity=".72"/>
+    <circle cx="1240" cy="235" r="1.5" opacity=".9"/>
+    <circle cx="720" cy="620" r="1.5" opacity=".55"/>
+  </g>
+</svg>
