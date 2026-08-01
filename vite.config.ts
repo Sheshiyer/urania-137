@@ -22,6 +22,10 @@ function buildSha(): string {
 // Vite dev server and its /api/selemene proxy are retired.
 export default defineConfig({
   plugins: [react()],
+  build: {
+    outDir: 'dist/app',
+    emptyOutDir: true,
+  },
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
     __APP_BUILD_TIME__: JSON.stringify(new Date().toISOString()),

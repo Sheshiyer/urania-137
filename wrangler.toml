@@ -1,16 +1,16 @@
-# Cloudflare Pages + Functions + D1 (T-001). The SPA builds to dist/ (Pages),
+# Cloudflare Pages + Functions + D1 (T-001). The SPA builds to dist/app (Pages),
 # and functions/ is the API layer. Secrets (SELEMENE_API_KEY, SELEMENE_API_URL)
 # are set via `wrangler pages secret put` / .dev.vars — never committed here.
 #
 # Pages build settings (T-057) — dashboard (git integration) or `wrangler pages deploy`:
 #   Build command:       npm run build        # tsc + vite build
-#   Build output dir:    dist                 # = pages_build_output_dir below
+#   Build output dir:    dist/app             # = pages_build_output_dir below
 #   Functions directory: functions/           # auto-detected at the project root
 #   Node version:        22 (matches CI)
-# Local proof of the same layout: npm run build && wrangler pages dev dist.
+# Local proof of the same layout: npm run build:app && wrangler pages dev dist/app.
 name = "urania-137"
 compatibility_date = "2026-07-01"
-pages_build_output_dir = "dist"
+pages_build_output_dir = "dist/app"
 
 # Public config (non-secret) — T-059 / T-067. Only values that are REAL and
 # non-secret belong here. SELEMENE_API_URL is the public engine base (also the
