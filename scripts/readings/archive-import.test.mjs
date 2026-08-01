@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { EventEmitter } from 'node:events'
+import { existsSync } from 'node:fs'
 import {
   access,
   mkdir,
@@ -31,8 +32,15 @@ import {
 import { buildArchiveUpsertSql } from './lib/archive-sql.mjs'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
-const actualCorpusRoot = path.resolve(here, '../../../723')
+const actualCorpusRoot = path.resolve(
+  process.env.URANIA_CORPUS_ROOT ?? path.resolve(here, '../../../723'),
+)
+const actualCorpusAvailable = existsSync(actualCorpusRoot)
 const ownerEmail = 'archive-owner@example.test'
+
+if (process.env.URANIA_REQUIRE_EXTERNAL_READING_SOURCES === '1' && !actualCorpusAvailable) {
+  throw new Error(`required external corpus is unavailable: ${actualCorpusRoot}`)
+}
 
 function digest(value) {
   return createHash('sha256').update(value).digest('hex')
@@ -75,7 +83,10 @@ async function fixtureCorpus(units = {}) {
   }
 }
 
-test('actual 723 corpus inventories exactly 51 Solo and 2 Synastry readings', async () => {
+test(
+  'actual 723 corpus inventories exactly 51 Solo and 2 Synastry readings',
+  { skip: actualCorpusAvailable ? false : 'requires the sibling 723 corpus' },
+  async () => {
   const inventory = await buildArchiveInventory({
     corpusRoot: actualCorpusRoot,
     ownerEmail,
@@ -109,7 +120,8 @@ test('actual 723 corpus inventories exactly 51 Solo and 2 Synastry readings', as
       { canonicalName: 'Rohan Kamat', subjectRole: 'secondary', position: 2 },
     ],
   )
-})
+  },
+)
 
 test('canonical selection prefers new-l0-local and humanizes only the display label', async (t) => {
   const fixture = await fixtureCorpus({

@@ -1,7 +1,7 @@
 {
   "name": "urania-137",
   "private": true,
-  "version": "0.6.0",
+  "version": "0.6.1",
   "type": "module",
   "description": "Selemene report frontend with a stellar node branching architecture viewer.",
   "scripts": {
@@ -9,6 +9,7 @@
     "build": "tsc && vite build",
     "test": "vitest run",
     "test:node": "node --test scripts/readings/*.test.mjs scripts/verify/release-attestation.test.mjs scripts/verify/migration-chain.test.mjs scripts/verify/ui-*.test.mjs",
+    "test:corpus": "URANIA_REQUIRE_EXTERNAL_READING_SOURCES=1 node --test scripts/readings/archive-import.test.mjs scripts/readings/engine-output-atlas.test.mjs",
     "test:cf": "vitest run functions",
     "test:daily": "vitest run src/lib/daily",
     "verify:daily-contracts": "node scripts/verify/daily-contracts.mjs",

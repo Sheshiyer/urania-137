@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
+import { existsSync } from 'node:fs'
 import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
@@ -15,6 +16,21 @@ import {
 const CLI = fileURLToPath(new URL('./build-engine-output-atlas.mjs', import.meta.url))
 const MANIFEST = fileURLToPath(new URL('../../docs/engine-output-atlas.json', import.meta.url))
 const VISUAL_REGISTRY = fileURLToPath(new URL('../../src/lib/readings/engineVisualRegistry.ts', import.meta.url))
+const EXTERNAL_PATHS = Object.freeze({
+  corpusRoot: path.resolve(process.env.URANIA_CORPUS_ROOT ?? DEFAULT_PATHS.corpusRoot),
+  selemeneRoot: path.resolve(process.env.URANIA_SELEMENE_ROOT ?? DEFAULT_PATHS.selemeneRoot),
+})
+const corpusAvailable = existsSync(EXTERNAL_PATHS.corpusRoot)
+const selemeneAvailable = existsSync(EXTERNAL_PATHS.selemeneRoot)
+const externalSourcesAvailable = corpusAvailable && selemeneAvailable
+
+if (process.env.URANIA_REQUIRE_EXTERNAL_READING_SOURCES === '1' && !externalSourcesAvailable) {
+  const missing = [
+    !corpusAvailable && EXTERNAL_PATHS.corpusRoot,
+    !selemeneAvailable && EXTERNAL_PATHS.selemeneRoot,
+  ].filter(Boolean)
+  throw new Error(`required external reading sources are unavailable: ${missing.join(', ')}`)
+}
 
 const EXPECTED_WORKFLOW_MEMBERS = Object.freeze({
   'birth-blueprint': ['numerology', 'human-design', 'vimshottari', 'biofield', 'face-reading'],
@@ -117,10 +133,12 @@ async function corpusPrivacyTerms(root) {
   return { rawStrings, subjectDirectories }
 }
 
-test('committed atlas is deterministic and matches a fresh structural build', async () => {
+test('committed atlas is deterministic and matches a fresh structural build', {
+  skip: externalSourcesAvailable ? false : 'requires sibling corpus and Selemene sources',
+}, async () => {
   const committed = JSON.parse(await readFile(MANIFEST, 'utf8'))
-  const first = await buildEngineOutputAtlas()
-  const second = await buildEngineOutputAtlas()
+  const first = await buildEngineOutputAtlas(EXTERNAL_PATHS)
+  const second = await buildEngineOutputAtlas(EXTERNAL_PATHS)
 
   assert.deepEqual(second, first)
   assert.deepEqual(committed, first)
@@ -174,11 +192,13 @@ test('runtime visual registry reconciles atlas states, provenance, components, a
   }
 })
 
-test('Selemene supported engines, Urania extractors, and atlas entries stay reconciled', async () => {
+test('Selemene supported engines, Urania extractors, and atlas entries stay reconciled', {
+  skip: selemeneAvailable ? false : 'requires sibling Selemene sources',
+}, async () => {
   const manifest = JSON.parse(await readFile(MANIFEST, 'utf8'))
   const selemeneSource = await readFile(
     path.join(
-      DEFAULT_PATHS.selemeneRoot,
+      EXTERNAL_PATHS.selemeneRoot,
       'crates',
       'noesis-orchestrator',
       'src',
@@ -333,10 +353,12 @@ test('every engine defaults to named non-JSON presentations with accessible equi
   }
 })
 
-test('manifest contains no absolute paths, subject directories, raw values, binary data, or secrets', async () => {
+test('manifest contains no absolute paths, subject directories, raw values, binary data, or secrets', {
+  skip: corpusAvailable ? false : 'requires the sibling 723 corpus',
+}, async () => {
   const manifest = JSON.parse(await readFile(MANIFEST, 'utf8'))
   const serialized = JSON.stringify(manifest)
-  const { rawStrings, subjectDirectories } = await corpusPrivacyTerms(DEFAULT_PATHS.corpusRoot)
+  const { rawStrings, subjectDirectories } = await corpusPrivacyTerms(EXTERNAL_PATHS.corpusRoot)
 
   assert.doesNotMatch(serialized, /\/(?:Users|Volumes|home|private|tmp)\//)
   assert.doesNotMatch(serialized, /[A-Za-z]:\\/)
@@ -374,7 +396,9 @@ test('manifest contains no absolute paths, subject directories, raw values, bina
   })
 })
 
-test('CLI accepts explicit corpus, Selemene, and output flags', async (t) => {
+test('CLI accepts explicit corpus, Selemene, and output flags', {
+  skip: externalSourcesAvailable ? false : 'requires sibling corpus and Selemene sources',
+}, async (t) => {
   const tempRoot = await mkdtemp(path.join(tmpdir(), 'engine-output-atlas-'))
   t.after(() => rm(tempRoot, { recursive: true, force: true }))
   const output = path.join(tempRoot, 'atlas.json')
@@ -384,9 +408,9 @@ test('CLI accepts explicit corpus, Selemene, and output flags', async (t) => {
     [
       CLI,
       '--corpus',
-      DEFAULT_PATHS.corpusRoot,
+      EXTERNAL_PATHS.corpusRoot,
       '--selemene',
-      DEFAULT_PATHS.selemeneRoot,
+      EXTERNAL_PATHS.selemeneRoot,
       '--output',
       output,
     ],
