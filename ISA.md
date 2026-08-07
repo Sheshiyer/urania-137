@@ -1,15 +1,15 @@
 ---
-task: "Cut and publish Urania 137 contextual-readings release"
-slug: 20260729-contextual-readings-release
+task: "Publish the verified Urania witness-prompt landing to Cloudflare Pages"
+slug: 20260801-landing-production-deploy
 project: Urania 137
 effort: advanced
 effort_source: classifier
 phase: complete
-progress: 16/16
+progress: 32/32
 mode: interactive
-started: 2026-07-28T11:28:00Z
-updated: 2026-07-29T07:16:00Z
-iteration: 20
+started: 2026-08-01T11:53:06Z
+updated: 2026-08-01T13:21:45Z
+iteration: 23
 ---
 
 ## Problem
@@ -156,6 +156,24 @@ Produce a clear architectural map of the full Instagram reference and a phased i
   depends_on: [ParentPagePrototype]
   parallelizable: true
 ```
+
+## Architecture
+
+<!-- arch-assets:start -->
+
+_Auto-maintained by `ArchitectureAssetsSync.hook.ts` on release events._  
+_Last refreshed: 2026-08-01T11:49:40.125Z_
+
+| Asset | Status | How it's generated |
+|---|---|---|
+| [`docs/architecture/SERVICES.md`](docs/architecture/SERVICES.md) | ✓ current | auto (file scan) |
+| [`docs/architecture/DEPENDENCY-GRAPH.md`](docs/architecture/DEPENDENCY-GRAPH.md) | ✓ current | auto (file scan) |
+| [`docs/architecture/architecture.html`](docs/architecture/architecture.html) | ✗ not yet generated | manual (LLM skill) |
+| [`docs/architecture/notebooklm-prompt.md`](docs/architecture/notebooklm-prompt.md) | ✗ not yet generated | manual (LLM skill) |
+
+**To refresh LLM-generated assets:** invoke `/refresh-architecture` in any Claude Code session.
+
+<!-- arch-assets:end -->
 
 ## Decisions
 
@@ -4632,3 +4650,725 @@ flow at the live URL.
   `SELEMENE_API_KEY`, while the authenticated Folio proves Access and D1
   bindings. A scoped error tail observed no runtime errors during the API
   smoke window; the longer soak remains an owned operational follow-up.
+
+## Iteration 21 — Public Landing and Protected Application Cutover (2026-08-01)
+
+### Problem
+
+The production custom domain challenges anonymous visitors with Cloudflare
+Access before Urania can introduce itself. The preceding v0.6.1 release proved
+artifact integrity but incorrectly treated that challenge as a successful
+boundary, even though the approved production-readiness design and the user's
+explicit expectation require the landing experience first and authentication
+only after its entry action. An earlier same-SPA landing prototype was reverted
+because it returned before later React hooks and because hash navigation cannot
+cross a hostname-level Access boundary.
+
+### Vision
+
+An anonymous visitor opens `https://urania.tryambakam.space` and immediately
+encounters the authored Urania landing journey. “Enter the Field” performs a
+full-document transition to `https://app.urania.tryambakam.space`, where—and
+only where—Cloudflare Access asks the visitor to authenticate. After the
+threshold, the existing graph-first console, D1-backed Folio, and authenticated
+API behave unchanged.
+
+### Out of Scope
+
+- No path-scoped Access bypass over the protected SPA.
+- No weakening of Worker JWT verification for `/api/*`.
+- No location/timezone, relationship-consent, or privacy-workflow expansion.
+- No wholesale restoration of the rejected checkpoint architecture.
+- No claim that the remaining production-readiness program is complete.
+
+### Principles
+
+- Invitation precedes identity: the product explains itself before requesting authentication.
+- Authentication is a threshold, not the first screen.
+- Host separation expresses the trust boundary more reliably than client routing.
+- Public presentation contains no private bootstrap, data binding, or API authority.
+- The graph remains the primary interface after the protected threshold.
+- Production claims are made from anonymous live-browser evidence, not configuration intent.
+
+### Constraints
+
+- The public landing and protected console are separate build artifacts and Pages projects.
+- `urania.tryambakam.space` is public landing; `app.urania.tryambakam.space` is protected console.
+- The landing CTA is an absolute HTTPS link validated against an allowlist at build time.
+- The landing artifact contains no Pages Functions, D1 binding, Access AUD, or app bootstrap.
+- Every protected `/api/*` request still authenticates in `functions/api/[[path]].ts`.
+- Existing production D1 data and migrations remain untouched.
+- Cutover is staged and reversible; the apex Access selector is removed last.
+- Existing unrelated `ISA.md` and `docs/architecture/` work remains preserved and unstaged.
+
+### Goal
+
+Ship and verify a split-host production entrance in which the public apex serves
+only the Urania landing artifact, the CTA crosses to the Access-protected app
+subdomain, anonymous API access remains denied, and every external mutation has
+a recorded rollback target.
+
+### Root Cause Analysis — Five Whys
+
+1. The landing is invisible because Access challenges the apex document.
+2. Access challenges the apex because the protected SPA and acquisition surface share one hostname.
+3. They share one hostname because the landing extraction in Tasks 11–12 was not implemented before the release was explicitly cut.
+4. The release was still declared successful because verification optimized for exact bytes and security boundary presence, not the intended first-visit journey.
+5. The journey was missed because the release done-condition separated broader readiness but did not retain “landing before auth” as a release-blocking user-facing criterion.
+
+Root cause: the deployment gate verified infrastructure identity while omitting
+the anonymous encounter that defines the product entrance.
+
+### SystemsThinking — Find Leverage
+
+The high-leverage intervention is the system rule and topology: bind public and
+protected purposes to different hostnames and artifacts. Adding a same-host
+Bypass policy is a low-quality parameter change that creates an alternate
+exposure path and leaves hash routing invisible to Access. The split makes the
+desired behavior the default output of the system rather than a fragile policy
+exception.
+
+### FirstPrinciples — Reconstruct
+
+Hard truths: anonymous visitors must receive public bytes; authenticated data
+must remain behind server verification; URL fragments never reach the edge;
+and one hostname-level document cannot be simultaneously challenged and public
+for the same path. Therefore the minimal correct design is a public static
+origin plus a separately protected application origin connected by one
+absolute navigation.
+
+### Criteria
+
+- [x] ISC-735: `npm run build:landing` exits zero from a clean checkout.
+- [x] ISC-736: `npm run build:app` exits zero from the same checkout.
+- [x] ISC-737: The combined build writes distinct `dist/landing` and `dist/app` trees.
+- [x] ISC-738: The landing build contains exactly one application-entry CTA origin.
+- [x] ISC-739: The CTA origin is `https://app.urania.tryambakam.space` in production.
+- [x] ISC-740: Invalid protected origins fail the landing build or configuration test.
+- [x] ISC-741: The CTA is a declarative absolute anchor, not hash navigation.
+- [x] ISC-742: The protected hash router still maps `#/` to the console home.
+- [x] ISC-743: The protected `App` calls all hooks unconditionally.
+- [x] ISC-744: The landing bundle contains no `/api/me` string.
+- [x] ISC-745: The landing bundle contains no Access AUD or D1 database identifier.
+- [x] ISC-746: The landing deployment directory contains no `functions/` tree.
+- [x] ISC-747: The landing deployment configuration declares no D1 binding.
+- [x] ISC-748: The landing document has exactly one `h1`.
+- [x] ISC-749: The landing CTA is keyboard reachable with visible focus.
+- [x] ISC-750: Reduced-motion visitors receive a stable, non-scrubbed composition.
+- [x] ISC-751: Missing or rejected video playback leaves readable landing content.
+- [x] ISC-752: Landing media avoids unconditional `preload="auto"`.
+- [x] ISC-753: The landing makes zero application API requests before CTA activation.
+- [x] ISC-754: The landing project hostname returns HTTP 200 anonymously.
+- [x] ISC-755: The landing project `/api/me` returns 404, never app JSON.
+- [x] ISC-756: The protected app custom hostname challenges anonymous HTML requests.
+- [x] ISC-757: The protected app custom hostname challenges anonymous API requests.
+- [x] ISC-758: The production apex returns landing HTML without an Access redirect.
+- [x] ISC-759: The production apex `/api/me` returns 404, never landing HTML or app JSON.
+- [x] ISC-760: A fresh browser renders the landing before any authentication page.
+- [x] ISC-761: Activating “Enter the Field” navigates to the protected app hostname.
+- [x] ISC-762: Cloudflare Access appears only after the landing CTA navigation.
+- [x] ISC-763: The protected application retains the expected production D1 binding.
+- [x] ISC-764: The deployed landing and app record the same exact source SHA.
+- [x] ISC-765: A rollback receipt names prior Pages domains, projects, and deployments.
+- [x] ISC-766: Anti: no same-host public Bypass exposes the protected SPA shell.
+- [x] ISC-767: Anti: existing D1 rows, migrations, and secrets remain unmodified.
+- [x] ISC-768: The existing Access application adds the app hostname without changing AUD.
+- [x] ISC-769: The app custom hostname presents a valid TLS certificate covering its exact name.
+- [x] ISC-770: A redacted export records the pre-cutover Access application and policies.
+- [x] ISC-771: An Access-scoped credential completes authenticated readback before apex transfer.
+- [x] ISC-772: A rollback receipt records apex and app DNS/custom-domain before state.
+- [x] ISC-773: The application contains no cookie-domain, callback, or CORS dependency on the apex.
+
+### Test Strategy
+
+| ISC range | Probe type | Threshold | Tool |
+| --- | --- | --- | --- |
+| 735–743 | build and routing | both artifacts build; protected hooks/routes unchanged | npm, Vitest, TypeScript |
+| 744–747 | artifact boundary | zero app/API/auth/data authority in landing output | Node boundary tests + filesystem scan |
+| 748–753 | experience/accessibility | semantic, keyboard, reduced-motion, fallback, zero API calls | Vitest + browser network capture |
+| 754–759 | live HTTP boundary | public landing 200/404; protected app/API challenged | curl + Cloudflare API readback |
+| 760–762 | first-visit journey | landing visible before Access; CTA causes host transition | fresh browser profile + screenshots |
+| 763–765 | deployment integrity | binding/SHA/rollback receipt agree | Cloudflare API + Git |
+| 766–767 | anti-probe | no bypass and no D1/secret mutation | Access policy readback + D1 counts/config diff |
+| 768–773 | cutover prerequisites | unchanged AUD, valid TLS, Access/DNS exports, origin portability | Access/Pages API + openssl + source scan |
+
+### Features
+
+| Feature | Description | Satisfies | Depends on | Parallelizable |
+| --- | --- | --- | --- | --- |
+| Landing artifact | Extract and harden the authored public presentation | 735, 737–753 | rejected checkpoint as read-only source | yes |
+| Protected origin contract | Validate CTA and preserve protected SPA routing/auth | 736, 739–743 | landing artifact | partially |
+| Landing deployment guard | Upload only static landing bytes to a separate project | 746–747, 754–755, 764 | landing artifact | no |
+| Split-host cutover | Attach app subdomain, transfer apex, change Access selector last | 756–765 | both deployments | no |
+| Boundary audit | Prove no bypass, D1 mutation, or secret drift | 763, 766–767 | cutover | no |
+
+### Decisions
+
+- 2026-08-01 15:50: refined: “Cloudflare Access is present” is no longer a
+  sufficient launch probe. The first anonymous encounter and CTA-triggered
+  threshold are now explicit release-blocking criteria ISC-758–762.
+- 2026-08-01 15:50: ❌ DEAD END: The checkpoint `5972ac6` placed landing at
+  `#/` and console at `#/console`; it broke the protected router contract,
+  returned before later hooks, and could not cross Access because fragments
+  are invisible to the edge. Salvage visual/copy source only; never restore its
+  routing or `App.tsx` changes.
+- 2026-08-01 15:50: Use public apex plus protected `app.` subdomain. Removing
+  the apex Access selector before landing origin transfer is prohibited because
+  it would briefly expose the full SPA shell.
+- 2026-08-01 15:50: The original worktree contains pre-existing ISA and
+  architecture changes. Implementation occurs in clean worktree branch
+  `codex/urania-public-landing-hotfix`; this master ISA is appended in place but
+  remains outside that branch's staged code set.
+- 2026-08-01 15:50: Wrangler OAuth is valid for Pages, D1, Workers, and zone
+  read, but its grant lacks Access application/policy scope. Pages work proceeds
+  through CLI/API; final Access mutation requires an Access-scoped token or
+  authenticated dashboard session.
+- 2026-08-01 15:56: Pre-build Advisor review rejected creating a second Access
+  application because a new audience would make the Worker reject every valid
+  session. The cutover will extend the existing Access application with the
+  app hostname, preserving AUD `df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4`,
+  and remove only the apex hostname after the landing transfer is proven.
+- 2026-08-01 15:56: Apex transfer is treated as delete-then-add, not atomic.
+  Exact Pages custom-domain and DNS before-state, Access policy export, app-host
+  TLS SAN, and a working Access-scoped credential are hard prerequisites.
+- 2026-08-01 16:29: PRs #176 and #177 merged the static landing and its
+  deployment correction to `main` at
+  `c34a70f0ee1d0a848abebdcff2a271860f790324`; all ten GitHub checks passed.
+- 2026-08-01 16:29: The exact merged landing is deployed to the separate
+  production Pages project `urania-137-landing` as deployment
+  `91e8df5a-f63b-4ae8-a37f-7b52cac52643`, with artifact SHA-256
+  `3c156d7a250bb35b4e4295aebd4092b4dfe75018507ce1177033e3fbe18d7154`.
+- 2026-08-01 16:29: ❌ DEAD END: Passing `--config` to `wrangler pages deploy`
+  is parsed by help but rejected by Pages. The first attempt published no
+  assets; PR #177 removed the flag and relies on the isolated staging root's
+  sole `wrangler.toml`.
+- 2026-08-01 16:29: The apex remains unchanged until an Access-scoped
+  credential can export and update the existing Access application. Package
+  version `0.6.2` is merged, but the tag/release is intentionally not cut
+  before the public-apex journey is proven.
+- 2026-08-01 16:50: The authenticated Cloudflare dashboard session exported
+  the existing Access application before mutation. The app kept ID
+  `03e2e059-ca4b-405c-8188-39415a22cf84`, policy
+  `468e6887-7619-46e4-8e39-6b7e6b96c9ee`, and AUD
+  `df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4` while
+  replacing only the apex destination with `app.urania.tryambakam.space`.
+- 2026-08-01 17:02: ❌ DEAD END: Adding the Access destination before Pages
+  certificate validation left the custom domain in `Verifying`; Access
+  intercepted Cloudflare's HTTP DCV path. Following Cloudflare's Pages
+  debugging guidance, the new destination alone was temporarily removed and
+  its CNAME temporarily gray-clouded. Pages immediately became Active with
+  SSL, after which the CNAME was re-proxied and the same Access destination was
+  restored; Access 302 propagation completed in nine seconds.
+- 2026-08-01 17:15: Fresh production QA exposed zone-level Web Analytics
+  injection as a CSP-blocked cross-origin request on the landing. Configuration
+  rule `76844f8ce9714e64806781cf37b9b280` now sets `disable_rum=true` only when
+  `(http.host eq "urania.tryambakam.space")`, preserving analytics elsewhere
+  and restoring a zero-error, zero-cross-origin pre-CTA boundary.
+- 2026-08-01 17:20: Release `v0.6.2` was published at exact main commit
+  `c34a70f0ee1d0a848abebdcff2a271860f790324` only after final production Gate
+  4 passed 5/5 and both Pages projects reported the same source SHA.
+
+### Changelog
+
+- 2026-08-01 | conjectured: an exact-SHA deployment behind Access completed the authorized production goal
+  refuted by: the user's fresh-browser screenshot showed Access before the authored landing experience
+  learned: release integrity is necessary but cannot replace verification of the intended first encounter
+  criterion now: ISC-758–762 require public landing, CTA host transition, and delayed Access challenge
+
+### Verification
+
+- ISC-758 passed final probe: `https://urania.tryambakam.space/` returns HTTP
+  200 with the authored landing and no Access redirect.
+- ISC-759 passed final probe: `https://urania.tryambakam.space/api/me`
+  returns static HTTP 404, never application JSON or landing HTML.
+- ISC-760–762 passed final fresh-browser Gate 4: the landing renders first with
+  exactly one `h1` and one `main`; all three CTAs target
+  `https://app.urania.tryambakam.space/`; activation produces app HTTP 302 and
+  then the Cloudflare Access email challenge. Before activation there are zero
+  console/page errors, failed requests, `/api/*` calls, or cross-origin calls.
+  Final captures: `/tmp/urania-production-final-landing.png` and
+  `/tmp/urania-production-final-access.png`.
+- ISC-735–753 passed on merged version `0.6.2`: the final canonical
+  `npm run verify:ci` completed with 94 Vitest files / 781 tests, 61 Node tests
+  passed with 11 corpus-dependent skips, both TypeScript builds, D1 schema
+  verification, bundle budgets, and zero audited vulnerabilities.
+- ISC-748–753 passed browser Gate 4 locally and on the deployed Pages hostname:
+  one `h1`, exact absolute CTA anchors, visible keyboard focus, stable reduced
+  motion, zero root console/page errors, zero application API requests, and
+  zero cross-origin requests. Live screenshot: `/tmp/urania-production-preview.png`.
+- ISC-754 passed: `https://urania-137-landing.pages.dev/` returns HTTP 200
+  anonymously with the Urania landing title plus CSP, HSTS, COOP/CORP,
+  no-sniff, frame, referrer, and permissions headers.
+- ISC-755 passed: `https://urania-137-landing.pages.dev/api/me` returns HTTP 404
+  with the static “Not found — Urania 137” page, never app JSON or landing HTML.
+- ISC-763, ISC-766, ISC-767, and ISC-773 passed read-only audit: the protected
+  project remains `urania-137` with D1
+  `d57550ea-c8d3-48fc-a2ee-c6b3fc41948e`; no Bypass, D1, migration, secret,
+  cookie-domain, callback, or CORS mutation was made.
+- ISC-765 rollback receipt: before cutover, protected Pages project
+  `urania-137` owns `urania.tryambakam.space` and `urania-137.pages.dev`;
+  production deployment `ac4488b3-cbd5-42d9-9856-832ad9cb48d4` records source
+  `c9771542980038fd975bdad8c119f6baefab8d3e`. The new landing project has no
+  custom domain yet, so rollback requires no mutation at this checkpoint.
+- ISC-756–757 passed: anonymous `app.urania.tryambakam.space/` and `/api/me`
+  both return HTTP 302 to the existing Cloudflare Access application; the
+  redirect `kid` and decoded audience remain
+  `df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4`.
+- ISC-764 passed: landing deployment
+  `91e8df5a-f63b-4ae8-a37f-7b52cac52643` and protected app deployment
+  `f40f990b-8ae3-4a19-a68e-63e1e91ffcb2` both record source
+  `c34a70f0ee1d0a848abebdcff2a271860f790324`.
+- ISC-768–769 passed: authenticated Access readback shows the original app ID,
+  policy, session duration, settings, and AUD with
+  `app.urania.tryambakam.space` as destination five; Pages reports Active / SSL
+  enabled and OpenSSL reports subject and SAN exactly
+  `app.urania.tryambakam.space` from Google Trust Services WE1.
+- ISC-770–772 passed: redacted before/after Access, Pages, DNS, deployment,
+  certificate, and remediation receipts live under the ignored `.release/`
+  directory in the clean release worktree; no credentials, cookies, or session
+  metadata are recorded.
+- Release verification passed: GitHub release `v0.6.2` is published, non-draft,
+  non-prerelease, and both the tag and remote `main` resolve to
+  `c34a70f0ee1d0a848abebdcff2a271860f790324`.
+
+## Iteration 22 — Witness-Prompt Public Landing Realignment (2026-08-01)
+
+### Problem
+
+The newly public Urania landing correctly introduces the protected application,
+but its first encounter remains a conventional editorial campaign page. The
+supplied Wandor reference identifies a stronger interaction hierarchy: a
+full-viewport ambient field, immediate product promise, and one frosted prompt
+instrument that lets the visitor understand what to do before crossing the
+authentication threshold. A literal travel-app clone would violate Urania's
+voice, visual system, privacy boundary, and graph-first protected experience.
+
+### Vision
+
+The anonymous landing feels like the first membrane of the Urania instrument.
+An on-brand stellar field occupies the viewport; the headline names the real
+question; and a liquid-glass witness prompt makes the product legible in one
+encounter. The prompt, upload affordance, and entry action are declarative and
+safe on the public artifact. The existing long-form sections remain available
+below for visitors who need evidence before entering. Euphoric surprise comes
+from recognizing the familiar clarity of the reference flow without finding a
+single borrowed travel-app sentence or aesthetic.
+
+### Out of Scope
+
+- No change to the protected React application, hash router, Folio, chat, D1,
+  Cloudflare Access, or Selemene execution surfaces.
+- No production deployment, DNS change, release cut, or Access policy mutation.
+- No third-party travel footage and no externally hosted runtime media.
+- No claim that a public prompt is submitted, stored, interpreted, or uploaded.
+- No replacement of Urania's canonical typography or palette with Wandor's.
+
+### Principles
+
+- Structure may be borrowed; identity may not.
+- The landing explains the instrument before the protected threshold.
+- The prompt is an invitation to examine, never a prediction box.
+- Sacred geometry stays load-bearing and attributable to the approved visual system.
+- Public presentation contains no private application authority or implicit data capture.
+- Copy assumes capacity, preserves authorship, and protects productive ambiguity.
+
+### Constraints
+
+- Work starts from `main` at `c34a70f` in an isolated branch/worktree because
+  the active tree is on an older release branch with unrelated dirty ISA work.
+- The public landing remains statically rendered and non-hydrated.
+- Every protected-app CTA remains a declarative allowlisted absolute HTTPS anchor.
+- The landing bundle remains free of `/api/*`, D1, Access AUD, and protected app bootstrap.
+- The approved Void Black, Sacred Gold, Witness Violet, Flow Indigo, Coherence
+  Emerald, Parchment, Panchang/Satoshi/Cinzel visual grammar remains canonical.
+- Reduced-motion, keyboard, semantic, and no-eager-media guarantees remain intact.
+- External agent work routes through OmniRoute using `codex/gpt-5.3-codex-spark`;
+  any unavailable task fails open without consuming GPT-5.6 Sol subagent quota.
+
+### Risks
+
+- OmniRoute may report the explicitly requested Spark model unavailable, as a
+  prior 54-task dispatch did; work must fail open without silently changing rails.
+- A frosted prompt can imply public submission or storage when none exists.
+- The card can become generic glassmorphism and detach from the approved instrument grammar.
+- Centered content can clip on 320px screens or obscure the ambient field.
+- Editing the older active branch would omit the already-released landing boundary.
+
+### Goal
+
+Rebuild the public landing's first viewport around the supplied ambient-media
+and liquid-glass prompt hierarchy while retaining the proven split-origin
+security contract, Urania's authored long-form sections, and the complete
+Noesis visual and verbal system.
+
+### Criteria
+
+- [x] ISC-774: The implementation branch is based on `main` commit `c34a70f`.
+  - Evidence: isolated branch `codex/urania-landing-witness-prompt` reports HEAD `c34a70f0ee1d0a848abebdcff2a271860f790324`.
+- [x] ISC-775: The public landing and protected application remain separate build artifacts.
+  - Evidence: `npm run verify:ci` rebuilt `dist/app` and `dist/landing`; landing boundary Node tests passed.
+- [x] ISC-776: The landing renders exactly one `main` and one `h1`.
+  - Evidence: Vitest and Chromium metrics report `mainCount: 1`, `h1Count: 1` across all contexts.
+- [x] ISC-777: The header renders the Urania 137 / Noesis wordmark in canonical typography.
+  - Evidence: inspected `desktop-hero.png` and `mobile-320-hero.png`; the intact engraved Urania 137 mark is visible.
+- [x] ISC-778: The desktop header exposes three in-page evidence anchors.
+  - Evidence: rendered header contains Instrument, Principles, and Invitation anchors; desktop screenshot confirms placement.
+- [x] ISC-779: The header entry CTA is an absolute allowlisted protected-app anchor.
+  - Evidence: header CTA uses `appHref`; browser asserts all three CTA hrefs equal `https://app.urania.tryambakam.space/`.
+- [x] ISC-780: The hero occupies at least one small dynamic viewport height.
+  - Evidence: CSS uses `min-height: 100svh`; Chromium measured 1000px desktop and 882.8px at a 320×844 viewport.
+- [x] ISC-781: Antecedent: the first viewport visibly preserves void, gold geometry, luminous stellar depth, and engraved typography.
+  - Evidence: final desktop/mobile screenshots were visually inspected against `.assets` composition references.
+- [x] ISC-782: Anti: the supplied travel video URL never appears in source or output.
+  - Evidence: final source/output scan returned no Wandor, travel-host, MP4, or WebM reference.
+- [x] ISC-783: The hero remains readable when its field poster cannot load.
+  - Evidence: `field-poster-fallback.png` was captured with the SVG request aborted; headline and card remained visible without a broken-image glyph.
+- [x] ISC-784: A top-to-transparent contrast veil keeps header and hero copy legible.
+  - Evidence: `.landing-hero-overlay` supplies the top dark veil; desktop and mobile captures show readable chrome and copy.
+- [x] ISC-785: The hero's message and prompt instrument share one centered reading flow.
+  - Evidence: `.landing-hero-copy` is a centered grid; final viewport screenshots confirm the single vertical hierarchy.
+- [x] ISC-786: The headline names examination or authorship without promising certainty.
+  - Evidence: final headline is “See the pattern. Keep the authority.”
+- [x] ISC-787: The supporting copy describes Urania without selling AI.
+  - Evidence: focused copy assertions pass and rendered prose contains no AI-as-feature language.
+- [x] ISC-788: The witness-prompt instrument has a bounded desktop width and generous radius.
+  - Evidence: CSS caps the card at 701px with 44px radius; Chromium measured the cap at desktop, 759px, and 761px widths.
+- [x] ISC-789: The witness-prompt instrument uses translucent fill, bright border, blur, and soft internal shadow.
+  - Evidence: CSS and inspected captures confirm translucent fill, 3px bright border, 20px blur, inset line, and soft shadow.
+- [x] ISC-790: The prompt example is specific enough to demonstrate a real decision or pattern inquiry.
+  - Evidence: the card asks what pattern repeats and what concrete signal would disconfirm it.
+- [x] ISC-791: Anti: reader-facing copy contains none of the critical Noesis avoid vocabulary.
+  - Evidence: focused prose-only banned-vocabulary assertion passed; final source/output scan found no prohibited term.
+- [x] ISC-792: A hidden file input accepts images and PDF context.
+  - Evidence: the static input is visually hidden and declares `accept="image/*,.pdf"`.
+- [x] ISC-793: The visible context control declaratively activates the hidden file input.
+  - Evidence: the visible `<label>` targets `landing-witness-input`; Playwright observed the native file chooser.
+- [x] ISC-794: The context control is keyboard reachable with a visible focus indicator.
+  - Evidence: the native input remains focusable and its `:focus-visible` state outlines the adjacent visible label.
+- [x] ISC-795: The context control has an accessible name that does not imply upload completion.
+  - Evidence: accessible name is “Choose an image or PDF for context”; `aria-describedby` binds the explicit no-send note.
+- [x] ISC-796: The prompt-card entry CTA targets the protected application origin.
+  - Evidence: browser href probe resolved the prompt CTA exactly to the protected root.
+- [x] ISC-797: Every primary interactive target is at least 44 CSS pixels tall.
+  - Evidence: Chromium measured primary target heights of 44, 44.8, 53.6, and 53.6 pixels.
+- [x] ISC-798: Hover, focus, and active states use restrained tactile transitions.
+  - Evidence: CSS defines bounded color, border, translate, and 0.985-scale states with 180ms transitions.
+- [x] ISC-799: The center navigation collapses below the compact breakpoint.
+  - Evidence: at ≤760px center navigation is hidden while remaining in raw HTML; 759px/761px browser probes verify the seam.
+- [x] ISC-800: The prompt instrument fits within the viewport at 320 CSS pixels.
+  - Evidence: mobile browser measured a 288px card inside a 320px viewport.
+- [x] ISC-801: Prompt copy remains readable without horizontal overflow on mobile.
+  - Evidence: mobile document `scrollWidth` equals `viewportWidth` at 320px; inspected copy is unclipped.
+- [x] ISC-802: The existing Instrument, Principles, and Invitation evidence sections remain reachable below the hero.
+  - Evidence: all three sections are present in DOM and visible in `desktop-full.png`.
+- [x] ISC-803: All rewritten sections follow the grounded, direct, respectful-challenging Noesis voice.
+  - Evidence: copy was calibrated through the Noesis writer skill and independently audited on the exact Spark rail.
+- [x] ISC-804: The public artifact contains no vault or internal-source references.
+  - Evidence: final source and `dist/landing` scan found no `/Volumes`, vault, or brand-source path.
+- [x] ISC-805: Anti: no AI-as-feature, prediction, diagnosis, or authority-transfer claim is introduced.
+  - Evidence: focused copy tests pass; final Principles headline explicitly frames insight without overclaim.
+- [x] ISC-806: The landing makes zero application API requests before CTA activation.
+  - Evidence: browser verifier rejects any `/api/` request or request outside the local landing origin; all contexts passed.
+- [x] ISC-807: The landing bundle imports no protected application bootstrap code.
+  - Evidence: landing boundary Node tests and the 764-byte static entry bundle passed the artifact-boundary gate.
+- [x] ISC-808: The landing contains no eager video payload or `preload="auto"` media.
+  - Evidence: static markup contains no video or image element; local poster is a CSS background and focused tests pass.
+- [x] ISC-809: Reduced-motion mode disables all nonessential continuous motion.
+  - Evidence: reduced-motion Chromium context measured orbit animation duration `1e-05s` with one iteration.
+- [x] ISC-810: Static rendering produces deterministic HTML without client hydration.
+  - Evidence: Vite server-renders markup; `main.tsx` does not hydrate; no-JavaScript verification passed.
+- [x] ISC-811: Landing unit, origin, boundary, typecheck, and production build gates pass.
+  - Evidence: final `npm run verify:ci` exited 0: 94 Vitest files/787 assertions, 62 Node passes, builds, typechecks, budgets, and audit.
+- [x] ISC-812: Desktop and mobile browser screenshots show the intended hierarchy without clipping or overlap.
+  - Evidence: final desktop/mobile screenshots were inspected; header-bottom/kicker-top and horizontal-overflow assertions pass.
+- [x] ISC-813: Anti: the witness prompt is not a modal, scrim, scroll-lock, interstitial, or dismissible gate.
+  - Evidence: source test rejects those patterns; browser reports no dialog and body is not scroll-locked.
+- [x] ISC-814: Instrument, Principles, and Invitation anchors remain present in raw static HTML.
+  - Evidence: static markup assertions and JavaScript-disabled Chromium context found all three anchors/sections.
+- [x] ISC-815: Anti: no witness-prompt content is placed in a URL, request, or cross-origin handoff.
+  - Evidence: href tests reject prompt/query content; browser allows only local asset requests before direct root navigation.
+- [x] ISC-816: The complete public landing remains readable and navigable with JavaScript disabled.
+  - Evidence: `javascript-disabled.png` was inspected and its raw evidence heading remained visible.
+
+### Test Strategy
+
+| ISC range | Probe type | Check | Threshold | Tool |
+| --- | --- | --- | --- | --- |
+| 774–775 | repository | base ref and build trees | exact main base; two artifacts | git, build scripts |
+| 776–787 | semantics/copy | static markup and vocabulary | exact structure; zero prohibited phrases | Vitest, Node grep |
+| 788–801 | interaction/responsive | prompt-card contract and computed layout | 44px targets; no 320px overflow | Vitest, Playwright |
+| 802–810 | architecture/content | retained sections and public boundary | zero private authority or hydration | boundary tests, bundle scan |
+| 811 | build | landing-focused and project gates | all selected commands exit 0 | npm, TypeScript, Vite |
+| 812 | visual | desktop/mobile encounter | no clipping, overlap, or broken hierarchy | Chromium screenshots |
+| 813–816 | static encounter | hero is normal document flow and evidence remains reachable | no gate; raw HTML complete; JS optional | source scan, curl, Chromium |
+
+### Features
+
+| Feature | Description | Satisfies | Depends on | Parallelizable |
+| --- | --- | --- | --- | --- |
+| First-viewport architecture | Ambient field, contrast veil, centered promise, prompt instrument | 780–790 | approved assets + supplied plan | yes |
+| Declarative context control | Accessible file-input affordance without collection claims | 792–795 | static HTML contract | yes |
+| Protected entry contract | Retain allowlisted absolute anchors in header, prompt, invitation | 779, 796, 806–810 | existing split-host config | no |
+| Responsive visual system | Desktop/mobile prompt geometry, motion, and type | 797–801, 809, 812 | first-viewport architecture | partially |
+| Noesis copy transmutation | Rewrite hero and evidence sections through the canonical voice gates | 786–787, 790–791, 803–805 | writer calibration sources | yes |
+| Verification hardening | Update tests and run static/browser/build evidence | 774–812 | all implementation features | no |
+
+### Decisions
+
+- 2026-08-01 17:23: refined: “proceed with the whole plan” binds the reference's
+  interaction hierarchy, not its Wandor identity. Brand fonts, palette, travel
+  footage, AI pitch, and trip copy are explicitly replaced by Urania-native equivalents.
+- 2026-08-01 17:23: The public landing artifact on `main` is the target. The
+  protected console's graph-first home remains unchanged; applying this prompt
+  card inside the console would obscure its primary node interface.
+- 2026-08-01 17:23: The static landing will use a declarative `<label>` + file
+  input pattern. It may open the browser picker but will not claim that context
+  has been uploaded, parsed, or retained before authentication.
+- 2026-08-01 17:23: The existing local `.assets/` images remain composition
+  contracts. Runtime media stays the purpose-built public field poster so the
+  visual boundary test and deployment footprint remain honest.
+- 2026-08-01 17:25: FirstPrinciples/Reconstruct selected the retained-evidence
+  prompt-overlay design over both a literal Wandor clone and a hero-only
+  replacement. SystemsThinking/FindLeverage located the intervention at the
+  first viewport's goal: participation before explanation, without changing
+  the public/protected topology.
+- 2026-08-01 17:28: refined: Advisor approved the first-viewport plus retained-
+  evidence decomposition but rejected ambiguous “overlay” language. The prompt
+  is the first screen in normal document flow: no scrim, dismiss, focus trap, or
+  scroll lock. It demonstrates the protected interaction without transmitting
+  public prompt content. ISC-813–816 make the distinction executable.
+- 2026-08-01 17:30: Root-Cause-at-Ingestion checkpoint: the unwanted state
+  enters in `src/landing/LandingPage.tsx` where the first viewport is composed,
+  not in the protected app or downstream evidence sections. Fixing that source
+  composition corrects headline hierarchy, interaction legibility, and mobile
+  encounter together. The analysis proceeds display-down from the released
+  screenshot and source, and no output-side routing patch is warranted.
+- 2026-08-01 17:30: The E4 Forge-role implementation is fulfilled by the
+  user-mandated OmniRoute `codex/gpt-5.3-codex-spark` coding task in isolated
+  worktree `landing-implementation`; no GPT-5.6 Sol subagent is spawned.
+- 2026-08-01 18:08: final contract audit exposed the missing header entry CTA.
+  The CTA was restored, the 320px auto-placement defect it introduced was fixed,
+  and browser geometry now proves header/content separation at every tested width.
+- 2026-08-01 18:20: field-poster failure inspection exposed a broken-image glyph.
+  Moving the poster into the CSS background stack preserves the intended field
+  while making the authored gradient/orbit fallback visually complete.
+
+### Changelog
+
+- 2026-08-01 | conjectured: the supplied Wandor plan should replace the existing landing one-for-one
+  refuted by: Urania's public/protected split, static-rendering boundary, canonical visual system, and writer vocabulary make literal replacement structurally incorrect
+  learned: the transferable design is the encounter hierarchy—ambient field, contrast veil, prompt instrument, tactile entry—not the travel brand or video
+  criterion now: ISC-780–810 preserve the hierarchy while proving Urania identity, static safety, and protected entry
+- 2026-08-01 | conjectured: desktop plus 320px screenshots are sufficient responsive evidence
+  refuted by: the 701px card cap and 760px navigation collapse create a distinct seam between those endpoints
+  learned: explicit near-breakpoint probes catch geometry regressions that endpoint screenshots cannot
+  criterion now: ISC-788 and ISC-799 include 700/720/759/761px browser evidence
+
+### Verification
+
+- PASS: exact Spark dispatch completed two read-only planning audits, one implementation
+  draft (timed out only after producing its diff), and two final read-only audits.
+- PASS: the first final contract audit found one missing header CTA; it was restored,
+  covered by exact-href and header-overlap browser assertions, and the later targeted
+  Spark recheck timed out without a verdict. The blocker is closed by direct evidence.
+- PASS: final `npm run verify:ci` exited 0 after the last implementation change.
+- PASS: all 11 skipped Node cases are explicitly corpus/Selemene integration fixtures;
+  landing boundary, accessibility-adjacent markup, CTA, build, and browser probes have zero skips.
+- PASS: local `main`, branch HEAD, and merge-base all remain exactly `c34a70f`; divergence is `0 0`.
+- PASS: final Advisor verdict is APPROVE; its accessibility and 701/760 breakpoint
+  hardening suggestions were implemented and reverified.
+- PASS: desktop, 320px mobile, reduced-motion, JavaScript-disabled, full-page, and
+  field-poster-failure screenshots were captured and visually inspected.
+- PASS: `git diff --check` is clean and the implementation changes only four landing files.
+
+## Iteration 23 — Witness-Prompt Landing Production Deployment (2026-08-01)
+
+### Problem
+
+The witness-prompt landing is fully implemented and verified in an isolated
+branch, but the public Cloudflare Pages project still serves the prior
+`c34a70f` artifact. The user has now explicitly authorized a production push.
+Publishing an uncommitted worktree, the wrong Pages project, or a full-stack
+release that also mutates the protected app or D1 would create avoidable risk.
+
+### Vision
+
+The four-file landing change becomes an exact reviewed Git commit, passes the
+hosted production gate, lands on `main`, and is uploaded through the repository's
+static-only deployment guard to `urania-137-landing`. The immutable deployment
+URL and the public custom domain both render the new witness-prompt encounter,
+while the application origin remains Access-protected and the prior deployment
+remains an identified rollback point.
+
+### Out of Scope
+
+- No protected-app deployment, D1 migration, schema/data mutation, DNS change,
+  Access policy change, secret rotation, version bump, tag, or GitHub release.
+- No direct upload from a dirty or non-provenance-bearing worktree.
+- No alteration of the approved landing design during the deployment task.
+- No rollback unless the newly deployed landing fails its production probes.
+
+### Principles
+
+- Production state follows a clean, exact, remotely reachable source commit.
+- Mutate the smallest surface that can satisfy the requested outcome.
+- Capture the rollback target before the first production write.
+- Treat an immutable deployment URL and the custom domain as separate probes.
+- A successful CLI exit is not a successful release until the visitor journey passes.
+
+### Constraints
+
+- Deployment uses `scripts/deploy/landing.mjs`, never a repository-root Wrangler upload.
+- The selected account is `9d9d23b27f32e70ae3afb6a1aa2c0f10` and the only
+  mutable project is `urania-137-landing` on branch `main`.
+- The deploy helper must stage only `dist/landing` and `wrangler.landing.toml`.
+- The prior production deployment is captured before mutation and remains available.
+- The unrelated dirty primary worktree and `docs/architecture/` outputs are preserved.
+- Production verification is anonymous and read-only after the Pages upload.
+
+### Goal
+
+Publish the verified witness-prompt landing to the dedicated Cloudflare Pages
+production project from an exact merged `main` SHA, then prove the immutable
+deployment and public custom-domain journey without changing any protected
+application, data, DNS, Access, or secret surface.
+
+### Criteria
+
+- [x] ISC-817: The release source remains isolated from the unrelated dirty primary worktree.
+- [x] ISC-818: The candidate diff contains only the four reviewed landing files.
+- [x] ISC-819: The candidate diff passes `git diff --check`.
+- [x] ISC-820: The canonical `verify:ci` gate passes before publication.
+- [x] ISC-821: The landing changes are committed as one exact source SHA.
+- [x] ISC-822: The candidate branch is pushed to the canonical GitHub remote.
+- [x] ISC-823: The pull request diff contains no non-landing implementation change.
+- [x] ISC-824: GitHub's `Production gate` succeeds for the exact candidate SHA.
+- [x] ISC-825: The candidate is merged to `main` without unrelated content.
+- [x] ISC-826: Local deployment `main` exactly matches fetched `origin/main`.
+- [x] ISC-827: The deployment worktree is attached to `main` and fully clean.
+- [x] ISC-828: `dist/landing` is rebuilt from the exact merged source SHA.
+- [x] ISC-829: Landing boundary and deploy-helper contract tests pass at that SHA.
+- [x] ISC-830: The built landing artifact receives a deterministic SHA-256 receipt.
+- [x] ISC-831: Wrangler authentication resolves the intended Cloudflare account.
+- [x] ISC-832: Read-only project discovery resolves `urania-137-landing` exactly once.
+- [x] ISC-833: The prior production deployment ID and source SHA are captured.
+- [x] ISC-834: The prior public root returns anonymous HTTP 200 before mutation.
+- [x] ISC-835: The prior immutable deployment URL is retained as the rollback target.
+- [x] ISC-836: The guarded deployment dry-run names only the landing project and artifact.
+- [x] ISC-837: Production upload requires the exact `--confirm urania-137-landing` token.
+- [x] ISC-838: Anti: repository Functions, D1 config, and app output never enter the upload stage.
+- [x] ISC-839: Cloudflare records the exact merged source SHA on the new deployment.
+- [x] ISC-840: A local mode-0600 deployment receipt records artifact hash and immutable URL.
+- [x] ISC-841: The new deployment is Cloudflare Pages `Production` on branch `main`.
+- [x] ISC-842: The new immutable deployment URL returns anonymous HTTP 200.
+- [x] ISC-843: `https://urania.tryambakam.space/` returns the new witness-prompt document.
+- [x] ISC-844: Live HTML contains the approved title and “See the pattern” headline.
+- [x] ISC-845: Anti: the public origin exposes no application API at `/api/me`.
+- [x] ISC-846: The live CTA targets the exact Access-protected application root.
+- [x] ISC-847: The live response retains the reviewed security and privacy headers.
+- [x] ISC-848: Desktop and 320px live browser probes show no error or horizontal overflow.
+
+### Test Strategy
+
+| ISC range | Type | Check | Threshold | Tool |
+| --- | --- | --- | --- | --- |
+| 817–820 | source preflight | isolation, path set, diff, canonical gate | exact and green | Git, npm |
+| 821–829 | publication provenance | commit, remote, PR, hosted CI, merged clean tree | one exact SHA | Git, gh, npm |
+| 830–837 | Cloudflare preflight | artifact hash, account/project, before state, dry-run | exact named target | deploy helper, Wrangler |
+| 838–841 | mutation boundary | isolated upload, source SHA, receipt, production branch | one Pages mutation | deploy helper, Wrangler |
+| 842–847 | edge contract | immutable/custom URLs, copy, API boundary, CTA, headers | expected status/content | curl, source probes |
+| 848 | visual | desktop and 320px production journey | no errors/overflow | Chromium |
+
+### Features
+
+| Feature | Description | Satisfies | Depends on | Parallelizable |
+| --- | --- | --- | --- | --- |
+| Source publication | Commit, push, hosted CI, and merge the reviewed four-file delta | 817–829 | Iteration 22 verification | no |
+| Target preflight | Resolve account/project, artifact identity, and prior rollback deployment | 830–837 | clean merged source | no |
+| Guarded Pages upload | Upload only the static landing artifact and write a receipt | 838–841 | target preflight | no |
+| Production evidence | Probe immutable URL, custom domain, API boundary, CTA, headers, and layout | 842–848 | completed upload | partially |
+
+### Decisions
+
+- 2026-08-01 18:38: The user's production instruction supplies mutation authority
+  for the public landing project only. It does not authorize the full release
+  workflow's protected-app, D1, DNS, Access, secret, tag, or release mutations.
+- 2026-08-01 18:38: FirstPrinciples/Deconstruct reduced the required mutation to
+  one commit, one static artifact, one Pages project, one rollback capture, and
+  live proof. The existing guarded landing helper is preferred over raw Wrangler.
+- 2026-08-01 18:38: The prior v0.6.2 cutover used the same helper and produced a
+  clean exact-SHA receipt for deployment `91e8df5a-f63b-4ae8-a37f-7b52cac52643`.
+- 2026-08-01 18:38: E3 delegation target is two, but zero subagents are used:
+  source publication, shared branch state, and one live production target form
+  a serial critical path; the active multi-agent policy also forbids unsolicited
+  spawning. Independent evidence comes from hosted GitHub CI and live edge probes.
+- 2026-08-01 18:42: Advisor returned a conditional stop until main-trigger behavior,
+  post-merge SHA verification, content disclosure, rollback mechanics, build
+  cleanliness, cache behavior, and both Access directions were proven. The
+  workflow is dispatch-only, the Pages project has no Git provider, the hostile
+  content review passed, exact merged-main gates passed, cache-busted/custom and
+  immutable HTML matched, and cookie-less public/protected probes passed.
+- 2026-08-01 18:43: Cloudflare's current Pages rollback API is the concrete
+  compensating action: `POST /accounts/{account_id}/pages/projects/urania-137-landing/deployments/91e8df5a-f63b-4ae8-a37f-7b52cac52643/rollback`.
+  The prior clean `c34a70f` artifact and guarded redeploy path remain a second
+  recovery route; neither rollback was invoked because every production probe passed.
+- 2026-08-01 18:58: Final Advisor required two conflict rounds before approval.
+  The first closed plain-root caching, production-host scan, indexability, and
+  rollback liveness. The second used Cloudflare deployment detail to prove full
+  commit hash and clean-source metadata, then proved each CSS/JS/SVG resource's
+  MIME and a deliberate bogus-CSS 404. Final verdict: APPROVE with no required fixes.
+
+### Changelog
+
+- 2026-08-01 | conjectured: the broad `release.yml` is the safest way to publish every production change
+  refuted by: it also deploys the protected app and mutates D1, exceeding this landing-only authorization
+  learned: production safety is smallest-authorized-surface plus provenance, rollback, and live proof
+  criterion now: ISC-838 limits the upload stage and ISC-845–847 prove adjacent boundaries remain intact
+
+### Verification
+
+- PASS ISC-817–820: isolated candidate status listed only the four landing files;
+  `git diff --check` was clean and the pre-commit canonical gate passed 94 Vitest
+  files / 787 assertions, 62 applicable Node checks, builds, budgets, and audit.
+- PASS ISC-821–824: commit `80616c025ec582e6a7d41b3be6c2437fb8c363ee`
+  was pushed, PR #178 exposed exactly four files, and both push/PR Production
+  gate aggregators passed for that exact candidate.
+- PASS ISC-825–829: PR #178 merged as `f13c388467ea4d53ab12026eda206a03809d4a8e`;
+  clean local `main` matched `origin/main` at `0 0`, the main-branch hosted gate
+  passed, and a fresh post-merge `npm run verify:ci` passed before deployment.
+- PASS ISC-830–838: two exact-main landing builds produced artifact SHA-256
+  `73bd842f338ef7454947ce790ead0395fd1c5c89259cfde3f538dfd18e84acd7`;
+  Wrangler resolved the intended account/project, the prior production deployment
+  was `91e8df5a-f63b-4ae8-a37f-7b52cac52643`, and the guarded dry-run named only
+  `dist/landing`, the landing config, `main`, and the confirmed project.
+- PASS ISC-839–841: Cloudflare created production deployment
+  `ac097a29-cb29-42d4-84c0-c8570b00c0d1` on `main` with source `f13c388`;
+  `.release/landing-deployment-f13c388.json` is mode 0600 and binds the full
+  source SHA, artifact hash, project, command, timestamp, and immutable URL.
+- PASS ISC-842–844: the immutable deployment and cache-busted public domain both
+  returned HTTP 200 with byte-identical HTML containing the approved title,
+  headline, witness prompt, retained sections, and three protected-root CTAs.
+- PASS ISC-845–847: anonymous public `/api/me` returned 404 with `no-store` and no
+  app JSON; cookie-less protected `/` returned the expected Cloudflare Access 302;
+  CSP, HSTS, frame, content-type, referrer, permissions, opener, and resource headers persisted.
+- PASS ISC-848: the browser spoke loaded production with four same-origin 200
+  requests, zero console/failed-network entries, and visually inspected screenshots.
+  Desktop width was 1920/1920; mobile was 320/320 with a 288px card at x=16–304,
+  hidden compact nav, and 65px of header-to-kicker clearance.
+- PASS artifact identity: local and live index, CSS, JavaScript, poster, and favicon
+  SHA-256 values matched byte-for-byte.
+- PASS plain-root/cache: two consecutive no-query custom-domain requests returned
+  byte-identical current HTML with `max-age=0, must-revalidate`, `CF-Cache-Status: DYNAMIC`,
+  and no `Age` header. The custom domain has no `X-Robots-Tag`; managed robots
+  declares `search=yes` and `Allow: /`, while AI-training crawlers remain denied.
+- PASS deployment detail: Cloudflare API reports deployment
+  `ac097a29-cb29-42d4-84c0-c8570b00c0d1`, environment `production`, project
+  `urania-137-landing`, alias `https://urania.tryambakam.space`, deploy stage
+  `success`, branch `main`, full commit hash `f13c388467ea4d53ab12026eda206a03809d4a8e`,
+  and `commit_dirty: false`.
+- PASS asset MIME/fallback: root, CSS, JS, favicon, and field poster returned 200
+  with `text/html`, `text/css`, `application/javascript`, and `image/svg+xml` as
+  appropriate; `/__nope.css` returned 404 `text/html`, ruling out fallback-masked assets.
+- PASS positive content: served plain HTML contains the complete approved headline,
+  witness prompt label, and the prompt's opening question.
+- PASS final Advisor verdict: APPROVE; no objectively missing critical production criterion.
