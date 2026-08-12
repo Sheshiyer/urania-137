@@ -1,0 +1,53 @@
+{
+  "tasks": [
+    {
+      "id": "D-001",
+      "title": "Update SERVICES.md with R2 + Vectorize + Workers AI",
+      "file": "docs/architecture/SERVICES.md",
+      "combo": "te-swarm-s",
+      "priority": "medium",
+      "mode": "parallel",
+      "done": false
+    },
+    {
+      "id": "D-002",
+      "title": "Update _PROJECT-STATUS.md with corpus browser status",
+      "file": "_PROJECT-STATUS.md",
+      "combo": "te-swarm-s",
+      "priority": "medium",
+      "mode": "parallel",
+      "done": false
+    },
+    {
+      "id": "D-003",
+      "title": "Update README.md project structure section",
+      "file": "README.md",
+      "combo": "te-swarm-s",
+      "priority": "medium",
+      "mode": "parallel",
+      "done": false
+    },
+    {
+      "id": "I-001",
+      "title": "Write corpus-to-R2 ingestion script",
+      "file": "scripts/readings/upload-corpus-to-r2.mjs",
+      "combo": "te-dispatch-paid",
+      "priority": "high",
+      "mode": "single",
+      "done": false,
+      "blocked": true,
+      "blocker": "requires owner corpus data export from Selemene PostgreSQL"
+    },
+    {
+      "id": "I-002",
+      "title": "Write catalogue-to-D1 ingestion script",
+      "file": "scripts/readings/upload-catalogue-to-d1.mjs",
+      "combo": "te-dispatch-paid",
+      "priority": "high",
+      "mode": "single",
+      "done": false,
+      "blocked": true,
+      "blocker": "requires corpus metadata dump from Selemene PostgreSQL"
+    }
+  ]
+}

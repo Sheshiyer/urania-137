@@ -17,6 +17,13 @@
 
 > **Urania 137** is the **online entry** to Tryambakam Noesis — a **multi-page stellar console** over the Selemene consciousness engines. You land on a galactic overview of seven surfaces; clicking a node opens its own page, where that node re-centres as a golden astrolabe and its sub-nodes orbit it. The graph is the interface at every depth.
 
+> **Admin Data Browser** (T-079 fast-follow): an `#/admin-data` route exposes an
+> owner-scoped browser for the 723 corpus catalogue (D1 `catalogue_readings`),
+> R2 reading bodies (`corpus/readings/{sha256}/reading.html`), and Vectorize
+> pattern-memory search (`GET /api/patterns/search`). This is the admin's lens on
+> synced historical readings; it runs behind the same CF Access gate. See
+> [`docs/corpus-browser-2026-08-12-plan.md`](./docs/corpus-browser-2026-08-12-plan.md).
+
 ### Part of an integrated product
 
 | Surface | Role | Where |
@@ -242,13 +249,17 @@ urania-137
 │   ├── integrated-product-map.md
 │   └── superpowers/                       # specs + swarm plans
 ├── functions/
-│   ├── api/[[path]].ts                    # /api/* router (Pages Functions)
-│   └── lib/                               # cf-access · dev-identity · engine-proxy · db
-├── migrations/0001_init.sql               # D1 schema: users + readings
+│   ├── api/[[path].ts                    # /api/* router (Pages Functions)
+│   └── lib/                               # cf-access · dev-identity · engine-proxy · db · env
+├── migrations/                          # D1 schema migrations
+│   ├── 0001_init.sql                     # users + readings (Phase 3)
+│   └── 0009_catalogue_readings.sql       # 723 corpus catalogue (T-079)
 ├── scripts/verify/                        # runnable gates (taxonomy, daily, V5, phase exits)
+├── scripts/readings/                      # corpus ingestion utilities (pending 723 data)
 ├── src/
-│   ├── App.tsx                            # Router: TopNav + HomePage / NodePage
-│   ├── pages/                              # Graph, Folio, Settings, dyad reading views
+│   ├── App.tsx                            # Router: TopNav + HomePage / NodePage / AdminDataBrowserPage
+│   ├── pages/                             # Graph, Folio, Settings, dyad reading, Admin Data Browser
+│   │   └── AdminDataBrowserPage.tsx       # Corpus browser + reading viewer + pattern search
 │   ├── components/
 │   │   ├── ConstellationGraph.tsx         # Shared renderer (variant: home | node)
 │   │   ├── ui/InstrumentDialog.tsx         # Shared focus-managed overlay
@@ -263,7 +274,7 @@ urania-137
 │   ├── lib/    (selemeneApi.ts, folioStore.ts, api/contract.ts, graphUtils.ts)
 │   ├── styles/tokens.ts                   # Design tokens (single source of truth)
 │   └── types/index.ts
-├── wrangler.toml                          # Pages + Functions + D1 config
+├── wrangler.toml                          # Pages + Functions + D1 + R2 + Vectorize + AI config
 ├── ISA.md                                 # Ideal State Artifact (goals + verification)
 └── vite.config.ts                         # build-only (no dev server, no proxy)
 ```

@@ -51,6 +51,7 @@ as static assets (`npm run build` → `dist/`) and the `/api/*` surface ships as
 | `/api/me` · `/api/logout` | identity surface (Access JWT verify → `users` upsert; logout → Access) |
 | `/api/selemene/*` | engine proxy — injects the shared `X-API-Key` server-side (`functions/lib/engine-proxy.ts`) |
 | `/api/folio/*` | per-user readings CRUD + import over the D1 `DB` binding |
+| `/api/corpus` · `/api/corpus/:id` · `/api/patterns/search` | 723 corpus catalogue (D1) + R2 reading bodies + Vectorize pattern search (T-079, ISC-#133/137/139/132/138) |
 
 Local development is the same topology: `npm run dev` = build + `wrangler pages
 dev dist` (SPA + Functions + local D1). **Vercel is fully delinked** — no
@@ -59,6 +60,13 @@ reference outside historical records (gate V7, `scripts/verify/delink-check.mjs`
 The remote one-time steps (wrangler login, D1 provisioning, secrets, first
 deploy) are pending the owner's Cloudflare account — see the README deploy
 runbook.
+
+The `wrangler.toml` also configures R2 (`READINGS_BUCKET`), Vectorize
+(`PATTERN_INDEX`), and Workers AI (`AI`) bindings for the admin corpus data
+browser (T-079): the 723 historical readings live as HTML bodies in R2, pattern
+memory in Vectorize, and metadata in D1 `catalogue_readings` (migration 0009).
+All corpus routes are owner-scoped and fail-closed behind the same CF Access
+trust boundary as `/api/folio`.
 
 **Tracked fast-follow:** `birth_profiles` (per-user saved birth profiles) is
 recorded, not omitted — deliberately out of the readings slice; it lands as its

@@ -1,6 +1,6 @@
 # Urania 137 — Project Status
 
-**Updated:** 2026-08-01
+**Updated:** 2026-08-12
 
 ## Launch Decision
 
@@ -29,14 +29,17 @@ These states are cumulative only with evidence; none is inferred from another.
 | D1 recovery/isolation | blocked | Preview binding/schema and restore drill not proven |
 | Security/privacy/observability | blocked | Request limits, CSRF, export/delete, alert delivery, and production attestations incomplete |
 | Broad launch | not operationally ready | Launch-critical ISA criteria remain pending/deferred |
+| Corpus admin browser (T-079 fast-follow) | implemented, verified locally | R2/VVectorize/AI bindings in wrangler.toml; migration 0009 applied locally; 3 API routes + AdminDataBrowserPage UI tested (1153 tests pass); ISC-#133/137/139/132/138 |
 
 ## Active Work
 
-- Branch: `codex/urania-production-readiness`
+- Branch: `main` (T-079 fast-follow committed, `9ad4f0b`)
 - Plan: `docs/plans/2026-08-01-urania-production-readiness.md`
 - Design: `docs/plans/2026-08-01-urania-production-readiness-design.md`
 - Baseline: `docs/operations/production-baseline.md`
 - Rollback matrix: `docs/operations/rollback-matrix.md`
+- Corpus browser plan: `docs/corpus-browser-2026-08-12-plan.md`
+- Swarm plan: `.swarm/plan.yaml`
 
 ## Next Gate
 
