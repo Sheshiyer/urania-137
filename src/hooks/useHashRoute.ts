@@ -15,6 +15,7 @@ export type Route =
   | { view: 'readings'; readingId: string | null }
   | { view: 'relationship-reading'; relationshipId: string; generationId: string }
   | { view: 'settings' }
+  | { view: 'admin-data'; section: 'corpus' | 'patterns' | null }
 
 export type ConversationReturnPath =
   | '/'
@@ -43,6 +44,20 @@ export function parseHash(hash = typeof window !== 'undefined' ? window.location
   // The Threshold (W2-A): pre-graph onboarding scene — a third top-level view.
   if (hash === '#/threshold') return { view: 'threshold' }
   if (hash === '#/settings') return { view: 'settings' }
+
+  // Admin Data Browser (T-079 fast-follow): #/admin-data, #/admin-data/corpus,
+  // #/admin-data/patterns. All gated by CF Access (T-008); the SPA never renders
+  // this view without an authenticated identity.
+  if (hash === '#/admin-data' || hash === '#/admin-data/') return { view: 'admin-data', section: null }
+  const adminData = hash.match(/^#\/admin-data\/([^/?#]+)/)
+  if (adminData) {
+    const section = decodeURIComponent(adminData[1])
+    if (section === 'corpus' || section === 'patterns') {
+      return { view: 'admin-data', section }
+    }
+    return { view: 'admin-data', section: null }
+  }
+
   const chat = hash.match(
     /^#\/chat(?:\/([^/?#]+)\/([^/?#]+))?(?:\?([^#]*))?\/?$/,
   )
@@ -121,6 +136,9 @@ export type AppPath =
   | '/readings'
   | `/readings/${string}`
   | `/relationships/${string}/readings/${string}`
+  | '/admin-data'
+  | '/admin-data/corpus'
+  | '/admin-data/patterns'
   | `/node/${string}`
   | `/node/${string}/${string}`
 

@@ -1,4 +1,4 @@
-import type { D1Database } from '@cloudflare/workers-types'
+import type { D1Database, R2Bucket, VectorizeIndex, Ai } from '@cloudflare/workers-types'
 
 /**
  * Typed bindings for the Pages Functions (T-005). The four config keys are the
@@ -33,4 +33,16 @@ export interface Env {
    * operator lens in the UI but grants no API authority.
    */
   OPERATOR_EMAILS?: string
+  /**
+   * R2 bucket holding 723 corpus HTML renders (ISC-#139).
+   * Keys: corpus/readings/{sha256}/reading.html
+   */
+  READINGS_BUCKET?: R2Bucket
+  /**
+   * Vectorize index with 723 corpus pattern embeddings (ISC-#132/#138).
+   * 1536-dimension, cosine metric, bge-small-en-v1.5, top_k=10.
+   */
+  PATTERN_INDEX?: VectorizeIndex
+  /** Workers AI binding for embedding generation (@cf/baai/bge-small-en-v1.5). */
+  AI?: Ai
 }

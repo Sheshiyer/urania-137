@@ -2,6 +2,7 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   AlertTriangle,
   Copy,
+  Database,
   Link2,
   LockKeyhole,
   LogOut,
@@ -291,6 +292,21 @@ export function SettingsPage({ me }: { me: User | null }) {
                   <p className="mt-1 text-xs text-parchment">Active consent only</p>
                 </div>
               </div>
+
+              {me && (
+                <div className="mt-4 border-t border-gold/10 pt-4">
+                  <a
+                    href="#/admin-data"
+                    className="inline-flex items-center gap-2 font-display text-xs uppercase tracking-[0.16em] text-gold transition-colors hover:text-parchment"
+                  >
+                    <Database className="h-3.5 w-3.5" aria-hidden="true" />
+                    Admin Data Browser · Corpus & Pattern Archive
+                  </a>
+                  <p className="mt-1 text-xs text-secondary">
+                    Browse the 723 corpus catalogue (R2 bodies) and pattern memory (Vectorize).
+                  </p>
+                </div>
+              )}
             </div>
           </section>
 

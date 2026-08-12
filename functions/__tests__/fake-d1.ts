@@ -9,6 +9,7 @@
  */
 import type { ReadingRow, UserRow } from '../lib/db'
 import type { ReadingInterpretationRow } from '../lib/interpretations/db'
+import type { CorpusReading } from '../api/[[path]]'
 
 const ok = (changes: number) => ({ success: true, meta: { changes, duration: 0, last_row_id: 0, served_by: 'fake' } })
 
@@ -16,6 +17,8 @@ export function makeFakeD1() {
   const users = new Map<string, UserRow>()
   const readings = new Map<string, ReadingRow>()
   const interpretations = new Map<string, ReadingInterpretationRow>()
+  const catalogueReadings = new Map<string, CorpusReading & { user_id: string; is_synastry: number }>()
+  const r2Objects = new Map<string, { key: string; body: string }>()
 
   function run(sql: string, args: unknown[]) {
     if (sql.startsWith('INSERT INTO reading_interpretations')) {
@@ -117,6 +120,31 @@ export function makeFakeD1() {
       const row = interpretations.get(id)
       return row && row.owner_user_id === ownerUserId ? { ...row } : null
     }
+    // catalogue_readings: SELECT single row by sha256 + user_id (GET /api/corpus/:id)
+    if (sql.startsWith('SELECT id, sha256') && sql.includes('FROM catalogue_readings') && sql.includes('WHERE user_id = ?1 AND sha256 = ?2')) {
+      const [userId, sha256] = args as [string, string]
+      for (const [, row] of catalogueReadings) {
+        if (row.user_id === userId && row.sha256 === sha256) {
+          return { ...row }
+        }
+      }
+      return null
+    }
+    // catalogue_readings: SELECT COUNT(*) for total count
+    if (sql.startsWith('SELECT COUNT(*) as total FROM catalogue_readings')) {
+      const userId = args[0] as string
+      let rows = [...catalogueReadings.values()].filter((r) => r.user_id === userId)
+      const search = args.length > 1 ? (args[1] as string) : undefined
+      const mode = args.length > 2 ? (args[2] as string) : undefined
+      if (search !== undefined && search.trim().length > 0) {
+        const needle = search.trim().toLowerCase()
+        rows = rows.filter((r) => r.title.toLowerCase().includes(needle))
+      }
+      if (mode !== undefined && mode.trim().length > 0) {
+        rows = rows.filter((r) => r.mode === mode.trim())
+      }
+      return { total: rows.length }
+    }
     throw new Error(`fake D1: unsupported first() SQL: ${sql}`)
   }
 
@@ -147,6 +175,23 @@ export function makeFakeD1() {
         .sort((a, b) => b.created_at - a.created_at)
         .map((r) => ({ ...r }))
     }
+    // catalogue_readings: SELECT list with optional filters (GET /api/corpus)
+    if (sql.includes('FROM catalogue_readings') && sql.includes('ORDER BY created_at DESC')) {
+      const userId = args[0] as string
+      const search = args.length > 1 ? (args[1] as string) : undefined
+      const mode = args.length > 2 ? (args[2] as string) : undefined
+      let rows = [...catalogueReadings.values()].filter((r) => r.user_id === userId)
+      if (search !== undefined && search.trim().length > 0) {
+        const needle = `%${search.trim()}%`.toLowerCase()
+        rows = rows.filter((r) => r.title.toLowerCase().includes(needle.replace(/%/g, '')))
+      }
+      if (mode !== undefined && mode.trim().length > 0) {
+        rows = rows.filter((r) => r.mode === mode.trim())
+      }
+      return rows
+        .sort((a, b) => b.created_at - a.created_at)
+        .map((r) => ({ ...r }))
+    }
     throw new Error(`fake D1: unsupported all() SQL: ${sql}`)
   }
 
@@ -170,7 +215,7 @@ export function makeFakeD1() {
     },
   }
 
-  return { db, users, readings, interpretations }
+  return { db, users, readings, interpretations, catalogueReadings, r2Objects }
 }
 
 export type FakeD1 = ReturnType<typeof makeFakeD1>

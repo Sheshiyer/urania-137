@@ -162,7 +162,7 @@ Produce a clear architectural map of the full Instagram reference and a phased i
 <!-- arch-assets:start -->
 
 _Auto-maintained by `ArchitectureAssetsSync.hook.ts` on release events._  
-_Last refreshed: 2026-08-01T11:49:40.125Z_
+_Last refreshed: 2026-08-12T05:04:56.162Z_
 
 | Asset | Status | How it's generated |
 |---|---|---|
@@ -1089,10 +1089,20 @@ preflight and pilot gates pass.
 - A full import can make historical placeholders appear current or verified.
 - An artifact upload without checksum and deletion lineage can orphan private data.
 - A direct local role update can disappear on the next Cloudflare login.
-- An invitation token leak can bind the wrong account without recipient matching.
-- Cross-system identity drift can confuse a CF subject with a Selemene UUID.
-- A new relationship route can accidentally weaken existing owner-scoped subject checks.
-- Treating Vectorize as archive storage can make deletion and provenance unverifiable.
+  - An invitation token leak can bind the wrong account without recipient matching.
+  - Cross-system identity drift can confuse a CF subject with a Selemene UUID.
+  - A new relationship route can accidentally weaken existing owner-scoped subject checks.
+  - Treating Vectorize as archive storage can make deletion and provenance unverifiable.
+
+- 2026-08-12: **T-079 corpus browser UI activated (post-ISA fast-follow).** The corpus
+  browser UI (ISC-#133, ISC-#137) and pattern memory store (ISC-#132/#138) were
+  explicitly deferred at T-079 production-readiness. Plan `.swarm/plan.yaml` (id:
+  `r2-vectorize-corpus-ui`) is activated to: provision R2 + Vectorize resources, add
+  wrangler bindings (READINGS_BUCKET, PATTERN_INDEX), create D1 `catalogue_readings`
+  migration 0009, ingest the 723 corpus into R2 + D1, add API routes
+  (`/api/corpus`, `/api/corpus/:id`, `/api/patterns/search`), build Admin Data Browser
+  UI surfaces, and verify auth scoping (T-008). See `docs/corpus-browser-2026-08-12-plan.md`.
+
 
 ### Verification
 

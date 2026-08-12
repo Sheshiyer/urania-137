@@ -823,5 +823,237 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
     return sse.response
   }
 
+  // -----------------------------------------------------------------------
+  // T-079 fast-follow: Corpus admin data browser API routes.
+  // Auth middleware (above) has already verified the CF Access JWT.
+  // -----------------------------------------------------------------------
+
+  // GET /api/corpus — owner-scoped catalogue list with optional ?search= / ?mode=.
+  if (pathname === '/api/corpus' && method === 'GET') {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    const query = new URL(ctx.request.url).searchParams
+    return getCorpusCatalog(ctx.env, u.user.id, query)
+  }
+
+  // GET /api/corpus/:sha256 — single reading metadata + R2 HTML body.
+  const corpusId = /^\/api\/corpus\/([^/]+)$/.exec(pathname)?.[1]
+  if (corpusId && method === 'GET') {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    let sha256: string
+    try {
+      sha256 = decodeURIComponent(corpusId)
+    } catch {
+      return badRequest('malformed corpus id')
+    }
+    return getCorpusDetail(ctx.env, u.user.id, sha256)
+  }
+
+  // GET /api/patterns/search?q=<query> — Vectorize similarity search.
+  if (pathname === '/api/patterns/search' && method === 'GET') {
+    const u = await requireUser(ctx.env, auth.claims)
+    if (!u.ok) return u.response
+    const searchParams = new URL(ctx.request.url).searchParams
+    const query = searchParams.get('q')
+    if (!query || query.trim().length === 0) {
+      return badRequest('GET /api/patterns/search requires ?q=<query>')
+    }
+    return searchPatterns(ctx.env, u.user.id, query.trim(), u.user.email)
+  }
+
   return json({ error: 'NOT_FOUND', message: `no route for ${method} ${pathname}` } satisfies ApiError, 404)
+}
+
+// ---------------------------------------------------------------------------
+// T-079 fast-follow: Corpus admin data browser API (ISC-#133, ISC-#137,
+// ISC-#139, ISC-#132/#138). Three routes for the 723 corpus:
+//   GET /api/corpus         — catalogue list (owner-scoped, D1)
+//   GET /api/corpus/:id     — single reading metadata + R2 HTML body
+//   GET /api/patterns/search — Vectorize similarity search
+// All three are behind the same authenticate() middleware above (T-008).
+// ---------------------------------------------------------------------------
+
+/** Shape of a single catalogue_readings row as returned by GET /api/corpus. */
+export interface CorpusReading {
+  id: string
+  sha256: string
+  title: string
+  mode: string
+  source_type: string
+  created_at: number
+  is_synastry: boolean
+  canonical_uri: string | null
+}
+
+/** GET /api/corpus — owner-scoped catalogue list with optional filtering. */
+export interface CorpusListResponse {
+  readings: CorpusReading[]
+  total: number
+}
+
+/** GET /api/corpus/:id — metadata + R2 HTML body. */
+export interface CorpusDetailResponse {
+  reading: CorpusReading
+  content_html: string
+}
+
+/** GET /api/patterns/search — Vectorize similarity results. */
+export interface PatternSearchResult {
+  id: string
+  score: number
+  metadata: Record<string, unknown>
+}
+
+export interface PatternSearchResponse {
+  results: PatternSearchResult[]
+  query_embedding: boolean
+}
+
+/**
+ * GET /api/corpus — list the caller's corpus readings from D1 `catalogue_readings`.
+ * Supports ?search=<string> (substring on title) and ?mode=<Solo|Synastry>.
+ * Ownership is enforced server-side: only rows WHERE user_id = caller's id.
+ */
+export async function getCorpusCatalog(
+  env: Env,
+  userId: string,
+  query: URLSearchParams,
+): Promise<Response> {
+  const search = query.get('search')
+  const mode = query.get('mode')
+  // Build a parameterized query with optional filters. D1 supports ?1, ?2, etc.
+  const conditions: string[] = ['user_id = ?1']
+  const params: unknown[] = [userId]
+  if (search !== null && search.trim().length > 0) {
+    conditions.push(`title LIKE ?${params.length + 1}`)
+    params.push(`%${search.trim()}%`)
+  }
+  if (mode !== null && mode.trim().length > 0) {
+    conditions.push(`mode = ?${params.length + 1}`)
+    params.push(mode.trim())
+  }
+  const whereClause = conditions.join(' AND ')
+
+  const { results: rows } = await env.DB.prepare(
+    `SELECT id, sha256, title, mode, source_type, created_at, is_synastry, canonical_uri
+     FROM catalogue_readings
+     WHERE ${whereClause}
+     ORDER BY created_at DESC`,
+  )
+    .bind(...params)
+    .all<(CorpusReading & { is_synastry: number })>()
+
+  const readings: CorpusReading[] = rows.map((r) => ({
+    id: r.id,
+    sha256: r.sha256,
+    title: r.title,
+    mode: r.mode,
+    source_type: r.source_type,
+    created_at: r.created_at,
+    is_synastry: Boolean(r.is_synastry),
+    canonical_uri: r.canonical_uri ?? null,
+  }))
+
+  const countResult = await env.DB.prepare(
+    `SELECT COUNT(*) as total FROM catalogue_readings WHERE ${whereClause}`,
+  )
+    .bind(...params)
+    .first<{ total: number }>()
+
+  return json({ readings, total: countResult?.total ?? readings.length } satisfies CorpusListResponse)
+}
+
+/**
+ * GET /api/corpus/:id — fetch a single reading by SHA-256.
+ * Metadata from D1 `catalogue_readings` (owner-scoped), HTML body from R2.
+ * 404 for unknown sha256, missing R2 object, or cross-user lookup.
+ */
+export async function getCorpusDetail(
+  env: Env,
+  userId: string,
+  sha256: string,
+): Promise<Response> {
+  // D1 lookup — owner-scoped, so we never leak existence to another user.
+  const row = await env.DB.prepare(
+    `SELECT id, sha256, title, mode, source_type, created_at, is_synastry, canonical_uri
+     FROM catalogue_readings
+     WHERE user_id = ?1 AND sha256 = ?2`,
+  )
+    .bind(userId, sha256)
+    .first<CorpusReading & { is_synastry: number }>()
+
+  if (!row) {
+    return notFound('reading not found')
+  }
+
+  const reading: CorpusReading = {
+    id: row.id,
+    sha256: row.sha256,
+    title: row.title,
+    mode: row.mode,
+    source_type: row.source_type,
+    created_at: row.created_at,
+    is_synastry: Boolean(row.is_synastry),
+    canonical_uri: row.canonical_uri ?? null,
+  }
+
+  // R2 fetch — key pattern: corpus/readings/{sha256}/reading.html
+  const r2Key = `corpus/readings/${sha256}/reading.html`
+  const object = await env.READINGS_BUCKET?.get(r2Key)
+  if (!object) {
+    // Fail with 404 — the metadata exists but the R2 body is missing.
+    return notFound(`R2 object not found at ${r2Key}`)
+  }
+
+  const content_html = await object.text()
+
+  return json({ reading, content_html } satisfies CorpusDetailResponse)
+}
+
+/**
+ * GET /api/patterns/search?q=<query> — Vectorize similarity search on the
+ * 723 corpus pattern embeddings. Generates an embedding via Workers AI
+ * @cf/baai/bge-small-en-v1.5 (1536-dim), queries PATTERN_INDEX with topK=10,
+ * and returns owner-filtered results only.
+ *
+ * Cost guard: topK is hard-capped at 10 regardless of client request.
+ */
+export async function searchPatterns(
+  env: Env,
+  userId: string,
+  query: string,
+  ownerEmail: string,
+): Promise<Response> {
+  if (!env.PATTERN_INDEX) {
+    return json({ error: 'CONFIG_ERROR', message: 'Vectorize index not bound' } satisfies ApiError, 500)
+  }
+
+  // Generate embedding via Workers AI.
+  const aiResp = await env.AI?.run('@cf/baai/bge-small-en-v1.5', {
+    text: [query],
+  })
+
+  if (!aiResp?.data?.length || !aiResp.data[0]?.embedding) {
+    return json({ error: 'EMBEDDING_FAILED', message: 'Could not generate query embedding' } satisfies ApiError, 502)
+  }
+
+  const embedding: number[] = aiResp.data[0].embedding
+
+  // Query Vectorize with hard-capped topK.
+  const vectorResults = await env.PATTERN_INDEX.query(embedding, {
+    topK: 10,
+    // Filter to only the owner's patterns via metadata.
+    filter: { owner_email: { $eq: ownerEmail } },
+    includeMetadata: true,
+    includeVector: false,
+  })
+
+  const results: PatternSearchResult[] = (vectorResults.matches ?? []).map((match) => ({
+    id: match.id,
+    score: match.score,
+    metadata: (match.metadata ?? {}) as Record<string, unknown>,
+  }))
+
+  return json({ results, query_embedding: true } satisfies PatternSearchResponse)
 }

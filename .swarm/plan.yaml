@@ -1,0 +1,504 @@
+version: 1
+
+id: r2-vectorize-corpus-ui
+title: "Admin Data Browser + R2/Vectorize/723 Corpus Integration"
+description: >
+  Expose admin-owned data synced to R2 (full reading HTML), Vectorize
+  (pattern embeddings / search), and the 723 corpus catalog in the Urania UI.
+  Currently the reading library only shows D1 `readings` table entries; R2 and
+  Vectorize have no wrangler bindings, no API routes, no D1 `catalogue_readings`
+  table, and no UI surfaces.
+
+tier: E4
+owner: "swarm-architect"
+created_at: "2026-08-12T10:35:00Z"
+status: planned
+is_final: true
+target_branch: "codex/r2-vectorize-corpus-ui"
+isa_reference: "ISA.md"
+isa_references:
+  - "#133: Corpus browser UI shows reading list (deferred post-ISA)"
+  - "#137: Corpus browser UI renders R2 body in XSS-safe iframe"
+  - "#132: Pattern memory store backed by Vectorize"
+  - "#138: Pattern memory store backed by Vectorize (canonical)"
+  - "#139: 723 readings with full provenance + R2 body"
+  - "#140: 5040 Synastry relationships in R2 + Vectorize"
+  - "ISC-333: R2 body retrieval for single reading"
+  - "ISC-334: Vectorize pattern memory retrieval for search"
+
+context_bundle:
+  discovery_summary: |
+    - wrangler.toml has ONLY a D1 binding (DB). No R2 or Vectorize bindings.
+    - Existing API pattern: single catch-all [[path]].ts with authenticate() middleware
+      (T-008/T-019). All routes are behind requireUser() scoping.
+    - Env interface in functions/lib/env.ts needs R2/READINGS_BUCKET + RA2Vectorize/PATTERN_INDEX.
+    - R2 buckets on Cloudflare: brandbooks, moltbot-data, nova-mail-*, plexus-updates, teamforge-artifacts.
+      NONE match the 723 corpus. R2 bucket must be CREATED.
+    - Vectorize indexes on Cloudflare: cambium-cortex, nova-mail-*. NONE match
+      the 723 corpus pattern search. Vectorize index must be CREATED.
+    - D1 schema (migrations 0001-0008): users, readings, subjects, relationships, chat_sessions, etc.
+      NO `catalogue_readings` table exists. New migration 0009 needed.
+    - Archive import (scripts/readings/import-archive.mjs) uses psql --apply against
+      an external PostgreSQL DB, NOT D1. It creates archived_readings, artifacts tables there.
+    - The corpus HTML renders (723 readings) live in an external Selemene Engine
+      PostgreSQL DB, not yet synced to R2. The R2 bucket needs population.
+  isa_key_findings:
+    - "2024-12-30: 723 corpus archived into R2 with provenance metadata, Vectorize index #138 populated"
+    - "2026-08-01: T-079 production-readiness: corpus browser UI deferred to fast-follow — post-ISA"
+    - "T-079 explicitly notes corpus browser UI is deferred; this plan activates it"
+  key_constraints:
+    - "T-008: dev-identity guard is fail-closed; corpus routes must respect Access auth"
+    - "T-076: CF Access session cookie owns auth; no client-side token storage"
+    - "wrangler.toml must not commit secrets; R2 buckets need dev/prod naming"
+    - "All corpus data is owner-scoped (sheshnirayan.iyer@gmail.com only)"
+  unknowns_resolved:
+    - "R2 bucket name for 723 corpus: MUST be created — named 'urania-137-corpus'"
+    - "Vectorize index name: MUST be created — named 'urania-137-corpus-index'"
+    - "R2 key pattern: corpus/readings/{sha256}/reading.html (from archive-import.mjs artifact_key)"
+    - "Vectorize dims: 1536 (bge-small-en-v1.5 per ISA line 5351)"
+    - "D1 catalogue_readings table: needs migration 0009"
+
+waves:
+  - name: "Resource Provisioning + Bindings"
+    phase: foundation
+    description: "Create R2 bucket + Vectorize index on Cloudflare, add wrangler bindings, create D1 migration for catalogue_readings."
+    exit_criteria:
+      - "R2 bucket 'urania-137-corpus' exists"
+      - "Vectorize index 'urania-137-corpus-index' exists with 1536 dims"
+      - "wrangler.toml has [[r2_buckets]] and [[vectorize]] sections"
+      - "functions/lib/env.ts includes READINGS_BUCKET + PATTERN_INDEX"
+      - "migrations/0009_catalogue_readings.sql exists and applies locally"
+    swarms:
+      - id: provision-cf-resources
+        title: "Create R2 bucket + Vectorize index"
+        description: "Provision Cloudflare R2 bucket and Vectorize index for the 723 corpus."
+        tasks:
+          - "wrangler r2 bucket create urania-137-corpus"
+          - "wrangler vectorize create urania-137-corpus-index --dimensions=1536 --metric=cosine"
+          - "Verify both resources appear in wrangler r2 bucket list / wrangler vectorize list"
+          - "Record resource names in .swarm/r2-vectorize-resources.md"
+        dependencies: ["none"]
+        worktree: false
+        constraints:
+          - "Read-only verification after creation"
+          - "Bucket/index names must match plan"
+        worker_bootstrap_packet:
+          - "npm ci"
+          - "wrangler login (already configured)"
+        owner: te-fast
+        assignee: "orchestrator"
+        issues:
+          - title: "Provision R2 bucket + Vectorize index for 723 corpus"
+            template: infra
+
+      - id: wrangler-bindings
+        title: "Add R2 + Vectorize bindings to wrangler.toml"
+        description: "Wire wrangler.toml with [[r2_buckets]] and [[vectorize]] sections."
+        tasks:
+          - "Add [[r2_buckets]] with binding = READINGS_BUCKET, bucket_name = urania-137-corpus"
+          - "Add [[vectorize]] with binding = PATTERN_INDEX, index_name = urania-137-corpus-index, query_options.top_k = 10"
+          - "Verify wrangler pages dev starts without binding errors"
+        dependencies: [provision-cf-resources]
+        worktree: true
+        constraints:
+          - "No secrets in wrangler.toml"
+          - "Binding names must be uppercase: READINGS_BUCKET, PATTERN_INDEX"
+        worker_bootstrap_packet:
+          - "git checkout -b feature/bindings-from-plan"
+          - "npm ci"
+          - "cp .dev.vars.example .dev.vars"
+        owner: te-build
+        assignee: "orchestrator"
+        issues:
+          - title: "Add R2 + Vectorize bindings to wrangler.toml"
+            template: config
+
+      - id: d1-catalogue-migration
+        title: "Create D1 migration 0009 for catalogue_readings"
+        description: "Add catalogue_readings table to D1 schema for the 723 corpus metadata."
+        tasks:
+          - "Create migrations/0009_catalogue_readings.sql with: id, user_id, sha256, title, mode, source_type, created_at, is_synastry, canonical_uri, r2_key"
+          - "Add FK to users(id) ON DELETE CASCADE"
+          - "Add index: idx_catalogue_readings_owner_sha (user_id, sha256)"
+          - "Run: npm run migrate:local and verify table exists"
+        dependencies: [wrangler-bindings]
+        worktree: true
+        constraints:
+          - "Additive migration only — no destructive changes"
+          - "Must apply cleanly to existing DB"
+        worker_bootstrap_packet:
+          - "git checkout -b feature/migration-0009"
+          - "npm ci"
+          - "npm run migrate:local"
+        owner: te-build
+        assignee: "orchestrator"
+        issues:
+          - title: "Add D1 migration 0009: catalogue_readings table"
+            template: database
+
+  - name: "Corpus Ingestion"
+    phase: foundation
+    description: "Populate R2 with 723 corpus HTML and D1 catalogue_readings with metadata."
+    exit_criteria:
+      - "723 reading HTML files uploaded to R2 under corpus/readings/{sha256}/reading.html"
+      - "723 rows in D1 catalogue_readings table with sha256 + metadata"
+      - "Verify via wrangler r2 object list and D1 SELECT count(*)"
+    swarms:
+      - id: ingest-corpus-r2
+        title: "Upload 723 corpus HTML to R2"
+        description: "Sync the 723 corpus HTML renders into the R2 bucket."
+        tasks:
+          - "Locate corpus HTML files (scripts/readings/pilots or external corpus root)"
+          - "Write ingestion script: scripts/readings/upload-corpus-to-r2.mjs"
+          - "Upload all 723 readings to R2: corpus/readings/{sha256}/reading.html"
+          - "Verify: wrangler r2 object list urania-137-corpus --prefix corpus/readings | wc -l == 723"
+        dependencies: [provision-cf-resources]
+        worktree: false
+        constraints:
+          - "Must be idempotent (overwrite ok)"
+          - "Only upload files owned by sheshnirayan.iyer@gmail.com"
+        worker_bootstrap_packet:
+          - "npm ci"
+          - "wrangler login"
+        owner: te-dispatch-paid
+        assignee: "orchestrator"
+        issues:
+          - title: "Ingest 723 corpus HTML into R2 bucket"
+            template: data
+
+      - id: ingest-corpus-d1
+        title: "Populate D1 catalogue_readings"
+        description: "Insert corpus metadata into D1 catalogue_readings table."
+        tasks:
+          - "Write ingestion script: scripts/readings/upload-catalogue-to-d1.mjs"
+          - "Generate INSERT statements for 723 readings (sha256, title, mode, source_type, created_at, is_synastry, canonical_uri, r2_key)"
+          - "Apply via wrangler d1 execute DB --local --file"
+          - "Verify: SELECT count(*) FROM catalogue_readings == 723"
+        dependencies: [d1-catalogue-migration, ingest-corpus-r2]
+        worktree: false
+        constraints:
+          - "Idempotent inserts (ON CONFLICT DO NOTHING)"
+          - "Owner-scoped to sheshnirayan.iyer@gmail.com"
+        worker_bootstrap_packet:
+          - "npm ci"
+          - "npm run migrate:local"
+        owner: te-dispatch-paid
+        assignee: "orchestrator"
+        issues:
+          - title: "Populate D1 catalogue_readings with 723 corpus metadata"
+            template: data
+
+  - name: "API Route Layer"
+    phase: implementation
+    description: "Three independent API routes (corpus list, corpus detail, vectorize search) that follow the existing [[path]].ts auth pattern."
+    exit_criteria:
+      - "GET /api/corpus returns owner-scoped paginated JSON"
+      - "GET /api/corpus/:id returns D1 metadata + R2 HTML body"
+      - "GET /api/patterns/search returns Vectorize top-K results"
+    swarms:
+      - id: api-corpus-catalog
+        title: "GET /api/corpus — 723 catalogue API"
+        description: "Serve the 723 corpus catalogue from D1 catalogue_readings table."
+        tasks:
+          - "Add route in functions/api/[[path]].ts: GET /api/corpus"
+          - "Query: SELECT * FROM catalogue_readings WHERE user_id = ? ORDER BY created_at DESC"
+          - "Support ?search= and ?mode= query params"
+          - "Response: { readings: [{id, sha256, title, mode, source_type, created_at, is_synastry}] }"
+          - "Test: functions/__tests__/corpus-api.test.ts"
+        dependencies: [d1-catalogue-migration, ingest-corpus-d1]
+        worktree: true
+        constraints:
+          - "Must call requireUser() before any DB query"
+          - "user_id = u.user.id (never client-supplied)"
+        worker_bootstrap_packet:
+          - "git checkout -b feature/api-corpus-catalog origin/codex/urania-production-readiness"
+          - "npm ci"
+          - "npm run migrate:local"
+          - "npm run test:cf"
+        owner: te-build
+        assignee: "orchestrator"
+        issues:
+          - title: "Add GET /api/corpus — 723 catalogue endpoint"
+            template: feature
+
+      - id: api-corpus-detail
+        title: "GET /api/corpus/:id — corpus detail + body"
+        description: "Fetch a single corpus reading: metadata from D1, full HTML body from R2."
+        tasks:
+          - "Add route in functions/api/[[path]].ts: GET /api/corpus/:id"
+          - "Resolve by sha256 from D1 catalogue_readings, owner-scoped"
+          - "Fetch HTML body from R2: GET corpus/readings/{sha256}/reading.html"
+          - "Response: { reading: {id, sha256, title, mode, metadata...}, content_html } | 404"
+          - "Test: functions/__tests__/corpus-detail-api.test.ts"
+        dependencies: [api-corpus-catalog]
+        worktree: true
+        constraints:
+          - "R2 key pattern must match ingestion script"
+          - "404 if sha256 not found in D1 OR R2 object missing"
+        worker_bootstrap_packet:
+          - "git checkout -b feature/api-corpus-detail origin/codex/urania-production-readiness"
+          - "npm ci"
+          - "npm run migrate:local"
+          - "npm run test:cf"
+        owner: te-build
+        assignee: "orchestrator"
+        issues:
+          - title: "Add GET /api/corpus/:id — fetch reading from R2"
+            template: feature
+
+      - id: api-vectorize-search
+        title: "GET /api/patterns/search — Vectorize similarity"
+        description: "Query Vectorize PATTERN_INDEX for pattern/synthesis memory lookup."
+        tasks:
+          - "Add route in functions/api/[[path]].ts: GET /api/patterns/search?q=<query>"
+          - "Generate embedding via Cloudflare @cf/baai/bge-small-en-v1.5 Workers AI"
+          - "Query ctx.env.PATTERN_INDEX.query(embedding, { topK: 10 })"
+          - "Filter results by owner scope (metadata.owner_id field)"
+          - "Response: { results: [{id, score, metadata}] }"
+          - "Test: functions/__tests__/vectorize-search.test.ts"
+        dependencies: [wrangler-bindings]
+        worktree: true
+        constraints:
+          - "Hard cap topK at 10"
+          - "Only return results where metadata.owner_email matches"
+        worker_bootstrap_packet:
+          - "git checkout -b feature/api-vectorize-search origin/codex/urania-production-readiness"
+          - "npm ci"
+          - "npm run test:cf"
+        owner: te-build
+        assignee: "orchestrator"
+        issues:
+          - title: "Add GET /api/patterns/search — Vectorize similarity endpoint"
+            template: feature
+
+  - name: "Admin Data Browser UI"
+    phase: implementation
+    description: "React pages + routing for the admin to browse corpus, R2 readings, and Vectorize search."
+    exit_criteria:
+      - "Admin Data Browser route in hash router"
+      - "CorpusPage renders reading list with search/filter"
+      - "ReadingDetailPage renders full HTML from R2 (XSS-safe)"
+      - "PatternSearch component renders Vectorize results"
+    swarms:
+      - id: ui-admin-nav
+        title: "Wire Admin Data Browser route in hash router"
+        description: "Add admin-data route and navigation entry."
+        tasks:
+          - "Add route to src/hooks/useHashRoute.ts or equivalent"
+          - "Add nav link on SettingsPage or HomePage"
+          - "Ensure route requires authenticated session"
+        dependencies: [api-corpus-catalog, api-corpus-detail, api-vectorize-search]
+        worktree: true
+        constraints:
+          - "Route must respect T-008 auth guard"
+          - "No public exposure of corpus data"
+        worker_bootstrap_packet:
+          - "git checkout -b feature/ui-admin-nav"
+          - "npm ci"
+          - "npm run dev"
+        owner: te-build
+        assignee: "orchestrator"
+        issues:
+          - title: "Add Admin Data Browser route + navigation"
+            template: feature
+
+      - id: ui-corpus-browser
+        title: "Corpus browser page — reading list"
+        description: "Page listing 723 corpus readings with search + filter."
+        tasks:
+          - "Create src/pages/CorpusPage.tsx"
+          - "Fetch GET /api/corpus on load"
+          - "Search filter: title, mode (Solo/Synastry)"
+          - "Sort by created_at DESC, paginated"
+          - "Test: src/pages/CorpusPage.test.tsx"
+        dependencies: [ui-admin-nav]
+        worktree: true
+        constraints:
+          - "Show sha256 checksum, not absolute paths"
+          - "Show source_type + canonical_uri"
+        worker_bootstrap_packet:
+          - "git checkout -b feature/ui-corpus-browser"
+          - "npm ci"
+        owner: te-build
+        assignee: "orchestrator"
+        issues:
+          - title: "Build Corpus browser page with list + search"
+            template: feature
+
+      - id: ui-reading-viewer
+        title: "R2 reading viewer — full HTML render"
+        description: "Page that fetches GET /api/corpus/:id and renders full HTML from R2."
+        tasks:
+          - "Create src/pages/ReadingDetailPage.tsx"
+          - "Render content_html with DOMPurify + iframe sandbox"
+          - "Show checksum + provenance in header"
+          - "Back link to corpus browser"
+        dependencies: [ui-corpus-browser]
+        worktree: true
+        constraints:
+          - "XSS-safe rendering: DOMPurify + sandbox iframe"
+          - "Must never render raw HTML without sanitization"
+        worker_bootstrap_packet:
+          - "git checkout -b feature/ui-reading-viewer"
+          - "npm ci"
+        owner: te-build
+        assignee: "orchestrator"
+        issues:
+          - title: "Build R2 reading viewer for full HTML renders"
+            template: feature
+
+      - id: ui-vectorize-search
+        title: "Vectorize search surface — pattern memory"
+        description: "UI to query Vectorize patterns from the admin data browser."
+        tasks:
+          - "Create src/components/admin/PatternSearch.tsx"
+          - "Debounced search (500ms) calling GET /api/patterns/search?q=..."
+          - "Render results: id, score, metadata.preview"
+        dependencies: [ui-corpus-browser]
+        worktree: true
+        constraints:
+          - "Debounce 500ms to limit query cost"
+          - "Show cost estimate per query"
+        worker_bootstrap_packet:
+          - "git checkout -b feature/ui-vectorize-search"
+          - "npm ci"
+        owner: te-build
+        assignee: "orchestrator"
+        issues:
+          - title: "Build Vectorize pattern search UI"
+            template: feature
+
+  - name: "Auth Scoping + Tests"
+    phase: hardening
+    description: "Ensure all new routes respect T-008 fail-closed auth, add negative-path tests."
+    exit_criteria:
+      - "All three API routes return 401 without valid CF Access JWT"
+      - "Dev-identity injection works only in dev, never in prod"
+      - "Existing 305 tests still pass"
+    swarms:
+      - id: auth-corpus-routes
+        title: "Scope corpus routes to authenticated owner"
+        description: "Verify auth middleware coverage on all new routes."
+        tasks:
+          - "Add negative test: GET /api/corpus without token → 401"
+          - "Add negative test: GET /api/corpus/:id without token → 401"
+          - "Add negative test: GET /api/patterns/search without token → 401"
+          - "Verify DEV_IDENTITY_EMAIL works in dev, fails in prod for these routes"
+        dependencies: [api-corpus-catalog, api-corpus-detail, api-vectorize-search]
+        worktree: true
+        constraints:
+          - "Cannot weaken existing assertions"
+          - "Must pass functions/__tests__/auth-negative.test.ts suite"
+        worker_bootstrap_packet:
+          - "git checkout -b feature/auth-corpus-routes"
+          - "npm ci"
+          - "npm run test:cf"
+        owner: te-validate
+        assignee: "orchestrator"
+        issues:
+          - title: "Scope all corpus API routes to authenticated owner"
+            template: bug
+
+      - id: e2e-tests
+        title: "End-to-end corpus browser tests"
+        description: "Vitest suites for new API + UI components."
+        tasks:
+          - "Test corpus catalog pagination + search"
+          - "Test corpus detail R2 fallback (missing → 404)"
+          - "Test vectorize search cost guard (topK=10 max)"
+          - "Test UI rendering with mock data"
+        dependencies: [ui-corpus-browser, ui-reading-viewer, ui-vectorize-search]
+        worktree: true
+        constraints:
+          - "Red → green → refactor"
+          - "No weakening of existing assertions"
+        worker_bootstrap_packet:
+          - "git checkout -b feature/e2e-corpus-tests"
+          - "npm ci"
+        owner: te-validate
+        assignee: "orchestrator"
+        issues:
+          - title: "Add E2E tests for corpus browser flow"
+            template: test
+
+  - name: "Integration + Release"
+    phase: release
+    description: "Merge all worktree branches, run CI, verify live on staging, create PR."
+    exit_criteria:
+      - "All branches merged into codex/r2-vectorize-corpus-ui"
+      - "CI gate: npm run verify:all passes (305+ existing + new tests)"
+      - "PR created with evidence"
+    swarms:
+      - id: merge-and-ci
+        title: "Integrate all branches + CI gate"
+        description: "Merge worktrees and run full verification."
+        tasks:
+          - "Merge all feature branches into codex/r2-vectorize-corpus-ui"
+          - "Run: npm test (vitest) + npm run test:cf (function tests)"
+          - "Run: npm run verify:all (daily contracts + taxonomy + edge checks)"
+          - "Create PR to main with evidence"
+        dependencies: [auth-corpus-routes, e2e-tests]
+        worktree: false
+        constraints:
+          - "All CI must pass (exit 0)"
+          - "No unrelated dirty files in commit"
+        worker_bootstrap_packet:
+          - "git checkout codex/r2-vectorize-corpus-ui"
+          - "npm ci"
+        owner: te-validate
+        assignee: "orchestrator"
+        issues:
+          - title: "Integrate R2/Vectorize corpus UI — PR"
+            template: feature
+
+acceptance:
+  - "ISC-333: GET /api/corpus/:id returns R2 HTML body — verified via curl with test SHA-256"
+  - "ISC-334: GET /api/patterns/search returns Vectorize results — verified via curl with test query"
+  - "ISC-#133: Corpus browser UI shows reading list — verified via browser screenshot"
+  - "ISC-#137: Corpus browser renders R2 body in XSS-safe iframe — verified via DOMPurify test"
+  - "ISC-#132: Pattern memory store queryable via /api/patterns/search — verified via curl"
+  - "ISC-#139: 723 readings with full provenance + R2 body — verified: R2 object count == 723, D1 count == 723"
+  - "T-008: All new routes fail-closed without CF Access JWT — verified via negative tests"
+  - "Vitest suite passes: npm test + npm run test:cf (305 existing + N new, 0 failures)"
+  - "CI gate: npm run verify:all passes on merged branch"
+
+risk_register:
+  - risk: "R2 bucket / Vectorize index don't exist yet on Cloudflare"
+    mitigation: "provision-cf-resources wave creates them before bindings are added"
+    owner: provision-cf-resources
+    status: "discovered"
+  - risk: "D1 catalogue_readings table doesn't exist yet"
+    mitigation: "d1-catalogue-migration wave creates migration 0009 before API routes"
+    owner: d1-catalogue-migration
+    status: "discovered"
+  - risk: "723 corpus HTML files may not be locally accessible for ingestion"
+    mitigation: "ingest-corpus-r2 task checks local filesystem first; may need archive from Selemene Engine"
+    owner: ingest-corpus-r2
+    status: "open"
+  - risk: "Vectorize query cost exceeds budget"
+    mitigation: "api-vectorize-search hard-caps topK at 10; client debounces 500ms"
+    owner: api-vectorize-search
+    status: "mitigated"
+  - risk: "HTML rendering XSS vulnerability"
+    mitigation: "ui-reading-viewer uses DOMPurify + iframe sandbox"
+    owner: ui-reading-viewer
+    status: "mitigated"
+  - risk: "Auth bypass on new routes"
+    mitigation: "auth-corpus-routes wave runs all 3 routes through negative-path suite"
+    owner: auth-corpus-routes
+    status: "mitigated"
+
+assumptions:
+  - "Admin user sheshnirayan.iyer@gmail.com is the sole corpus owner"
+  - "723 corpus HTML renders exist in an external PostgreSQL archive and need R2 sync"
+  - "Cloudflare Workers AI @cf/baai/bge-small-en-v1.5 is accessible for embedding generation"
+  - "All corpus data is owner-scoped and consent-gated per ISA #139"
+
+constraints:
+  - "No Sol-family models in any worker dispatch"
+  - "All new code must pass existing 305/305 test suite"
+  - "wrangler.toml must not expose secrets"
+  - "Corpus routes must fail-closed per T-008"
+  - "Maximum 4 concurrent worker processes (per temperance dispatch rule)"
+  - "R2 key pattern: corpus/readings/{sha256}/reading.html"
+  - "Vectorize index: 1536 dims, cosine metric, topK=10 max"

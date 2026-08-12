@@ -6,6 +6,7 @@ import { NodePage } from './pages/NodePage'
 import { ThresholdPage } from './pages/ThresholdPage'
 import { ReadingLibraryPage } from './pages/ReadingLibraryPage'
 import { SettingsPage } from './pages/SettingsPage'
+import { AdminDataBrowserPage } from './pages/AdminDataBrowserPage'
 import { RelationshipReadingPage } from './pages/RelationshipReadingPage'
 import { ConversationPage } from './pages/ConversationPage'
 import { TopNav } from './components/chrome/TopNav'
@@ -165,6 +166,7 @@ export default function App() {
           )}
           {route.view === 'readings' && <ReadingLibraryPage me={me} readingId={route.readingId} />}
           {route.view === 'settings' && <SettingsPage me={me} />}
+          {route.view === 'admin-data' && <AdminDataBrowserPage me={me} section={route.section} />}
           {route.view === 'relationship-reading' && (
             <RelationshipReadingPage
               relationshipId={route.relationshipId}

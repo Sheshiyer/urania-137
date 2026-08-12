@@ -49,3 +49,19 @@ OPERATOR_EMAILS = "sheshnarayan.iyer@gmail.com"
 binding = "DB"
 database_name = "urania-137-db"
 database_id = "d57550ea-c8d3-48fc-a2ee-c6b3fc41948e"
+
+# R2 + Vectorize bindings for the 723 corpus admin data browser (T-079, ISC-#132/133/137/138/139/140).
+# Provisioned 2026-08-12 by swarm-architect plan r2-vectorize-corpus-ui.
+# R2 bucket holds 723 corpus HTML renders; Vectorize holds chunked pattern embeddings
+# (1536-dim, bge-small-en-v1.5, cosine). Both are owner-scoped (sheshnarayan.iyer@gmail.com).
+[[r2_buckets]]
+binding = "READINGS_BUCKET"
+bucket_name = "urania-137-corpus"
+
+[[vectorize]]
+binding = "PATTERN_INDEX"
+index_name = "urania-137-corpus-index"
+
+# Workers AI binding for embedding generation (ISC-#138, @cf/baai/bge-small-en-v1.5).
+[ai]
+binding = "AI"
