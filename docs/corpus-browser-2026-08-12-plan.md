@@ -2,13 +2,13 @@
 
 **Date:** 2026-08-12
 **Plan ID:** `r2-vectorize-corpus-ui`
-**Status:** ✅ Foundation + Implementation complete | ⏳ Ingestion pending corpus data
+**Status:** ✅ Foundation + Implementation complete | ✅ Ingestion complete (53 readings: 51 Solo + 2 Synastry)
 
 ## What was done
 
 ### 1. Cloudflare Resources Provisioned
 - **R2 bucket:** `urania-137-corpus` (Standard storage class)
-- **Vectorize index:** `urania-137-corpus-index` (1536 dims, cosine metric, bge-small-en-v1.5)
+- **Vectorize index:** `urania-137-corpus-index` (384 dims, cosine metric, bge-small-en-v1.5)
 
 ### 2. wrangler.toml Updated
 Added three new bindings:
@@ -66,13 +66,16 @@ All three routes added to `functions/api/[[path]].ts`, behind the existing `auth
 
 ## What remains
 
-### Ingestion (pending corpus data access)
-The 723 corpus HTML files need to be uploaded to R2 and metadata to D1:
-1. **R2 ingestion:** Upload 723 reading HTML files to `corpus/readings/{sha256}/reading.html`
-   - Source: the archived corpus from Selemene Engine
-   - Script: `scripts/readings/upload-corpus-to-r2.mjs` (to be written)
-2. **D1 ingestion:** Insert 723 rows into `catalogue_readings`
-   - Script: `scripts/readings/upload-catalogue-to-d1.mjs` (to be written)
+### Ingestion (complete — 53 readings)
+The 53 readings (51 Solo + 2 Synastry) are uploaded to R2, D1, and Vectorize:
+1. **R2 ingestion:** 53 reading HTML files at `corpus/readings/{sha256}/reading.html`
+   - Source: the `/723/` archive directory (Selemene Engine) — `/723/` is the folder
+     name, not a reading count
+   - Script: `scripts/readings/upload-corpus-to-r2.mjs`
+2. **D1 ingestion:** 53 rows in `catalogue_readings`
+   - Script: `scripts/readings/upload-catalogue-to-d1.mjs`
+3. **Vectorize ingestion:** 53 vectors in `urania-137-corpus-index` (384-dim, owner-scoped)
+   - Script: `scripts/readings/upload-embeddings-to-vectorize.mjs`
 
 ### Production deployment
 - Run `npm run migrate:remote` to apply migration 0009 to production D1

@@ -1,53 +1,168 @@
 {
+  "version": "2.0.0",
   "tasks": [
     {
-      "id": "D-001",
-      "title": "Update SERVICES.md with R2 + Vectorize + Workers AI",
-      "file": "docs/architecture/SERVICES.md",
+      "id": "H-1",
+      "title": "Commit and push pending corpus work",
+      "description": "Push 9ad4f0b + 799534c and commit the uncommitted 384-dim fixes, docs sync, and 4 ingestion scripts (upload-corpus-to-r2.mjs, upload-catalogue-to-d1.mjs, upload-embeddings-to-vectorize.mjs, r2-d1-ingestion.test.mjs).",
       "combo": "te-swarm-s",
-      "priority": "medium",
-      "mode": "parallel",
-      "done": false
+      "wave": 0,
+      "acceptance": ["main == origin/main", "CI green for that SHA"],
+      "parallel": true
     },
     {
-      "id": "D-002",
-      "title": "Update _PROJECT-STATUS.md with corpus browser status",
-      "file": "_PROJECT-STATUS.md",
+      "id": "H-2",
+      "title": "Correct 723-to-53 doc truth and regenerate DEPENDENCY-GRAPH",
+      "description": "Update docs that say '723 corpus' to '53 readings (51 Solo + 2 Synastry)', note /723/ is a directory name, fix corpus-browser plan 'ingestion pending' line, and actually regenerate DEPENDENCY-GRAPH.md to include AdminDataBrowserPage + readings ecosystem (D-004).",
       "combo": "te-swarm-s",
-      "priority": "medium",
-      "mode": "parallel",
-      "done": false
+      "wave": 0,
+      "acceptance": ["docs say 53 readings", "graph includes AdminDataBrowserPage + readings-ecosystem"],
+      "parallel": true
     },
     {
-      "id": "D-003",
-      "title": "Update README.md project structure section",
-      "file": "README.md",
+      "id": "R-7",
+      "title": "Bind preview D1 and non-prod secrets",
+      "description": "Create/bind urania-137-db-preview and non-production secrets; verify preview and production database IDs are distinct.",
       "combo": "te-swarm-s",
-      "priority": "medium",
-      "mode": "parallel",
-      "done": false
+      "wave": 0,
+      "acceptance": ["isolation verifier passes (preview != prod ID)"],
+      "parallel": true
     },
     {
-      "id": "I-001",
-      "title": "Write corpus-to-R2 ingestion script",
-      "file": "scripts/readings/upload-corpus-to-r2.mjs",
+      "id": "R-1",
+      "title": "Implement D1 backup, restore-drill, isolation verifier",
+      "description": "Write scripts/d1/backup.mjs, restore drill, and isolation verifier per production-readiness Task 16.",
       "combo": "te-dispatch-paid",
-      "priority": "high",
-      "mode": "single",
-      "done": false,
-      "blocked": true,
-      "blocker": "requires owner corpus data export from Selemene PostgreSQL"
+      "wave": 1,
+      "acceptance": ["node --test scripts/d1/*.test.mjs green"],
+      "parallel": true
     },
     {
-      "id": "I-002",
-      "title": "Write catalogue-to-D1 ingestion script",
-      "file": "scripts/readings/upload-catalogue-to-d1.mjs",
+      "id": "R-2",
+      "title": "Implement ops validate-targets and cutover",
+      "description": "Write scripts/ops/validate-targets.mjs and cutover.mjs (app-deploy/landing-deploy/d1-migrate).",
       "combo": "te-dispatch-paid",
-      "priority": "high",
-      "mode": "single",
-      "done": false,
-      "blocked": true,
-      "blocker": "requires corpus metadata dump from Selemene PostgreSQL"
+      "wave": 1,
+      "acceptance": ["dry-run exits 0", "--confirm required for prod mutation"],
+      "parallel": true
+    },
+    {
+      "id": "R-3",
+      "title": "Implement split-host-gates and alert-probe",
+      "description": "Write scripts/verify/split-host-gates.mjs and scripts/ops/alert-probe.mjs (read-only smoke + alert delivery).",
+      "combo": "te-dispatch-paid",
+      "wave": 1,
+      "acceptance": ["read-only smoke + alert delivery probes run"],
+      "parallel": true
+    },
+    {
+      "id": "R-4",
+      "title": "Implement mark-subjects-for-review",
+      "description": "Write scripts/data/mark-subjects-for-review.mjs (location remediation manifest application).",
+      "combo": "te-dispatch-paid",
+      "wave": 1,
+      "acceptance": ["idempotent", "--apply guarded"],
+      "parallel": true
+    },
+    {
+      "id": "R-5",
+      "title": "Reconcile release-preflight to assert scripts exist",
+      "description": "Update release-preflight.mjs to fail-closed when any of the six ops/d1/data scripts are missing.",
+      "combo": "te-dispatch-paid",
+      "wave": 1,
+      "acceptance": ["fails-closed on any missing ops script"],
+      "parallel": true
+    },
+    {
+      "id": "R-6",
+      "title": "Add readiness workflow emitting 4 artifacts",
+      "description": "Add a workflow producing production-targets.json, backup-receipt.json, preview-proofs.json, governance-snapshot.json (release.yml inputs).",
+      "combo": "te-dispatch-paid",
+      "wave": 1,
+      "acceptance": ["workflow run yields all 4 artifacts"],
+      "parallel": true
+    },
+    {
+      "id": "R-8",
+      "title": "Author live proofs FV-188 and FV-189",
+      "description": "Produce live JSON evidence for admin session (FV-188) and two-account synastry (FV-189).",
+      "combo": "te-dispatch-paid",
+      "wave": 2,
+      "acceptance": ["both produce live JSON evidence"],
+      "parallel": true
+    },
+    {
+      "id": "R-9",
+      "title": "Close ISA gates ISC-143/144/145/146",
+      "description": "Transition open ISA gates with evidence.",
+      "combo": "te-dispatch-paid",
+      "wave": 2,
+      "acceptance": ["ISC statuses transition with evidence"],
+      "parallel": true
+    },
+    {
+      "id": "R-10",
+      "title": "Run canonical CI on release-candidate SHA",
+      "description": "npm run verify:ci from a clean clone at the merged release-candidate SHA.",
+      "combo": "te-validate",
+      "wave": 3,
+      "acceptance": ["canonical CI green from clean clone"],
+      "parallel": false
+    },
+    {
+      "id": "R-11",
+      "title": "Prepare release metadata (dry-run)",
+      "description": "release.mjs --prepare minor --dry-run, review, commit metadata.",
+      "combo": "te-plan",
+      "wave": 3,
+      "acceptance": ["version bump deterministic", "no tag/deploy"],
+      "parallel": false
+    },
+    {
+      "id": "R-12",
+      "title": "Preflight dry-run",
+      "description": "release.mjs --dry-run asserting clean tree, HEAD==origin/main, same-SHA receipt.",
+      "combo": "te-validate",
+      "wave": 3,
+      "acceptance": ["passes all fail-closed guards"],
+      "parallel": false
+    },
+    {
+      "id": "R-13",
+      "title": "Dispatch release workflow",
+      "description": "Dispatch release.yml with production Environment approval; deploy app + landing.",
+      "combo": "te-dispatch-paid",
+      "wave": 4,
+      "acceptance": ["attestation subject SHA == deployed SHA"],
+      "approval": ["merge", "deploy", "credential_change"],
+      "parallel": false
+    },
+    {
+      "id": "R-14",
+      "title": "Verify corpus browser live",
+      "description": "Live curl /api/corpus + /api/patterns/search behind Access.",
+      "combo": "te-validate",
+      "wave": 5,
+      "acceptance": ["live curl returns owner-scoped 53/53"],
+      "parallel": false
+    },
+    {
+      "id": "R-15",
+      "title": "Mark operationally_ready",
+      "description": "Update ISA + _PROJECT-STATUS with attestation evidence.",
+      "combo": "te-validate",
+      "wave": 5,
+      "acceptance": ["register updated with attestation receipt"],
+      "parallel": false
+    },
+    {
+      "id": "R-16",
+      "title": "Learn and doc-sync",
+      "description": "Append Changelog/Decisions via ISA skill; doc-sync.",
+      "combo": "te-reason",
+      "wave": 5,
+      "acceptance": ["canonical C/R/L entries"],
+      "parallel": false
     }
   ]
 }

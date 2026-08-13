@@ -7,13 +7,13 @@ Provisioned: 2026-08-12
 - Name: `urania-137-corpus`
 - Storage class: Standard
 - Binding name (wrangler.toml): `READINGS_BUCKET`
-- Key pattern: `corpus/readings/{sha256}/reading.html` — 723 reading renders
+- Key pattern: `corpus/readings/{sha256}/reading.html` — 53 reading renders (51 Solo + 2 Synastry)
 - Key pattern: `corpus/readings/{sha256}/metadata.json` — provenance metadata
 
 ## Vectorize Index
 
 - Name: `urania-137-corpus-index`
-- Dimensions: 1536 (bge-small-en-v1.5)
+- Dimensions: 384 (bge-small-en-v1.5)
 - Metric: cosine
 - Binding name (wrangler.toml): `PATTERN_INDEX`
 - Query options: `top_k = 10`

@@ -1,9 +1,10 @@
 -- 0009_catalogue_readings (T-079 fast-follow): owner-scoped metadata for the
--- 723 historical corpus catalogue. Each row is a content-addressed reading in
--- the corpus; its body HTML lives in R2 (READINGS_BUCKET) under
--- corpus/readings/{sha256}/reading.html, never in D1.
+-- historical corpus catalogue (53 readings: 51 Solo + 2 Synastry, from the
+-- /723/ archive directory — /723/ is a folder name, not a reading count).
+-- Each row is a content-addressed reading in the corpus; its body HTML lives
+-- in R2 (READINGS_BUCKET) under corpus/readings/{sha256}/reading.html, never in D1.
 --
--- ISC-#139: 723 readings with full provenance + R2 body.
+-- ISC-#139: readings with full provenance + R2 body.
 
 CREATE TABLE catalogue_readings (
   id           TEXT PRIMARY KEY,           -- uuid (Worker-generated)

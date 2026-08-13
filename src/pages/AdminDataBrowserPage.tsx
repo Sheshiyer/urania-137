@@ -101,7 +101,7 @@ export function AdminDataBrowserPage({ me, section }: { me: User | null; section
               <div>
                 <p className="console-eyebrow">Reading corpus catalogue</p>
                 <h2 id="admin-corpus-title" className="mt-2 font-display text-2xl uppercase tracking-[0.1em] text-parchment">
-                  723 Corpus Browser
+                  Corpus Browser
                 </h2>
                 <p className="mt-2 text-sm text-secondary">
                   Owner-scoped catalogue of {readings.length} readings. Select a row to view its full R2 body.
@@ -161,7 +161,7 @@ export function AdminDataBrowserPage({ me, section }: { me: User | null; section
               <div className="mt-8 text-center">
                 <FolderClosed className="mx-auto h-8 w-8 text-silver/30" aria-hidden="true" />
                 <p className="mt-3 text-sm text-secondary">
-                  No readings in the catalogue. The 723 corpus may not have been ingested yet.
+                  No readings in the catalogue. The corpus may not have been ingested yet.
                 </p>
               </div>
             ) : (
@@ -215,7 +215,7 @@ export function AdminDataBrowserPage({ me, section }: { me: User | null; section
                 Pattern Search
               </h2>
               <p className="mt-2 text-sm text-secondary">
-                Search the 723 corpus pattern embeddings. Results are owner-scoped.
+                Search the corpus pattern embeddings. Results are owner-scoped.
                 Top-K is hard-capped at 10 to limit query cost.
               </p>
             </header>
@@ -290,7 +290,7 @@ export function AdminDataBrowserPage({ me, section }: { me: User | null; section
                     Corpus Browser
                   </p>
                   <p className="mt-1 text-xs text-secondary">
-                    Browse the 723 corpus catalogue and view full R2 reading bodies.
+                    Browse the corpus catalogue and view full R2 reading bodies.
                   </p>
                 </div>
               </button>
@@ -325,7 +325,7 @@ export function AdminDataBrowserPage({ me, section }: { me: User | null; section
               Admin Data Browser
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-secondary">
-              Owner-scoped administration surface for the 723 corpus catalogue (D1 + R2)
+              Owner-scoped administration surface for the corpus catalogue (D1 + R2)
               and pattern memory (Vectorize). All data is access-gated behind Cloudflare Access (T-008).
             </p>
           </div>

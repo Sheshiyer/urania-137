@@ -29,7 +29,7 @@ These states are cumulative only with evidence; none is inferred from another.
 | D1 recovery/isolation | blocked | Preview binding/schema and restore drill not proven |
 | Security/privacy/observability | blocked | Request limits, CSRF, export/delete, alert delivery, and production attestations incomplete |
 | Broad launch | not operationally ready | Launch-critical ISA criteria remain pending/deferred |
-| Corpus admin browser (T-079 fast-follow) | implemented, verified locally | R2/VVectorize/AI bindings in wrangler.toml; migration 0009 applied locally; 3 API routes + AdminDataBrowserPage UI tested (1153 tests pass); ISC-#133/137/139/132/138 |
+| Corpus admin browser (T-079 fast-follow) | implemented, verified locally | R2/Vectorize/AI bindings in wrangler.toml; migration 0009 applied; 3 API routes + AdminDataBrowserPage UI tested (1153 tests pass); corpus ingested (53 readings: 51 Solo + 2 Synastry) into R2 + D1 `catalogue_readings` + Vectorize `urania-137-corpus-index` (384-dim, bge-small-en-v1.5); ISC-#133/137/139/132/138 |
 
 ## Active Work
 

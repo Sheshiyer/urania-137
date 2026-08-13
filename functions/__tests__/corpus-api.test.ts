@@ -72,7 +72,7 @@ beforeEach(() => {
   db = fake.db as unknown as D1Database
   r2 = makeFakeR2(fake.r2Objects) as unknown as R2Bucket
   vectorize = { query: async () => ({ matches: [] }) } as VectorizeIndex
-  ai = { run: async () => ({ data: [{ embedding: new Array(1536).fill(0) }] }) } as unknown as Ai
+  ai = { run: async () => ({ data: [{ embedding: new Array(384).fill(0) }] }) } as unknown as Ai
 })
 
 function makeFakeR2(objects: Map<string, { key: string; body: string }>): { get: (key: string) => Promise<{ text: () => Promise<string> } | null> } {

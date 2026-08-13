@@ -303,7 +303,7 @@ export function SettingsPage({ me }: { me: User | null }) {
                     Admin Data Browser · Corpus & Pattern Archive
                   </a>
                   <p className="mt-1 text-xs text-secondary">
-                    Browse the 723 corpus catalogue (R2 bodies) and pattern memory (Vectorize).
+                    Browse the corpus catalogue (53 readings — R2 bodies) and pattern memory (Vectorize).
                   </p>
                 </div>
               )}

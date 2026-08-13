@@ -1013,8 +1013,8 @@ export async function getCorpusDetail(
 
 /**
  * GET /api/patterns/search?q=<query> — Vectorize similarity search on the
- * 723 corpus pattern embeddings. Generates an embedding via Workers AI
- * @cf/baai/bge-small-en-v1.5 (1536-dim), queries PATTERN_INDEX with topK=10,
+ * corpus pattern embeddings (53 readings). Generates an embedding via Workers AI
+ * @cf/baai/bge-small-en-v1.5 (384-dim), queries PATTERN_INDEX with topK=10,
  * and returns owner-filtered results only.
  *
  * Cost guard: topK is hard-capped at 10 regardless of client request.

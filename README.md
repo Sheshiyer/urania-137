@@ -18,7 +18,8 @@
 > **Urania 137** is the **online entry** to Tryambakam Noesis — a **multi-page stellar console** over the Selemene consciousness engines. You land on a galactic overview of seven surfaces; clicking a node opens its own page, where that node re-centres as a golden astrolabe and its sub-nodes orbit it. The graph is the interface at every depth.
 
 > **Admin Data Browser** (T-079 fast-follow): an `#/admin-data` route exposes an
-> owner-scoped browser for the 723 corpus catalogue (D1 `catalogue_readings`),
+> owner-scoped browser for the corpus catalogue (53 readings: 51 Solo + 2 Synastry;
+> D1 `catalogue_readings`),
 > R2 reading bodies (`corpus/readings/{sha256}/reading.html`), and Vectorize
 > pattern-memory search (`GET /api/patterns/search`). This is the admin's lens on
 > synced historical readings; it runs behind the same CF Access gate. See
@@ -39,7 +40,7 @@ Both doors are **nodes, not menu items**: Folio Archive → Noesis Mirror, Engin
 Chat is the threshold and the Folio is the durable reading surface. Both now
 render the same canonical `ReadingDocument`: source-supplied passes remain real
 sections, while older flat archive rows remain visibly unstructured rather than
-receiving invented hierarchy. The architecture, 723 corpus map, identity model,
+receiving invented hierarchy. The architecture, `/723/` archive corpus map, identity model,
 semantic visual grammar, vocabulary law, and staged learning loop are documented
 in **[`docs/living-readings-ecosystem.md`](./docs/living-readings-ecosystem.md)**.
 Deterministic readings now project their real panchanga, number, position,
@@ -253,9 +254,9 @@ urania-137
 │   └── lib/                               # cf-access · dev-identity · engine-proxy · db · env
 ├── migrations/                          # D1 schema migrations
 │   ├── 0001_init.sql                     # users + readings (Phase 3)
-│   └── 0009_catalogue_readings.sql       # 723 corpus catalogue (T-079)
+│   └── 0009_catalogue_readings.sql       # corpus catalogue (T-079)
 ├── scripts/verify/                        # runnable gates (taxonomy, daily, V5, phase exits)
-├── scripts/readings/                      # corpus ingestion utilities (pending 723 data)
+├── scripts/readings/                      # corpus ingestion utilities (53 readings)
 ├── src/
 │   ├── App.tsx                            # Router: TopNav + HomePage / NodePage / AdminDataBrowserPage
 │   ├── pages/                             # Graph, Folio, Settings, dyad reading, Admin Data Browser

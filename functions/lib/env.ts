@@ -34,13 +34,14 @@ export interface Env {
    */
   OPERATOR_EMAILS?: string
   /**
-   * R2 bucket holding 723 corpus HTML renders (ISC-#139).
+   * R2 bucket holding corpus HTML renders (ISC-#139) — 53 readings
+   * (51 Solo + 2 Synastry).
    * Keys: corpus/readings/{sha256}/reading.html
    */
   READINGS_BUCKET?: R2Bucket
   /**
-   * Vectorize index with 723 corpus pattern embeddings (ISC-#132/#138).
-   * 1536-dimension, cosine metric, bge-small-en-v1.5, top_k=10.
+   * Vectorize index with corpus pattern embeddings (ISC-#132/#138).
+   * 384-dimension, cosine metric, bge-small-en-v1.5, top_k=10.
    */
   PATTERN_INDEX?: VectorizeIndex
   /** Workers AI binding for embedding generation (@cf/baai/bge-small-en-v1.5). */

@@ -2,7 +2,9 @@
 
 Status: implementation baseline
 Date: 2026-07-26
-Scope: Urania 137, Selemene Engine, witness reports, 723 historical corpus,
+Scope: Urania 137, Selemene Engine, witness reports, the `/723/` historical
+corpus archive (53 ingested readings: 51 Solo + 2 Synastry — `/723/` is a
+folder name, not a reading count),
 Cloudflare identity/storage, Vectorize retrieval, and Noesis writing voice
 
 ## Product thesis

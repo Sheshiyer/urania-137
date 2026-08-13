@@ -11,7 +11,7 @@ Detected **3 services** across 2 categories.
 | Cloudflare Workers | `configured` | wrangler.toml |
 | Cloudflare Wrangler | `imported` | package.json: wrangler@^4.112.0 |
 | Cloudflare R2 | `configured` | wrangler.toml — `READINGS_BUCKET` (urania-137-corpus) |
-| Cloudflare Vectorize | `configured` | wrangler.toml — `PATTERN_INDEX` (urania-137-corpus-index, 1536-dim cosine) |
+| Cloudflare Vectorize | `configured` | wrangler.toml — `PATTERN_INDEX` (urania-137-corpus-index, 384-dim cosine) |
 | Cloudflare Workers AI | `configured` | wrangler.toml — `AI` binding (@cf/baai/bge-small-en-v1.5) |
 
 ## Database
