@@ -9,7 +9,7 @@
  */
 import type { ReadingRow, UserRow } from '../lib/db'
 import type { ReadingInterpretationRow } from '../lib/interpretations/db'
-import type { CorpusReading } from '../api/[[path]]'
+import type { CorpusReadingRow } from '../api/[[path]]'
 
 const ok = (changes: number) => ({ success: true, meta: { changes, duration: 0, last_row_id: 0, served_by: 'fake' } })
 
@@ -17,7 +17,7 @@ export function makeFakeD1() {
   const users = new Map<string, UserRow>()
   const readings = new Map<string, ReadingRow>()
   const interpretations = new Map<string, ReadingInterpretationRow>()
-  const catalogueReadings = new Map<string, CorpusReading & { user_id: string; is_synastry: number }>()
+  const catalogueReadings = new Map<string, CorpusReadingRow & { user_id: string }>()
   const r2Objects = new Map<string, { key: string; body: string }>()
 
   function run(sql: string, args: unknown[]) {

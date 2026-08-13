@@ -36,7 +36,7 @@ Then inline: **T-029** Phase-1 exit gate (consolidated run).
 - Both need `SELEMENE_API_KEY` in `.dev.vars` — source from local env without printing secrets; if unavailable, build fixture-based parity and flag.
 
 ## Wave 5 — Phase 4 local delink (1–2 agents)
-- **P4_Delink:** T-055 (delete Vercel artifacts), T-056 (retire Vite proxy), T-057 (Pages build config), T-060 (docs), T-061 (ISA host=Pages + V7 ISC), T-062 (V7 static half incl. `vercel.app` grep).
+- **P4_Delink:** T-055 (delete Vercel artifacts), T-056 (retire Vite proxy), T-057 (Pages build config), T-060 (docs), T-061 (ISA host=Pages + V7 ISC), T-062 (V7 static half incl. the legacy-host grep).
 - **Blocked, report only:** T-058/T-059/T-063/T-064 (remote deploy), T-080 (remote D1), Phase 5, T-081 (human CF Access).
 
 ## Stage gates

@@ -11,9 +11,9 @@
  * - Return 404 for unknown / cross-user lookups (no existence leak)
  */
 import { describe, it, expect, beforeEach } from 'vitest'
-import type { D1Database, R2Bucket, VectorizeIndex, Ai } from '@cloudflare/workers-types'
+import type { R2Bucket, VectorizeIndex, Ai } from '@cloudflare/workers-types'
 import type { Env } from '../lib/env'
-import { onRequest, type CorpusReading, type CorpusListResponse, type CorpusDetailResponse } from '../api/[[path]]'
+import { onRequest, type CorpusReadingRow, type CorpusListResponse, type CorpusDetailResponse } from '../api/[[path]]'
 import { makeFakeD1 } from './fake-d1'
 
 const LOCAL = 'http://localhost:8788'
@@ -43,7 +43,7 @@ const asB = (req: Request, db: unknown, r2: unknown, vec: unknown, ai: unknown) 
 const CORPUS = `${LOCAL}/api/corpus`
 const SEARCH = `${LOCAL}/api/patterns/search`
 
-type CatalogueRow = CorpusReading & { user_id: string; is_synastry: number; r2_key: string }
+type CatalogueRow = CorpusReadingRow & { user_id: string }
 
 function makeCatalogueRow(over: Partial<CatalogueRow> = {}): CatalogueRow {
   return {
@@ -56,23 +56,20 @@ function makeCatalogueRow(over: Partial<CatalogueRow> = {}): CatalogueRow {
     created_at: 1_750_000_000_000,
     is_synastry: 0,
     canonical_uri: 'https://selemene.example/readings/abc',
-    r2_key: 'corpus/readings/aa.../reading.html',
     ...over,
   }
 }
 
 let fake: ReturnType<typeof makeFakeD1>
-let db: D1Database
 let r2: R2Bucket
 let vectorize: VectorizeIndex
 let ai: Ai
 
 beforeEach(() => {
   fake = makeFakeD1()
-  db = fake.db as unknown as D1Database
   r2 = makeFakeR2(fake.r2Objects) as unknown as R2Bucket
-  vectorize = { query: async () => ({ matches: [] }) } as VectorizeIndex
-  ai = { run: async () => ({ data: [{ embedding: new Array(384).fill(0) }] }) } as unknown as Ai
+  vectorize = { query: async () => ({ matches: [] }) } as unknown as VectorizeIndex
+  ai = { run: async () => ({ data: [new Array(384).fill(0)] }) } as unknown as Ai
 })
 
 function makeFakeR2(objects: Map<string, { key: string; body: string }>): { get: (key: string) => Promise<{ text: () => Promise<string> } | null> } {

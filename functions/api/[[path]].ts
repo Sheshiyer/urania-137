@@ -886,6 +886,22 @@ export interface CorpusReading {
   canonical_uri: string | null
 }
 
+/**
+ * Raw D1 row shape for catalogue_readings — the wire format keeps
+ * `is_synastry` as a 0/1 integer before mapping to the boolean API field.
+ * Kept separate from CorpusReading because the two types differ on that field.
+ */
+export interface CorpusReadingRow {
+  id: string
+  sha256: string
+  title: string
+  mode: string
+  source_type: string
+  created_at: number
+  is_synastry: number
+  canonical_uri: string | null
+}
+
 /** GET /api/corpus — owner-scoped catalogue list with optional filtering. */
 export interface CorpusListResponse {
   readings: CorpusReading[]
@@ -942,7 +958,7 @@ export async function getCorpusCatalog(
      ORDER BY created_at DESC`,
   )
     .bind(...params)
-    .all<(CorpusReading & { is_synastry: number })>()
+    .all<CorpusReadingRow>()
 
   const readings: CorpusReading[] = rows.map((r) => ({
     id: r.id,
@@ -981,7 +997,7 @@ export async function getCorpusDetail(
      WHERE user_id = ?1 AND sha256 = ?2`,
   )
     .bind(userId, sha256)
-    .first<CorpusReading & { is_synastry: number }>()
+    .first<CorpusReadingRow>()
 
   if (!row) {
     return notFound('reading not found')
@@ -1021,7 +1037,7 @@ export async function getCorpusDetail(
  */
 export async function searchPatterns(
   env: Env,
-  userId: string,
+  _userId: string,
   query: string,
   ownerEmail: string,
 ): Promise<Response> {
@@ -1034,19 +1050,23 @@ export async function searchPatterns(
     text: [query],
   })
 
-  if (!aiResp?.data?.length || !aiResp.data[0]?.embedding) {
+  // The AI binding's return type can be the synchronous output or an
+  // async-queue response (which carries no embeddings yet). Fail closed
+  // on the async case rather than reading a missing `data` field.
+  const data = aiResp && 'data' in aiResp ? aiResp.data : undefined
+  if (!data?.length || !data[0]) {
     return json({ error: 'EMBEDDING_FAILED', message: 'Could not generate query embedding' } satisfies ApiError, 502)
   }
 
-  const embedding: number[] = aiResp.data[0].embedding
+  const embedding: number[] = data[0]
 
   // Query Vectorize with hard-capped topK.
   const vectorResults = await env.PATTERN_INDEX.query(embedding, {
     topK: 10,
     // Filter to only the owner's patterns via metadata.
     filter: { owner_email: { $eq: ownerEmail } },
-    includeMetadata: true,
-    includeVector: false,
+    returnMetadata: true,
+    returnValues: false,
   })
 
   const results: PatternSearchResult[] = (vectorResults.matches ?? []).map((match) => ({

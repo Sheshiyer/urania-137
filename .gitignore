@@ -90,7 +90,6 @@ dist/
 build/
 out/
 .output/
-.vercel/
 .netlify/
 .next/
 .nuxt/

@@ -1,14 +1,19 @@
 import { describe, it, before, after, mock } from 'node:test'
 import assert from 'node:assert/strict'
+import { existsSync } from 'node:fs'
 import { buildR2UploadPlan, serializeR2Plan } from './upload-corpus-to-r2.mjs'
 import { buildD1Plan, serializeD1Plan } from './upload-catalogue-to-d1.mjs'
 
 const OWNER_EMAIL = 'sheshnarayan.iyer@gmail.com'
 const USER_ID = 'c04424f4-d73a-5d60-a3ef-da0ac5705ae4'
 
+// This is a local-only integration test: the /723 archive is a private
+// on-disk corpus that exists on the operator's machine but is never present
+// in CI. Skip the suite when the archive is absent rather than failing.
 const CORPUS_ROOT = '/Volumes/madara/2026/Projects/tryambakam-noesis/723'
+const HAS_CORPUS = existsSync(CORPUS_ROOT)
 
-describe('R2 Upload Plan (I-001)', () => {
+describe('R2 Upload Plan (I-001)', { skip: !HAS_CORPUS }, () => {
   let plan
 
   before(async () => {
@@ -51,7 +56,7 @@ describe('R2 Upload Plan (I-001)', () => {
   })
 })
 
-describe('D1 Catalogue Plan (I-002)', () => {
+describe('D1 Catalogue Plan (I-002)', { skip: !HAS_CORPUS }, () => {
   let plan
 
   before(async () => {
