@@ -60,6 +60,11 @@
   ],
   "next_action": "execute_next",
   "next_wave": "wave-0",
+  "wave_0_status": {
+    "H-1": "done",
+    "H-2": "done",
+    "R-7": "pending — account mutation, owner approval required"
+  },
   "dispatch": {
     "action": "dispatch_parallel",
     "wave": "wave-0",

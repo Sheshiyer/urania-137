@@ -7,9 +7,9 @@
 
 | ID | Task | Acceptance Criteria | Combo | Status |
 |---|---|---|---|---|
-| H-1 | Commit + push pending corpus work (9ad4f0b, 799534c + 384-dim/docs/ingestion scripts) | `main == origin/main`; CI green for that SHA | te-swarm-s | pending |
-| H-2 | Correct 723→53 doc truth + regen DEPENDENCY-GRAPH (D-004 actually done) | docs say "53 readings (51 Solo + 2 Synastry)"; graph includes AdminDataBrowserPage + readings-ecosystem | te-swarm-s | pending |
-| R-7 | Bind preview D1 `urania-137-db-preview` + non-prod secrets | isolation verifier passes (preview ≠ prod ID) | te-swarm-s | pending |
+| H-1 | Commit + push pending corpus work (9ad4f0b, 799534c + 384-dim/docs/ingestion scripts) | `main == origin/main`; CI green for that SHA | te-swarm-s | done (4bad753 — CI green 2026-08-13) |
+| H-2 | Correct 723→53 doc truth + regen DEPENDENCY-GRAPH (D-004 actually done) | docs say "53 readings (51 Solo + 2 Synastry)"; graph includes AdminDataBrowserPage + readings-ecosystem | te-swarm-s | done (cab60b1) |
+| R-7 | Bind preview D1 `urania-137-db-preview` + non-prod secrets | isolation verifier passes (preview ≠ prod ID) | te-swarm-s | pending (account mutation — owner approval required) |
 
 ## Wave 1 — Release-path build (parallel — te-dispatch-paid)
 
