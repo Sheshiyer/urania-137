@@ -65,3 +65,4 @@
 - Corpus = 53 readings (51 Solo + 2 Synastry). `/723/` is the archive directory name, not a count.
 - Six release scripts are missing from `release.yml`'s execution path; they are the Wave 1 core.
 - Release dispatch (R-13) requires human approval per approval policy v1 (`merge`/`deploy`/`credential_change`).
+- Decision B (2026-08-14): Pages **preview** env stays **fail-closed** — no `SELEMENE_API_KEY` / `CHAT_PROXY_TOKEN`, so preview cannot call the Selemene engine. Accepted posture; revisit only if preview must exercise live engine calls.
