@@ -59,16 +59,16 @@
     }
   ],
   "next_action": "execute_next",
-  "next_wave": "wave-0",
+  "next_wave": "wave-1",
   "wave_0_status": {
     "H-1": "done",
     "H-2": "done",
-    "R-7": "pending — account mutation, owner approval required"
+    "R-7": "done — preview DB binding 6b90d773-0233-4dcf-b548-2feb61365c77 != prod d57550ea-c8d3-48fc-a2ee-c6b3fc41948e; live --api PASS; preview env fail-closed (no SELEMENE_API_KEY/CHAT_PROXY_TOKEN)"
   },
   "dispatch": {
-    "action": "dispatch_parallel",
-    "wave": "wave-0",
+    "action": "execute_next",
+    "wave": "wave-1",
     "mode": "parallel",
-    "combo": "te-swarm-s"
+    "combo": "te-dispatch-paid"
   }
 }

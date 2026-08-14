@@ -40,15 +40,18 @@ CF_ACCESS_TEAM_DOMAIN = "red-queen-4dfa.cloudflareaccess.com"
 OPERATOR_EMAILS = "sheshnarayan.iyer@gmail.com"
 
 # Per-user readings store (T-080). Production D1 provisioned 2026-07-20 in the
-# 9d9d account (region APAC). Pages applies this single binding to all deployments;
-# the preview database below is recorded for attaching to the Pages preview
-# environment via the dashboard if preview isolation is wanted:
+# 9d9d account (region APAC). `preview_database_id` routes `wrangler dev` /
+# `wrangler d1 ... --preview` to the distinct preview database so local and
+# preview work never touch production data. The Pages PREVIEW deployment's own
+# `DB` binding is pinned to the same preview ID via the dashboard/API (see
+# scripts/d1/verify-isolation.mjs) — it must never equal `database_id`.
 #   preview: database_name = "urania-137-db-preview"
 #            database_id   = "6b90d773-0233-4dcf-b548-2feb61365c77"
 [[d1_databases]]
 binding = "DB"
 database_name = "urania-137-db"
 database_id = "d57550ea-c8d3-48fc-a2ee-c6b3fc41948e"
+preview_database_id = "6b90d773-0233-4dcf-b548-2feb61365c77"
 
 # R2 + Vectorize bindings for the corpus admin data browser (T-079, ISC-#132/133/137/138/139/140).
 # Provisioned 2026-08-12 by swarm-architect plan r2-vectorize-corpus-ui.
