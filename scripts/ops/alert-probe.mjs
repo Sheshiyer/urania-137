@@ -8,10 +8,14 @@
  * app forwards to its notification destination; the probe then verifies
  * delivery idempotently.
  *
- * NOTE (live dependency): the in-app probe route requires the function-level
- * auth/authorization layer (`authorization.ts`, `csrf.ts`, smoke-principal
- * classification) which does not yet exist. Until that lands, this script
- * fails closed with a clear, redacted message rather than fabricating success.
+ * NOTE (live dependency, T-088): the function-level auth/authorization layer
+ * (`functions/lib/authorization.ts`, `functions/lib/csrf.ts`, smoke-principal
+ * classification) now EXISTS, and the protected app exposes
+ * `POST /api/alert-probe` which acknowledges a valid bearer token in constant
+ * time. What is not yet wired is the in-app FORWARDING step: no notification
+ * destination is bound to the route, so the app cannot attest real delivery.
+ * Until that destination is bound, this script fails closed (with `--expect-delivery`)
+ * rather than fabricating success.
  *
  * Frozen release.yml invocation:
  *   node scripts/ops/alert-probe.mjs \
@@ -46,14 +50,27 @@ export function buildAlertProbePlan(targets, { token, expectDelivery = true } = 
   if (!targets?.protectedHostname) issues.push('protectedHostname missing from targets')
   if (issues.length > 0) return { ok: false, error: `alert probe precondition failed: ${issues.join('; ')}` }
 
-  // Fail-closed until the in-app route + authorization layer exists.
+  // Fail-closed: the in-app route + authorization layer exist (T-088), but the
+  // route does not yet forward to a bound notification destination. With
+  // --expect-delivery the probe therefore cannot attest delivery.
+  if (expectDelivery) {
+    return {
+      ok: false,
+      error:
+        'alert-probe route exists (T-088) but no notification destination is ' +
+        'bound yet; real alert delivery cannot be attested. Bind the ' +
+        'notification destination to POST /api/alert-probe before production ' +
+        'attestation stamps probes.ok.',
+    }
+  }
   return {
-    ok: false,
-    error:
-      'alert-probe route requires the function-level auth/authorization layer ' +
-      '(authorization.ts / csrf.ts / smoke-principal classification), which is ' +
-      'not yet implemented. Alert delivery must be proven out-of-band before ' +
-      'production attestation stamps probes.ok.',
+    ok: true,
+    plan: {
+      method: 'POST',
+      url: `https://${targets.protectedHostname}/api/alert-probe`,
+      body: { token: '[REDACTED]' },
+      expectDelivery: false,
+    },
   }
 }
 

@@ -59,10 +59,18 @@ test('runSplitHostProbes classifies pass/fail correctly', async () => {
   assert.ok(leaky.results.some((r) => r.name === 'public-landing-is-open-and-clean' && r.ok === false))
 })
 
-test('alert probe fails closed without the auth/authorization layer', () => {
+test('alert probe fails closed until a notification destination is bound', () => {
   const result = buildAlertProbePlan(TARGETS, { token: 'probe-token-1234567890', expectDelivery: true })
   assert.equal(result.ok, false)
-  assert.match(result.error, /authorization layer/i)
+  assert.match(result.error, /notification destination/i)
+})
+
+test('alert probe plan (no delivery expectation) points at the app probe route', () => {
+  const result = buildAlertProbePlan(TARGETS, { token: 'probe-token-1234567890', expectDelivery: false })
+  assert.equal(result.ok, true)
+  assert.equal(result.plan.url, 'https://urania.tryambakam.space/api/alert-probe')
+  assert.equal(result.plan.method, 'POST')
+  assert.equal(result.plan.expectDelivery, false)
 })
 
 test('alert probe rejects a missing/short token', () => {

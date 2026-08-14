@@ -2,6 +2,8 @@ import type { Env } from '../lib/env'
 import type { ApiError, FolioListResponse, ImportResponse, MeResponse, ReadingDTO } from '../../src/lib/api/contract'
 import { AccessVerifyError, extractIdentity, verifyAccessJwt, type AccessJwtClaims } from '../lib/cf-access'
 import { maybeInjectDevIdentity } from '../lib/dev-identity'
+import { hasPermission, resolvePrincipal } from '../lib/authorization'
+import { constantTimeEqual } from '../lib/csrf'
 import {
   upsertUser,
   listReadings,
@@ -240,12 +242,74 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
     })
   }
 
+  // T-088 — GET /api/admin/session: resolve the verified caller's authority
+  // (role → permission) and report the smoke-principal classification. This is
+  // the FV-188 production-admin-session capture point AND the ISC-161/162
+  // gate: it requires `admin:analytics:read` (viewer → 403), so a successful
+  // response proves the fresh Access login mapped to platform-admin via the
+  // fail-closed CF_PLATFORM_ADMIN_EMAILS allowlist. Read-only; reports only the
+  // caller's own roles/permissions — never another principal.
+  if (pathname === '/api/admin/session' && method === 'GET') {
+    const principal = resolvePrincipal(
+      {
+        sub: typeof auth.claims.sub === 'string' ? auth.claims.sub : '',
+        email: typeof auth.claims.email === 'string' ? auth.claims.email : '',
+        groups: Array.isArray(auth.claims.groups)
+          ? (auth.claims.groups as string[]).filter((g): g is string => typeof g === 'string')
+          : [],
+      },
+      ctx.env.CF_PLATFORM_ADMIN_EMAILS,
+    )
+    if (!hasPermission(principal.permissions, 'admin:analytics:read')) {
+      return json(
+        { error: 'FORBIDDEN', message: 'admin:analytics:read required' } satisfies ApiError,
+        403,
+      )
+    }
+    return json({
+      principal: principal.principal,
+      roles: principal.roles,
+      permissions: principal.permissions,
+      hasAdminAnalyticsRead: true,
+      email: principal.email,
+    })
+  }
+
   // T-020 — logout: hand the session teardown to CF Access.
   if (pathname === '/api/logout' && (method === 'GET' || method === 'POST')) {
     return new Response(null, {
       status: 302,
       headers: { location: '/cdn-cgi/access/logout' },
     })
+  }
+
+  // T-088 — POST /api/alert-probe: out-of-band alert-delivery probe (read-only,
+  // fail-closed). Accepts a bounded, unguessable bearer token (ALERT_PROBE_TOKEN)
+  // and — once a notification destination is bound — forwards a probe event to
+  // it and confirms idempotent delivery. Until ALERT_PROBE_TOKEN is configured
+  // the route returns 501 (never fabricates delivery). Constant-time token
+  // compare so the endpoint leaks nothing through timing.
+  if (pathname === '/api/alert-probe' && method === 'POST') {
+    const token = (ctx.env as unknown as { ALERT_PROBE_TOKEN?: string }).ALERT_PROBE_TOKEN
+    if (!token || token.length < 16) {
+      return json(
+        { error: 'NOT_CONFIGURED', message: 'ALERT_PROBE_TOKEN is not bound' } satisfies ApiError,
+        501,
+      )
+    }
+    const body = await readJson(ctx.request)
+    const supplied = typeof body === 'object' && body !== null
+      ? (body as Record<string, unknown>).token
+      : null
+    if (typeof supplied !== 'string' || !constantTimeEqual(supplied, token)) {
+      return json(
+        { error: 'FORBIDDEN', message: 'invalid alert-probe token' } satisfies ApiError,
+        403,
+      )
+    }
+    // No notification destination is wired yet; report the acknowledged probe
+    // without claiming delivery to a destination that does not exist.
+    return json({ ok: true, probe: 'acknowledged', delivered: false })
   }
 
   // T-031 — ALL /api/selemene/*: CF Access verify (the middleware above) →

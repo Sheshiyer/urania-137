@@ -34,6 +34,23 @@ export interface Env {
    */
   OPERATOR_EMAILS?: string
   /**
+   * T-088 — fail-closed authority allowlist. The ONLY backend source of
+   * `platform-admin` role assignment (ISA 2026-07-26 23:22): Access rule
+   * groups are policy labels, not IdP group claims, so an exact
+   * case-insensitive email match here is required before `admin:analytics:read`
+   * (and every other admin permission) is granted. Unset/empty → no one is
+   * platform-admin. Set as a Pages production secret, never committed.
+   */
+  CF_PLATFORM_ADMIN_EMAILS?: string
+  /**
+   * T-088 — bounded, unguessable bearer token for the out-of-band alert-probe
+   * endpoint (scripts/ops/alert-probe.mjs). The probe POSTs this token; the
+   * route verifies it in constant time and forwards to the notification
+   * destination. Unset → the route fails closed (501) and never fabricates
+   * delivery. Set as a Pages production secret, never committed.
+   */
+  ALERT_PROBE_TOKEN?: string
+  /**
    * R2 bucket holding corpus HTML renders (ISC-#139) — 53 readings
    * (51 Solo + 2 Synastry).
    * Keys: corpus/readings/{sha256}/reading.html
