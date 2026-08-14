@@ -10,7 +10,7 @@
     "build:landing": "vite build --config vite.landing.config.ts",
     "build": "npm run build:app && npm run build:landing",
     "test": "vitest run",
-    "test:node": "node --test scripts/deploy/*.test.mjs scripts/readings/*.test.mjs scripts/verify/landing-boundary.test.mjs scripts/verify/release-attestation.test.mjs scripts/verify/migration-chain.test.mjs scripts/verify/ui-*.test.mjs",
+    "test:node": "node --test scripts/deploy/*.test.mjs scripts/readings/*.test.mjs scripts/d1/*.test.mjs scripts/ops/*.test.mjs scripts/data/*.test.mjs scripts/verify/landing-boundary.test.mjs scripts/verify/release-attestation.test.mjs scripts/verify/readiness.test.mjs scripts/verify/split-host-gates.test.mjs scripts/verify/migration-chain.test.mjs scripts/verify/ui-*.test.mjs",
     "test:corpus": "URANIA_REQUIRE_EXTERNAL_READING_SOURCES=1 node --test scripts/readings/archive-import.test.mjs scripts/readings/engine-output-atlas.test.mjs scripts/readings/pilot-import.test.mjs",
     "test:cf": "vitest run functions",
     "test:daily": "vitest run src/lib/daily",

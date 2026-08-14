@@ -211,6 +211,27 @@ describe('release preflight', () => {
     )
     expect(validateActionsPreflight({ ...input, remoteTagExists: true })).toContain('tag-already-exists')
   })
+
+  it('fails closed when any release-path script is missing', () => {
+    expect(
+      validateLocalPreflight({ ...cleanLocal, missingReleasePathScripts: [] }),
+    ).toEqual([])
+    expect(
+      validateLocalPreflight({ ...cleanLocal, missingReleasePathScripts: ['scripts/ops/cutover.mjs'] }),
+    ).toContain('release-path-scripts-missing:scripts/ops/cutover.mjs')
+    expect(
+      validateActionsPreflight({
+        requestedSha: 'a'.repeat(40),
+        githubSha: 'a'.repeat(40),
+        originMain: 'a'.repeat(40),
+        ciConclusion: 'success',
+        backupReceiptValid: true,
+        packageVersion: '0.7.0',
+        requestedVersion: '0.7.0',
+        missingReleasePathScripts: ['scripts/d1/backup.mjs'],
+      }),
+    ).toContain('release-path-scripts-missing:scripts/d1/backup.mjs')
+  })
 })
 
 describe('publication order and cleanup', () => {

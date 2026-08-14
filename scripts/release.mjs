@@ -11,9 +11,25 @@
  */
 import { spawnSync } from 'node:child_process'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 export const PROD_URL = 'https://urania.tryambakam.space'
+
+/** The six release-path scripts release.yml executes — all must exist (R-5). */
+export const RELEASE_PATH_SCRIPTS = [
+  'scripts/ops/validate-targets.mjs',
+  'scripts/ops/cutover.mjs',
+  'scripts/ops/alert-probe.mjs',
+  'scripts/d1/backup.mjs',
+  'scripts/data/mark-subjects-for-review.mjs',
+  'scripts/verify/split-host-gates.mjs',
+]
+
+/** Fail-closed: return the release-path scripts missing from the repo (R-5). */
+export function missingReleasePathScripts(root = process.cwd()) {
+  return RELEASE_PATH_SCRIPTS.filter((relative) => !existsSync(resolve(root, relative)))
+}
 const FULL_HISTORY_CAP = 50
 const SEMVER_RE = /^\d+\.\d+\.\d+$/
 const SHA_RE = /^[a-f0-9]{40}$/
@@ -148,6 +164,7 @@ export function validateLocalPreflight(input) {
   if (input.localTagExists || input.remoteTagExists) issues.push('tag-already-exists')
   if (!input.backupReceiptValid) issues.push('backup-receipt-invalid')
   if (input.requestedVersion !== input.packageVersion) issues.push('requested-version-must-match-package')
+  if ((input.missingReleasePathScripts ?? []).length > 0) issues.push(`release-path-scripts-missing:${input.missingReleasePathScripts.join(',')}`)
   return [...new Set(issues)]
 }
 
@@ -160,6 +177,7 @@ export function validateActionsPreflight(input) {
   if (input.localTagExists || input.remoteTagExists) issues.push('tag-already-exists')
   if (!input.backupReceiptValid) issues.push('backup-receipt-invalid')
   if (input.requestedVersion !== input.packageVersion) issues.push('requested-version-must-match-package')
+  if ((input.missingReleasePathScripts ?? []).length > 0) issues.push(`release-path-scripts-missing:${input.missingReleasePathScripts.join(',')}`)
   return [...new Set(issues)]
 }
 
@@ -283,6 +301,7 @@ export function collectLocalPreflight(version, env = process.env) {
     backupReceiptValid: validateBackupReceipt(receipt, head),
     packageVersion: readPackage().version,
     requestedVersion: version,
+    missingReleasePathScripts: missingReleasePathScripts(),
   }
 }
 

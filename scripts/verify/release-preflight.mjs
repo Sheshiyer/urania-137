@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import {
   collectLocalPreflight,
+  missingReleasePathScripts,
   validateActionsPreflight,
   validateBackupReceipt,
   validateLocalPreflight,
@@ -82,6 +83,7 @@ function collectActionsPreflight(args) {
     backupReceiptValid: validateBackupReceipt(receipt, args.sha),
     packageVersion,
     requestedVersion,
+    missingReleasePathScripts: missingReleasePathScripts(),
   }
 }
 

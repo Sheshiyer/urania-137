@@ -52,6 +52,7 @@ declare module '*/scripts/release.mjs' {
     backupReceiptValid: boolean
     packageVersion: string
     requestedVersion: string
+    missingReleasePathScripts?: string[]
   }
 
   export interface ActionsPreflight {
@@ -64,6 +65,7 @@ declare module '*/scripts/release.mjs' {
     backupReceiptValid: boolean
     packageVersion: string
     requestedVersion: string
+    missingReleasePathScripts?: string[]
   }
 
   export function parseReleaseArgs(argv: string[]): ReleaseArgs

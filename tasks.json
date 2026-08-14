@@ -75,11 +75,11 @@
     },
     {
       "id": "R-6",
-      "title": "Add readiness workflow emitting 4 artifacts",
-      "description": "Add a workflow producing production-targets.json, backup-receipt.json, preview-proofs.json, governance-snapshot.json (release.yml inputs).",
+      "title": "Add readiness workflow emitting 5 artifacts",
+      "description": "Add a workflow producing production-targets.json, backup-receipt.json, preview-proofs.json, location-remediation-manifest.json, governance-snapshot.json (release.yml downloads all 5).",
       "combo": "te-dispatch-paid",
       "wave": 1,
-      "acceptance": ["workflow run yields all 4 artifacts"],
+      "acceptance": ["workflow run yields all 5 artifacts"],
       "parallel": true
     },
     {

@@ -59,15 +59,23 @@
     }
   ],
   "next_action": "execute_next",
-  "next_wave": "wave-1",
+  "next_wave": "wave-2",
   "wave_0_status": {
     "H-1": "done",
     "H-2": "done",
     "R-7": "done — preview DB binding 6b90d773-0233-4dcf-b548-2feb61365c77 != prod d57550ea-c8d3-48fc-a2ee-c6b3fc41948e; live --api PASS; preview env fail-closed (no SELEMENE_API_KEY/CHAT_PROXY_TOKEN)"
   },
+  "wave_1_status": {
+    "R-1": "done — scripts/d1/backup.mjs + restore-drill.mjs + d1-tools.test.mjs (8 green); frozen --production --targets --output path",
+    "R-2": "done — scripts/ops/validate-targets.mjs + cutover.mjs + cutover.test.mjs (11 green); deploy receipts emit sourceSha/deploymentId",
+    "R-3": "done — scripts/verify/split-host-gates.mjs + scripts/ops/alert-probe.mjs (6 green); --deny-mutations read-only; alert-probe fail-closed pending auth layer",
+    "R-4": "done — migrations/0010+0011 + scripts/data/mark-subjects-for-review.mjs (5 green); chain 11/11",
+    "R-5": "done — missingReleasePathScripts wired into release.mjs + release-preflight.mjs (21 vitest green)",
+    "R-6": "done — .github/workflows/readiness.yml + scripts/verify/readiness.mjs (6 green); emits 5 artifacts (incl. location-remediation-manifest.json)"
+  },
   "dispatch": {
     "action": "execute_next",
-    "wave": "wave-1",
+    "wave": "wave-2",
     "mode": "parallel",
     "combo": "te-dispatch-paid"
   }

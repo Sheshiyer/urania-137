@@ -1,0 +1,23 @@
+{
+  "schema": "urania.production-targets.v1",
+  "accountId": "REPLACE_WITH_32_HEX_ACCOUNT_ID",
+  "teamDomain": "red-queen-4dfa.cloudflareaccess.com",
+  "productionD1Id": "d57550ea-c8d3-48fc-a2ee-c6b3fc41948e",
+  "previewD1Id": "6b90d773-0233-4dcf-b548-2feb61365c77",
+  "recoveryD1Id": "REPLACE_RECOVERY_D1_ID",
+  "protectedPagesProjectId": "REPLACE_PROTECTED_PAGES_PROJECT_ID",
+  "protectedPagesProjectName": "urania-137",
+  "protectedHostname": "urania.tryambakam.space",
+  "publicPagesProjectId": "REPLACE_PUBLIC_PAGES_PROJECT_ID",
+  "publicPagesProjectName": "urania-137-landing",
+  "publicHostname": "urania-landing.tryambakam.space",
+  "accessAud": "df8a00b1d19f2e8034ed262544912656ca969fcdadf0e2599b61d4d2f687b6b4",
+  "accessApplicationId": "REPLACE_ACCESS_APPLICATION_ID",
+  "accessPolicyId": "REPLACE_ACCESS_POLICY_ID",
+  "backupDestination": "R2 or S3 destination for durable exports",
+  "backupRetentionDays": 30,
+  "alertDestinationId": "REPLACE_ALERT_DESTINATION_ID",
+  "alertZoneId": "REPLACE_CLOUDFLARE_ZONE_ID",
+  "independentReviewer": "REPLACE_GITHUB_HANDLE",
+  "relationshipRevocationRetentionDays": 30
+}

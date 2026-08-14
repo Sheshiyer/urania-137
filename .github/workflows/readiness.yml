@@ -1,0 +1,122 @@
+name: Readiness
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Exact main commit to prove ready
+        required: true
+        type: string
+      version:
+        description: Version committed in package.json for that SHA
+        required: true
+        type: string
+
+concurrency:
+  group: urania-readiness-${{ github.sha }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  readiness:
+    name: Preview-prove release candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: preview
+    env:
+      RELEASE_SHA: ${{ inputs.sha }}
+      RELEASE_VERSION: ${{ inputs.version }}
+      GH_TOKEN: ${{ github.token }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      # Environment-scoped, never source-controlled. These hold the same
+      # top-level targets shape release.yml reads, plus the reviewed
+      # location-remediation manifest whose subjectSha binds to RELEASE_SHA.
+      PRODUCTION_TARGETS_JSON: ${{ secrets.PRODUCTION_TARGETS_JSON }}
+      LOCATION_REMEDIATION_MANIFEST_JSON: ${{ secrets.LOCATION_REMEDIATION_MANIFEST_JSON }}
+    steps:
+      - name: Validate dispatch inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$RELEASE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+
+      - name: Checkout exact release SHA
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.sha }}
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Materialize environment-scoped readiness inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .release-input
+          [[ -n "$PRODUCTION_TARGETS_JSON" ]] || { echo "PRODUCTION_TARGETS_JSON secret is unset" >&2; exit 1; }
+          [[ -n "$LOCATION_REMEDIATION_MANIFEST_JSON" ]] || { echo "LOCATION_REMEDIATION_MANIFEST_JSON secret is unset" >&2; exit 1; }
+          printf '%s\n' "$PRODUCTION_TARGETS_JSON" > .release-input/production-targets.json
+          printf '%s\n' "$LOCATION_REMEDIATION_MANIFEST_JSON" > .release-input/location-remediation-manifest.json
+          # The manifest must bind to this exact release SHA (fail closed).
+          test "$(node -p 'JSON.parse(require("fs").readFileSync(".release-input/location-remediation-manifest.json")).subjectSha === process.env.RELEASE_SHA')" = "true"
+
+      - name: Canonical production gate
+        run: npm run verify:ci
+
+      - name: Revalidate preview targets read-only
+        run: >-
+          node scripts/ops/validate-targets.mjs
+          --targets .release-input/production-targets.json
+
+      - name: Fresh preview backup and restore receipt
+        run: >-
+          node scripts/d1/backup.mjs
+          --preview
+          --targets .release-input/production-targets.json
+          --output .readiness/fresh-backup-receipt.json
+
+      - name: Capture governance snapshot (read-only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .readiness
+          gh api "repos/$GITHUB_REPOSITORY/branches/main/protection" > .readiness/governance-snapshot.json
+
+      - name: Assemble and validate readiness bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/verify/readiness.mjs \
+            --sha "$RELEASE_SHA" \
+            --version "$RELEASE_VERSION" \
+            --targets .release-input/production-targets.json \
+            --backup-receipt .readiness/fresh-backup-receipt.json \
+            --manifest .release-input/location-remediation-manifest.json \
+            --governance .readiness/governance-snapshot.json \
+            --preview-proofs-ok true \
+            --out .release-input
+
+      - name: Upload readiness evidence artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: urania-readiness-${{ inputs.sha }}
+          path: |
+            .release-input/backup-receipt.json
+            .release-input/preview-proofs.json
+            .release-input/production-targets.json
+            .release-input/location-remediation-manifest.json
+            .release-input/governance-snapshot.json
+          if-no-files-found: error
+          retention-days: 30

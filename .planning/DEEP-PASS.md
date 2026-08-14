@@ -84,8 +84,7 @@ ISA criteria pending/deferred; corpus-browser plan doc still says "ingestion pen
 | R-3 | `scripts/verify/split-host-gates.mjs` + `scripts/ops/alert-probe.mjs` | read-only smoke + alert probes run | te-dispatch-paid | high |
 | R-4 | `scripts/data/mark-subjects-for-review.mjs` | idempotent, `--apply` guarded | te-dispatch-paid | high |
 | R-5 | `release-preflight.mjs` asserts new scripts exist | fails-closed on any missing ops script | te-dispatch-paid | high |
-| R-6 | Readiness workflow emitting production-targets/backup-receipt/preview-proofs/governance-snapshot | workflow yields all 4 artifacts | te-dispatch-paid | high |
-| R-7 | Bind preview D1 `urania-137-db-preview` + non-prod secrets | isolation verifier passes | te-swarm-s | medium |
+| R-6 | Readiness workflow emitting production-targets/backup-receipt/preview-proofs/governance-snapshot | workflow yields all 5 artifacts (release.yml downloads 5, not 4 — incl. location-remediation-manifest.json) | te-dispatch-paid | high || R-7 | Bind preview D1 `urania-137-db-preview` + non-prod secrets | isolation verifier passes | te-swarm-s | medium |
 | R-8 | Live proofs FV-188 (admin session) + FV-189 (two-account synastry) | both produce live JSON evidence | te-dispatch-paid | medium |
 | R-9 | Close ISA gates ISC-143/144/145/146 | statuses transition with evidence | te-dispatch-paid | medium |
 | R-10 | `npm run verify:ci` on merged release-candidate SHA | canonical CI green from clean clone | te-validate | high |
