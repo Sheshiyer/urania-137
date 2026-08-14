@@ -5327,6 +5327,22 @@ application, data, DNS, Access, or secret surface.
   rollback liveness. The second used Cloudflare deployment detail to prove full
   commit hash and clean-source metadata, then proved each CSS/JS/SVG resource's
   MIME and a deliberate bogus-CSS 404. Final verdict: APPROVE with no required fixes.
+- 2026-08-14: Wave-2 scope decision — FV-189 (two-account synastry) is deferred
+  and the second-real-identity requirement is deleted from the active release
+  path. Rationale: a second real Access identity and its participant-owned subject
+  cannot be fabricated, and administrator authority is never substituted for
+  consent (ISC-154/176/189). ISC-189 remains an OPEN deferred gate — it is
+  deferred, not falsified. R-8 is rescoped to FV-188 only.
+- 2026-08-14: R-9 (ISC-143/144/145/146 closure) remains BLOCKED, not closed.
+  ISC-144 requires the permissioned admin query surface for archive records,
+  which is not built in Urania's HTTP layer (only `/api/admin/session` exists;
+  no archive list/detail admin route). ISC-145/146 require a Cloudflare
+  Access-write credential and a fresh Access login — the available OAuth token
+  is read-only Access scope and cannot mutate Access groups or policies.
+  ISC-143's pilot importer exists (`scripts/readings/lib/pilot-import.mjs`,
+  8 passing tests including deletion-boundary preservation) but its closure is
+  held with the R-9 batch rather than flipped in isolation. No gate transitions
+  to `[x]` without that evidence.
 
 ### Changelog
 
@@ -5334,6 +5350,10 @@ application, data, DNS, Access, or secret surface.
   refuted by: it also deploys the protected app and mutates D1, exceeding this landing-only authorization
   learned: production safety is smallest-authorized-surface plus provenance, rollback, and live proof
   criterion now: ISC-838 limits the upload stage and ISC-845–847 prove adjacent boundaries remain intact
+- 2026-08-14 | conjectured: the Wave-2 release path could close every open living-readings admin gate in one pass
+  refuted by: two independent hard preconditions — no Access-write credential (token is read-only Access scope) and no fresh admin login — plus an unbuilt permissioned admin query surface (ISC-144) — are unmet
+  learned: deferred-verify gates (ISC-188/189) and admin-query gates (ISC-143/144) separate cleanly; the second-real-identity requirement is removed from active scope while its criterion stays open-deferred
+  criterion now: ISC-189 is deferred (open), FV-189 deleted from R-8, R-9 blocked pending permissioned admin query surface + Access-write credential + fresh login
 
 ### Verification
 

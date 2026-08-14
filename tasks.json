@@ -84,17 +84,17 @@
     },
     {
       "id": "R-8",
-      "title": "Author live proofs FV-188 and FV-189",
-      "description": "Produce live JSON evidence for admin session (FV-188) and two-account synastry (FV-189).",
+      "title": "Author live proof FV-188 (admin session)",
+      "description": "Produce live JSON evidence for the FV-188 admin session. FV-189 (two-account synastry) is deferred + deleted per 2026-08-14 decision; ISC-189 remains an open deferred gate, not a falsified one.",
       "combo": "te-dispatch-paid",
       "wave": 2,
-      "acceptance": ["both produce live JSON evidence"],
+      "acceptance": ["live JSON evidence for FV-188"],
       "parallel": true
     },
     {
       "id": "R-9",
       "title": "Close ISA gates ISC-143/144/145/146",
-      "description": "Transition open ISA gates with evidence.",
+      "description": "Transition open ISA gates with evidence. Blocked: ISC-144 needs the permissioned admin query surface (not built); ISC-145/146 need a Cloudflare Access-write credential + a fresh login. ISC-143's pilot importer exists but is closed with this batch.",
       "combo": "te-dispatch-paid",
       "wave": 2,
       "acceptance": ["ISC statuses transition with evidence"],

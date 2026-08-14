@@ -30,8 +30,8 @@
 #   CF_ACCESS_SMOKE_CLIENT_SECRET='…' \
 #   ALERT_PROBE_TOKEN='…' \
 #   CF_PLATFORM_ADMIN_EMAILS='sheshnarayan.iyer@gmail.com' \
-#   PRODUCTION_TARGETS_JSON="$(cat ops/production-targets.json)" \
-#   LOCATION_REMEDIATION_MANIFEST_JSON="$(cat ops/location-remediation-manifest.json)" \
+#   PRODUCTION_TARGETS_JSON='<JSON — see .release-input/production-targets.json>' \
+#   LOCATION_REMEDIATION_MANIFEST_JSON='<JSON — see .release-input/location-remediation-manifest.json>' \
 #   bash scripts/deploy/t088-prod-secrets.sh
 #
 # USAGE (prompt form — hidden reads for each missing value):
