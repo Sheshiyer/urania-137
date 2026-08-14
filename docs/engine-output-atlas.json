@@ -1,5 +1,5 @@
 {
-  "manifestId": "engine-output-atlas_b89d5b7428cfaf904c5bbebd479762b10fe3473adb1a365f5f9cdeacf2d44798",
+  "manifestId": "engine-output-atlas_23742f7500d4a1c2cc78c946306564e97e053f7bdaf8cde42e9cc15d8164453b",
   "schemaVersion": "1.0.0",
   "title": "Urania Engine Output Atlas",
   "privacy": {
@@ -5145,7 +5145,7 @@
     {
       "id": "daily-practice",
       "name": "Daily Practice",
-      "description": "Daily rhythm optimization through temporal analysis",
+      "description": "Daily rhythm calibration through temporal analysis",
       "requiredPhase": 0,
       "engineIds": [
         "panchanga",

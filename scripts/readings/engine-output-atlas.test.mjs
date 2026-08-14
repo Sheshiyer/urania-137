@@ -207,7 +207,7 @@ test('Selemene supported engines, Urania extractors, and atlas entries stay reco
     'utf8',
   )
   const supportedBlock = selemeneSource.match(
-    /pub const SUPPORTED_ENGINE_IDS:\s*\[&str;\s*18\]\s*=\s*\[([\s\S]*?)\];/,
+    /pub const SUPPORTED_ENGINE_IDS:\s*\[&str;\s*\d+\]\s*=\s*\[([\s\S]*?)\];/,
   )?.[1]
   assert.ok(supportedBlock, 'Selemene supported-engine contract is missing')
   const selemeneIds = [...supportedBlock.matchAll(/"([^"]+)"/g)].map((match) => match[1])
@@ -223,7 +223,14 @@ test('Selemene supported engines, Urania extractors, and atlas entries stay reco
   const uraniaIds = [...extractorBlock.matchAll(/case '([^']+)'/g)].map((match) => match[1])
 
   const atlasIds = manifest.engines.map(({ id }) => id)
-  assert.deepEqual(sorted(selemeneIds), EXPECTED_ENGINE_IDS)
+  // Urania ships an eighteen-engine subset of Selemene's supported set.
+  // Selemene may add engines (e.g. financial-biosensor) that Urania has not
+  // yet adopted, so assert every Urania engine is supported upstream rather
+  // than that the two lists are byte-identical.
+  assert.equal(atlasIds.length, 18)
+  for (const engineId of EXPECTED_ENGINE_IDS) {
+    assert.ok(selemeneIds.includes(engineId), `Selemene no longer supports ${engineId}`)
+  }
   assert.deepEqual(sorted(uraniaIds), EXPECTED_ENGINE_IDS)
   assert.deepEqual(atlasIds, EXPECTED_ENGINE_IDS)
 })
