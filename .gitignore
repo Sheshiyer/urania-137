@@ -34,6 +34,11 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+# Release inputs (env-scoped, never committed — readiness.yml materializes these
+# from GitHub environment secrets; release.yml downloads them as artifacts).
+.release-input/
+.release/
+
 # CodeGraph local index
 .codegraph/
 

@@ -14,6 +14,9 @@
     "test:corpus": "URANIA_REQUIRE_EXTERNAL_READING_SOURCES=1 node --test scripts/readings/archive-import.test.mjs scripts/readings/engine-output-atlas.test.mjs scripts/readings/pilot-import.test.mjs",
     "test:cf": "vitest run functions",
     "test:daily": "vitest run src/lib/daily",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed",
+    "admin:session": "node scripts/ops/admin-session.mjs",
     "verify:daily-contracts": "node scripts/verify/daily-contracts.mjs",
     "verify:daily-phase1": "node scripts/verify/daily-phase1.mjs",
     "verify:daily": "node scripts/verify/daily-gates.mjs https://urania-137.pages.dev",
@@ -48,6 +51,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
     "@cloudflare/workers-types": "^5.20260714.1",
+    "@playwright/test": "^1.62.1",
     "@types/node": "^20.19.43",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
