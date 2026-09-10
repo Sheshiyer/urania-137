@@ -43,6 +43,30 @@ function parsePagesDeploymentId(stdout) {
   const match = text.match(DEPLOYMENT_ID_RE)
   return match ? match[0] : null
 }
+
+function fetchLatestDeploymentId(projectName) {
+  const account = process.env.CLOUDFLARE_ACCOUNT_ID
+  const token = process.env.CLOUDFLARE_API_TOKEN
+  if (!account || !token || !projectName) return null
+  const result = spawnSync(
+    'curl',
+    [
+      '-sS',
+      '-H',
+      `Authorization: Bearer ${token}`,
+      `https://api.cloudflare.com/client/v4/accounts/${account}/pages/projects/${projectName}`,
+    ],
+    { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
+  )
+  if (result.status !== 0) return null
+  try {
+    const parsed = JSON.parse(result.stdout || '{}')
+    const id = parsed?.result?.canonical_deployment?.id
+    return typeof id === 'string' && id.length > 0 ? id : null
+  } catch {
+    return null
+  }
+}
 const MUTATIONS = new Set(['d1-migrate', 'app-deploy', 'landing-deploy'])
 
 /** The three mutations release.yml invokes, and their resolved resources. */
@@ -126,9 +150,9 @@ export function executeCutover(mutation, args, targets, { run }) {
   if (mutation === 'd1-migrate') {
     command = [process.execPath, wranglerBin, 'd1', 'migrations', 'apply', 'DB', '--remote']
   } else if (mutation === 'app-deploy') {
-    command = [process.execPath, wranglerBin, 'pages', 'deploy', args.artifact, '--project-name', targets.protectedPagesProjectName, '--branch', 'main', '--commit-hash', args.sha, '--commit-dirty=false', '--json']
+    command = [process.execPath, wranglerBin, 'pages', 'deploy', args.artifact, '--project-name', targets.protectedPagesProjectName, '--branch', 'main', '--commit-hash', args.sha, '--commit-dirty=false']
   } else {
-    command = [process.execPath, wranglerBin, 'pages', 'deploy', args.artifact, '--project-name', targets.publicPagesProjectName, '--branch', 'main', '--commit-hash', args.sha, '--commit-dirty=false', '--json']
+    command = [process.execPath, wranglerBin, 'pages', 'deploy', args.artifact, '--project-name', targets.publicPagesProjectName, '--branch', 'main', '--commit-hash', args.sha, '--commit-dirty=false']
   }
 
   const result = run(command, cwd)
@@ -145,7 +169,13 @@ export function executeCutover(mutation, args, targets, { run }) {
   }
   // Deploy receipts must expose deploymentId + sourceSha (release.yml attestation).
   if (mutation === 'app-deploy' || mutation === 'landing-deploy') {
-    after.deploymentId = result.deploymentId ?? parsePagesDeploymentId(result.stdout) ?? null
+    const projectName =
+      mutation === 'app-deploy' ? targets.protectedPagesProjectName : targets.publicPagesProjectName
+    after.deploymentId =
+      result.deploymentId
+      ?? parsePagesDeploymentId(result.stdout)
+      ?? fetchLatestDeploymentId(projectName)
+      ?? null
     after.sourceSha = SHA_RE.test(args.sha ?? '') ? args.sha : null
   }
   const receipt = writeCutoverReceipt(plan, after, args.receipt)
