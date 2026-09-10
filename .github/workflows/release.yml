@@ -175,10 +175,14 @@ jobs:
             const sha = process.env.RELEASE_SHA;
             const appReceipt = JSON.parse(fs.readFileSync(".release/app-deploy.json"));
             const landingReceipt = JSON.parse(fs.readFileSync(".release/landing-deploy.json"));
+            const appId = appReceipt.deploymentId || appReceipt.after?.deploymentId;
+            const landingId = landingReceipt.deploymentId || landingReceipt.after?.deploymentId;
+            const appSha = appReceipt.sourceSha || appReceipt.after?.sourceSha || sha;
+            const landingSha = landingReceipt.sourceSha || landingReceipt.after?.sourceSha || sha;
             const manifest = {
               deployments: [
-                { surface: "app", id: appReceipt.deploymentId, sourceSha: appReceipt.sourceSha },
-                { surface: "landing", id: landingReceipt.deploymentId, sourceSha: landingReceipt.sourceSha }
+                { surface: "app", id: appId, sourceSha: appSha },
+                { surface: "landing", id: landingId, sourceSha: landingSha }
               ],
               artifacts: [
                 { name: "app", sha256: process.env.APP_SHA256 },
