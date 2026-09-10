@@ -20,7 +20,7 @@
  * rollback receipt) without a network.
  */
 import { createHash } from 'node:crypto'
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { pathToFileURL } from 'node:url'
@@ -100,18 +100,24 @@ export function executeCutover(mutation, args, targets, { run }) {
   }
 
   const cwd = resolve(import.meta.dirname, '../..')
+  const wranglerBin = [
+    resolve(cwd, 'node_modules/.bin/wrangler'),
+    resolve(cwd, 'node_modules/wrangler/bin/wrangler.js'),
+  ].find((candidate) => existsSync(candidate))
+  if (!wranglerBin) throw new Error('wrangler executable not found — run `npm ci` first')
   let command
   if (mutation === 'd1-migrate') {
-    command = ['wrangler', 'd1', 'migrations', 'apply', 'DB', '--remote']
+    command = [process.execPath, wranglerBin, 'd1', 'migrations', 'apply', 'DB', '--remote']
   } else if (mutation === 'app-deploy') {
-    command = ['wrangler', 'pages', 'deploy', args.artifact, '--project-name', targets.protectedPagesProjectName, '--branch', 'main', '--commit-hash', args.sha, '--commit-dirty=false']
+    command = [process.execPath, wranglerBin, 'pages', 'deploy', args.artifact, '--project-name', targets.protectedPagesProjectName, '--branch', 'main', '--commit-hash', args.sha, '--commit-dirty=false']
   } else {
-    command = ['wrangler', 'pages', 'deploy', args.artifact, '--project-name', targets.publicPagesProjectName, '--branch', 'main', '--commit-hash', args.sha, '--commit-dirty=false']
+    command = [process.execPath, wranglerBin, 'pages', 'deploy', args.artifact, '--project-name', targets.publicPagesProjectName, '--branch', 'main', '--commit-hash', args.sha, '--commit-dirty=false']
   }
 
   const result = run(command, cwd)
   if (result.status !== 0) {
-    throw new Error(`cutover ${mutation} failed: ${(result.stderr || result.stdout || '').trim()}`)
+    const detail = (result.stderr || result.stdout || result.error || '').toString().trim()
+    throw new Error(`cutover ${mutation} failed: ${detail || `exit ${result.status}`}`)
   }
 
   const after = {
