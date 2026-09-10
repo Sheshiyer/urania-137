@@ -90,12 +90,12 @@ test('restore drill command construction is explicit and bounded', () => {
     writeFileSync(exportPath, 'CREATE TABLE "t" (id INTEGER);\nINSERT INTO "t" (id) VALUES (1);\n')
     assert.throws(() => buildRestoreDrillCommands({ exportPath: resolve(workspace, 'nope.sql'), wranglerBin: '/bin/wrangler', workspace }), /existing export/)
     const plan = buildRestoreDrillCommands({ exportPath, wranglerBin: '/bin/wrangler', root: ROOT, workspace })
-    assert.equal(plan.commands.length, 2)
+    assert.equal(plan.commands.length, 1)
+    assert.equal(plan.commands[0][0], 'sqlite3')
+    assert.equal(plan.commands[0][1], plan.dbPath)
     for (const argv of plan.commands) {
-      assert.ok(argv.includes('--local'), 'drill must stay local')
       assert.ok(!argv.includes('--remote'))
       assert.ok(!argv.includes('--preview'))
-      assert.ok(argv.includes('--file'))
     }
   } finally {
     rmSync(workspace, { recursive: true, force: true })

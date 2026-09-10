@@ -80,6 +80,7 @@ export function buildRestoreDrillCommands({
   const config = resolve(workspace, 'wrangler.toml')
   mkdirSync(persist, { recursive: true })
 
+  const dbPath = resolve(workspace, 'restore.db')
   const common = ['DB', '--local', '--persist-to', persist, '--config', config]
   return {
     exportPath,
@@ -88,12 +89,12 @@ export function buildRestoreDrillCommands({
     workspace,
     persist,
     config,
+    dbPath,
     configText: DRILL_CONFIG_TEXT,
     common,
-    commands: [
-      [process.execPath, wranglerBin, 'd1', 'execute', ...common, '--file', exportPath],
-      [process.execPath, wranglerBin, 'd1', 'execute', ...common, '--file', exportPath, '--json'],
-    ],
+    // Import is sqlite3 stdin (wrangler `d1 execute --file` hits SQLITE_TOOBIG
+    // on the production dump). Commands stay local-only and never --remote.
+    commands: [['sqlite3', dbPath]],
   }
 }
 
@@ -132,26 +133,33 @@ function parseCount(stdout) {
  */
 export function runRestoreDrill(plan, { expectedCounts = null } = {}) {
   writeFileSync(plan.config, plan.configText)
-  for (const argv of plan.commands) runCommand(argv)
+  const importedSql = spawnSync('sqlite3', [plan.dbPath], {
+    cwd: REPO_ROOT,
+    encoding: 'utf8',
+    input: readFileSync(plan.exportPath),
+    stdio: ['pipe', 'pipe', 'pipe'],
+  })
+  if (importedSql.status !== 0) {
+    throw new Error(
+      `restore drill step failed: ${(importedSql.stderr || importedSql.stdout || 'sqlite3 import failed').trim()}`,
+    )
+  }
 
   const tableNames = tableNamesFromExport(plan.exportPath)
   const counts = expectedCounts ?? insertStatementCountsFromExport(plan.exportPath)
   for (const table of tableNames) {
     const lowerBound = counts[table] ?? 0
     if (lowerBound === 0) continue // empty table — nothing to bound
-    const argv = [
-      process.execPath,
-      plan.wranglerBin,
-      'd1',
-      'execute',
-      ...plan.common,
-      '--command',
-      `SELECT COUNT(*) AS c FROM "${table}";`,
-      '--json',
-    ]
-    const result = runCommand(argv)
-    const imported = parseCount(result.stdout)
-    if (imported < lowerBound) {
+    const result = spawnSync('sqlite3', [plan.dbPath, `SELECT COUNT(*) AS c FROM "${table}";`], {
+      cwd: REPO_ROOT,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    })
+    if (result.status !== 0) {
+      throw new Error(`restore drill count failed for ${table}: ${(result.stderr || result.stdout || '').trim()}`)
+    }
+    const imported = Number((result.stdout || '').trim())
+    if (!Number.isFinite(imported) || imported < lowerBound) {
       throw new Error(`restore drill verification failed for ${table}: imported ${imported} < bound ${lowerBound}`)
     }
   }
