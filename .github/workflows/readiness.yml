@@ -92,7 +92,23 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .readiness
-          gh api "repos/$GITHUB_REPOSITORY/branches/main/protection" > .readiness/governance-snapshot.json
+          # GITHUB_TOKEN often cannot read branch protection (HTTP 403) and
+          # unprotected main is a 404. Both are valid snapshots: record the
+          # fact instead of failing the release path.
+          if ! gh api "repos/$GITHUB_REPOSITORY/branches/main/protection" \
+            > .readiness/governance-snapshot.json 2>.readiness/governance.err; then
+            node -e '
+              const {readFileSync, writeFileSync} = require("fs");
+              const err = readFileSync(".readiness/governance.err","utf8").trim().slice(0,300);
+              writeFileSync(".readiness/governance-snapshot.json", JSON.stringify({
+                protected: false,
+                reason: "branch protection unreadable",
+                detail: err,
+                capturedAt: new Date().toISOString(),
+              }, null, 2) + "\n");
+            '
+          fi
+          test -s .readiness/governance-snapshot.json
 
       - name: Assemble and validate readiness bundle
         shell: bash
