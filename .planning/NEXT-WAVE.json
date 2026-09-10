@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-08-16T10:03:37.217Z",
+  "generated_at": "2026-09-10T08:44:10.993Z",
   "cwd": "/Volumes/madara/2026/Projects/tryambakam-noesis/urania-137",
   "github": "Sheshiyer/urania-137",
   "gsd": {
@@ -103,7 +103,7 @@
     "reason": "phase \"02 — Live proofs + gates (wave 2)\" has 2 open tasks; take next batch",
     "mode": "sequential-batch",
     "phase": "02 — Live proofs + gates (wave 2)",
-    "combo": "te-build",
+    "combo": "noesis-build",
     "tasks": [
       {
         "id": "L1",
@@ -116,8 +116,8 @@
   },
   "orchestration": {
     "schema": "temperance.orchestration.v1",
-    "plan_id": "plan_9f15f0c679b2e31429f1",
-    "state": "awaiting_approval",
+    "plan_id": "plan_e95b2652bd523cb7e3cf",
+    "state": "draft",
     "mapping": {
       "policy_hash": "f41f6873f99821c46610410fd977e0b454cbc60fd898ef6e8d06c4333bc32605",
       "phase_combo_map": "temperance.phase-combo-map.v2",
@@ -190,32 +190,13 @@
       }
     ],
     "research": [],
-    "options": [
-      {
-        "option_id": "opt_02c02c7cb914947b8dd9",
-        "label": "Execute the proposed next task",
-        "recommendation": true,
-        "rationale": "phase \"02 — Live proofs + gates (wave 2)\" has 2 open tasks; take next batch",
-        "tasks": [
-          {
-            "id": "L1",
-            "parallel": false,
-            "desc": "R-8: Live proof FV-188 (admin session) — fresh Access login yields `platform-admin` + `admin:analytics:read`, captured as live JSON evidence. *(ISC-188, deferred-verify; human-gated fresh login)*",
-            "phase": "02 — Live proofs + gates (wave 2)",
-            "source": ".planning/phases/02-live-proofs-gates/02-01-PLAN.md"
-          }
-        ],
-        "combo": "te-build",
-        "concurrency": 1,
-        "worktree_required": false
-      }
-    ],
-    "approval": {
-      "approval_id": "apr_3ffba5a30aee67a5d02e",
-      "status": "required",
-      "expires_at": "2026-08-16T10:13:37.216Z",
-      "selected_option_id": null
+    "option_admission": {
+      "status": "absent",
+      "source": null,
+      "issues": []
     },
+    "options": [],
+    "approval": null,
     "readiness": {
       "status": "blocked",
       "checks": [
@@ -227,7 +208,7 @@
     },
     "execution": {
       "status": "blocked",
-      "reason": "human approval is required before any swarm dispatch"
+      "reason": "no executable proposal"
     },
     "reporting": {
       "status": "pending",
@@ -236,7 +217,42 @@
         "task",
         "verification"
       ]
+    },
+    "cockpit_handoff": {
+      "schema": "temperance.cockpit-handoff.source.v1",
+      "status": "incomplete",
+      "reason": "command_invalid",
+      "command": null,
+      "gsd_phase": "M1 — Production readiness → release (wave 2 of 5)",
+      "gsd_phase_label": "02 — Live proofs + gates (wave 2)",
+      "canonical_combo": null,
+      "execution_plane": null,
+      "policy_hash": "f41f6873f99821c46610410fd977e0b454cbc60fd898ef6e8d06c4333bc32605",
+      "source_fingerprint": "ecda856186dbcef2b38eac24d7a57ecb0756c24fba7f241c2b992706d8bc6e14",
+      "task_fingerprint": "23409fa94471d660590ad4c0401de33f106f4344467254841c9cac50c759d464",
+      "git_head": "86f1d21a18d2250db66e56eae3f5e1b3c0cf50ed",
+      "approval_id": "apr_7a23afb599f03c8b449c",
+      "option_id": null,
+      "observed_at": "2026-09-10T08:44:10.953Z",
+      "evidence": {
+        "quota": {
+          "label": "quota_snapshot",
+          "path": ".planning/quota-snapshot.json",
+          "observed_at": null,
+          "freshness": "unavailable"
+        },
+        "sources": [
+          {
+            "label": "orchestration",
+            "path": ".planning/ORCHESTRATION.json"
+          },
+          {
+            "label": "quota_snapshot",
+            "path": ".planning/quota-snapshot.json"
+          }
+        ]
+      }
     }
   },
-  "agent_instruction": "NEXT-WAVE (proposal only — human approval required before dispatch):\n  action=execute_next · phase \"02 — Live proofs + gates (wave 2)\" has 2 open tasks; take next batch\n  gsd_phase=M1 — Production readiness → release (wave 2 of 5) status=Blocked — wave 2 needs human-gated inputs (fresh admin login for FV-188; permissioned admin query surface + Access-write credential for R-9)\n  github=Sheshiyer/urania-137\n  wave_mode=sequential-batch phase=\"02 — Live proofs + gates (wave 2)\" open_total=2\n  - [ ] L1: R-8: Live proof FV-188 (admin session) — fresh Access login yields `platform-admin` + `admin:analytics:read`, captured as live JSON evidence. *(ISC-188, deferred-verify; human-gated fresh login)*\n  DO: present the proposed option and wait for an explicit approval receipt before executing it.\n  SYNC: plan-issue-sync LaunchAgent promotes open plan docs → Sheshiyer/thoughtseed-vault issues hourly; run temperance-next-wave --sync to force."
+  "agent_instruction": "NEXT-WAVE (interactive noesis-build guidance — no automated Hands approval):\n  action=execute_next · phase \"02 — Live proofs + gates (wave 2)\" has 2 open tasks; take next batch\n  gsd_phase=M1 — Production readiness → release (wave 2 of 5) status=Blocked — wave 2 needs human-gated inputs (fresh admin login for FV-188; permissioned admin query surface + Access-write credential for R-9)\n  github=Sheshiyer/urania-137\n  wave_mode=sequential-batch phase=\"02 — Live proofs + gates (wave 2)\" open_total=2\n  - [ ] L1: R-8: Live proof FV-188 (admin session) — fresh Access login yields `platform-admin` + `admin:analytics:read`, captured as live JSON evidence. *(ISC-188, deferred-verify; human-gated fresh login)*\n  DO: continue interactively on noesis-build in the current Superset Claude session; no automated Hands approval or ledger receipt is created.\n  SYNC: plan-issue-sync LaunchAgent promotes open plan docs → Sheshiyer/thoughtseed-vault issues hourly; run temperance-next-wave --sync to force."
 }
