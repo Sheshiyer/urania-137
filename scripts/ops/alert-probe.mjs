@@ -50,28 +50,48 @@ export function buildAlertProbePlan(targets, { token, expectDelivery = true } = 
   if (!targets?.protectedHostname) issues.push('protectedHostname missing from targets')
   if (issues.length > 0) return { ok: false, error: `alert probe precondition failed: ${issues.join('; ')}` }
 
-  // Fail-closed: the in-app route + authorization layer exist (T-088), but the
-  // route does not yet forward to a bound notification destination. With
-  // --expect-delivery the probe therefore cannot attest delivery.
-  if (expectDelivery) {
-    return {
-      ok: false,
-      error:
-        'alert-probe route exists (T-088) but no notification destination is ' +
-        'bound yet; real alert delivery cannot be attested. Bind the ' +
-        'notification destination to POST /api/alert-probe before production ' +
-        'attestation stamps probes.ok.',
-    }
-  }
   return {
     ok: true,
     plan: {
       method: 'POST',
       url: `https://${targets.protectedHostname}/api/alert-probe`,
       body: { token: '[REDACTED]' },
-      expectDelivery: false,
+      expectDelivery,
+      destinationId: targets.alertDestinationId,
     },
   }
+}
+
+/** POST the probe through Access (optional service token) and require delivered:true. */
+export async function runAlertProbe(plan, { token, smokeClientId, smokeClientSecret, fetchImpl = fetch } = {}) {
+  const headers = { 'content-type': 'application/json' }
+  if (smokeClientId && smokeClientSecret) {
+    headers['CF-Access-Client-Id'] = smokeClientId
+    headers['CF-Access-Client-Secret'] = smokeClientSecret
+  }
+  const response = await fetchImpl(plan.url, {
+    method: plan.method,
+    headers,
+    body: JSON.stringify({ token }),
+    redirect: 'manual',
+  })
+  const status = response.status
+  let body = null
+  try {
+    body = await response.json()
+  } catch {
+    body = null
+  }
+  if (plan.expectDelivery) {
+    if (status !== 200 || body?.delivered !== true) {
+      return {
+        ok: false,
+        error: `alert delivery not attested (HTTP ${status}, delivered=${body?.delivered ?? 'missing'})`,
+        status,
+      }
+    }
+  }
+  return { ok: true, status, delivered: body?.delivered === true }
 }
 
 function parseArgs(argv) {
@@ -87,20 +107,42 @@ function parseArgs(argv) {
   return args
 }
 
+async function main(argv) {
+  const args = parseArgs(argv)
+  const targets = JSON.parse(readFileSync(resolve(args.targets), 'utf8'))
+  const result = buildAlertProbePlan(targets, { token: args.token, expectDelivery: args.expectDelivery })
+  if (!result.ok) {
+    console.error(JSON.stringify({ ok: false, error: redactProbe(result.error) }, null, 2))
+    process.exitCode = 1
+    return
+  }
+  if (!args.expectDelivery) {
+    console.log(JSON.stringify({ ok: true, plan: result.plan }, null, 2))
+    return
+  }
+  const report = await runAlertProbe(result.plan, {
+    token: args.token,
+    smokeClientId: process.env.CF_ACCESS_SMOKE_CLIENT_ID,
+    smokeClientSecret: process.env.CF_ACCESS_SMOKE_CLIENT_SECRET,
+  })
+  if (!report.ok) {
+    console.error(JSON.stringify({ ok: false, error: redactProbe(report.error) }, null, 2))
+    process.exitCode = 1
+    return
+  }
+  console.log(
+    JSON.stringify(
+      { ok: true, plan: result.plan, delivery: { status: report.status, delivered: report.delivered } },
+      null,
+      2,
+    ),
+  )
+}
+
 const invokedAs = process.argv[1] ? pathToFileURL(process.argv[1]).href : ''
 if (import.meta.url === invokedAs) {
-  try {
-    const args = parseArgs(process.argv.slice(2))
-    const targets = JSON.parse(readFileSync(resolve(args.targets), 'utf8'))
-    const result = buildAlertProbePlan(targets, { token: args.token, expectDelivery: args.expectDelivery })
-    if (!result.ok) {
-      console.error(JSON.stringify({ ok: false, error: redactProbe(result.error) }, null, 2))
-      process.exitCode = 1
-    } else {
-      console.log(JSON.stringify({ ok: true, plan: result.plan }, null, 2))
-    }
-  } catch (error) {
+  main(process.argv.slice(2)).catch((error) => {
     console.error(JSON.stringify({ ok: false, error: redactProbe(error instanceof Error ? error.message : String(error)) }, null, 2))
     process.exitCode = 1
-  }
+  })
 }

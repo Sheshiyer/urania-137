@@ -62,6 +62,14 @@ export interface Env {
    */
   ALERT_PROBE_TOKEN?: string
   /**
+   * Webhook URL of the Cloudflare notification destination bound as
+   * `alertDestinationId` in production-targets. The alert-probe route POSTs a
+   * non-data-bearing probe event here; unset → acknowledged but delivered=false.
+   */
+  ALERT_DESTINATION_URL?: string
+  /** Cloudflare alerting destination UUID (echoed in the probe receipt). */
+  ALERT_DESTINATION_ID?: string
+  /**
    * R2 bucket holding corpus HTML renders (ISC-#139) — 53 readings
    * (51 Solo + 2 Synastry).
    * Keys: corpus/readings/{sha256}/reading.html

@@ -5,7 +5,7 @@ import {
   runSplitHostProbes,
   validateSplitHostTargets,
 } from './split-host-gates.mjs'
-import { buildAlertProbePlan, redactProbe } from '../ops/alert-probe.mjs'
+import { buildAlertProbePlan, redactProbe, runAlertProbe } from '../ops/alert-probe.mjs'
 
 const TARGETS = {
   protectedHostname: 'urania.tryambakam.space',
@@ -60,9 +60,27 @@ test('runSplitHostProbes classifies pass/fail correctly', async () => {
 })
 
 test('alert probe fails closed until a notification destination is bound', () => {
-  const result = buildAlertProbePlan(TARGETS, { token: 'probe-token-1234567890', expectDelivery: true })
+  const { alertDestinationId: _omit, ...noDest } = TARGETS
+  const result = buildAlertProbePlan(noDest, { token: 'probe-token-1234567890', expectDelivery: true })
   assert.equal(result.ok, false)
-  assert.match(result.error, /notification destination/i)
+  assert.match(result.error, /alertDestinationId/i)
+})
+
+test('alert probe with a bound destination plans a live delivery check', () => {
+  const result = buildAlertProbePlan(TARGETS, { token: 'probe-token-1234567890', expectDelivery: true })
+  assert.equal(result.ok, true)
+  assert.equal(result.plan.expectDelivery, true)
+  assert.equal(result.plan.destinationId, 'dest-123')
+})
+
+test('runAlertProbe attests delivered:true', async () => {
+  const plan = buildAlertProbePlan(TARGETS, { token: 'probe-token-1234567890', expectDelivery: true }).plan
+  const report = await runAlertProbe(plan, {
+    token: 'probe-token-1234567890',
+    fetchImpl: async () => ({ status: 200, json: async () => ({ delivered: true }) }),
+  })
+  assert.equal(report.ok, true)
+  assert.equal(report.delivered, true)
 })
 
 test('alert probe plan (no delivery expectation) points at the app probe route', () => {

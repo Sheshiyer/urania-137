@@ -307,9 +307,34 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
         403,
       )
     }
-    // No notification destination is wired yet; report the acknowledged probe
-    // without claiming delivery to a destination that does not exist.
-    return json({ ok: true, probe: 'acknowledged', delivered: false })
+    const destinationUrl = ctx.env.ALERT_DESTINATION_URL?.trim()
+    const destinationId = ctx.env.ALERT_DESTINATION_ID?.trim()
+    if (!destinationUrl) {
+      return json({ ok: true, probe: 'acknowledged', delivered: false })
+    }
+    const probeId = crypto.randomUUID()
+    try {
+      const forwarded = await fetch(destinationUrl, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          source: 'urania-137',
+          probe: 'alert-probe',
+          probeId,
+          destinationId: destinationId || null,
+        }),
+      })
+      const delivered = forwarded.ok
+      return json({
+        ok: delivered,
+        probe: 'acknowledged',
+        delivered,
+        probeId,
+        destinationStatus: forwarded.status,
+      })
+    } catch {
+      return json({ ok: false, probe: 'acknowledged', delivered: false, probeId })
+    }
   }
 
   // T-031 — ALL /api/selemene/*: CF Access verify (the middleware above) →
