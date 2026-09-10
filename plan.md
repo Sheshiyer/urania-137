@@ -1,3 +1,5 @@
+> **Status: SHIPPED — historical record.** Auth phases 0–5 are complete (ISA ISC-23..30, T-001..T-079). Present acceptance and the forward ladder live in `goal.md` + `.planning/ROADMAP.md`; this file is kept for provenance only.
+
 # Execution Plan — Cloudflare Auth + Reading Storage (Phases 1–4-local)
 
 **Source plan:** `docs/superpowers/plans/2026-07-20-cloudflare-auth-readings-plan.md` (81 tasks, spec SHA-pinned)

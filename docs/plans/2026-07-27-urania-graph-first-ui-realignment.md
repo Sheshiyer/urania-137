@@ -1850,23 +1850,25 @@ documentation, and ISA paths.
 
 ## Final acceptance checklist
 
-- [ ] Seven parent nodes remain visible and usable.
-- [ ] Chat is a direct as well as graph-derived reading doorway.
-- [ ] A failed canonical save still leaves a complete visual reading fallback.
-- [ ] Folio is the one archive noun and canonical recovery surface.
-- [ ] Long-form readings use Parchment material and a 65–75 character measure.
-- [ ] Reading, Evidence, and Source are distinct; Source is collapsed.
-- [ ] All 18 engines and 6 workflows reconcile with the executable atlas.
-- [ ] Implemented, partial, capture-gated, missing, and failed are visually and
+> Resolved 2026-08-16 (stale-orphan close): all 15 items verified green by ISA ISC-344/345 (`[x]`) and the `verify:ui-realignment` orchestrator (33 stable-state browser rows, blocking Axe, evidence redaction, build, bundle budget) — see ISA.md Iteration 2 / Verification. This plan is **shipped**; present acceptance + forward ladder live in `goal.md` + `.planning/ROADMAP.md`.
+
+- [x] Seven parent nodes remain visible and usable.
+- [x] Chat is a direct as well as graph-derived reading doorway.
+- [x] A failed canonical save still leaves a complete visual reading fallback.
+- [x] Folio is the one archive noun and canonical recovery surface.
+- [x] Long-form readings use Parchment material and a 65–75 character measure.
+- [x] Reading, Evidence, and Source are distinct; Source is collapsed.
+- [x] All 18 engines and 6 workflows reconcile with the executable atlas.
+- [x] Implemented, partial, capture-gated, missing, and failed are visually and
       textually distinct.
-- [ ] No fictional telemetry, decorative quantitative geometry, or default raw
+- [x] No fictional telemetry, decorative quantitative geometry, or default raw
       JSON remains.
-- [ ] Every graph has a complete non-visual equivalent.
-- [ ] Dialog focus, keyboard behavior, reduced motion, mobile hit targets, and
+- [x] Every graph has a complete non-visual equivalent.
+- [x] Dialog focus, keyboard behavior, reduced motion, mobile hit targets, and
       effective reflow pass.
-- [ ] Owner, subject, participant, access reason, and admin authority remain
+- [x] Owner, subject, participant, access reason, and admin authority remain
       distinct.
-- [ ] No frontend email allowlist or participant-consent bypass exists.
-- [ ] No backend, database, KV, Vectorize, embedding, or Selemene API contract
+- [x] No frontend email allowlist or participant-consent bypass exists.
+- [x] No backend, database, KV, Vectorize, embedding, or Selemene API contract
       changed.
-- [ ] The complete test/build/visual gate exits zero.
+- [x] The complete test/build/visual gate exits zero.

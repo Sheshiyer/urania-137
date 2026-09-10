@@ -1,3 +1,5 @@
+> **Status: SHIPPED — historical record.** Phases 0–3 landed (chat threshold + SSE narrator + in-thread readings; modal era retired, ISA 2026-07-24). Forward ladder: `goal.md` + `.planning/ROADMAP.md`.
+
 # Plan — Narrative Agentic Chat Onboarding (replacing the node modal)
 
 **Date:** 2026-07-23 · **Repo:** urania-137 (frontend) · **Builds on:** Selemene-engine (upstream, `../Selemene-engine`)

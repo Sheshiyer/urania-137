@@ -1,3 +1,5 @@
+> **Status: SHIPPED — historical record.** Threshold + subjects profile shipped (migrations 0004/0005, `#/threshold`, delta-collection). Forward ladder: `goal.md` + `.planning/ROADMAP.md`.
+
 # Plan — The Threshold: pre-graph onboarding & persistent subject profiles
 
 **Date:** 2026-07-25 · **Repo:** urania-137 (frontend) · **Builds on:** chat narrator stack (Phases 0–3 shipped), `docs/onboarding-threshold-ideation.md` (concept), `prototypes/threshold.html` (owner-approved scroll-scrub POC)
