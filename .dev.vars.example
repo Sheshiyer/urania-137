@@ -16,3 +16,9 @@ DEV_IDENTITY_EMAIL="dev@urania.local"
 # fail-closed production marker in the dev-identity guard. Blank it locally so
 # dev injection can fire (production is unaffected — real Pages sets it for real):
 CF_PAGES=""
+#
+# Direct inference fallback when selemene-llm-proxy is blocked (Cloudflare 1010)
+# or returns non-OK. Copy from ~/.claude/.env — NEVER commit the real values.
+# NEBIUS_API_KEY maps from NEBIUS_FACTORY_API_TOKEN.
+NVIDIA_API_KEY=""
+NEBIUS_API_KEY=""

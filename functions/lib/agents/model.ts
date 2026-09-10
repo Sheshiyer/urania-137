@@ -1,51 +1,65 @@
 import type { Env } from '../env'
+import {
+  completeChatCompletions,
+  completeDirectProviders,
+  hasDirectInferenceKeys,
+  type FetchLike,
+} from '../llm'
 import type { InterpretationModelPort, ModelCompletionInput } from './types'
 
 const INTERPRETATION_TIMEOUT_MS = 25_000
 
-export type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
+export type { FetchLike }
+
+function proxyBase(env: Env): string {
+  return (env.NARRATOR_LLM_URL ?? env.SELEMENE_API_URL ?? '').replace(/\/+$/, '')
+}
+
+function completionBody(input: ModelCompletionInput, extra: Record<string, unknown> = {}) {
+  return {
+    messages: [
+      { role: 'system', content: input.system },
+      { role: 'user', content: input.user },
+    ],
+    temperature: 0.2,
+    ...extra,
+  }
+}
 
 /** Existing OpenAI-compatible proxy behind a narrow, replaceable model port. */
 export function createLlmProxyModel(
   env: Env,
   fetchImpl: FetchLike = fetch,
 ): InterpretationModelPort {
-  const base = (env.NARRATOR_LLM_URL ?? env.SELEMENE_API_URL ?? '').replace(/\/+$/, '')
+  const base = proxyBase(env)
+  const configured = base.length > 0 || hasDirectInferenceKeys(env)
 
   return {
     id: 'selemene-llm-proxy',
-    configured: base.length > 0,
+    configured,
     async complete(input: ModelCompletionInput): Promise<string | null> {
-      if (!base) return null
-      const controller = new AbortController()
-      const timer = setTimeout(() => controller.abort(), INTERPRETATION_TIMEOUT_MS)
-      try {
-        const headers: Record<string, string> = { 'content-type': 'application/json' }
+      if (base) {
+        const headers: Record<string, string> = {}
         if (env.SELEMENE_API_KEY) headers['x-api-key'] = env.SELEMENE_API_KEY
         if (env.CHAT_PROXY_TOKEN) headers['x-chat-key'] = env.CHAT_PROXY_TOKEN
-        const response = await fetchImpl(`${base}/v1/chat/completions`, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({
-            messages: [
-              { role: 'system', content: input.system },
-              { role: 'user', content: input.user },
-            ],
-            temperature: 0.2,
-          }),
-          signal: controller.signal,
-        })
-        if (!response.ok) return null
-        const body = (await response.json()) as {
-          choices?: Array<{ message?: { content?: unknown } }>
-        }
-        const content = body.choices?.[0]?.message?.content
-        return typeof content === 'string' && content.trim() ? content.trim() : null
-      } catch {
-        return null
-      } finally {
-        clearTimeout(timer)
+        const proxied = await completeChatCompletions(
+          {
+            url: `${base}/v1/chat/completions`,
+            headers,
+            body: completionBody(input),
+            timeoutMs: INTERPRETATION_TIMEOUT_MS,
+          },
+          fetchImpl,
+        )
+        if (proxied?.content) return proxied.content
       }
+      const direct = await completeDirectProviders(
+        env,
+        completionBody(input),
+        INTERPRETATION_TIMEOUT_MS,
+        fetchImpl,
+      )
+      return direct?.content ?? null
     },
   }
 }

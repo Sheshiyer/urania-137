@@ -28,6 +28,7 @@ import {
   type StoryTurn,
 } from './stateMachine'
 import { appendChatTurn, saveChatSession } from './store'
+import { completeChatCompletions, completeDirectProviders } from '../llm'
 import { buildNarratorSystemPrompt } from './prompts'
 import { RECORD_INTAKE_TOOL } from './tools'
 
@@ -131,7 +132,6 @@ interface LlmToolCall {
  */
 async function tryLlmNarrator(ctx: NarratorContext, env: Env): Promise<NarratorReply | null> {
   const base = (env.NARRATOR_LLM_URL ?? env.SELEMENE_API_URL ?? '').replace(/\/+$/, '')
-  if (!base) return null
 
   try {
     const userPrompt = [
@@ -145,44 +145,30 @@ async function tryLlmNarrator(ctx: NarratorContext, env: Env): Promise<NarratorR
       .filter((l): l is string => l !== null)
       .join('\n')
 
-    const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), NARRATOR_TIMEOUT_MS)
-    let res: Response
-    try {
-      const headers: Record<string, string> = { 'content-type': 'application/json' }
-      // Legacy engine credential (only sent when configured).
-      if (env.SELEMENE_API_KEY) headers['x-api-key'] = env.SELEMENE_API_KEY
-      // W2: shared-secret gate on the upstream llm-proxy chat endpoint.
-      // Inert by default — the header is sent only when CHAT_PROXY_TOKEN is
-      // configured here (and the proxy enforces it only when it has the same
-      // secret configured). See docs/chat-protocol.md § LLM-path auth.
-      if (env.CHAT_PROXY_TOKEN) headers['x-chat-key'] = env.CHAT_PROXY_TOKEN
-      res = await fetch(`${base}/v1/chat/completions`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          // No `model`: the proxy applies its per-provider default
-          // (command-code: deepseek/deepseek-v4-pro; nvidia: nemotron-super-49b).
-          messages: [
-            { role: 'system', content: buildNarratorSystemPrompt(ctx.state) },
-            { role: 'user', content: userPrompt },
-          ],
-          tools: [RECORD_INTAKE_TOOL],
-          tool_choice: 'auto',
-          temperature: 0.7,
-        }),
-        signal: controller.signal,
-      })
-    } finally {
-      clearTimeout(timer)
+    const requestBody = {
+      // No `model` on the proxy hop: it applies per-provider defaults
+      // (command-code: deepseek/deepseek-v4-pro; nebius/nvidia failover).
+      messages: [
+        { role: 'system', content: buildNarratorSystemPrompt(ctx.state) },
+        { role: 'user', content: userPrompt },
+      ],
+      tools: [RECORD_INTAKE_TOOL],
+      tool_choice: 'auto' as const,
+      temperature: 0.7,
     }
-    if (!res.ok) return null
-
-    const data = (await res.json()) as {
-      choices?: { message?: { content?: unknown; tool_calls?: LlmToolCall[] } }[]
-    }
-    const message = data.choices?.[0]?.message
-    const content = typeof message?.content === 'string' ? message.content.trim() : ''
+    const headers: Record<string, string> = {}
+    if (env.SELEMENE_API_KEY) headers['x-api-key'] = env.SELEMENE_API_KEY
+    if (env.CHAT_PROXY_TOKEN) headers['x-chat-key'] = env.CHAT_PROXY_TOKEN
+    const message =
+      (base
+        ? await completeChatCompletions({
+            url: `${base}/v1/chat/completions`,
+            headers,
+            body: requestBody,
+            timeoutMs: NARRATOR_TIMEOUT_MS,
+          })
+        : null) ?? (await completeDirectProviders(env, requestBody, NARRATOR_TIMEOUT_MS))
+    const content = message?.content
     if (!content) return null
 
     const blocks: ChatBlock[] = []

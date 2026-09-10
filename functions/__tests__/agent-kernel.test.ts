@@ -233,4 +233,62 @@ describe('LLM proxy model adapter', () => {
     await modelWithoutSecret.complete({ system: 's', user: 'u' })
     expect(withoutSecret).toHaveBeenCalledOnce()
   })
+
+  it('sends a browser-like User-Agent on the proxy hop', async () => {
+    const fetchImpl = vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+      expect(new Headers(init?.headers).get('user-agent')).toMatch(/urania-137-functions/)
+      return new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }), {
+        status: 200,
+      })
+    })
+    const model = createLlmProxyModel(
+      { NARRATOR_LLM_URL: 'https://proxy.example', SELEMENE_API_KEY: '' } as Env,
+      fetchImpl,
+    )
+    await expect(model.complete({ system: 's', user: 'u' })).resolves.toBe('ok')
+  })
+
+  it('falls through to Nebius then NVIDIA when the proxy is blocked', async () => {
+    const fetchImpl = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input)
+      if (url.includes('proxy.example')) {
+        return new Response('error code: 1010', { status: 403 })
+      }
+      if (url.includes('tokenfactory.nebius.com')) {
+        return new Response(
+          JSON.stringify({ choices: [{ message: { content: 'nebius-ok' } }] }),
+          { status: 200 },
+        )
+      }
+      throw new Error(`unexpected url ${url}`)
+    })
+    const model = createLlmProxyModel(
+      {
+        NARRATOR_LLM_URL: 'https://proxy.example',
+        NEBIUS_API_KEY: 'nb-key',
+        NVIDIA_API_KEY: 'nv-key',
+        SELEMENE_API_KEY: '',
+      } as Env,
+      fetchImpl,
+    )
+    await expect(model.complete({ system: 's', user: 'u' })).resolves.toBe('nebius-ok')
+    expect(fetchImpl).toHaveBeenCalledTimes(2)
+  })
+
+  it('is configured from a direct NVIDIA key even when the proxy URL is unset', async () => {
+    const fetchImpl = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      expect(String(input)).toContain('integrate.api.nvidia.com')
+      const body = JSON.parse(String(init?.body ?? '{}')) as { model?: string }
+      expect(body.model).toBe('nvidia/nemotron-3-nano-omni-30b-a3b-reasoning')
+      return new Response(JSON.stringify({ choices: [{ message: { content: 'nvidia-ok' } }] }), {
+        status: 200,
+      })
+    })
+    const model = createLlmProxyModel(
+      { NVIDIA_API_KEY: 'nv-key', SELEMENE_API_KEY: '', NARRATOR_LLM_URL: '' } as Env,
+      fetchImpl,
+    )
+    expect(model.configured).toBe(true)
+    await expect(model.complete({ system: 's', user: 'u' })).resolves.toBe('nvidia-ok')
+  })
 })

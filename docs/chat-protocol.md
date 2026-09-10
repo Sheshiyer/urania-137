@@ -119,9 +119,15 @@ omits `model` — the proxy applies per-provider defaults:
 | order | provider | endpoint | default model |
 |---|---|---|---|
 | 1 | command-code | `api.commandcode.ai/provider/v1/chat/completions` | `deepseek/deepseek-v4-pro` |
-| 2 | nvidia | `integrate.api.nvidia.com/v1/chat/completions` | `nvidia/llama-3.3-nemotron-super-49b-v1.5` |
-| 3 | openrouter | `openrouter.ai/api/v1/chat/completions` | `anthropic/claude-sonnet-4` |
-| 4 | openai | `api.openai.com/v1/chat/completions` | `gpt-4o-mini` |
+| 2 | nebius | `api.tokenfactory.nebius.com/v1/chat/completions` | `deepseek-ai/DeepSeek-V4-Pro` |
+| 3 | nvidia | `integrate.api.nvidia.com/v1/chat/completions` | `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning` |
+| 4 | kimi | `api.moonshot.ai/v1/chat/completions` | `kimi-k2.6` |
+
+Pages Functions send a browser-like `User-Agent` on the proxy hop. The
+workers.dev host returns Cloudflare **1010** without one. If the proxy is
+still blocked or non-OK, the Worker falls through to Nebius then NVIDIA
+using `NEBIUS_API_KEY` / `NVIDIA_API_KEY` (Pages secrets / `.dev.vars`,
+never committed).
 
 Command Code is called through its official **Provider API** (OpenAI-compatible
 shape) — never the CLI-only `/alpha/generate` route, whose TOS forbids

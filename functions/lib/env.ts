@@ -29,6 +29,17 @@ export interface Env {
    */
   NARRATOR_LLM_URL?: string
   /**
+   * Direct NVIDIA NIM key. Optional fallback when the selemene-llm-proxy hop
+   * is blocked (Cloudflare 1010) or returns non-OK. Never committed; set in
+   * `.dev.vars` / Pages secrets from the operator Claude env.
+   */
+  NVIDIA_API_KEY?: string
+  /**
+   * Direct Nebius Token Factory key (`NEBIUS_FACTORY_API_TOKEN` in ~/.claude/.env).
+   * Optional fallback beside NVIDIA. Never committed.
+   */
+  NEBIUS_API_KEY?: string
+  /**
    * Comma-separated, server-side presentation allowlist. This may reveal an
    * operator lens in the UI but grants no API authority.
    */
