@@ -1,10 +1,16 @@
 # Deep Pass — Urania 137 Production-Readiness → Release
 
+> **2026-09-10 live receipt:** `docs/operations/2026-09-10-deep-pass.md`.
+> Engine `/health` is `3.3.1` / **19 engines** / 6 workflows. Local `.planning/` is on
+> `origin/main`. `release.yml` still has **zero** historical runs; preview env is missing
+> the two JSON secrets readiness needs. This file's original Aug-13 body is kept below
+> as the corpus-browser planning record (some SHA claims in it are stale).
+>
 > Phase 3 of the corpus-browser effort. Corpus browser (T-079) is **built, data-ingested,
 > verified locally — but NOT deployed.** This deep pass plans the production-readiness →
 > release path that ships it.
 >
-> Last verified state: commit `799534c` (2 ahead of `origin/main` `b6b0cd1`), live prod source
+> Last verified state (original): commit `799534c` (2 ahead of `origin/main` `b6b0cd1`), live prod source
 > `c34a70f` (not an ancestor of HEAD).
 
 ## Objective

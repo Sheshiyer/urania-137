@@ -114,10 +114,6 @@ export function deterministicNarrator(ctx: NarratorContext): NarratorReply {
 /** Upstream narrator timeout; a hang degrades to the deterministic fallback. */
 const NARRATOR_TIMEOUT_MS = 25_000
 
-interface LlmToolCall {
-  function?: { name?: unknown; arguments?: unknown }
-}
-
 /**
  * LLM path, or null (→ deterministic fallback). The state machine remains
  * the sole intake writer: `record_intake` tool calls are ADVISORY — a call

@@ -13,7 +13,7 @@ Current focus: Production readiness → release (milestone M1).
 Phase: M1 — Production readiness → release (wave 2 of 5)
 Plan: `.planning/phases/02-live-proofs-gates/02-01-PLAN.md`
 Status: Blocked — wave 2 needs human-gated inputs (fresh admin login for FV-188; permissioned admin query surface + Access-write credential for R-9)
-Last activity: 2026-08-14 — wave 1 (R-1→R-6) shipped; FV-189 deferred; wave 2 blocked on human-gated inputs.
+Last activity: 2026-09-10 — GSD spine on GitHub; WitnessRun inference proven locally; deep pass `docs/operations/2026-09-10-deep-pass.md`. Live engine `3.3.1` / 19 engines. `release.yml` not dispatchable until preview secrets + a green readiness artifact exist.
 
 ## Accumulated Context
 
@@ -38,7 +38,7 @@ Logged in `.planning/PROJECT.md` Key Decisions; ISA.md Decisions per iteration.
 
 ## Session Continuity
 
-Last session: 2026-08-14 (wave 1 R-1→R-6 done; FV-189 deferred)
-Stopped at: wave 2 blocked on human-gated inputs.
-Resume file: `.planning/phases/02-live-proofs-gates/02-01-PLAN.md`
-Next command after unblock: `temperance-next-wave` (observes this spine) → execute wave-2 via `te-dispatch-paid`.
+Last session: 2026-09-10 (deep pass + local interpret E2E)
+Stopped at: cannot complete governed production release — preview env missing `PRODUCTION_TARGETS_JSON` / `LOCATION_REMEDIATION_MANIFEST_JSON`; local Selemene API key 401; FV-188 still human-gated for *production* Access (local admin E2E is green).
+Resume file: `docs/operations/2026-09-10-deep-pass.md` then `.planning/phases/02-live-proofs-gates/02-01-PLAN.md`
+Next: set the two preview GitHub Environment secrets, wait for green `readiness.yml`, then `gh workflow run release.yml` with that run id.
