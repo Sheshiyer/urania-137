@@ -51,6 +51,19 @@
 | R-15 | Mark ISA + `_PROJECT-STATUS` operationally_ready | register updated with attestation receipt | te-validate | pending |
 | R-16 | Learn: Changelog/Decisions via ISA skill + doc-sync | canonical C/R/L entries | te-reason | pending |
 
+## Backlog — Milestones M2→M7 (from `goal.md`, not yet waved)
+
+> North star: `goal.md`. These milestones are ordered backward from the end state and are **not** in the live manifest. They enter `NEXT-WAVE.json` only after M1 reaches `operationally_ready`. Requirements are fully traced in `.planning/REQUIREMENTS.md`.
+
+| Milestone | Summary | Requirements | Blocked-by |
+|---|---|---|---|
+| M2 | Public landing (split-host): correct two-artifact build, replace rejected prototype | REQ-M2-01..02 | M1 |
+| M3 | Relationship journey UI: production caller for the secure generation API | REQ-M3-01..02 | M1 + subject seam (shipped) |
+| M4 | 723 → canonical archive: catalogue → consent → provenance-preserving import | REQ-M4-01..03 | M1 |
+| M5 | Vectorize continuous-learning loop: approval-gated pattern write + deletion-propagation proof | REQ-M5-01..03 | M4 |
+| M6 | AgentScope context orchestration: post-result Dyad interpretation, executor-port pilot | REQ-M6-01 | M5 |
+| M7 | Boundary fast-follows: birth_profiles, calc correctness, engine daily-panchanga, sibling doors | REQ-M7-01..04 | M1 (+ upstream) |
+
 ## Status
 
 - Wave 0: done
@@ -59,6 +72,7 @@
 - Wave 3: pending
 - Wave 4: pending
 - Wave 5: pending
+- M2–M7: backlog (see above), not yet waved
 
 ## Notes
 

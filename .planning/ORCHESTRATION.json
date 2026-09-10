@@ -1,0 +1,124 @@
+{
+  "schema": "temperance.orchestration.v1",
+  "plan_id": "plan_9f15f0c679b2e31429f1",
+  "state": "awaiting_approval",
+  "mapping": {
+    "policy_hash": "f41f6873f99821c46610410fd977e0b454cbc60fd898ef6e8d06c4333bc32605",
+    "phase_combo_map": "temperance.phase-combo-map.v2",
+    "planner": "temperance-next-wave"
+  },
+  "source_fingerprints": [
+    {
+      "path": ".planning/STATE.md",
+      "fingerprint": "af77f3b35134da7ec83bb4384e1b3e2af38a0dd8faaee46120bee71023d2fcf3"
+    },
+    {
+      "path": ".planning/phases/01-hygiene-release-build/01-01-PLAN.md",
+      "fingerprint": "84ab79c80330655c51e1d49edf61be0b07ae8b994d89208ba9e78a5593173ee2"
+    },
+    {
+      "path": ".planning/phases/02-live-proofs-gates/02-01-PLAN.md",
+      "fingerprint": "e509d46669348bd7e2649a0fb75b2146ecb8fef7a5c7513e61beda9b2f1f8c3e"
+    },
+    {
+      "path": ".planning/phases/03-verify-prepare/03-01-PLAN.md",
+      "fingerprint": "039da17bdff02ea6f32a7b6061e396befc9fcd12029600f98cf15c0ec1e8d4a5"
+    },
+    {
+      "path": ".planning/phases/04-release/04-01-PLAN.md",
+      "fingerprint": "95d04a53a4d25e74ca3541044ad40312023f659f4b4c379689b43cd05cba5ba4"
+    },
+    {
+      "path": ".planning/phases/05-verify-learn/05-01-PLAN.md",
+      "fingerprint": "bfbb099a838d90103094412e8616bcab9eb95a48cf5d463b04dcece8846a2c38"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-07-18-daily-panchanga-reading-plan.md",
+      "fingerprint": "b346e687d746ed260f365d430be24963aff48411d99d52d7138bf7b9ac64429f"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-07-20-cloudflare-auth-readings-plan.md",
+      "fingerprint": "63c7c9d08795586a57a01dca0b1523d03050346b261190a565ec1ddf52710901"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-07-26-living-readings-admin-synastry.md",
+      "fingerprint": "20869170b1816732d3c85e186b7bc9f50572c9fe5f4cc2c7df20a41840c3eadc"
+    },
+    {
+      "path": "docs/plans/2026-07-27-urania-graph-first-ui-realignment.md",
+      "fingerprint": "861c749d6e3a4e0e85eccd3b08dd0236f58094314e8584f39e21eea89cb2b211"
+    },
+    {
+      "path": "docs/plans/2026-07-28-agentscope-context-orchestration-integration.md",
+      "fingerprint": "d71f8f3873c35fec4f6010494119e2c091678ab831f582ccfcca72d0cc261bfd"
+    },
+    {
+      "path": "docs/plans/2026-08-01-urania-production-readiness-design.md",
+      "fingerprint": "dd2f582bf9ab7e4bc75eff56c72637d0a82b6b230c8efb6bedd915cc7334d34c"
+    },
+    {
+      "path": "docs/plans/2026-08-01-urania-production-readiness.md",
+      "fingerprint": "b0ff1025c4310804d24e17698c67cab8890c678b9cbb2439607d311276542509"
+    },
+    {
+      "path": ".planning/ROADMAP.md",
+      "fingerprint": "49a82882bc31f5d73425020fe666277f99dcdf288c210210ee759cfd6242012d"
+    },
+    {
+      "path": ".planning/PROJECT.md",
+      "fingerprint": "668d1389c5940ec1f1b90eab42d5c046dc753d9c8767d428556368d6063476a7"
+    },
+    {
+      "path": ".planning/REQUIREMENTS.md",
+      "fingerprint": "f5bc1aa79f890de6ceb764510551ee5cc60076eac6d171c7ea6a2fadca23eac2"
+    }
+  ],
+  "research": [],
+  "options": [
+    {
+      "option_id": "opt_02c02c7cb914947b8dd9",
+      "label": "Execute the proposed next task",
+      "recommendation": true,
+      "rationale": "phase \"02 — Live proofs + gates (wave 2)\" has 2 open tasks; take next batch",
+      "tasks": [
+        {
+          "id": "L1",
+          "parallel": false,
+          "desc": "R-8: Live proof FV-188 (admin session) — fresh Access login yields `platform-admin` + `admin:analytics:read`, captured as live JSON evidence. *(ISC-188, deferred-verify; human-gated fresh login)*",
+          "phase": "02 — Live proofs + gates (wave 2)",
+          "source": ".planning/phases/02-live-proofs-gates/02-01-PLAN.md"
+        }
+      ],
+      "combo": "te-build",
+      "concurrency": 1,
+      "worktree_required": false
+    }
+  ],
+  "approval": {
+    "approval_id": "apr_3ffba5a30aee67a5d02e",
+    "status": "required",
+    "expires_at": "2026-08-16T10:13:37.216Z",
+    "selected_option_id": null
+  },
+  "readiness": {
+    "status": "blocked",
+    "checks": [
+      "human_approval",
+      "source_freshness",
+      "quota_snapshot",
+      "dispatch_receipt"
+    ]
+  },
+  "execution": {
+    "status": "blocked",
+    "reason": "human approval is required before any swarm dispatch"
+  },
+  "reporting": {
+    "status": "pending",
+    "required_receipts": [
+      "dispatch",
+      "task",
+      "verification"
+    ]
+  }
+}
