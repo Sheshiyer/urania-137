@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import test from 'node:test'
 import { resolve } from 'node:path'
-import { executeCutover, gateCutover, planCutover } from './cutover.mjs'
+import { executeCutover, gateCutover, parsePagesDeploymentId, planCutover } from './cutover.mjs'
 import { validateTargets, validateTargetsShape } from './validate-targets.mjs'
 
 const TARGETS = {
@@ -96,6 +96,8 @@ test('executeCutover dry-runs without calling the runner', () => {
   assert.equal(calls, 0, 'dry-run must not invoke the runner')
 })
 
+const DEPLOY_ID = '11111111-2222-3333-4444-555555555555'
+
 test('executeCutover applies only with --apply + matching --confirm', () => {
   const workspace = mkdtempSync(resolve(tmpdir(), 'urania-cutover-'))
   try {
@@ -108,17 +110,84 @@ test('executeCutover applies only with --apply + matching --confirm', () => {
       receipt: receiptPath,
       apply: true,
       confirm: TARGETS.protectedPagesProjectId,
-    }, TARGETS, { run: () => { calls += 1; return { status: 0, stdout: 'deployed', stderr: '' } } })
+    }, TARGETS, {
+      run: () => {
+        calls += 1
+        return { status: 0, stdout: `Deployment complete ${DEPLOY_ID}`, stderr: '' }
+      },
+    })
     assert.equal(report.ok, true)
     assert.equal(report.dryRun, false)
     assert.equal(calls, 1)
     assert.ok(report.receipt.sha256, 'receipt is checksummed')
     assert.ok(report.receipt.rollbackCommand.length > 0)
     assert.equal(report.receipt.after.sourceSha, 'a'.repeat(40), 'deploy receipt carries sourceSha')
-    assert.equal(report.receipt.after.deploymentId, null, 'deploymentId recorded when runner reports it')
+    assert.equal(report.receipt.after.deploymentId, DEPLOY_ID, 'deploymentId recorded from runner stdout')
+    assert.equal(report.receipt.deploymentId, DEPLOY_ID, 'deploymentId copied to receipt root')
   } finally {
     rmSync(workspace, { recursive: true, force: true })
   }
+})
+
+test('executeCutover mocked apply never reads CLOUDFLARE env for a deployment id', () => {
+  const previousToken = process.env.CLOUDFLARE_API_TOKEN
+  const previousAccount = process.env.CLOUDFLARE_ACCOUNT_ID
+  process.env.CLOUDFLARE_API_TOKEN = 'gha-would-have-a-real-token'
+  process.env.CLOUDFLARE_ACCOUNT_ID = 'a'.repeat(32)
+  const workspace = mkdtempSync(resolve(tmpdir(), 'urania-cutover-env-'))
+  try {
+    assert.throws(
+      () => executeCutover('app-deploy', {
+        targets: TARGETS,
+        artifact: 'dist/app',
+        sha: 'a'.repeat(40),
+        receipt: resolve(workspace, 'receipt.json'),
+        apply: true,
+        confirm: TARGETS.protectedPagesProjectId,
+      }, TARGETS, { run: () => ({ status: 0, stdout: 'deployed', stderr: '' }) }),
+      /deployment id missing/,
+    )
+  } finally {
+    if (previousToken === undefined) delete process.env.CLOUDFLARE_API_TOKEN
+    else process.env.CLOUDFLARE_API_TOKEN = previousToken
+    if (previousAccount === undefined) delete process.env.CLOUDFLARE_ACCOUNT_ID
+    else process.env.CLOUDFLARE_ACCOUNT_ID = previousAccount
+    rmSync(workspace, { recursive: true, force: true })
+  }
+})
+
+test('executeCutover records deploymentId from injected fetcher when stdout has none', () => {
+  const workspace = mkdtempSync(resolve(tmpdir(), 'urania-cutover-fetch-'))
+  try {
+    let fetched = 0
+    const report = executeCutover('landing-deploy', {
+      targets: TARGETS,
+      artifact: 'dist/landing',
+      sha: 'b'.repeat(40),
+      receipt: resolve(workspace, 'receipt.json'),
+      apply: true,
+      confirm: TARGETS.publicPagesProjectId,
+    }, TARGETS, {
+      run: () => ({ status: 0, stdout: 'deployed', stderr: '' }),
+      fetchDeploymentId: (projectName, sha) => {
+        fetched += 1
+        assert.equal(projectName, TARGETS.publicPagesProjectName)
+        assert.equal(sha, 'b'.repeat(40))
+        return DEPLOY_ID
+      },
+    })
+    assert.equal(fetched, 1)
+    assert.equal(report.receipt.deploymentId, DEPLOY_ID)
+    assert.equal(report.receipt.sourceSha, 'b'.repeat(40))
+  } finally {
+    rmSync(workspace, { recursive: true, force: true })
+  }
+})
+
+test('parsePagesDeploymentId reads JSON then a UUID scan', () => {
+  assert.equal(parsePagesDeploymentId(`{"id":"${DEPLOY_ID}"}`), DEPLOY_ID)
+  assert.equal(parsePagesDeploymentId(`take a peek at ${DEPLOY_ID}`), DEPLOY_ID)
+  assert.equal(parsePagesDeploymentId('deployed'), null)
 })
 
 test('executeCutover refuses --apply with a non-matching confirm', () => {

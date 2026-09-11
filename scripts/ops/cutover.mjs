@@ -17,7 +17,9 @@
  *
  * The runner is a pure, injectable `executeCutover` so the test suite can prove
  * the fail-closed guards (wrong target, wildcard, missing backup, multi-mutation,
- * rollback receipt) without a network.
+ * rollback receipt) without a network. Pages deployment-id lookup is a second
+ * injectable (`fetchDeploymentId`); omitting it keeps Canonical-gate tests off
+ * the live Cloudflare API even when CLOUDFLARE_* is set in the environment.
  */
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
@@ -28,7 +30,7 @@ import { pathToFileURL } from 'node:url'
 const SHA_RE = /^[a-f0-9]{40}$/
 const DEPLOYMENT_ID_RE = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
 
-function parsePagesDeploymentId(stdout) {
+export function parsePagesDeploymentId(stdout) {
   const text = String(stdout ?? '')
   const jsonStart = text.indexOf('{')
   if (jsonStart !== -1) {
@@ -44,20 +46,40 @@ function parsePagesDeploymentId(stdout) {
   return match ? match[0] : null
 }
 
-function fetchLatestDeploymentId(projectName) {
+/**
+ * Resolve a Pages deployment id from the Cloudflare API. Prefer a deployment
+ * whose commit hash matches the frozen release SHA; fall back to the project's
+ * canonical deployment only when no SHA match exists. Tests must inject this
+ * (or omit it) — never call it from a mocked runner, because readiness.yml
+ * sets CLOUDFLARE_* and a live GET would leak into the Canonical gate.
+ */
+export function fetchLatestDeploymentId(projectName, sourceSha) {
   const account = process.env.CLOUDFLARE_ACCOUNT_ID
   const token = process.env.CLOUDFLARE_API_TOKEN
   if (!account || !token || !projectName) return null
-  const result = spawnSync(
+  const curl = (url) => spawnSync(
     'curl',
-    [
-      '-sS',
-      '-H',
-      `Authorization: Bearer ${token}`,
-      `https://api.cloudflare.com/client/v4/accounts/${account}/pages/projects/${projectName}`,
-    ],
+    ['-sS', '--max-time', '15', '-H', `Authorization: Bearer ${token}`, url],
     { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
   )
+  const accountRoot = `https://api.cloudflare.com/client/v4/accounts/${account}/pages/projects/${projectName}`
+  if (SHA_RE.test(sourceSha ?? '')) {
+    const listed = curl(`${accountRoot}/deployments`)
+    if (listed.status === 0) {
+      try {
+        const parsed = JSON.parse(listed.stdout || '{}')
+        const rows = Array.isArray(parsed?.result) ? parsed.result : []
+        const match = rows.find((row) => {
+          const hash = row?.deployment_trigger?.metadata?.commit_hash
+          return hash === sourceSha && typeof row?.id === 'string' && row.id.length > 0
+        })
+        if (match?.id) return match.id
+      } catch {
+        // fall through to canonical_deployment
+      }
+    }
+  }
+  const result = curl(accountRoot)
   if (result.status !== 0) return null
   try {
     const parsed = JSON.parse(result.stdout || '{}')
@@ -67,6 +89,7 @@ function fetchLatestDeploymentId(projectName) {
     return null
   }
 }
+
 const MUTATIONS = new Set(['d1-migrate', 'app-deploy', 'landing-deploy'])
 
 /** The three mutations release.yml invokes, and their resolved resources. */
@@ -124,9 +147,11 @@ export function writeCutoverReceipt(plan, afterState, receiptPath) {
 /**
  * Execute a mutation via the injected `run` runner (spawnSync-like). This is
  * the seam the test suite mocks. `run` receives (argv[], cwd) and returns
- * { status, stdout, stderr }.
+ * { status, stdout, stderr }. Optional `fetchDeploymentId(projectName, sha)`
+ * is the only path that may touch the Cloudflare API; tests omit it.
  */
-export function executeCutover(mutation, args, targets, { run }) {
+export function executeCutover(mutation, args, targets, { run, fetchDeploymentId } = {}) {
+  if (typeof run !== 'function') throw new Error('executeCutover requires a run runner')
   const plan = planCutover(mutation, args, targets)
   if (args.dryRun || !args.apply) {
     return { ok: true, dryRun: true, plan }
@@ -174,9 +199,12 @@ export function executeCutover(mutation, args, targets, { run }) {
     after.deploymentId =
       result.deploymentId
       ?? parsePagesDeploymentId(result.stdout)
-      ?? fetchLatestDeploymentId(projectName)
+      ?? (typeof fetchDeploymentId === 'function' ? fetchDeploymentId(projectName, args.sha) : null)
       ?? null
     after.sourceSha = SHA_RE.test(args.sha ?? '') ? args.sha : null
+    if (!after.deploymentId) {
+      throw new Error(`cutover ${mutation} failed: Pages deployment id missing from wrangler output and Cloudflare API`)
+    }
   }
   const receipt = writeCutoverReceipt(plan, after, args.receipt)
   if (mutation === 'app-deploy' || mutation === 'landing-deploy') {
@@ -225,7 +253,10 @@ if (import.meta.url === invokedAs) {
       const result = spawnSync(argv[0], argv.slice(1), { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] })
       return { status: result.status ?? 1, stdout: result.stdout || '', stderr: result.stderr || '' }
     }
-    const report = executeCutover(mutation, args, targets, { run: runner })
+    const report = executeCutover(mutation, args, targets, {
+      run: runner,
+      fetchDeploymentId: fetchLatestDeploymentId,
+    })
     console.log(JSON.stringify(report, null, 2))
   } catch (error) {
     console.error(JSON.stringify({ ok: false, error: error instanceof Error ? error.message : String(error) }, null, 2))
