@@ -47,7 +47,7 @@ describe('public landing ecosystem (Golden Portal shell)', () => {
     expect(html).toContain('/media/gp-hero.mp4')
     expect(html).toContain('preload="metadata"')
     expect(html).not.toContain('preload="auto"')
-    expect(html).toContain('/media/urania/hero.jpg')
+    expect(html).toContain('/media/urania/hero-2k.png')
   })
 
   it('exposes first-time-user rooms as real routes in the shared nav', () => {

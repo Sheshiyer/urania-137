@@ -22,7 +22,7 @@ export function HomePage({ appHref }: { appHref: string }) {
       <section className="gp-hero" aria-labelledby="landing-title">
         <video
           src="/media/gp-hero.mp4"
-          poster="/media/urania/hero.jpg"
+          poster="/media/urania/hero-2k.png"
           autoPlay
           muted
           loop
@@ -65,7 +65,7 @@ export function HomePage({ appHref }: { appHref: string }) {
 
       <div className="gp-showcase-wrap">
         <section id={SHOWCASE.id} className="gp-showcase" aria-labelledby="instrument-title">
-          <img className="gp-showcase__bg" src="/media/urania/hero.jpg" alt="" />
+          <img className="gp-showcase__bg" src="/media/urania/hero-2k.png" alt="" />
           <div className="gp-showcase__copy">
             <h2 id="instrument-title" className="reveal">
               {SHOWCASE.title}
