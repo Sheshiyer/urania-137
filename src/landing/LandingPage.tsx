@@ -8,8 +8,8 @@ export interface LandingPageProps {
 }
 
 /**
- * Motionskin of Void Atlas: structure + scroll/WebGL motion preserved;
- * Urania tokens/copy/funnel (Access OTP) are the skin.
+ * Void Atlas motion substrate + Urania composition pass:
+ * tunnel/scroll world kept; funnel copy, beats, and liquid-glass chrome are Urania.
  */
 export function LandingPage({
   protectedAppOrigin = import.meta.env.VITE_PROTECTED_APP_ORIGIN,

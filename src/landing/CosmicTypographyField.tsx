@@ -1,264 +1,267 @@
 import { useEffect, useRef, type CSSProperties } from 'react'
+import {
+  INSTRUMENT,
+  INVITATION,
+  LENSES,
+  PORTAL_TITLES,
+  PRINCIPLES,
+  SPATIAL_TEXTS,
+} from './landingCopy'
 
 type SpatialProperties = CSSProperties & {
-  "--x": string;
-  "--y": string;
-  "--z": string;
-  "--rx": string;
-  "--ry": string;
-  "--rz": string;
-};
+  '--x': string
+  '--y': string
+  '--z': string
+  '--rx': string
+  '--ry': string
+  '--rz': string
+}
 
-type SpatialText = {
-  key: string;
-  text: string;
-  kind: "near" | "phrase" | "micro";
-  x: string;
-  y: string;
-  z: string;
-  rx?: string;
-  ry?: string;
-  rz?: string;
-};
-
-const spatialTexts: SpatialText[] = [
-  { key: 'birth-witness', text: 'BIRTH WITNESS', kind: 'phrase', x: '-46vw', y: '-55vh', z: '-220px', rx: '-2deg', ry: '17deg', rz: '-2deg' },
-  { key: 'union-mirror', text: 'UNION MIRROR', kind: 'phrase', x: '-44vw', y: '58vh', z: '-360px', rx: '3deg', ry: '12deg', rz: '-1deg' },
-  { key: 'sky-weather', text: 'SKY WEATHER', kind: 'phrase', x: '45vw', y: '-56vh', z: '-430px', rx: '-3deg', ry: '-14deg', rz: '2deg' },
-  { key: 'noesis-reading', text: 'NOESIS READING', kind: 'phrase', x: '46vw', y: '54vh', z: '-500px', rx: '-7deg', ry: '-13deg', rz: '4deg' },
-  { key: 'engine-status', text: 'ENGINE STATUS', kind: 'phrase', x: '55vw', y: '8vh', z: '-620px', rx: '8deg', ry: '11deg', rz: '2deg' },
-  { key: 'folio-archive', text: 'FOLIO ARCHIVE', kind: 'phrase', x: '-52vw', y: '-23vh', z: '-520px', rx: '-5deg', ry: '-16deg', rz: '-2deg' },
-  { key: 'bridge-query', text: 'BRIDGE QUERY', kind: 'phrase', x: '-56vw', y: '23vh', z: '-560px', rx: '4deg', ry: '15deg', rz: '2deg' },
-  { key: 'source-before-model', text: 'SOURCE BEFORE MODEL', kind: 'phrase', x: '20vw', y: '-61vh', z: '-580px', rx: '-4deg', ry: '-12deg', rz: '-2deg' },
-  { key: 'consent-before-relation', text: 'CONSENT BEFORE RELATION', kind: 'phrase', x: '-20vw', y: '61vh', z: '-660px', rx: '-5deg', ry: '8deg', rz: '-3deg' },
-  { key: 'field-01', text: 'PATTERN 01', kind: 'micro', x: '-28vw', y: '-64vh', z: '-460px', rz: '-4deg' },
-  { key: 'signal-02', text: 'WITNESS 02', kind: 'micro', x: '34vw', y: '-61vh', z: '-520px', rz: '3deg' },
-  { key: 'threshold-03', text: 'THRESHOLD 03', kind: 'micro', x: '-25vw', y: '63vh', z: '-440px', rz: '-2deg' },
-  { key: 'folio-04', text: 'FOLIO 04', kind: 'micro', x: '10vw', y: '-67vh', z: '-560px', rz: '2deg' },
-  { key: 'access-05', text: 'ACCESS 05', kind: 'micro', x: '32vw', y: '64vh', z: '-500px', rz: '-3deg' },
-  { key: 'vector-06', text: 'SELEMENE 06', kind: 'micro', x: '-58vw', y: '4vh', z: '-520px', rz: '3deg' },
-  { key: 'orbit-07', text: 'GRAPH 07', kind: 'micro', x: '55vw', y: '-42vh', z: '-400px', rz: '-2deg' },
-  { key: 'echo-08', text: 'LEDGER 08', kind: 'micro', x: '8vw', y: '66vh', z: '-580px', rz: '4deg' },
-]
-
+type SpatialText = (typeof SPATIAL_TEXTS)[number]
 
 const spatialStyle = (item: SpatialText): SpatialProperties => ({
-  "--x": item.x,
-  "--y": item.y,
-  "--z": item.z,
-  "--rx": item.rx ?? "0deg",
-  "--ry": item.ry ?? "0deg",
-  "--rz": item.rz ?? "0deg",
-});
+  '--x': item.x,
+  '--y': item.y,
+  '--z': item.z,
+  '--rx': item.rx ?? '0deg',
+  '--ry': item.ry ?? '0deg',
+  '--rz': item.rz ?? '0deg',
+})
 
 export function CosmicTypographyField({ appHref }: { appHref: string }) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const worldRef = useRef<HTMLDivElement>(null);
-  const portalPreviewRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null)
+  const worldRef = useRef<HTMLDivElement>(null)
+  const portalPreviewRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
-    const section = sectionRef.current;
-    const world = worldRef.current;
-    const portalPreview = portalPreviewRef.current;
+    const section = sectionRef.current
+    const world = worldRef.current
+    const portalPreview = portalPreviewRef.current
 
-    if (!section || !world || !portalPreview) return;
+    if (!section || !world || !portalPreview) return
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      section.dataset.motion = "reduced";
-      return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      section.dataset.motion = 'reduced'
+      portalPreview.dataset.motion = 'reduced'
+      return
     }
 
-    let disposed = false;
-    let animationContext: { revert: () => void } | undefined;
-    let tunnelObserver: MutationObserver | undefined;
-    let portalProgressObserver: MutationObserver | undefined;
-    let releaseTunnelWait: (() => void) | undefined;
+    let disposed = false
+    let animationContext: { revert: () => void } | undefined
+    let tunnelObserver: MutationObserver | undefined
+    let portalProgressObserver: MutationObserver | undefined
+    let releaseTunnelWait: (() => void) | undefined
 
     const waitForTunnelPin = () => {
-      const tunnel = document.querySelector<HTMLElement>(".tunnel-experience");
+      const tunnel = document.querySelector<HTMLElement>('.tunnel-experience')
 
       if (
         !tunnel ||
-        tunnel.classList.contains("is-ready") ||
+        tunnel.classList.contains('is-ready') ||
         Boolean(tunnel.dataset.renderMode)
       ) {
-        return Promise.resolve();
+        return Promise.resolve()
       }
 
       return new Promise<void>((resolve) => {
         const finish = () => {
-          tunnelObserver?.disconnect();
-          tunnelObserver = undefined;
-          releaseTunnelWait = undefined;
-          resolve();
-        };
+          tunnelObserver?.disconnect()
+          tunnelObserver = undefined
+          releaseTunnelWait = undefined
+          resolve()
+        }
 
-        releaseTunnelWait = finish;
+        releaseTunnelWait = finish
         tunnelObserver = new MutationObserver(() => {
           if (
-            tunnel.classList.contains("is-ready") ||
+            tunnel.classList.contains('is-ready') ||
             Boolean(tunnel.dataset.renderMode)
           ) {
-            finish();
+            finish()
           }
-        });
+        })
         tunnelObserver.observe(tunnel, {
-          attributeFilter: ["class", "data-render-mode"],
+          attributeFilter: ['class', 'data-render-mode'],
           attributes: true,
-        });
+        })
 
         if (
-          tunnel.classList.contains("is-ready") ||
+          tunnel.classList.contains('is-ready') ||
           Boolean(tunnel.dataset.renderMode)
         ) {
-          finish();
+          finish()
         }
-      });
-    };
+      })
+    }
 
     const setup = async () => {
-      await waitForTunnelPin();
-      if (disposed) return;
+      await waitForTunnelPin()
+      if (disposed) return
 
       const [gsapModule, scrollTriggerModule] = await Promise.all([
-        import("gsap"),
-        import("gsap/ScrollTrigger"),
-      ]);
+        import('gsap'),
+        import('gsap/ScrollTrigger'),
+      ])
 
-      if (disposed) return;
+      if (disposed) return
 
-      const { gsap } = gsapModule;
-      const { ScrollTrigger } = scrollTriggerModule;
-      gsap.registerPlugin(ScrollTrigger);
+      const { gsap } = gsapModule
+      const { ScrollTrigger } = scrollTriggerModule
+      gsap.registerPlugin(ScrollTrigger)
 
       animationContext = gsap.context(() => {
-        const select = gsap.utils.selector(portalPreview);
-        const layers = select<HTMLElement>("[data-scene-layer]");
-        const phrases = select<HTMLElement>(".cosmic-field__phrase");
+        const select = gsap.utils.selector(portalPreview)
+        const layers = select<HTMLElement>('[data-scene-layer]')
+        const phrases = select<HTMLElement>('.cosmic-field__phrase')
         const phraseInners = select<HTMLElement>(
-          ".cosmic-field__phrase .cosmic-field__layer-inner",
-        );
-        const microLabels = select<HTMLElement>(".cosmic-field__micro");
+          '.cosmic-field__phrase .cosmic-field__layer-inner',
+        )
+        const microLabels = select<HTMLElement>('.cosmic-field__micro')
         const portalCopy = portalPreview.querySelector<HTMLElement>(
-          ".cosmic-portal-preview__copy--primary",
-        );
+          '.cosmic-portal-preview__copy--primary',
+        )
         const secondaryCopy = portalPreview.querySelector<HTMLElement>(
-          ".cosmic-portal-preview__copy--secondary",
-        );
+          '.cosmic-portal-preview__copy--secondary',
+        )
+        const instrumentPanel = portalPreview.querySelector<HTMLElement>(
+          '[data-urania-beat="instrument"]',
+        )
+        const lensesPanel = portalPreview.querySelector<HTMLElement>(
+          '[data-urania-beat="lenses"]',
+        )
+        const principlesPanel = portalPreview.querySelector<HTMLElement>(
+          '[data-urania-beat="principles"]',
+        )
         const feedbackForm = portalPreview.querySelector<HTMLElement>(
-          ".cosmic-feedback",
-        );
-        const tunnel = document.querySelector<HTMLElement>(".tunnel-experience");
+          '.cosmic-feedback',
+        )
+        const tunnel = document.querySelector<HTMLElement>('.tunnel-experience')
 
-        if (!portalCopy || !secondaryCopy || !feedbackForm) return;
+        if (
+          !portalCopy ||
+          !secondaryCopy ||
+          !instrumentPanel ||
+          !lensesPanel ||
+          !principlesPanel ||
+          !feedbackForm
+        ) {
+          return
+        }
 
         if (tunnel) {
           const syncPortalProgress = () => {
-            const progress = tunnel.style.getPropertyValue("--tunnel-progress") || "0";
-            const numericProgress = Number.parseFloat(progress) || 0;
+            const progress = tunnel.style.getPropertyValue('--tunnel-progress') || '0'
+            const numericProgress = Number.parseFloat(progress) || 0
             const revealProgress = Math.min(
               1,
               Math.max(0, (numericProgress - 0.9) / 0.1),
-            );
+            )
             const reveal =
-              revealProgress * revealProgress * (3 - 2 * revealProgress);
-            portalPreview.style.setProperty("--portal-progress", progress);
-            portalPreview.style.setProperty("--portal-reveal", reveal.toFixed(4));
+              revealProgress * revealProgress * (3 - 2 * revealProgress)
+            portalPreview.style.setProperty('--portal-progress', progress)
+            portalPreview.style.setProperty('--portal-reveal', reveal.toFixed(4))
             portalPreview.style.setProperty(
-              "--portal-title-scale",
+              '--portal-title-scale',
               (0.56 + reveal * 0.44).toFixed(4),
-            );
+            )
             portalPreview.style.setProperty(
-              "--portal-title-blur",
+              '--portal-title-blur',
               `${((1 - reveal) * 7).toFixed(2)}px`,
-            );
-          };
+            )
+          }
 
-          portalProgressObserver = new MutationObserver(syncPortalProgress);
+          portalProgressObserver = new MutationObserver(syncPortalProgress)
           portalProgressObserver.observe(tunnel, {
-            attributeFilter: ["style"],
+            attributeFilter: ['style'],
             attributes: true,
-          });
-          syncPortalProgress();
+          })
+          syncPortalProgress()
         }
 
-        gsap.set(layers, { autoAlpha: 0 });
-        gsap.set(world, { autoAlpha: 1 });
+        const beatPanels = [instrumentPanel, lensesPanel, principlesPanel]
+
+        gsap.set(layers, { autoAlpha: 0 })
+        gsap.set(world, { autoAlpha: 1 })
         gsap.set(phrases, {
           autoAlpha: 0,
-          filter: "blur(5px)",
-        });
+          filter: 'blur(5px)',
+        })
         gsap.set(microLabels, {
           autoAlpha: 0,
-          filter: "blur(4px)",
-        });
+          filter: 'blur(4px)',
+        })
         gsap.set(portalCopy, {
           autoAlpha: 0,
-          filter: "blur(8px)",
+          filter: 'blur(8px)',
           rotationY: -5,
           scale: 0.5,
-        });
+        })
         gsap.set(secondaryCopy, {
           autoAlpha: 0,
-          filter: "blur(8px)",
+          filter: 'blur(8px)',
           rotationY: 7,
           scale: 0.42,
           xPercent: 8,
           yPercent: 3,
-        });
+        })
+        gsap.set(beatPanels, {
+          autoAlpha: 0,
+          filter: 'blur(6px)',
+          pointerEvents: 'none',
+          scale: 0.94,
+          y: 28,
+        })
         gsap.set(feedbackForm, {
           autoAlpha: 0,
-          filter: "blur(5px)",
-          pointerEvents: "none",
+          filter: 'blur(5px)',
+          pointerEvents: 'none',
           scale: 0.92,
           y: 32,
-        });
+        })
+
         const timeline = gsap.timeline({
-          defaults: { ease: "none" },
+          defaults: { ease: 'none' },
           scrollTrigger: {
             anticipatePin: 0,
-            end: () =>
-              `+=${Math.max(window.innerHeight * 7.2, 4800)}`,
+            end: () => `+=${Math.max(window.innerHeight * 8.4, 5600)}`,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
               document.documentElement.style.setProperty(
-                "--cosmic-progress",
+                '--cosmic-progress',
                 self.progress.toFixed(4),
-              );
+              )
             },
             onEnter: () => {
-              gsap.set(portalPreview, { autoAlpha: 1 });
+              gsap.set(portalPreview, { autoAlpha: 1 })
             },
             onEnterBack: () => {
-              gsap.set(portalPreview, { autoAlpha: 1 });
+              gsap.set(portalPreview, { autoAlpha: 1 })
             },
             onLeave: () => {
-              document.documentElement.style.setProperty(
-                "--cosmic-progress",
-                "1",
-              );
-              gsap.set(portalPreview, { autoAlpha: 1 });
+              document.documentElement.style.setProperty('--cosmic-progress', '1')
+              gsap.set(portalPreview, { autoAlpha: 1 })
             },
             onLeaveBack: () => {
-              gsap.set(portalPreview, { clearProps: "opacity,visibility" });
+              gsap.set(portalPreview, { clearProps: 'opacity,visibility' })
             },
             pin: true,
             refreshPriority: -1,
             scrub: 0.8,
-            start: "top top",
+            start: 'top top',
             trigger: section,
           },
-        });
+        })
 
         const seededBeat = (index: number, salt: number) => {
           const value =
-            Math.sin((index + 1) * 12.9898 + salt * 78.233) * 43758.5453;
-          return value - Math.floor(value);
-        };
+            Math.sin((index + 1) * 12.9898 + salt * 78.233) * 43758.5453
+          return value - Math.floor(value)
+        }
 
         phrases.forEach((phrase, index) => {
-          const revealAt = 0.02 + seededBeat(index, 1) * 0.85;
-          const brightAt = 4.3 + seededBeat(index, 2) * 7.2;
-          const fadeAt = 13 + seededBeat(index, 3) * 0.7;
+          const revealAt = 0.02 + seededBeat(index, 1) * 0.85
+          const brightAt = 4.3 + seededBeat(index, 2) * 7.2
+          const fadeAt = 14.2 + seededBeat(index, 3) * 0.7
 
           timeline
             .to(
@@ -266,19 +269,19 @@ export function CosmicTypographyField({ appHref }: { appHref: string }) {
               {
                 autoAlpha: 0.58,
                 duration: 0.55,
-                ease: "power2.out",
-                filter: "blur(0px)",
+                ease: 'power2.out',
+                filter: 'blur(0px)',
               },
               revealAt,
             )
             .to(
               phrase,
-              { autoAlpha: 1, duration: 0.55, ease: "power2.out" },
+              { autoAlpha: 1, duration: 0.55, ease: 'power2.out' },
               brightAt,
             )
             .to(
               phrase,
-              { autoAlpha: 0.64, duration: 0.85, ease: "power1.inOut" },
+              { autoAlpha: 0.64, duration: 0.85, ease: 'power1.inOut' },
               brightAt + 0.55,
             )
             .to(
@@ -286,16 +289,16 @@ export function CosmicTypographyField({ appHref }: { appHref: string }) {
               {
                 autoAlpha: 0,
                 duration: 0.9,
-                filter: "blur(10px)",
+                filter: 'blur(10px)',
               },
               fadeAt,
-            );
-        });
+            )
+        })
 
         microLabels.forEach((label, index) => {
-          const revealAt = 0.04 + seededBeat(index, 4) * 1.05;
-          const brightAt = 4.8 + seededBeat(index, 5) * 6.8;
-          const fadeAt = 13 + seededBeat(index, 6) * 0.65;
+          const revealAt = 0.04 + seededBeat(index, 4) * 1.05
+          const brightAt = 4.8 + seededBeat(index, 5) * 6.8
+          const fadeAt = 14.2 + seededBeat(index, 6) * 0.65
 
           timeline
             .to(
@@ -303,19 +306,19 @@ export function CosmicTypographyField({ appHref }: { appHref: string }) {
               {
                 autoAlpha: 0.42,
                 duration: 0.5,
-                ease: "power2.out",
-                filter: "blur(0px)",
+                ease: 'power2.out',
+                filter: 'blur(0px)',
               },
               revealAt,
             )
             .to(
               label,
-              { autoAlpha: 1, duration: 0.45, ease: "power2.out" },
+              { autoAlpha: 1, duration: 0.45, ease: 'power2.out' },
               brightAt,
             )
             .to(
               label,
-              { autoAlpha: 0.5, duration: 0.75, ease: "power1.inOut" },
+              { autoAlpha: 0.5, duration: 0.75, ease: 'power1.inOut' },
               brightAt + 0.45,
             )
             .to(
@@ -323,18 +326,23 @@ export function CosmicTypographyField({ appHref }: { appHref: string }) {
               {
                 autoAlpha: 0,
                 duration: 0.8,
-                filter: "blur(8px)",
+                filter: 'blur(8px)',
               },
               fadeAt,
-            );
-        });
+            )
+        })
 
         timeline
           .fromTo(
             world,
-            { force3D: true, rotationX: 0.8, rotationY: -2.4, z: -260 },
             {
-              duration: 15.2,
+              force3D: true,
+              rotationX: 0.8,
+              rotationY: -2.4,
+              z: -260,
+            },
+            {
+              duration: 16.4,
               force3D: true,
               rotationX: -1.4,
               rotationY: 4.2,
@@ -347,7 +355,7 @@ export function CosmicTypographyField({ appHref }: { appHref: string }) {
             {
               autoAlpha: 1,
               duration: 0.9,
-              filter: "blur(0px)",
+              filter: 'blur(0px)',
               rotationX: 0,
               rotationY: 0,
               rotationZ: 0,
@@ -355,13 +363,13 @@ export function CosmicTypographyField({ appHref }: { appHref: string }) {
               xPercent: 0,
               yPercent: 0,
             },
-            2.25,
+            1.8,
           )
           .to(
             portalCopy,
             {
-              duration: 3.9,
-              filter: "blur(0px)",
+              duration: 2.4,
+              filter: 'blur(0px)',
               rotationX: 2,
               rotationY: -12,
               rotationZ: -1.35,
@@ -369,34 +377,57 @@ export function CosmicTypographyField({ appHref }: { appHref: string }) {
               xPercent: -12,
               yPercent: -3,
             },
-            3.15,
+            2.7,
           )
           .to(
             portalCopy,
             {
               autoAlpha: 0,
-              duration: 1.1,
-              filter: "blur(6px)",
+              duration: 0.85,
+              filter: 'blur(6px)',
             },
-            6.7,
+            5.0,
+          )
+          .set(instrumentPanel, { pointerEvents: 'auto' }, 5.15)
+          .to(
+            instrumentPanel,
+            {
+              autoAlpha: 1,
+              duration: 0.85,
+              filter: 'blur(0px)',
+              scale: 1,
+              y: 0,
+            },
+            5.15,
+          )
+          .to(
+            instrumentPanel,
+            {
+              autoAlpha: 0,
+              duration: 0.7,
+              filter: 'blur(6px)',
+              pointerEvents: 'none',
+              y: -18,
+            },
+            7.35,
           )
           .to(
             secondaryCopy,
             {
               autoAlpha: 1,
-              duration: 1.05,
-              filter: "blur(0px)",
+              duration: 0.95,
+              filter: 'blur(0px)',
               rotationY: 0,
               scale: 1,
               xPercent: 0,
               yPercent: 0,
             },
-            7.65,
+            7.55,
           )
           .to(
             secondaryCopy,
             {
-              duration: 3.6,
+              duration: 2.6,
               rotationX: -2,
               rotationY: 11,
               rotationZ: 1.1,
@@ -404,33 +435,79 @@ export function CosmicTypographyField({ appHref }: { appHref: string }) {
               xPercent: 12,
               yPercent: -3,
             },
-            8.55,
+            8.4,
           )
           .to(
             secondaryCopy,
             {
               autoAlpha: 0,
-              duration: 0.75,
-              filter: "blur(7px)",
+              duration: 0.7,
+              filter: 'blur(7px)',
             },
-            12.2,
+            10.7,
           )
-          .set(feedbackForm, { pointerEvents: "auto" }, 13)
+          .set(lensesPanel, { pointerEvents: 'auto' }, 10.85)
+          .to(
+            lensesPanel,
+            {
+              autoAlpha: 1,
+              duration: 0.9,
+              filter: 'blur(0px)',
+              scale: 1,
+              y: 0,
+            },
+            10.85,
+          )
+          .to(
+            lensesPanel,
+            {
+              autoAlpha: 0,
+              duration: 0.7,
+              filter: 'blur(6px)',
+              pointerEvents: 'none',
+              y: -18,
+            },
+            13.1,
+          )
+          .set(principlesPanel, { pointerEvents: 'auto' }, 13.25)
+          .to(
+            principlesPanel,
+            {
+              autoAlpha: 1,
+              duration: 0.85,
+              filter: 'blur(0px)',
+              scale: 1,
+              y: 0,
+            },
+            13.25,
+          )
+          .to(
+            principlesPanel,
+            {
+              autoAlpha: 0,
+              duration: 0.65,
+              filter: 'blur(6px)',
+              pointerEvents: 'none',
+              y: -16,
+            },
+            15.15,
+          )
+          .set(feedbackForm, { pointerEvents: 'auto' }, 15.35)
           .to(
             feedbackForm,
             {
               autoAlpha: 1,
               duration: 1,
-              filter: "blur(0px)",
+              filter: 'blur(0px)',
               scale: 1,
               y: 0,
             },
-            13,
+            15.35,
           )
           .to(
             phraseInners,
             {
-              duration: 13.1,
+              duration: 16.4,
               rotation: (index) => (index % 2 === 0 ? -2.5 : 2.5),
               xPercent: (index) =>
                 [-20, -14, 18, 15, 21, -17, -24, 8, 24, -11][index] ?? 0,
@@ -442,42 +519,40 @@ export function CosmicTypographyField({ appHref }: { appHref: string }) {
           .to(
             microLabels,
             {
-              duration: 13.1,
+              duration: 16.4,
               xPercent: (index) => (index % 2 === 0 ? -12 : 14),
               yPercent: (index) => (index % 3 === 0 ? -8 : 7),
             },
             0,
-          );
+          )
 
-        section.dataset.motion = "scroll";
-      }, section);
+        section.dataset.motion = 'scroll'
+      }, section)
 
-      ScrollTrigger.refresh();
-    };
+      ScrollTrigger.refresh()
+    }
 
     setup().catch(() => {
-      section.dataset.motion = "static";
-    });
+      section.dataset.motion = 'static'
+      portalPreview.dataset.motion = 'static'
+    })
 
     return () => {
-      disposed = true;
-      releaseTunnelWait?.();
-      tunnelObserver?.disconnect();
-      portalProgressObserver?.disconnect();
-      document.documentElement.style.removeProperty("--cosmic-progress");
-      animationContext?.revert();
-    };
-  }, []);
+      disposed = true
+      releaseTunnelWait?.()
+      tunnelObserver?.disconnect()
+      portalProgressObserver?.disconnect()
+      document.documentElement.style.removeProperty('--cosmic-progress')
+      animationContext?.revert()
+    }
+  }, [])
 
   return (
     <>
-      <div
-        ref={portalPreviewRef}
-        className="cosmic-portal-preview"
-      >
+      <div ref={portalPreviewRef} className="cosmic-portal-preview">
         <div className="cosmic-field__stage" aria-hidden="true">
           <div ref={worldRef} className="cosmic-field__world">
-            {spatialTexts.map((item) => (
+            {SPATIAL_TEXTS.map((item) => (
               <div
                 key={item.key}
                 className={`cosmic-field__layer cosmic-field__${item.kind}`}
@@ -497,9 +572,11 @@ export function CosmicTypographyField({ appHref }: { appHref: string }) {
           aria-hidden="true"
         >
           <p className="cosmic-portal-preview__title">
-            <span data-text="SEE THE">SEE THE</span>
-            <span data-text="PATTERN">PATTERN</span>
-            <span data-text="KEEP AUTHORITY">KEEP AUTHORITY</span>
+            {PORTAL_TITLES.primary.map((line) => (
+              <span key={line} data-text={line}>
+                {line}
+              </span>
+            ))}
           </p>
         </div>
 
@@ -508,23 +585,90 @@ export function CosmicTypographyField({ appHref }: { appHref: string }) {
           aria-hidden="true"
         >
           <p className="cosmic-portal-preview__title">
-            <span data-text="SOURCE BEFORE">SOURCE BEFORE</span>
-            <span data-text="MODEL">MODEL</span>
-            <span data-text="WITNESS OPEN">WITNESS OPEN</span>
+            {PORTAL_TITLES.secondary.map((line) => (
+              <span key={line} data-text={line}>
+                {line}
+              </span>
+            ))}
           </p>
         </div>
 
-        <div className="cosmic-feedback" data-urania-threshold>
-          <p className="cosmic-feedback__eyebrow">THRESHOLD / ACCESS OTP</p>
-          <h3>ENTER THE FIELD</h3>
-          <p className="cosmic-feedback__lede">
-            What pattern keeps returning, and what concrete signal would show that it no longer applies?
-          </p>
-          <p className="cosmic-feedback__note">
-            The next page is the protected application. Cloudflare Access email OTP is required.
-          </p>
+        <article
+          id={INSTRUMENT.id}
+          className="urania-beat liquid-glass"
+          data-urania-beat="instrument"
+          aria-labelledby="urania-instrument-title"
+        >
+          <p className="urania-beat__eyebrow">{INSTRUMENT.kicker}</p>
+          <h2 id="urania-instrument-title">{INSTRUMENT.title}</h2>
+          <p className="urania-beat__lede">{INSTRUMENT.lede}</p>
+          <ol className="urania-beat__steps">
+            {INSTRUMENT.steps.map((step) => (
+              <li key={step.index}>
+                <span>{step.index}</span>
+                <strong>{step.title}</strong>
+                <p>{step.body}</p>
+              </li>
+            ))}
+          </ol>
+        </article>
+
+        <section
+          id={LENSES.id}
+          className="urania-beat urania-beat--lenses liquid-glass"
+          data-urania-beat="lenses"
+          aria-labelledby="urania-lenses-title"
+        >
+          <p className="urania-beat__eyebrow">{LENSES.kicker}</p>
+          <h2 id="urania-lenses-title">{LENSES.title}</h2>
+          <p className="urania-beat__lede">{LENSES.lede}</p>
+          <div className="urania-lens-mosaic" aria-label="Seven parent lenses">
+            {LENSES.items.map((lens) => (
+              <article
+                key={lens.name}
+                className={
+                  lens.wide
+                    ? 'urania-lens-card urania-lens-card--wide'
+                    : 'urania-lens-card'
+                }
+              >
+                <span>{lens.name}</span>
+                <h3>{lens.title}</h3>
+                <p>{lens.body}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section
+          id={PRINCIPLES.id}
+          className="urania-beat urania-beat--principles liquid-glass"
+          data-urania-beat="principles"
+          aria-labelledby="urania-principles-title"
+        >
+          <p className="urania-beat__eyebrow">{PRINCIPLES.kicker}</p>
+          <h2 id="urania-principles-title">{PRINCIPLES.title}</h2>
+          <ol className="urania-principle-list">
+            {PRINCIPLES.items.map((item) => (
+              <li key={item.title}>
+                <span>{item.title}</span>
+                <p>{item.body}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <div
+          id={INVITATION.id}
+          className="cosmic-feedback liquid-glass"
+          data-urania-threshold
+        >
+          <p className="cosmic-feedback__eyebrow">{INVITATION.kicker}</p>
+          <h3>{INVITATION.title}</h3>
+          <p className="cosmic-feedback__lede">{INVITATION.lede}</p>
+          <p className="cosmic-feedback__note">{INVITATION.note}</p>
           <a className="cosmic-feedback__cta" href={appHref} data-protected-app-cta>
-            Open Urania 137
+            {INVITATION.cta}
           </a>
         </div>
       </div>
@@ -536,9 +680,9 @@ export function CosmicTypographyField({ appHref }: { appHref: string }) {
         aria-labelledby="cosmic-field-title"
       >
         <h2 id="cosmic-field-title" className="cosmic-field__sr-only">
-          SEE THE PATTERN. KEEP THE AUTHORITY.
+          See the pattern. Keep the authority.
         </h2>
       </section>
     </>
-  );
+  )
 }

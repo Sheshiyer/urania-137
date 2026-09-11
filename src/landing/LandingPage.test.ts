@@ -5,7 +5,7 @@ import { LandingPage } from './LandingPage'
 
 const origin = 'https://app.urania.tryambakam.space'
 
-describe('public landing page (Void Atlas Motionskin)', () => {
+describe('public landing page (Urania composition on Void Atlas)', () => {
   const render = () =>
     renderToStaticMarkup(
       createElement(LandingPage, { protectedAppOrigin: origin, development: false }),
@@ -42,18 +42,31 @@ describe('public landing page (Void Atlas Motionskin)', () => {
     expect(html).not.toContain('preload="auto"')
   })
 
-  it('preserves Urania funnel copy and Access threshold CTA', () => {
+  it('preserves Urania funnel copy, section map, and Access threshold CTA', () => {
     const html = render()
 
     expect(html).toContain('See the')
     expect(html).toContain('pattern')
     expect(html).toContain('Keep the')
     expect(html).toContain('authority')
-    expect(html).toContain('Enter the field')
+    expect(html).toContain('Tryambakam Noesis')
+    expect(html).toContain('One field. Many lenses. A traceable reading.')
+    expect(html).toContain('Seven rooms. One graph.')
+    expect(html).toContain('Birth Witness')
+    expect(html).toContain('Bridge Query')
+    expect(html).toContain('Source before model')
+    expect(html).toContain('Consent before relation')
+    expect(html).toContain('Enter when the question is active.')
     expect(html).toContain('Open Urania 137')
     expect(html).toContain('Cloudflare Access email OTP')
+    expect(html).toContain('id="instrument"')
+    expect(html).toContain('id="lenses"')
+    expect(html).toContain('id="principles"')
+    expect(html).toContain('id="invitation"')
     expect(html).toContain('data-protected-app-cta')
     expect(html).toContain('data-urania-threshold')
+    expect(html).toContain('href="#instrument"')
+    expect(html).toContain('href="#invitation"')
   })
 
   it('rejects forbidden vocabulary and preserves no AI-as-feature framing', () => {

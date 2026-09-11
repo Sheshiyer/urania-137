@@ -1,4 +1,5 @@
 import { useEffect, useRef, type PointerEvent as ReactPointerEvent } from "react";
+import { HERO, NAV, STAGES, STATS } from './landingCopy'
 import {
   posterFragmentShader,
   posterVertexShader,
@@ -445,15 +446,15 @@ export function TunnelExperience({ videoSrc, appHref }: TunnelExperienceProps) {
           </a>
 
           <nav className="cosmos-nav" aria-label="Primary navigation">
-            <a href="#experience">Instrument</a>
-            <a href="#field">Lenses</a>
-            <a href="#field">Folio</a>
-            <a href="#field">Principles</a>
-            <a href="#field">Invitation</a>
+            {NAV.map((item) => (
+              <a key={item.href} href={item.href}>
+                {item.label}
+              </a>
+            ))}
           </nav>
 
           <a className="cosmos-cta" href={appHref} data-protected-app-cta>
-            <span>Enter the field</span>
+            <span>{HERO.headerCta}</span>
           </a>
         </header>
 
@@ -463,23 +464,24 @@ export function TunnelExperience({ videoSrc, appHref }: TunnelExperienceProps) {
           <span className="cosmos-orbit cosmos-orbit--bottom" />
           <span className="cosmos-orbit cosmos-orbit--left" />
         </div>
-        <p className="cosmos-signal">Witness, not seer</p>
+        <p className="cosmos-signal">{HERO.signal}</p>
+        <p className="cosmos-kicker">{HERO.kicker}</p>
 
-        <h1 className="cosmos-title" aria-label="See the pattern. Keep the authority.">
+        <h1 className="cosmos-title" aria-label={HERO.title}>
           <span
             className="cosmos-title__left"
             onPointerEnter={updateTitleBlur}
             onPointerMove={updateTitleBlur}
           >
             <span className="cosmos-title__sharp">
-              See the
+              {HERO.titleLeft[0]}
               <br />
-              pattern
+              {HERO.titleLeft[1]}
             </span>
             <span className="cosmos-title__blur-layer" aria-hidden="true">
-              See the
+              {HERO.titleLeft[0]}
               <br />
-              pattern
+              {HERO.titleLeft[1]}
             </span>
           </span>
           <span
@@ -496,28 +498,36 @@ export function TunnelExperience({ videoSrc, appHref }: TunnelExperienceProps) {
             onPointerMove={updateTitleBlur}
           >
             <span className="cosmos-title__sharp">
-              Keep the
+              {HERO.titleRight[0]}
               <br />
-              authority
+              {HERO.titleRight[1]}
             </span>
             <span className="cosmos-title__blur-layer" aria-hidden="true">
-              Keep the
+              {HERO.titleRight[0]}
               <br />
-              authority
+              {HERO.titleRight[1]}
             </span>
           </span>
         </h1>
 
-        <p className="cosmos-manifesto">
-          A graph-first reading field: conversation as threshold, Selemene as computation, Folio as the attributable record.
-        </p>
+        <p className="cosmos-manifesto">{HERO.lede}</p>
+
+        <dl className="cosmos-stats liquid-glass" aria-label="What the console holds">
+          {STATS.map((stat) => (
+            <div key={stat.label}>
+              <dt>{stat.label}</dt>
+              <dd>{stat.value}</dd>
+            </div>
+          ))}
+        </dl>
 
         <ol className="cosmos-stages" aria-label="Reading stages">
-          <li><span>Pattern</span><strong>01</strong></li>
-          <li><span>Witness</span><strong>02</strong></li>
-          <li><span>Threshold</span><strong>03</strong></li>
-          <li><span>Folio</span><strong>04</strong></li>
-          <li><span>Access</span><strong>05</strong></li>
+          {STAGES.map((stage) => (
+            <li key={stage.index}>
+              <span>{stage.label}</span>
+              <strong>{stage.index}</strong>
+            </li>
+          ))}
         </ol>
         </div>
       </section>
