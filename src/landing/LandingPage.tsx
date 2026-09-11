@@ -1,20 +1,29 @@
-import { useRef } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { protectedAppHref } from '../config/landing'
-import { FOOTER, HERO, INVITATION, NAV, QA, QUOTE, SHOWCASE } from './landingCopy'
-import { useParallax } from './useParallax'
-import { useScrollReveal } from './useScrollReveal'
+import { Shell } from './Shell'
+import { EnterPage } from './pages/EnterPage'
+import { HomePage } from './pages/HomePage'
+import { InstrumentPage } from './pages/InstrumentPage'
+import { LensesPage } from './pages/LensesPage'
+import { PrinciplesPage } from './pages/PrinciplesPage'
 
 export interface LandingPageProps {
   protectedAppOrigin?: string
   development?: boolean
 }
 
-function Mark({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 256 256" aria-hidden="true" focusable="false">
-      <path d="M 64 128 L 64.5 128 L 32 95 L 0 64 L 0 0 L 64 0 L 128 64 L 128 64.5 L 161 32 L 192 0 L 256 0 L 256 64 L 192 128 L 128 128 L 128 192 L 96 223 L 63.5 256 L 0 256 L 0 192 Z M 256 192 L 224 223 L 191.5 256 L 128 256 L 128 192 L 192 128 L 256 128 Z" />
-    </svg>
-  )
+const HASH_ROOMS: Record<string, string> = {
+  '#instrument': '/instrument',
+  '#lenses': '/lenses',
+  '#principles': '/principles',
+  '#invitation': '/enter',
+}
+
+function HashRoomRedirect() {
+  const { hash, pathname } = useLocation()
+  if (pathname !== '/') return null
+  const next = HASH_ROOMS[hash]
+  return next ? <Navigate to={next} replace /> : null
 }
 
 export function LandingPage({
@@ -22,178 +31,17 @@ export function LandingPage({
   development = import.meta.env.DEV,
 }: LandingPageProps) {
   const appHref = protectedAppHref(protectedAppOrigin, { development })
-  const pageRef = useRef<HTMLDivElement>(null)
-  const qaRef = useRef<HTMLElement>(null)
-  const qaCloudRef = useRef<HTMLImageElement>(null)
-  const quoteRef = useRef<HTMLElement>(null)
-  const quoteOverlayRef = useRef<HTMLImageElement>(null)
-
-  useScrollReveal(pageRef)
-  useParallax(qaRef, qaCloudRef, 30)
-  useParallax(quoteRef, quoteOverlayRef, -80)
 
   return (
-    <div id="top" className="gp-page" ref={pageRef}>
-      <a className="landing-skip-link" href="#main-content">
-        Skip to content
-      </a>
-
-      <header className="gp-nav liquid-glass">
-        <nav aria-label="Primary navigation">
-          <a href={NAV[0].href}>{NAV[0].label}</a>
-          <a href={NAV[1].href}>{NAV[1].label}</a>
-          <a href="#top" aria-label="Urania 137 home">
-            <Mark className="gp-nav__mark" />
-          </a>
-          <a href={NAV[2].href}>{NAV[2].label}</a>
-          <a href={NAV[3].href}>{NAV[3].label}</a>
-        </nav>
-      </header>
-
-      <main id="main-content">
-        <section className="gp-hero" aria-labelledby="landing-title">
-          <video
-            src="/media/gp-hero.mp4"
-            poster="/media/gp-showcase.webp"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            aria-hidden="true"
-          />
-          <div className="gp-hero__copy">
-            <p className="gp-hero__kicker hero-fade-up">{HERO.kicker}</p>
-            <p className="gp-hero__subkicker hero-fade-up">{HERO.subkicker}</p>
-            <h1 id="landing-title" className="hero-fade-up">
-              <span>{HERO.titleSerif}</span>
-              <em>{HERO.titleSans}</em>
-            </h1>
-            <p className="gp-hero__lede hero-fade-up">{HERO.lede}</p>
-            <a className="gp-cta liquid-glass hero-fade-up" href={appHref} data-protected-app-cta>
-              {HERO.cta}
-            </a>
-          </div>
-        </section>
-
-        <div className="gp-cloud" aria-hidden="true">
-          <img src="/media/gp-cloud.png" alt="" />
-        </div>
-
-        <div className="gp-showcase-wrap">
-          <section id={SHOWCASE.id} className="gp-showcase" aria-labelledby="instrument-title">
-            <img className="gp-showcase__bg" src="/media/gp-showcase.webp" alt="" />
-            <div className="gp-showcase__copy">
-              <h2 id="instrument-title" className="reveal">
-                {SHOWCASE.title}
-              </h2>
-              {SHOWCASE.lines.map((line, index) => (
-                <p key={line} className="reveal" style={{ animationDelay: `${0.15 * (index + 1)}s` }}>
-                  {line}
-                </p>
-              ))}
-              <a
-                className="gp-ghost reveal"
-                href={appHref}
-                data-protected-app-cta
-                style={{ animationDelay: '0.45s' }}
-              >
-                {SHOWCASE.cta}
-              </a>
-            </div>
-            <div className="gp-showcase__veil" aria-hidden="true" />
-          </section>
-          <img className="gp-dove" src="/media/gp-dove.png" alt="" />
-        </div>
-
-        <section
-          ref={qaRef}
-          id={QA.id}
-          className="gp-qa"
-          aria-labelledby="lenses-title"
-        >
-          <h2 id="lenses-title" className="gp-qa__title reveal">
-            <span>{QA.title[0]}</span>
-            <em>{QA.title[1]}</em>
-            <span>{QA.title[2]}</span>
-          </h2>
-          <div className="gp-qa__grid">
-            <div>
-              {QA.left.map((item, index) => (
-                <article
-                  key={item.q}
-                  className="reveal"
-                  style={{ animationDelay: `${0.12 * (index + 1)}s` }}
-                >
-                  <h3>{item.q}</h3>
-                  <p>{item.a}</p>
-                </article>
-              ))}
-            </div>
-            <div className="gp-qa__col--right">
-              {QA.right.map((item, index) => (
-                <article
-                  key={item.q}
-                  className="reveal"
-                  style={{ animationDelay: `${0.12 * (index + 4)}s` }}
-                >
-                  <h3>{item.q}</h3>
-                  <p>{item.a}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-          <img
-            ref={qaCloudRef}
-            className="gp-qa__cloud"
-            src="/media/gp-cloud.png"
-            alt=""
-          />
-        </section>
-
-        <section
-          ref={quoteRef}
-          id={QUOTE.id}
-          className="gp-quote"
-          aria-labelledby="principles-title"
-        >
-          <p id="principles-title" className="reveal-scale">
-            {QUOTE.text}
-            <em>{QUOTE.emphasis}</em>
-          </p>
-          <img
-            ref={quoteOverlayRef}
-            className="gp-quote__overlay"
-            src="/media/gp-quote-overlay.png"
-            alt=""
-          />
-        </section>
-
-        <section
-          id={INVITATION.id}
-          className="gp-invite liquid-glass"
-          aria-labelledby="invitation-title"
-          data-urania-threshold
-        >
-          <p className="gp-invite__kicker">{INVITATION.kicker}</p>
-          <h2 id="invitation-title">{INVITATION.title}</h2>
-          <p>{INVITATION.lede}</p>
-          <p className="gp-invite__note">{INVITATION.note}</p>
-          <a className="gp-cta gp-cta--solid" href={appHref} data-protected-app-cta>
-            {INVITATION.cta}
-          </a>
-        </section>
-      </main>
-
-      <footer className="gp-footer">
-        <a href="#top" aria-label="Urania 137 home">
-          <strong>{FOOTER.mark}</strong>
-        </a>
-        <p>{FOOTER.line}</p>
-        <a href={appHref} data-protected-app-cta>
-          {INVITATION.cta}
-        </a>
-      </footer>
-    </div>
+    <Shell appHref={appHref}>
+      <HashRoomRedirect />
+      <Routes>
+        <Route path="/" element={<HomePage appHref={appHref} />} />
+        <Route path="/instrument" element={<InstrumentPage />} />
+        <Route path="/lenses" element={<LensesPage />} />
+        <Route path="/principles" element={<PrinciplesPage appHref={appHref} />} />
+        <Route path="/enter" element={<EnterPage appHref={appHref} />} />
+      </Routes>
+    </Shell>
   )
 }

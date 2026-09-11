@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => {
   )
 
   return {
+    appType: 'spa',
     root: landingRoot,
     publicDir: fileURLToPath(new URL('./landing/public', import.meta.url)),
     plugins: [react()],
