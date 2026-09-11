@@ -38,9 +38,13 @@ export function LandingPage({
       <Routes>
         <Route path="/" element={<HomePage appHref={appHref} />} />
         <Route path="/instrument" element={<InstrumentPage />} />
+        <Route path="/instrument/" element={<InstrumentPage />} />
         <Route path="/lenses" element={<LensesPage />} />
+        <Route path="/lenses/" element={<LensesPage />} />
         <Route path="/principles" element={<PrinciplesPage appHref={appHref} />} />
+        <Route path="/principles/" element={<PrinciplesPage appHref={appHref} />} />
         <Route path="/enter" element={<EnterPage appHref={appHref} />} />
+        <Route path="/enter/" element={<EnterPage appHref={appHref} />} />
       </Routes>
     </Shell>
   )

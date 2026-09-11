@@ -1,4 +1,7 @@
-/instrument /index.html 200
-/lenses /index.html 200
-/principles /index.html 200
-/enter /index.html 200
+# Pretty room URLs. Destinations are real folders emitted at build time
+# (instrument/index.html etc). Do not rewrite to /index.html — Cloudflare
+# canonicalizes that to / with a 308 and drops the room path.
+/instrument /instrument/index.html 200
+/lenses /lenses/index.html 200
+/principles /principles/index.html 200
+/enter /enter/index.html 200
