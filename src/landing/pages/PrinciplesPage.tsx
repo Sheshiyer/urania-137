@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import StaggeredText from '../../components/react-bits/staggered-text'
 import { PRINCIPLES_PAGE } from '../landingCopy'
 
 type CategoryKey = (typeof PRINCIPLES_PAGE.categories)[number]['key']
@@ -14,7 +15,17 @@ export function PrinciplesPage({ appHref }: { appHref: string }) {
       <header className="eco-faq-head">
         <div>
           <span className="liquid-glass eco-badge">{PRINCIPLES_PAGE.badge}</span>
-          <h1>{PRINCIPLES_PAGE.title}</h1>
+          <h1>
+            <span className="sr-only">{PRINCIPLES_PAGE.title}</span>
+            <StaggeredText
+              as="span"
+              text={PRINCIPLES_PAGE.title}
+              segmentBy="words"
+              blur
+              delay={40}
+              respectReducedMotion
+            />
+          </h1>
         </div>
         <p>{PRINCIPLES_PAGE.lede}</p>
       </header>

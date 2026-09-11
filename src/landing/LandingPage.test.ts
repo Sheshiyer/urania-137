@@ -47,7 +47,7 @@ describe('public landing ecosystem (Golden Portal shell)', () => {
     expect(html).toContain('/media/gp-hero.mp4')
     expect(html).toContain('preload="metadata"')
     expect(html).not.toContain('preload="auto"')
-    expect(html).toContain('/media/gp-showcase.webp')
+    expect(html).toContain('/media/urania/hero.jpg')
   })
 
   it('exposes first-time-user rooms as real routes in the shared nav', () => {
@@ -57,8 +57,7 @@ describe('public landing ecosystem (Golden Portal shell)', () => {
     expect(html).toContain('href="/lenses"')
     expect(html).toContain('href="/principles"')
     expect(html).toContain('href="/enter"')
-    expect(html).toContain('SEE THE')
-    expect(html).toContain('PATTERN')
+    expect(html).toContain('See the pattern. Keep the authority.')
     expect(html).toContain('Keep the authority')
     expect(html).toContain('data-protected-app-cta')
     expect(html).toContain('data-urania-threshold')

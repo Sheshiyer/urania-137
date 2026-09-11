@@ -975,3 +975,32 @@ button:focus-visible {
     transform: none;
   }
 }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.gp-hero-stagger {
+  margin: 0;
+  font-size: clamp(3rem, 9vw, 7rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.eco-depth,
+.eco-depth .depth-card-wrapper {
+  width: 100% !important;
+  max-width: 100%;
+}
+
+.eco-depth--wide {
+  grid-column: 1 / -1;
+}

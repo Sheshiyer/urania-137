@@ -1,5 +1,7 @@
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
+import BlurHighlight from '../../components/react-bits/blur-highlight'
+import StaggeredText from '../../components/react-bits/staggered-text'
 import { HERO, INVITATION, QA, QUOTE, SHOWCASE } from '../landingCopy'
 import { useParallax } from '../useParallax'
 import { useScrollReveal } from '../useScrollReveal'
@@ -20,7 +22,7 @@ export function HomePage({ appHref }: { appHref: string }) {
       <section className="gp-hero" aria-labelledby="landing-title">
         <video
           src="/media/gp-hero.mp4"
-          poster="/media/gp-showcase.webp"
+          poster="/media/urania/hero.jpg"
           autoPlay
           muted
           loop
@@ -31,11 +33,26 @@ export function HomePage({ appHref }: { appHref: string }) {
         <div className="gp-hero__copy">
           <p className="gp-hero__kicker hero-fade-up">{HERO.kicker}</p>
           <p className="gp-hero__subkicker hero-fade-up">{HERO.subkicker}</p>
-          <h1 id="landing-title" className="hero-fade-up">
-            <span>{HERO.titleSerif}</span>
-            <em>{HERO.titleSans}</em>
+          <h1 id="landing-title" className="gp-hero-stagger">
+            <span className="sr-only">{HERO.title}</span>
+            <StaggeredText
+              as="span"
+              text={`${HERO.titleSerif}|${HERO.titleSans}`}
+              separator="|"
+              segmentBy="chars"
+              blur
+              delay={28}
+              respectReducedMotion
+            />
           </h1>
-          <p className="gp-hero__lede hero-fade-up">{HERO.lede}</p>
+          <BlurHighlight
+            highlightedBits={['Keep the authority']}
+            highlightColor="#e6b84d"
+            blurAmount={8}
+            className="gp-hero__lede"
+          >
+            {HERO.lede}
+          </BlurHighlight>
           <a className="gp-cta liquid-glass hero-fade-up" href={appHref} data-protected-app-cta>
             {HERO.cta}
           </a>
@@ -48,7 +65,7 @@ export function HomePage({ appHref }: { appHref: string }) {
 
       <div className="gp-showcase-wrap">
         <section id={SHOWCASE.id} className="gp-showcase" aria-labelledby="instrument-title">
-          <img className="gp-showcase__bg" src="/media/gp-showcase.webp" alt="" />
+          <img className="gp-showcase__bg" src="/media/urania/hero.jpg" alt="" />
           <div className="gp-showcase__copy">
             <h2 id="instrument-title" className="reveal">
               {SHOWCASE.title}

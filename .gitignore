@@ -48,6 +48,7 @@ dist-ssr
 # ── merged from the universal template, 2026-08-08 ──
 .env
 .env.*
+.temperance/secrets/
 .dev.vars.*
 *.local.env
 !.env.example

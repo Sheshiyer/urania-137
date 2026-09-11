@@ -1,5 +1,7 @@
 import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import DepthCard from '../../components/react-bits/depth-card'
+import StaggeredText from '../../components/react-bits/staggered-text'
 import { INSTRUMENT_PAGE } from '../landingCopy'
 
 export function InstrumentPage() {
@@ -7,7 +9,17 @@ export function InstrumentPage() {
     <main id="main-content" className="eco-page">
       <header className="eco-header">
         <span className="liquid-glass eco-badge">{INSTRUMENT_PAGE.badge}</span>
-        <h1>{INSTRUMENT_PAGE.title}</h1>
+        <h1>
+          <span className="sr-only">{INSTRUMENT_PAGE.title}</span>
+          <StaggeredText
+            as="span"
+            text={INSTRUMENT_PAGE.title}
+            segmentBy="words"
+            blur
+            delay={40}
+            respectReducedMotion
+          />
+        </h1>
       </header>
 
       {INSTRUMENT_PAGE.rows.map((row) => (
@@ -23,8 +35,20 @@ export function InstrumentPage() {
               <ArrowUpRight size={16} aria-hidden="true" />
             </Link>
           </div>
-          <div className="liquid-glass eco-chess__frame">
-            <img src={row.image} alt={row.alt} />
+          <div className="eco-chess__frame">
+            <DepthCard
+              image={row.image}
+              title={row.title}
+              description={row.alt}
+              width={520}
+              height={360}
+              borderRadius="18px"
+              spotlight
+              spotlightColor="rgba(230, 184, 77, 0.28)"
+              respectReducedMotion
+              disableOnMobile
+              className="eco-depth"
+            />
           </div>
         </article>
       ))}

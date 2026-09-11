@@ -1,5 +1,6 @@
 import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import StaggeredText from '../../components/react-bits/staggered-text'
 import { ENTER_PAGE } from '../landingCopy'
 
 export function EnterPage({ appHref }: { appHref: string }) {
@@ -7,7 +8,7 @@ export function EnterPage({ appHref }: { appHref: string }) {
     <main id="main-content" className="eco-enter" data-urania-threshold>
       <video
         src="/media/gp-hero.mp4"
-        poster="/media/gp-showcase.webp"
+        poster="/media/urania/enter.jpg"
         autoPlay
         muted
         loop
@@ -18,7 +19,17 @@ export function EnterPage({ appHref }: { appHref: string }) {
       <div className="eco-enter__veil eco-enter__veil--top" aria-hidden="true" />
       <div className="eco-enter__veil eco-enter__veil--bottom" aria-hidden="true" />
       <div className="eco-enter__copy">
-        <h1>{ENTER_PAGE.title}</h1>
+        <h1>
+          <span className="sr-only">{ENTER_PAGE.title}</span>
+          <StaggeredText
+            as="span"
+            text={ENTER_PAGE.title}
+            segmentBy="words"
+            blur
+            delay={36}
+            respectReducedMotion
+          />
+        </h1>
         <p>{ENTER_PAGE.lede}</p>
         <div className="eco-enter__actions">
           <a className="liquid-glass-strong eco-pill" href={appHref} data-protected-app-cta>
