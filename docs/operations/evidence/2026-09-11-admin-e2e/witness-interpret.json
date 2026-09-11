@@ -1,0 +1,24 @@
+{
+  "result": {
+    "status": 200,
+    "degraded": false,
+    "route": "pattern",
+    "agentId": "aletheios",
+    "answerLen": 191,
+    "provenance": {
+      "readingId": "5efa34c4-8d1d-474f-a035-0498b26e3487",
+      "nodeId": "witness",
+      "agentId": "aletheios",
+      "evidenceIds": [
+        "reading:5efa34c4-8d1d-474f-a035-0498b26e3487:excerpt:0",
+        "reading:5efa34c4-8d1d-474f-a035-0498b26e3487:excerpt:1",
+        "reading:5efa34c4-8d1d-474f-a035-0498b26e3487:excerpt:2",
+        "reading:5efa34c4-8d1d-474f-a035-0498b26e3487:excerpt:3",
+        "reading:5efa34c4-8d1d-474f-a035-0498b26e3487:excerpt:4",
+        "reading:5efa34c4-8d1d-474f-a035-0498b26e3487:excerpt:5"
+      ],
+      "model": "selemene-llm-proxy"
+    },
+    "answerHead": "The most visible pattern right now is a structural tension between a foundational, disciplined core and a creative, expressive impulse, mirrored across both the Structural and Somatic Fields."
+  }
+}

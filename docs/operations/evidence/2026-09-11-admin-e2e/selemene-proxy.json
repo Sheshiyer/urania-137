@@ -1,0 +1,39 @@
+{
+  "result": {
+    "healthStatus": 200,
+    "healthBody": {
+      "status": "ok",
+      "version": "3.3.1",
+      "uptime_seconds": 228200,
+      "engines_loaded": 19,
+      "workflows_loaded": 6
+    },
+    "enginesStatus": 200,
+    "enginesPreview": {
+      "count": 1,
+      "sample": {
+        "engines": [
+          "biofield",
+          "biofield-capture",
+          "biorhythm",
+          "enneagram",
+          "face-reading",
+          "financial-biosensor",
+          "gene-keys",
+          "human-design",
+          "i-ching",
+          "nadabrahman",
+          "numerology",
+          "panchanga",
+          "raaga",
+          "sacred-geometry",
+          "sigil-forge",
+          "tarot",
+          "transits",
+          "vedic-clock",
+          "vimshottari"
+        ]
+      }
+    }
+  }
+}

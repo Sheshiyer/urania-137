@@ -1,0 +1,44 @@
+{
+  "schema": "urania.production-attestation.v1",
+  "subject": {
+    "sha": "93f69e975eb12d5f941af4cfc57ae96b45298237",
+    "version": "0.6.3",
+    "tag": "v0.6.3"
+  },
+  "generatedAt": "2026-09-11T08:52:19.064Z",
+  "deployments": [
+    {
+      "surface": "app",
+      "id": "93caeef7-2566-49c7-94f8-e328c0be266b",
+      "sourceSha": "93f69e975eb12d5f941af4cfc57ae96b45298237"
+    },
+    {
+      "surface": "landing",
+      "id": "4850894c-16c7-46bd-9c85-9f800a0bd890",
+      "sourceSha": "93f69e975eb12d5f941af4cfc57ae96b45298237"
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "app",
+      "sha256": "0d8f51d989d1e9e589dc734b93927769fe3525e27485f01e02eddc5fd5f9d449"
+    },
+    {
+      "name": "landing",
+      "sha256": "9e0542ba9f9ffc849709dbd42c55ef4bfa1c851ad88be69e8d9a99661661a48e"
+    }
+  ],
+  "backupReceiptSha256": "dfde8aebcd119a15d27364ee36e279a1dc2a0d4b64cd9a59a0bfc42d7298b026",
+  "previewProofs": [
+    {
+      "name": "same-sha-preview",
+      "subjectSha": "93f69e975eb12d5f941af4cfc57ae96b45298237",
+      "sha256": "b9e55f09849433d7955497af6d355944779deb59cc95814d0422f6a32c90334d"
+    }
+  ],
+  "probes": {
+    "ok": true,
+    "workflowRun": "34581173011"
+  },
+  "governanceSnapshotSha256": "364f827c8a6dc4ac8090a3bb5ee89c40b1baa4434e39133b782a80c95716c8ac"
+}

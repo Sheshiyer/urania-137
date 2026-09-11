@@ -177,6 +177,8 @@ _Last refreshed: 2026-08-12T05:04:56.162Z_
 
 ## Decisions
 
+- 2026-09-11: **refined:** M1 release path is closed at tag `v0.6.3` / SHA `93f69e975eb12d5f941af4cfc57ae96b45298237`. Wave 2 was never the release blocker. Live admin E2E on production closed R-8/ISC-188 and ISC-144; WitnessRun non-degraded incremented `reading_interpretations` 0→2. Runtime `platform-admin` authority remains `CF_PLATFORM_ADMIN_EMAILS` (proven), while ISC-145/146 Access-group durability stays open. Receipt: `docs/operations/2026-09-11-admin-e2e.md`.
+
 - 2026-07-14 16:00: The user explicitly stated the current implementation is only ~10% done because the reference shows parent nodes with their own pages and deeper branching. This ISA treats the architectural gap as the primary problem, not the API wiring.
 - 2026-07-14 16:00: Chose to preserve the SVG graph approach rather than introducing a graph library (D3, Cytoscape, or react-flow). The reference is radial and lightweight; adding a library would violate the existing build constraints without adding needed control over animation and layout.
 - 2026-07-14 16:35: Visual analysis of the Instagram reference (`instagram-post-chrome.png` and `stellar-node-branching.jpg`):
@@ -239,6 +241,11 @@ _Last refreshed: 2026-08-12T05:04:56.162Z_
 
 ## Changelog
 
+- 2026-09-11 | conjectured: planning spine blocking on wave 2 meant the release path was still undeliverable.
+  refuted by: tag `v0.6.3`, release run `34581173011`, attestation `issues: []`, and live admin proofs on the deployed SHA.
+  learned: release shipping and admin E2E are separable gates; stale STATE/NEXT-WAVE can lie after a successful cut.
+  criterion now: ISC-188 and ISC-144 checked with production evidence; `_PROJECT-STATUS` marks operationally_ready for the attested admin surface while ISC-143/145/146 and M2–M7 remain explicit open work.
+
 - 2026-07-24 | conjectured: Command Code is an OpenAI-compatible gateway at `https://api.commandcode.ai/v1`, so the llm-proxy could point the command-code provider at `/v1/chat/completions` with the preferred narrator model `claude-sonnet-5`.
   refuted by: live probes — `GET /v1/models` and `POST /v1/chat/completions` both 404 ("not a registered API route"); the CLI's own inference route `/alpha/generate` answers non-CLI requests with "This endpoint only serves CLI … violates the TOS and will result in account ban"; and the official Provider API (`/provider/v1/…`, discovered via Command Code docs) accepts the key but answers `claude-sonnet-5` with `PREMIUM_CREDITS_EXHAUSTED` (and that model demands the Anthropic Messages shape, not chat-completions).
   learned: vendor "OpenAI-compatible" claims must be probed route-by-route against the live gateway before wiring — the usable surface was the documented Provider API, not the assumed `/v1`. Model *existence* in a catalog is not model *availability* on the account: the default had to be chosen by test-completion, landing on `deepseek/deepseek-v4-pro` (prose + tool-calling verified live).
@@ -290,6 +297,8 @@ _Last refreshed: 2026-08-12T05:04:56.162Z_
   criterion now: ISC-344 and ISC-345 require the complete `verify:ui-realignment` orchestrator, including 33 stable-state browser rows, blocking Axe, evidence redaction, build, and bundle budget.
 
 ## Verification
+
+- ISC-188/144 (2026-09-11 production): Access OTP → platform-admin; `#/admin-data` 53/53 + R2 body + Vectorize; WitnessRun non-degraded via selemene-llm-proxy; attestation verified. Evidence under `docs/operations/evidence/2026-09-11-admin-e2e/`.
 
 - ISC-1: Read `instagram-post-chrome.png` and `stellar-node-branching.jpg`; identified seven radial parent labels in the reference.
 - ISC-2: Decisions section dated 2026-07-14 16:35 maps BACK OFFICE → Engine Status, SALES → Bridge Query, DEALS → Union Mirror, MARKETING → Folio Archive, OPERATIONS → Sky Weather, INTELLIGENCE → Noesis Reading, CUSTOMER → Birth Witness.
@@ -986,9 +995,9 @@ preflight and pilot gates pass.
 - [x] ISC-141: Evidence and readings expose explicit editorial states.
 - [x] ISC-142: Subject aliases cannot merge automatically during import.
 - [ ] ISC-143: Archive deletion preserves auditable run and source boundaries.
-- [ ] ISC-144: Archive records are queryable through permissioned admin boundaries.
-- [ ] ISC-145: `selemene-admin` remains the durable `platform-admin` mapping.
-- [ ] ISC-146: Access-login role replacement is documented and regression-tested.
+- [x] ISC-144: Archive records are queryable through permissioned admin boundaries. *(Verified production 2026-09-11 — `#/admin-data` + `/api/corpus` 53/53 behind Access platform-admin; evidence `docs/operations/2026-09-11-admin-e2e.md`.)*
+- [ ] ISC-145: `selemene-admin` remains the durable `platform-admin` mapping. *(Open — runtime elevation proven via `CF_PLATFORM_ADMIN_EMAILS`, not Access group claims; group-write credential unused.)*
+- [ ] ISC-146: Access-login role replacement is documented and regression-tested. *(Open — same residue as ISC-145.)*
 - [x] ISC-147: Relationship invitations expose opaque tokens and store hashes.
 - [x] ISC-148: Only the intended authenticated recipient can accept an invite.
 - [x] ISC-149: Each relationship participant supplies one personally owned subject.
@@ -1258,7 +1267,7 @@ and provenance reviews are explicitly satisfied.
 - [x] ISC-185: Antecedent: Chat and library open one matching reading identifier and checksum.
 - [x] ISC-186: Reading views explain owner, subject, source, producer, and access reason.
 - [x] ISC-187: The named email belongs to durable `selemene-admin` Access authority.
-- [ ] [DEFERRED-VERIFY: FV-188-production-admin-session] ISC-188: Fresh Access login yields `platform-admin` and `admin:analytics:read`.
+- [x] ISC-188: Fresh Access login yields `platform-admin` and `admin:analytics:read`. *(Verified production 2026-09-11 on app.urania.tryambakam.space — `/api/me` + `/api/admin/session`; evidence `docs/operations/evidence/2026-09-11-admin-e2e/r8-session.json`.)*
 - [ ] [DEFERRED-VERIFY: FV-189-two-account-synastry] ISC-189: Two authenticated accounts pass invite, accept, generate, browse, revoke, and deny.
 
 ### Test Strategy

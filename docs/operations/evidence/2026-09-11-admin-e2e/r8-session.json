@@ -1,0 +1,26 @@
+{
+  "result": {
+    "meStatus": 200,
+    "me": {
+      "id": "c04424f4-d73a-5d60-a3ef-da0ac5705ae4",
+      "email": "sheshnarayan.iyer@gmail.com"
+    },
+    "adminStatus": 200,
+    "admin": {
+      "principal": "platform-admin",
+      "roles": [
+        "platform-admin"
+      ],
+      "permissions": [
+        "admin:analytics",
+        "admin:audit:list",
+        "admin:audit:read",
+        "admin:system:read",
+        "admin:users",
+        "basic:access"
+      ],
+      "hasAdminAnalyticsRead": true,
+      "email": "sheshnarayan.iyer@gmail.com"
+    }
+  }
+}

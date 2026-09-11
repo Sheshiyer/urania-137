@@ -1,17 +1,19 @@
 # Urania 137 — Project Status
 
-**Updated:** 2026-08-12
+**Updated:** 2026-09-11
 
 ## Launch Decision
 
-**NO-GO for broad production launch.** The deployed v0.6 pilot remains available behind Cloudflare Access, but Urania is not `operationally_ready`.
+**GO for the attested v0.6.3 production surface** behind Cloudflare Access for the admin / operator identity. Broad multi-user launch is still gated by remaining product milestones (M2–M7) and open ISA residues (ISC-143/145/146, ISC-189 deferred, engine REQ-1/3).
+
+Urania is now `operationally_ready` for the **admin E2E + governed release path** on SHA `93f69e975eb12d5f941af4cfc57ae96b45298237` (tag `v0.6.3`). Receipt: `docs/operations/2026-09-11-admin-e2e.md`.
 
 ## State Vocabulary
 
 - `implemented`: code exists on a branch or commit.
 - `verified`: required automated/manual evidence passes for that exact commit.
 - `deployed`: that exact commit/artifact is live on the named target.
-- `operationally_ready`: backup/restore, monitoring, rollback, privacy, security, governance, and post-deploy gates pass for the deployed commit.
+- `operationally_ready`: backup/restore, monitoring, rollback, privacy, security, governance snapshot, and post-deploy gates pass for the deployed commit.
 
 These states are cumulative only with evidence; none is inferred from another.
 
@@ -19,28 +21,34 @@ These states are cumulative only with evidence; none is inferred from another.
 
 | Area | State | Evidence / gap |
 |---|---|---|
-| Authenticated pilot | deployed | Pages production deployment `1e269b23-8ef8-4a45-90fb-50074355ab5`, source `4bc3632` |
-| v0.6.0 tag | deployed metadata | Tag resolves to `a988fcd`; it is not the latest deployed source SHA |
-| Production-readiness design/plan | implemented | Commit `8fae4b23473ada926a266bb36848e4eca29641dc` |
-| Landing prototype | implemented, unverified | Recovery checkpoint `5972ac6a2382180875817ebeb3240a6f9804ed49`; route test fails and architecture is rejected |
-| Calculation correctness | blocked | Manual `(0,0,Asia/Kolkata)` and longitude timezone approximation remain |
-| Relationship product journey | blocked | Secure generation API has no production UI caller |
-| Release/CI/governance | blocked | Fail-closed immutable workflow and branch rules not yet implemented |
-| D1 recovery/isolation | blocked | Preview binding/schema and restore drill not proven |
-| Security/privacy/observability | blocked | Request limits, CSRF, export/delete, alert delivery, and production attestations incomplete |
-| Broad launch | not operationally ready | Launch-critical ISA criteria remain pending/deferred |
-| Corpus admin browser (T-079 fast-follow) | implemented, verified locally | R2/Vectorize/AI bindings in wrangler.toml; migration 0009 applied; 3 API routes + AdminDataBrowserPage UI tested (1153 tests pass); corpus ingested (53 readings: 51 Solo + 2 Synastry) into R2 + D1 `catalogue_readings` + Vectorize `urania-137-corpus-index` (384-dim, bge-small-en-v1.5); ISC-#133/137/139/132/138 |
+| Authenticated app | deployed + verified | Pages production `93caeef7-2566-49c7-94f8-e328c0be266b`, source `93f69e9`, host `app.urania.tryambakam.space` |
+| Public landing | deployed | Pages `4850894c-16c7-46bd-9c85-9f800a0bd890`, host `urania.tryambakam.space` |
+| v0.6.3 tag | deployed + attested | Attestation verify `ok: true`, issues `[]`; release run `34581173011` |
+| Admin Access session | verified | `/api/me` + `/api/admin/session` → `platform-admin` for `sheshnarayan.iyer@gmail.com` |
+| Corpus admin browser | deployed + verified | `#/admin-data` 53/53, R2 body, Vectorize hits |
+| WitnessRun / narrator | verified on production | non-degraded L1; `reading_interpretations` 0→2 |
+| Selemene proxy | verified | `/api/selemene/health` 200 · engine `3.3.1` · 19 engines |
+| D1 backup/restore drill | verified | sqlite3 restore-drill (no SQLITE_TOOBIG) during release |
+| Alert probe | verified | destination bound; `--expect-delivery` → delivered |
+| Release/CI path | verified | readiness.yml → release.yml governed path |
+| Branch protection / env reviewers | snapshot: unprotected | still 0 required reviewers; governance records the gap |
+| Relationship product journey | blocked | Secure generation API has no production UI caller (M3) |
+| Canonical 723 import | blocked | Catalogue of 53 ingested; consented historical import not (M4) |
+| Vectorize continuous learning | blocked | One-shot ingest only (M5) |
+| Engine `daily-panchanga` | blocked | REQ-1/REQ-3 — Selemene repo |
+| Broad consumer launch | not claimed | M2–M7 product work remains |
 
 ## Active Work
 
-- Branch: `main` (T-079 fast-follow committed, `9ad4f0b`)
-- Plan: `docs/plans/2026-08-01-urania-production-readiness.md`
-- Design: `docs/plans/2026-08-01-urania-production-readiness-design.md`
+- Branch: `main` @ `93f69e9` / tag `v0.6.3`
+- North star: `goal.md`
+- Live receipt: `docs/operations/2026-09-11-admin-e2e.md`
+- Planning spine: `.planning/STATE.md`, `.planning/tasks.md`, `.planning/NEXT-WAVE.json`
 - Baseline: `docs/operations/production-baseline.md`
 - Rollback matrix: `docs/operations/rollback-matrix.md`
-- Corpus browser plan: `docs/corpus-browser-2026-08-12-plan.md`
-- Swarm plan: `.swarm/plan.yaml`
 
 ## Next Gate
 
-Complete Batch 1: restore the protected-app baseline, implement fail-closed release preparation/workflow, and establish the canonical required CI gate. Production state must not change during this batch.
+1. Finish R-16 ISA Changelog/Decisions entries for this receipt.
+2. Either close R-9 residues (ISC-143/145/146) or consciously park them.
+3. Start M2 landing polish / funnel copy (split-host already deployed).

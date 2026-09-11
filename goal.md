@@ -2,7 +2,7 @@
 
 > **Status:** north star · **Read first:** this file, then `.planning/ROADMAP.md`, then `.planning/tasks.md` + `.planning/NEXT-WAVE.json`.
 > **Authority note:** this file is the product north star. It states *what we are building toward* and *why*. It does **not** invent capabilities — every surface below exists in code, docs, or a verified upstream contract. The executable wave breakdown lives in `.planning/` (GSD spine) and is observed by `temperance-next-wave`.
-> **Last reconciled:** 2026-08-16 · against ISA.md (23 iterations), `_PROJECT-STATUS.md`, `.planning/`, `docs/`.
+> **Last reconciled:** 2026-09-11 · against live v0.6.3 admin E2E (`docs/operations/2026-09-11-admin-e2e.md`), ISA.md, `_PROJECT-STATUS.md`, `.planning/`.
 
 ---
 
@@ -139,8 +139,8 @@ Milestones are ordered **backwards** — the farthest-out is what the end state 
 | **M5** | Vectorize continuous-learning loop | Extract → privacy-scrub → approval → anonymized pattern → retrieval with visible provenance + **deletion-propagation proof** before it influences a reading | future-state, explicitly unevidenced |
 | **M4** | 723 → canonical archive | Catalogue → consent gate → provenance-preserving import; pilot importer already exists (`scripts/readings/lib/pilot-import.mjs`) | catalogue + 53-readings admin browser done; canonical import + admin query surface pending (ISC-143/144) |
 | **M3** | Relationship journey UI | Consent-complete synastry/dyad/family with a production UI caller | API + migrations done; **no production UI caller** (ISC-189 deferred) |
-| **M2** | Public landing (split-host) | Correct two-artifact build (unauthenticated landing + protected app), replacing the rejected prototype | prototype checkpointed, **architecture rejected** (Iteration 21/22) |
-| **M1** | Production readiness → release | Ship corpus admin browser through the governed immutable release path; reach `operationally_ready` | **active** — waves 0–1 done, wave 2 blocked, waves 3–5 pending |
+| **M2** | Public landing (split-host) | Correct two-artifact build (unauthenticated landing + protected app), replacing the rejected prototype | **split-host deployed** on v0.6.3; funnel/copy polish still a product pass |
+| **M1** | Production readiness → release | Ship corpus admin browser through the governed immutable release path; reach `operationally_ready` | **done for release + admin E2E** on `v0.6.3` / `93f69e9` — R-9 residues (ISC-143/145/146) remain explicit open work |
 
 ---
 

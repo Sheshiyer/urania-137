@@ -1,0 +1,37 @@
+{
+  "result": {
+    "href": "https://app.urania.tryambakam.space/#/admin-data",
+    "title": "Urania 137 — Selemene Report Console",
+    "textHead": "URANIA 137\nNOESIS\nMAP\nFOLIO\nBEGIN\nSETTINGS\nOPERATOR\nSHESHNARAYAN.IYER@GMAIL.COM\nLOGOUT\n\nADMIN · SHESHNARAYAN.IYER@GMAIL.COM\n\nAdmin Data Browser\n\nOwner-scoped administration surface for the corpus catalogue (D1 + R2) and pattern memory (Vectorize). All data is access-gated behind Cloudflare Access (T-008).\n\nHOME\nCORPUS\nPATTERNS\nRETURN TO MAP\n\nREADING CORPUS CATALOGUE\n\nCORPUS BROWSER\n\nOwner-scoped catalogue of 53 readings. Select a row to view its full R2 body.\n\nSEARCH\nMODE\nAll modes\nSolo only\nSynastry only\nAPPLY\nTITLE\tMODE\tSHA-256\tSOURCE\nAbdulmuiz\tSolo\t5281c9268289a676…\tintegrated-kundali-l0\nAkanksha\tSolo\tb84a0c389f5fe268…\tintegrated-kundali-l0\nAkshay\tSolo\t15f8bdb831073ff0…\tintegrated-kundali-l0\nAnitha Nateshan\tSolo\t9f9b573ca9c6c762…\tintegrated-kundali-l0\nApoorva Nayak\tSolo\t28acc0d7419e9188…\tintegrated-kundali-l0\nArathi\tSolo\t76c472c4be39b4fb…\tintegrated-kundali-l0\nArjun Kamath\tSolo\t9a4a0d03a96a5ff0…\tintegrated-kundali-l0\nCumbipuram Subramaniam Nateshan\tSolo\ta4a2f26614d8f852…\tintegrated-kundali-l0\nDinesh\tSolo\t8ad81d76e32510ed…\tintegrated-kundali-l0\nDurga Prasad\tSolo\t71bdeb87d26f3d31…\tintegrated-kundali-l0\nGaurav\tSolo\tbe587e29c904591d…\tintegrated-kundali-l0\nGauri\tSolo\t6f4b94d4f2bd9821",
+    "corpusStatus": 200,
+    "corpusTotal": 53,
+    "corpusCount": 53,
+    "firstTitle": "Abdulmuiz",
+    "firstSha": "5281c9268289a676d55117ec7300b834024e06880e5fb459d4d43391f5b86bb5",
+    "detail": {
+      "status": 200,
+      "title": "Abdulmuiz",
+      "htmlLen": 156849,
+      "sha256": "5281c9268289a676d55117ec7300b834024e06880e5fb459d4d43391f5b86bb5"
+    },
+    "folioStatus": 200,
+    "folioCount": 25,
+    "patternsStatus": 200,
+    "patternsCount": 10,
+    "patternQueryEmbedding": true,
+    "patternTop": [
+      {
+        "id": "92e237075f49cf422b19c2fe09f0caa6c81b2b287883420e33fc10e601a14611",
+        "score": 0.6124625
+      },
+      {
+        "id": "92cdfe9e385f95a6d760649911133be843624f815c95d4bc4d10a9ed71979c48",
+        "score": 0.56648934
+      },
+      {
+        "id": "4385073ea215aa24e883657898d1d611ed31139222a958bcf1bf1f172db75a2f",
+        "score": 0.5531474
+      }
+    ]
+  }
+}
