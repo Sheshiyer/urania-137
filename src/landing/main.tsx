@@ -1,7 +1,16 @@
-import './landing.css'
+import { createElement } from 'react'
+import { createRoot } from 'react-dom/client'
+import { LandingPage } from './LandingPage'
+import './void-atlas.css'
+import './landing-chrome.css'
 
-// The landing markup is rendered from LandingPage.tsx at build time by
-// vite.landing.config.ts. This tiny entry intentionally does not hydrate React:
-// the acquisition surface is declarative, works without JavaScript, and keeps
-// authenticated application code out of the public bundle.
-document.documentElement.dataset.landingReady = 'true'
+const root = document.getElementById('root')
+if (root) {
+  createRoot(root).render(
+    createElement(LandingPage, {
+      protectedAppOrigin: import.meta.env.VITE_PROTECTED_APP_ORIGIN,
+      development: import.meta.env.DEV,
+    }),
+  )
+  document.documentElement.dataset.landingReady = 'true'
+}

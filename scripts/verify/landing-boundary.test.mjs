@@ -41,7 +41,8 @@ test('landing build is a separate static artifact with one allowlisted exit', ()
   assert.equal(existsSync(join(LANDING_OUTPUT, 'index.html')), true)
   assert.equal(existsSync(join(LANDING_OUTPUT, '404.html')), true)
   assert.equal(existsSync(join(LANDING_OUTPUT, 'favicon.svg')), true)
-  assert.equal(existsSync(join(LANDING_OUTPUT, 'media', 'field-poster.svg')), true)
+  assert.equal(existsSync(join(LANDING_OUTPUT, 'media', 'tunnel-source.mp4')), true)
+  assert.equal(existsSync(join(LANDING_OUTPUT, 'media', 'tunnel-poster.png')), true)
   assert.equal(existsSync(join(LANDING_OUTPUT, '_headers')), true)
 
   const text = filesUnder(LANDING_OUTPUT)
@@ -52,15 +53,28 @@ test('landing build is a separate static artifact with one allowlisted exit', ()
   for (const marker of FORBIDDEN_BUNDLE_MARKERS) {
     assert.equal(text.includes(marker), false, `landing bundle contains forbidden marker: ${marker}`)
   }
+  // Hydrated Motionskin: Vite minifies JSX attrs (preload:"metadata"), so accept
+  // both attribute and object-literal forms. Never ship preload auto.
   assert.equal(text.includes('preload="auto"'), false)
-  assert.match(text, /https:\/\/app\.urania\.tryambakam\.space\//)
+  assert.equal(text.includes('preload:"auto"'), false)
+  assert.match(text, /preload[=:]["']metadata["']/)
+  // Origin is baked as a string; trailing "/" is appended by protectedAppHref.
+  assert.match(text, /https:\/\/app\.urania\.tryambakam\.space/)
+  assert.match(text, /data-protected-app-cta/)
   assert.match(text, /rel="icon" href="\/favicon\.svg"/)
   assert.match(text, /prefers-reduced-motion/)
+  assert.match(text, /tunnel-source\.mp4/)
+  assert.match(text, /tunnel-poster\.png/)
 
   const clientJavaScriptBytes = filesUnder(LANDING_OUTPUT)
     .filter((path) => extname(path) === '.js')
     .reduce((total, path) => total + readFileSync(path).byteLength, 0)
-  assert.ok(clientJavaScriptBytes < 10_000, `landing client JavaScript is ${clientJavaScriptBytes} bytes`)
+  // Hydrated Void Atlas Motionskin (Three.js + GSAP) is intentionally heavier
+  // than the prior static landing shell.
+  assert.ok(
+    clientJavaScriptBytes < 1_800_000,
+    `landing client JavaScript is ${clientJavaScriptBytes} bytes`,
+  )
 
   const notFound = readFileSync(join(LANDING_OUTPUT, '404.html'), 'utf8')
   assert.match(notFound, /public site contains no application or API routes/i)
