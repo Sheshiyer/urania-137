@@ -11,8 +11,8 @@ const landingRoot = fileURLToPath(new URL('./landing', import.meta.url))
 const landingOutput = fileURLToPath(new URL('./dist/landing', import.meta.url))
 
 /**
- * Hydrated Void Atlas Motionskin landing.
- * Structure/motion from vikod3/void-atlasp; Urania copy/tokens/Access CTA as skin.
+ * Motionskin of Motionsites Golden Portal.
+ * Structure/motion 1:1; Urania type/palette/copy/Access CTA are the skin.
  */
 export default defineConfig(({ mode }) => {
   const environment = loadEnv(mode, repositoryRoot, '')
