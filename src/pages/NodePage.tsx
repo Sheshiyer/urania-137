@@ -11,7 +11,6 @@ import { SankalpaPanel } from '../components/panels/SankalpaPanel'
 import { PageHeader } from '../components/layout/PageHeader'
 import { PageFrame } from '../components/layout/PageFrame'
 import { StatFooter } from '../components/chrome/StatFooter'
-import { PageTabs } from '../components/chrome/PageTabs'
 import { BottomChrome } from '../components/chrome/BottomChrome'
 import { CHROME } from '../components/chrome/insets'
 import { navigate, type AppPath } from '../hooks/useHashRoute'
@@ -184,7 +183,6 @@ export function NodePage({
       <PageFrame />
       <BottomChrome>
         <StatFooter stats={nodeStats} />
-        <PageTabs nodeId={node.id} />
       </BottomChrome>
 
       {/* Witness narration is capability-specific, not the universal entry. */}
