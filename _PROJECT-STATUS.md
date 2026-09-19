@@ -1,6 +1,6 @@
 # Urania 137 — Project Status
 
-**Updated:** 2026-09-11
+**Updated:** 2026-09-19
 
 ## Launch Decision
 
@@ -37,18 +37,21 @@ These states are cumulative only with evidence; none is inferred from another.
 | Vectorize continuous learning | blocked | One-shot ingest only (M5) |
 | Engine `daily-panchanga` | blocked | REQ-1/REQ-3 — Selemene repo |
 | Broad consumer launch | not claimed | M2–M7 product work remains |
+| Instrument-shell redesign | implemented + verified | 6 phases on `redesign/instrument-shell`; 883 unit + 128 node + 7 contract tests pass; bundle 574,793 B (budget 575,000); `docs/ui/2026-09-19-instrument-shell-redesign-ledger.md` |
 
 ## Active Work
 
-- Branch: `main` @ `93f69e9` / tag `v0.6.3`
+- Branch: `redesign/instrument-shell` @ `8ab6ab1` (Phase 6)
+- Production: `main` @ `93f69e9` / tag `v0.6.3`
 - North star: `goal.md`
 - Live receipt: `docs/operations/2026-09-11-admin-e2e.md`
+- Redesign ledger: `docs/ui/2026-09-19-instrument-shell-redesign-ledger.md`
 - Planning spine: `.planning/STATE.md`, `.planning/tasks.md`, `.planning/NEXT-WAVE.json`
 - Baseline: `docs/operations/production-baseline.md`
 - Rollback matrix: `docs/operations/rollback-matrix.md`
 
 ## Next Gate
 
-1. Finish R-16 ISA Changelog/Decisions entries for this receipt.
+1. Merge `redesign/instrument-shell` into `main` after final review.
 2. Either close R-9 residues (ISC-143/145/146) or consciously park them.
 3. Start M2 landing polish / funnel copy (split-host already deployed).

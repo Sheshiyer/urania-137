@@ -9,22 +9,21 @@ const read = (path) =>
 const runtime = [
   read('src/pages/HomePage.tsx'),
   read('src/pages/NodePage.tsx'),
-  read('src/components/chrome/PageTabs.tsx'),
   read('src/components/chrome/TopNav.tsx'),
 ].join('\n')
 
-const knownViolations = [
+const resolvedViolations = [
   /1,337|12,851|Frequency/,
   /Resonance|Live Paths/,
   /label: 'Archive'|label: 'Library'/,
-].map((pattern) => ({ pattern: String(pattern), observed: pattern.test(runtime) }))
+].map((pattern) => ({ pattern: String(pattern), resolved: !pattern.test(runtime) }))
 
 assert.ok(
-  knownViolations.every(({ observed }) => observed),
-  'the characterization gate must begin with all documented violations present',
+  resolvedViolations.every(({ resolved }) => resolved),
+  'all previously documented vocabulary violations must be resolved after the instrument-shell redesign',
 )
 
-const assets = fileURLToPath(new URL('../../dist/assets/', import.meta.url))
+const assets = fileURLToPath(new URL('../../dist/app/assets/', import.meta.url))
 const bundleBytes = readdirSync(assets)
   .filter((name) => /\.(js|css)$/.test(name))
   .reduce((sum, name) => sum + statSync(join(assets, name)).size, 0)
@@ -33,9 +32,9 @@ assert.ok(bundleBytes > 0, 'the production bundle must have a measurable size')
 
 writeFileSync(
   new URL('../../docs/ui/realignment-baseline.json', import.meta.url),
-  `${JSON.stringify({ bundleBytes, knownViolations }, null, 2)}\n`,
+  `${JSON.stringify({ bundleBytes, resolvedViolations }, null, 2)}\n`,
 )
 
 console.log(
-  `UI baseline characterized: ${knownViolations.length} violation groups, ${bundleBytes} bundle bytes`,
+  `UI baseline characterized: ${resolvedViolations.length} resolved violation groups, ${bundleBytes} bundle bytes`,
 )
