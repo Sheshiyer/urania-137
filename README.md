@@ -116,6 +116,16 @@ The full set of per-node design references lives in [`.assets/page-references/`]
 Implemented truth lives in typed runtime components, executable registries, and
 the evidence produced by `npm run verify:ui-realignment`.
 
+### Instrument-shell redesign (2026-09-19)
+
+Six phases replaced the original chrome with a capsule masthead, command palette
+(Cmd+K), URL-as-state routing, folio gallery tiles, threshold-in-shell, and
+section-navigated settings. Brand locks held: void field, gold structure, parchment
+reading material, no light mode, graph as the interface. Bundle: 574,793 bytes
+(207 under the 575 KB budget). Decisions, borrowed/rejected patterns, and brand
+evidence are in [`docs/ui/2026-09-19-instrument-shell-redesign-ledger.md`](./docs/ui/2026-09-19-instrument-shell-redesign-ledger.md).
+Traceability: [`docs/ui/realignment-traceability.md`](./docs/ui/realignment-traceability.md).
+
 The living-reading component family and full folio composition are anchored by:
 
 <div align="center">

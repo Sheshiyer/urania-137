@@ -37,7 +37,7 @@ describe('TopNav target geometry', () => {
     expect(html).not.toContain('fixed inset-x-0 top-0')
   })
 
-  it('keeps the desktop node search input at least 44px square', () => {
+  it('keeps the palette hint as the search access point', () => {
     const html = renderToStaticMarkup(
       createElement(TopNav, {
         route: { view: 'home' },
@@ -45,9 +45,8 @@ describe('TopNav target geometry', () => {
         operator: false,
       }),
     )
-    const search = html.match(/<input[^>]*aria-label="Search stellar nodes"[^>]*>/)?.[0]
-
-    expectMinimumTarget(search)
+    const search = html.match(/<button[^>]*aria-label="Search stellar nodes"[^>]*>/)?.[0]
+    expect(search).toBeTruthy()
   })
 
   it('renders operator instrumentation only from the explicit capability prop', () => {
@@ -86,6 +85,20 @@ describe('TopNav target geometry', () => {
     )
 
     expect(html).toMatch(/<button[^>]*aria-current="page"[^>]*>Begin/)
+  })
+
+  it('uses capsule masthead styling, not a flat header', () => {
+    const html = renderToStaticMarkup(
+      createElement(TopNav, {
+        route: { view: 'home' },
+        me: null,
+        operator: false,
+      }),
+    )
+
+    expect(html).toContain('masthead-capsule')
+    expect(html).toContain('rounded-pill')
+    expect(html).toContain('shadow-capsule')
   })
 })
 

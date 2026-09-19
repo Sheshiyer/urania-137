@@ -11,10 +11,9 @@ import { SankalpaPanel } from '../components/panels/SankalpaPanel'
 import { PageHeader } from '../components/layout/PageHeader'
 import { PageFrame } from '../components/layout/PageFrame'
 import { StatFooter } from '../components/chrome/StatFooter'
-import { PageTabs } from '../components/chrome/PageTabs'
 import { BottomChrome } from '../components/chrome/BottomChrome'
 import { CHROME } from '../components/chrome/insets'
-import { navigate } from '../hooks/useHashRoute'
+import { navigate, buildFolioPath, type AppPath } from '../hooks/useHashRoute'
 import { ChatSheet } from '../components/chat/ChatSheet'
 import { witnessThreadResult, type ThreadResult } from '../lib/chat/resultMessages'
 import type { SubmitPayload } from '../lib/chat/stateMachine'
@@ -64,10 +63,13 @@ function findChildEntry(child: Pick<SelemeneChild, 'id' | 'label'>) {
 export function NodePage({
   nodeId,
   initialChildId,
+  surface = null,
   me,
 }: {
   nodeId: string
   initialChildId?: string
+  /** `run` addresses a deterministic/daily instrument at `#/node/:id/:child/run`. */
+  surface?: 'run' | null
   me: User | null
 }) {
   const node = getNodeById(nodeId)!
@@ -82,36 +84,33 @@ export function NodePage({
   const lastSubmitRef = useRef<LastSubmit | null>(null)
   const { generateReport, activeReport, saveError } = useReportGenerator()
   const engineStatus = useEngineStatus(node.id === 'engine')
-  const initialChildOpenedRef = useRef<string | null>(null)
   const childReturnFocusRef = useRef<HTMLElement | SVGElement | null>(null)
+
+  /** Every child surface has an address; the graph click only changes the URL. */
+  const childPath = (child: SelemeneChild): AppPath => {
+    const entry = resolveNodeEntry(node.id, child)
+    const base = `/node/${node.id}/${encodeURIComponent(child.id)}` as const
+    return entry === 'deterministic' || entry === 'daily' ? `${base}/run` : base
+  }
 
   const openChild = (childId: string) => {
     const child = node.children?.find((c) => c.id === childId)
     if (!child) return
     const entry = resolveNodeEntry(node.id, child)
-    if (entry === 'folio') return navigate('/readings')
-    if (entry === 'chat' && chatChild?.id === childId) return
-    if (
-      (entry === 'deterministic' || entry === 'daily')
-      && nativeChild?.id === childId
-    ) return
-
+    if (entry === 'folio') {
+      if (child.action === 'favorites') return navigate(buildFolioPath({ favorites: true }))
+      if (child.action === 'search') return navigate(buildFolioPath({ q: '' }))
+      return navigate('/readings')
+    }
     childReturnFocusRef.current = findChildEntry(child)
-    setSelectedChild(child)
-    setChatChild(null)
-    setNativeChild(null)
-    setModalView(null)
-    setResultChildId(null)
-    lastSubmitRef.current = null
-
-    if (entry === 'info') setModalView('info')
-    else if (entry === 'chat') setChatChild(child)
-    else setNativeChild(child)
+    navigate(childPath(child))
   }
 
+  // The route is the source of truth: `#/node/:id/:child[/run]` mounts the
+  // matching surface, `#/node/:id` clears it. Closing any surface navigates
+  // back to the room, so Back/refresh/share always match what is on screen.
   useEffect(() => {
     if (!initialChildId) {
-      initialChildOpenedRef.current = null
       setSelectedChild(null)
       setModalView(null)
       setChatChild(null)
@@ -120,33 +119,31 @@ export function NodePage({
       lastSubmitRef.current = null
       return
     }
-    if (initialChildOpenedRef.current === initialChildId) return
-    initialChildOpenedRef.current = initialChildId
-    openChild(initialChildId)
-  }, [initialChildId])
-
-  const closeModal = () => {
-    const deepLinkedChild = selectedChild && initialChildId === selectedChild.id
-      ? { id: selectedChild.id, label: selectedChild.label }
-      : null
-    setModalView(null)
-    setSelectedChild(null)
-    if (deepLinkedChild) {
-      navigate(`/node/${node.id}`)
+    const child = node.children?.find((c) => c.id === initialChildId)
+    if (!child) return
+    const entry = resolveNodeEntry(node.id, child)
+    if (entry === 'folio') {
+      const path = child.action === 'favorites'
+        ? buildFolioPath({ favorites: true })
+        : child.action === 'search'
+          ? buildFolioPath({ q: '' })
+          : '/readings' as AppPath
+      navigate(path, { replace: true })
+      return
     }
-  }
-
-  const closeChat = () => {
-    setChatChild(null)
-    setSelectedChild(null)
+    setSelectedChild(child)
     setResultChildId(null)
     lastSubmitRef.current = null
-  }
+    setModalView(entry === 'info' ? 'info' : null)
+    setChatChild(entry === 'chat' ? child : null)
+    setNativeChild(entry === 'deterministic' || entry === 'daily' ? child : null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialChildId, surface, node.id])
 
-  const closeNative = () => {
-    setNativeChild(null)
-    setSelectedChild(null)
-  }
+  const closeSurface = () => navigate(`/node/${node.id}`)
+  const closeModal = closeSurface
+  const closeChat = closeSurface
+  const closeNative = closeSurface
 
   /** Only witness capabilities can mount ChatSheet, so only witness payloads
    * may cross this handoff. The discriminant check keeps a malformed resumed
@@ -195,7 +192,6 @@ export function NodePage({
       <PageFrame />
       <BottomChrome>
         <StatFooter stats={nodeStats} />
-        <PageTabs nodeId={node.id} />
       </BottomChrome>
 
       {/* Witness narration is capability-specific, not the universal entry. */}

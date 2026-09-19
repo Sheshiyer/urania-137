@@ -46,13 +46,23 @@ const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v))
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 const easeOutExpo = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t))
 
+function getRouteField(): HTMLElement | null {
+  return document.querySelector('[data-route-field]')
+}
+
+function offsetInContainer(el: HTMLElement, container: HTMLElement): number {
+  return el.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop
+}
+
 function scrollToY(y: number, immediate = false) {
-  window.scrollTo({ top: y, behavior: immediate || REDUCED_MOTION() ? 'auto' : 'smooth' })
+  const rf = getRouteField()
+  if (rf) rf.scrollTo({ top: y, behavior: immediate || REDUCED_MOTION() ? 'auto' : 'smooth' })
 }
 
 function scrollToScene(id: string, immediate = false) {
   const el = document.getElementById(id)
-  if (el) scrollToY(el.offsetTop, immediate)
+  const rf = getRouteField()
+  if (el && rf) scrollToY(offsetInContainer(el, rf), immediate)
 }
 
 function msgText(msg: ChatMsg): string {
@@ -93,6 +103,29 @@ function deriveGates(s: ChatSessionState): Gates {
 }
 
 type Confidence = 'exact' | 'approximate' | 'unknown'
+
+// ---------------------------------------------------------------------------
+// Progress rail — 7 dots for the 7 scenes
+// ---------------------------------------------------------------------------
+
+const SCENES: [id: string, label: string][] = [['s1','Arrival'],['s2','Compact'],['s3','Name'],['s4','Moment'],['s5','Place'],['s6','Dedication'],['crossing-track','Crossing']]
+
+function ThresholdProgressRail({ gates }: { gates: Gates }) {
+  const n = 2 + Number(gates.name) + Number(gates.moment) + Number(gates.place) + Number(gates.dedication)
+  return (
+    <nav aria-label="Threshold progress" className="fixed right-4 top-1/2 z-40 flex -translate-y-1/2 flex-col gap-3 sm:right-6">
+      {SCENES.map(([id, label], i) => (
+        <button
+          key={id}
+          type="button"
+          aria-label={label}
+          onClick={() => scrollToScene(id)}
+          className={`h-2.5 w-2.5 rounded-full border transition-colors ${i < n ? 'border-gold bg-gold/60' : 'border-gold/30 hover:border-gold/60'}`}
+        />
+      ))}
+    </nav>
+  )
+}
 
 // ---------------------------------------------------------------------------
 // Page
@@ -246,6 +279,8 @@ export function ThresholdPage({ onComplete }: { onComplete?: () => void }) {
   // -------------------------------------------------------------------------
 
   useEffect(() => {
+    const rf = getRouteField()
+    if (!rf) return
     const updateCrossing = () => {
       const track = document.getElementById('crossing-track')
       const el = crossingRef.current
@@ -259,10 +294,11 @@ export function ThresholdPage({ onComplete }: { onComplete?: () => void }) {
         setCrossed(open)
         return
       }
-      const vh = window.innerHeight
+      const vh = rf.clientHeight
+      const trackTop = offsetInContainer(track, rf)
       const range = track.offsetHeight - vh
-      const p = clamp((window.scrollY - track.offsetTop) / range, 0, 1)
-      const e = easeOutExpo(clamp(p / 0.62, 0, 1)) // reveal completes at 62%
+      const p = clamp((rf.scrollTop - trackTop) / range, 0, 1)
+      const e = easeOutExpo(clamp(p / 0.62, 0, 1))
       const inset = lerp(50, 0, e)
       el.style.clipPath = `inset(${inset}% ${inset}% round ${lerp(6, 0, e)}px)`
       el.style.pointerEvents = e > 0.85 ? 'auto' : 'none'
@@ -271,9 +307,9 @@ export function ThresholdPage({ onComplete }: { onComplete?: () => void }) {
     const onScroll = () => {
       updateCrossing()
     }
-    window.addEventListener('scroll', onScroll, { passive: true })
+    rf.addEventListener('scroll', onScroll, { passive: true })
     onScroll()
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => rf.removeEventListener('scroll', onScroll)
   }, [gates.dedication])
 
   // -------------------------------------------------------------------------
@@ -352,7 +388,9 @@ export function ThresholdPage({ onComplete }: { onComplete?: () => void }) {
       setGate('dedication')
       onComplete?.()
       setNarrator('The mirror is aimed. The sky is yours to open.')
-      scrollToY((document.getElementById('crossing-track')?.offsetTop ?? 0) + window.innerHeight * 0.4)
+      const rf = getRouteField()
+      const ct = document.getElementById('crossing-track')
+      scrollToY((ct && rf ? offsetInContainer(ct, rf) : 0) + (rf?.clientHeight ?? 0) * 0.4)
     } catch (err) {
       setError(
         `${err instanceof Error ? err.message : 'The record could not be sealed.'} — the story is safe; confirm once more.`,
@@ -394,7 +432,7 @@ export function ThresholdPage({ onComplete }: { onComplete?: () => void }) {
     }`
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-void font-body text-parchment">
+    <div className="min-h-full overflow-x-hidden bg-void font-body text-parchment">
       <style>{`
         .threshold-nudge { animation: threshold-nudge .45s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes threshold-nudge {
@@ -415,11 +453,7 @@ export function ThresholdPage({ onComplete }: { onComplete?: () => void }) {
 
       <Starfield />
 
-      <header className="fixed left-1/2 top-[18px] z-40 flex -translate-x-1/2 items-center gap-3.5 whitespace-nowrap rounded-full border border-gold/10 bg-surface/55 px-[18px] py-2 font-display text-[10px] uppercase tracking-[0.28em] text-silver backdrop-blur-xl">
-        <b className="font-medium text-gold">✳ Urania 137</b>
-        <span className="text-gold/60">·</span>
-        <span>The Threshold</span>
-      </header>
+      <ThresholdProgressRail gates={gates} />
 
       {/* The narrator travels with you — latest reply, or a streaming pulse */}
       {(narrator || streaming) && (

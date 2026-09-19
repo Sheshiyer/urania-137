@@ -4,6 +4,8 @@ This document connects the directional visual references to implemented
 runtime contracts. Generated boards are not runtime truth. Typed data,
 executable registries, tests, and the bounded evidence manifest are.
 
+Updated: 2026-09-19 (instrument-shell redesign, Phases 1-6).
+
 ## Reference laws
 
 | Reference law | Runtime owner | Contract or evidence |
@@ -16,9 +18,13 @@ executable registries, tests, and the bounded evidence manifest are.
 | Interaction state never impersonates computed evidence | semantic `INTERACTION` and evidence tokens | `src/styles/semanticTokens.test.ts` |
 | One overlay contract serves chat, information, and reading selection | `InstrumentDialog`, `ChatSheet`, `BeginReadingDialog` | `src/components/ui/InstrumentDialog.test.ts`; `src/components/readings/BeginReadingDialog.test.ts` |
 | Chat transitions deliberately into a canonical Reading | `ReadingTransition`, `CanonicalReadingReference`, `useThreadScroll` | `src/components/chat/ReadingTransition.test.ts`; `src/hooks/useThreadScroll.test.ts` |
-| Narrow and reflowed views preserve every destination | `GraphLens`, `TopNav`, `BottomChrome` | `scripts/verify/ui-home-contracts.test.mjs`; visual manifest mobile/reflow rows |
-| Reduced motion removes choreography, never information | graph/dialog/reading motion guards | visual manifest reduced-motion rows |
+| Narrow and reflowed views preserve every destination | `TopNav`, `ContinuationDock`, `CommandPalette` | `scripts/verify/ui-home-contracts.test.mjs`; `TopNav.test.ts` |
+| Reduced motion removes choreography, never information | graph/dialog/reading motion guards, `withViewTransition` | visual manifest reduced-motion rows |
 | Generated images guide composition only | asset boundary and README labels | `scripts/verify/ui-asset-boundaries.test.mjs`; `scripts/verify/ui-realignment-contracts.test.mjs` |
+| URL is state for every surface | `useHashRoute`, `navigate()`, hash-encoded filters | `useHashRoute.test.ts`; `scripts/verify/ui-home-contracts.test.mjs` |
+| One shell wraps all routes | `AppShell` variant `app` or `threshold` | `data-app-shell`; `data-route-field` |
+| Arrival does not blank returning users unnecessarily | `ArrivalGate` gates map-shaped routes only | `AppErrorBoundary.test.ts`; `ArrivalGate.test.ts` |
+| Confirmations use the instrument overlay | `InstrumentDialog` state-based confirm | `SettingsPage.tsx` confirm state |
 
 Authoritative references:
 

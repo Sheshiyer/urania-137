@@ -98,11 +98,51 @@ export const STATE = {
   focus: INTERACTION.focus,
 } as const
 
-/** Brand motion spec (Tryambakam Noesis brand kit): out-expo, 1000ms reveal. */
+/**
+ * Brand motion spec (Tryambakam Noesis brand kit): out-expo, 1000ms reveal.
+ * One easing for the whole instrument — the Threshold scene kit and the
+ * landing must import this value rather than declare their own curve.
+ */
 export const MOTION = {
   easing: 'cubic-bezier(0.19, 1, 0.22, 1)',
   revealMs: 1000,
   snapMs: 300,
+  /** Masthead capsule scroll-shrink range (px of route-field scroll). */
+  mastheadShrinkPx: 200,
+} as const
+
+/**
+ * Three radius stops. Nothing on the instrument renders as a hard block:
+ * tiles (readings, doorways) are `tile`, panels/cards/popovers are `card`,
+ * and every button, chip, input and tab is a full `pill`.
+ */
+export const RADIUS = {
+  tile: '0.75rem',
+  card: '1rem',
+  pill: '9999px',
+} as const
+
+/** Tinted, directional, rare. Shadows fall from the void, never grey. */
+export const SHADOW = {
+  capsule: '0 4px 18px -8px rgb(7 11 29 / 0.9)',
+  popover: '0 12px 32px -16px rgb(7 11 29 / 0.95)',
+  dialog: '0 30px 60px -20px rgb(7 11 29 / 0.95)',
+  dock: '0 8px 30px -12px rgb(7 11 29 / 0.9)',
+} as const
+
+/**
+ * Seven-step type scale (rem). Tailwind's `text-*` utilities are re-pointed
+ * onto these stops in tailwind.config.js so reaching for "the next size" is a
+ * no-op instead of a new size.
+ */
+export const TYPE_SCALE = {
+  meta: 0.75,
+  small: 0.875,
+  body: 1.0625,
+  sub: 1.1875,
+  h2: 1.5,
+  h1: 2.25,
+  hero: 3.25,
 } as const
 
 /**

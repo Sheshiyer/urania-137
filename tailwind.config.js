@@ -47,6 +47,36 @@ export default {
         violetglow: '#7B68EE',
         goldwarm: '#E6B84D',
       },
+      // Mirror RADIUS / SHADOW / TYPE_SCALE in src/styles/tokens.ts — keep in sync.
+      borderRadius: {
+        tile: '0.75rem',
+        card: '1rem',
+        pill: '9999px',
+      },
+      boxShadow: {
+        capsule: '0 4px 18px -8px rgb(7 11 29 / 0.9)',
+        popover: '0 12px 32px -16px rgb(7 11 29 / 0.95)',
+        dialog: '0 30px 60px -20px rgb(7 11 29 / 0.95)',
+        dock: '0 8px 30px -12px rgb(7 11 29 / 0.9)',
+      },
+      fontSize: {
+        // Seven stops; neighbouring Tailwind sizes collapse onto one stop.
+        meta: ['0.75rem', { lineHeight: '1.5' }],
+        small: ['0.875rem', { lineHeight: '1.5' }],
+        body: ['1.0625rem', { lineHeight: '1.7' }],
+        sub: ['1.1875rem', { lineHeight: '1.5' }],
+        h2: ['1.5rem', { lineHeight: '1.25', letterSpacing: '-0.01em' }],
+        h1: ['2.25rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
+        hero: ['3.25rem', { lineHeight: '1', letterSpacing: '-0.02em' }],
+        lg: ['1.1875rem', { lineHeight: '1.5' }],
+        xl: ['1.1875rem', { lineHeight: '1.5' }],
+        '2xl': ['1.5rem', { lineHeight: '1.25' }],
+        '3xl': ['1.5rem', { lineHeight: '1.25' }],
+        '4xl': ['2.25rem', { lineHeight: '1.1' }],
+        '5xl': ['2.25rem', { lineHeight: '1.1' }],
+        '6xl': ['3.25rem', { lineHeight: '1' }],
+        '7xl': ['3.25rem', { lineHeight: '1' }],
+      },
       fontFamily: {
         display: ['Panchang', 'sans-serif'],
         serif: ['Cinzel', 'Times New Roman', 'serif'],
