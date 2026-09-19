@@ -5,9 +5,13 @@ import {
   EVIDENCE,
   EVIDENCE_COPY,
   INTERACTION,
+  MOTION,
+  RADIUS,
   READING,
+  SHADOW,
   TEXT,
   TYPE,
+  TYPE_SCALE,
 } from './tokens'
 
 describe('Urania semantic visual tokens', () => {
@@ -53,5 +57,20 @@ describe('Urania semantic visual tokens', () => {
     expect(TYPE.roles.metadata.minPx).toBeGreaterThanOrEqual(12)
     expect(TYPE.readingMeasureCh).toBeGreaterThanOrEqual(65)
     expect(TYPE.readingMeasureCh).toBeLessThanOrEqual(75)
+  })
+
+  it('declares exactly three radius stops and a seven-step type scale', () => {
+    expect(Object.keys(RADIUS)).toEqual(['tile', 'card', 'pill'])
+    expect(RADIUS.pill).toBe('9999px')
+    expect(Object.keys(TYPE_SCALE)).toEqual(['meta', 'small', 'body', 'sub', 'h2', 'h1', 'hero'])
+    const steps = Object.values(TYPE_SCALE)
+    for (let i = 1; i < steps.length; i += 1) expect(steps[i]).toBeGreaterThan(steps[i - 1])
+    expect(TYPE_SCALE.meta * 16).toBeGreaterThanOrEqual(TYPE.roles.metadata.minPx)
+  })
+
+  it('keeps shadows tinted from the void and one brand easing', () => {
+    for (const shadow of Object.values(SHADOW)) expect(shadow).toMatch(/rgb\(7 11 29/)
+    expect(MOTION.easing).toBe('cubic-bezier(0.19, 1, 0.22, 1)')
+    expect(MOTION.mastheadShrinkPx).toBeGreaterThan(0)
   })
 })

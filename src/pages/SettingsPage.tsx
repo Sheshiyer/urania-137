@@ -13,6 +13,7 @@ import {
   UsersRound,
 } from 'lucide-react'
 import type { User } from '../lib/api/contract'
+import type { SettingsSection } from '../hooks/useHashRoute'
 import {
   acceptRelationshipInvitation,
   createRelationshipInvitation,
@@ -40,7 +41,8 @@ import { appBuildInfo, formatBuildTime } from '../lib/appVersion'
 
 type LoadState = 'loading' | 'ready' | 'error'
 
-export function SettingsPage({ me }: { me: User | null }) {
+export function SettingsPage({ me, section = null }: { me: User | null; section?: SettingsSection | null }) {
+  void section // sections arrive with the settings split
   const [subjects, setSubjects] = useState<SubjectProfile[]>([])
   const [subjectState, setSubjectState] = useState<LoadState>('loading')
   const [subjectError, setSubjectError] = useState<string | null>(null)

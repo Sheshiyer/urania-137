@@ -123,6 +123,11 @@ export function ConversationPage({
   returnTo: ConversationReturnPath
   me: User | null
 }) {
+  // Hooks first — the witness branch below is an early return and must not
+  // change the hook order between renders of the same mount.
+  const lastSubmitRef = useRef<AssetGenerateRequest | null>(null)
+  const { generateReport, activeReport, saveError } = useReportGenerator()
+
   if (readingId) {
     return <WitnessSection readingId={readingId} returnTo={returnTo} />
   }
@@ -130,8 +135,6 @@ export function ConversationPage({
   const node = nodeId ? getNodeById(nodeId) : null
   const child = node?.children?.find((candidate) => candidate.id === childId)
   const narrativeChild = child?.run?.kind === 'witness' ? child : null
-  const lastSubmitRef = useRef<AssetGenerateRequest | null>(null)
-  const { generateReport, activeReport, saveError } = useReportGenerator()
 
   const close = () => navigate(returnTo)
   const chooseDoorway = (nextNodeId: string, nextChildId: string) => {

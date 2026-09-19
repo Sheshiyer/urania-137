@@ -15,7 +15,8 @@ interface PatternSearchList extends PatternSearchResponse {}
 
 type Section = 'corpus' | 'patterns' | null
 
-export function AdminDataBrowserPage({ me, section }: { me: User | null; section: Section }) {
+export function AdminDataBrowserPage({ me, section, recordId = null }: { me: User | null; section: Section; recordId?: string | null }) {
+  void recordId // corpus record deep links land with the admin route sync
   const [activeSection, setActiveSection] = useState<Section>(section ?? 'corpus')
   const [readings, setReadings] = useState<CorpusReading[]>([])
   const [loading, setLoading] = useState(false)

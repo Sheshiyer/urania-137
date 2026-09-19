@@ -18,6 +18,8 @@ const sources = {
   statFooter: read('src/components/chrome/StatFooter.tsx'),
   threshold: read('src/pages/ThresholdPage.tsx'),
   copy: read('src/content/uiCopy.ts'),
+  arrivalGate: read('src/components/layout/ArrivalGate.tsx'),
+  appShell: read('src/components/layout/AppShell.tsx'),
 }
 const runtime = Object.values(sources).join('\n')
 
@@ -66,7 +68,11 @@ test('mobile navigation begins with one disclosure instead of four competing lab
 
 test('experience and operator presentation stay orthogonal to authorization', () => {
   assert.match(sources.app, /experience/)
-  assert.match(sources.app, /data-experience-gate/)
+  // The arrival beat is its own component; the app mounts it and the gate hook survives.
+  assert.match(sources.app, /<ArrivalGate/)
+  assert.match(sources.arrivalGate, /data-experience-gate/)
+  assert.match(sources.app, /<ReauthInterstitial/, 'a server-side identity failure must be rendered, not swallowed')
+  assert.match(sources.appShell, /\{degradedNotice\}/, 'the degraded notice text must reach the reader')
   assert.match(
     sources.app,
     /meLoading[\s\S]*subjectLifecycle\.status === 'loading'[\s\S]*experience\.lifecycle === 'new'/,

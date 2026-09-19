@@ -1,11 +1,33 @@
 import { describe, expect, it } from 'vitest'
-import { buildConversationPath, parseHash } from './useHashRoute'
+import { EMPTY_FOLIO_QUERY, buildConversationPath, buildFolioPath, parseHash } from './useHashRoute'
 
 describe('hash route parsing', () => {
   it('keeps the stellar map and validated node routes intact', () => {
     expect(parseHash('#/')).toEqual({ view: 'home' })
     expect(parseHash('#/node/folio')).toEqual({ view: 'node', nodeId: 'folio' })
-    expect(parseHash('#/node/not-charted')).toEqual({ view: 'home' })
+    expect(parseHash('#/node/not-charted')).toEqual({ view: 'not-found', hash: '#/node/not-charted' })
+    expect(parseHash('')).toEqual({ view: 'home' })
+    expect(parseHash('#/nope')).toEqual({ view: 'not-found', hash: '#/nope' })
+  })
+
+  it('addresses the deterministic run surface only for engine, workflow and daily children', () => {
+    expect(parseHash('#/node/birth/numerology/run')).toEqual({
+      view: 'node',
+      nodeId: 'birth',
+      childId: 'numerology',
+      surface: 'run',
+    })
+    expect(parseHash('#/node/transit/panchanga-flow/run')).toEqual({
+      view: 'node',
+      nodeId: 'transit',
+      childId: 'panchanga-flow',
+      surface: 'run',
+    })
+    expect(parseHash('#/node/witness/integrated-reading/run')).toEqual({
+      view: 'node',
+      nodeId: 'witness',
+      childId: 'integrated-reading',
+    })
   })
 
   it('validates and preserves an addressable child doorway', () => {
@@ -15,8 +37,8 @@ describe('hash route parsing', () => {
       childId: 'integrated-reading',
     })
     expect(parseHash('#/node/witness/not-charted')).toEqual({
-      view: 'node',
-      nodeId: 'witness',
+      view: 'not-found',
+      hash: '#/node/witness/not-charted',
     })
   })
 
@@ -74,12 +96,21 @@ describe('hash route parsing', () => {
   })
 
   it('addresses the library, one canonical record, and settings', () => {
-    expect(parseHash('#/readings')).toEqual({ view: 'readings', readingId: null })
+    expect(parseHash('#/readings')).toEqual({ view: 'readings', readingId: null, query: EMPTY_FOLIO_QUERY })
     expect(parseHash('#/readings/reading%2Fone')).toEqual({
       view: 'readings',
       readingId: 'reading/one',
+      query: EMPTY_FOLIO_QUERY,
     })
-    expect(parseHash('#/settings')).toEqual({ view: 'settings' })
+    expect(parseHash('#/settings')).toEqual({ view: 'settings', section: null })
+    expect(parseHash('#/settings/session')).toEqual({ view: 'settings', section: 'session' })
+    expect(parseHash('#/settings/nope')).toEqual({ view: 'not-found', hash: '#/settings/nope' })
+    expect(parseHash('#/admin-data/corpus/abc')).toEqual({
+      view: 'admin-data',
+      section: 'corpus',
+      recordId: 'abc',
+    })
+    expect(parseHash('#/admin-data/other')).toEqual({ view: 'not-found', hash: '#/admin-data/other' })
     expect(parseHash('#/relationships/relationship%2Fone/readings/generation%2F137')).toEqual({
       view: 'relationship-reading',
       relationshipId: 'relationship/one',
@@ -87,8 +118,31 @@ describe('hash route parsing', () => {
     })
   })
 
-  it('fails malformed encoded record ids closed to home', () => {
-    expect(parseHash('#/readings/%E0%A4%A')).toEqual({ view: 'home' })
-    expect(parseHash('#/relationships/rel/readings/%E0%A4%A')).toEqual({ view: 'home' })
+  it('fails malformed encoded record ids closed to the not-found view', () => {
+    expect(parseHash('#/readings/%E0%A4%A')).toEqual({ view: 'not-found', hash: '#/readings/%E0%A4%A' })
+    expect(parseHash('#/relationships/rel/readings/%E0%A4%A')).toEqual({
+      view: 'not-found',
+      hash: '#/relationships/rel/readings/%E0%A4%A',
+    })
+  })
+
+  it('keeps the Folio browse state in the hash query and round-trips it', () => {
+    expect(parseHash('#/readings?q=moon&lens=birth&fav=1&view=map')).toEqual({
+      view: 'readings',
+      readingId: null,
+      query: { q: 'moon', lens: 'birth', kind: null, favorites: true, view: 'map' },
+    })
+    expect(parseHash('#/readings?view=nope')).toEqual({
+      view: 'readings',
+      readingId: null,
+      query: { ...EMPTY_FOLIO_QUERY, view: null },
+    })
+    const path = buildFolioPath({ q: 'moon', favorites: true, view: 'grid' })
+    expect(path).toBe('/readings?q=moon&fav=1&view=grid')
+    expect(parseHash(`#${buildFolioPath({ lens: 'transit' }, 'reading/one')}`)).toEqual({
+      view: 'readings',
+      readingId: 'reading/one',
+      query: { ...EMPTY_FOLIO_QUERY, lens: 'transit' },
+    })
   })
 })

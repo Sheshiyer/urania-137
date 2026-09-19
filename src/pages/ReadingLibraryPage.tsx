@@ -23,7 +23,7 @@ import {
   type FolioView,
 } from '../lib/readings/folioView'
 import { useFolioState } from '../hooks/useFolio'
-import { buildConversationPath, navigate } from '../hooks/useHashRoute'
+import { EMPTY_FOLIO_QUERY, buildConversationPath, navigate, type FolioQuery } from '../hooks/useHashRoute'
 import { PageFrame } from '../components/layout/PageFrame'
 import { AsyncBoundary } from '../components/ui/AsyncBoundary'
 import {
@@ -165,13 +165,15 @@ function ReadyFolio({
 export function ReadingLibraryPage({
   me,
   readingId,
+  query: routeQuery = EMPTY_FOLIO_QUERY,
 }: {
   me: User | null
   readingId: string | null
+  query?: FolioQuery
 }) {
   const { entries, status, error, httpStatus } = useFolioState()
-  const [query, setQuery] = useState('')
-  const [favoritesOnly, setFavoritesOnly] = useState(false)
+  const [query, setQuery] = useState(routeQuery.q)
+  const [favoritesOnly, setFavoritesOnly] = useState(routeQuery.favorites)
 
   // A direct canonical URL starts from the unfiltered owner-scoped Folio.
   useEffect(() => {

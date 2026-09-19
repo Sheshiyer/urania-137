@@ -13,20 +13,34 @@ import { X } from 'lucide-react'
 const FOCUSABLE =
   'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, object, embed, [contenteditable], [tabindex]:not([tabindex="-1"])'
 
-let bodyLockCount = 0
-let bodyOverflowBeforeLock = ''
+let scrollLockCount = 0
+let overflowBeforeLock = ''
+let lockedScroller: HTMLElement | null = null
+
+/**
+ * The app scrolls inside `[data-route-field]` (AppShell), not the document, so
+ * that is the element the lock must hold. Surfaces rendered outside the shell
+ * (the Threshold today) fall back to `body`.
+ */
+function resolveScroller(): HTMLElement {
+  return document.querySelector<HTMLElement>('[data-route-field]') ?? document.body
+}
 
 function lockDocumentScroll(): () => void {
   if (typeof document === 'undefined') return () => undefined
-  if (bodyLockCount === 0) {
-    bodyOverflowBeforeLock = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+  if (scrollLockCount === 0) {
+    lockedScroller = resolveScroller()
+    overflowBeforeLock = lockedScroller.style.overflow
+    lockedScroller.style.overflow = 'hidden'
   }
-  bodyLockCount += 1
+  scrollLockCount += 1
 
   return () => {
-    bodyLockCount = Math.max(0, bodyLockCount - 1)
-    if (bodyLockCount === 0) document.body.style.overflow = bodyOverflowBeforeLock
+    scrollLockCount = Math.max(0, scrollLockCount - 1)
+    if (scrollLockCount === 0 && lockedScroller) {
+      lockedScroller.style.overflow = overflowBeforeLock
+      lockedScroller = null
+    }
   }
 }
 
