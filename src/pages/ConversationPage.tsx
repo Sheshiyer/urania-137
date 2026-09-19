@@ -1,12 +1,11 @@
 import { useMemo, useRef } from 'react'
-import { ArrowLeft, MessageCircle } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { ChatSheet } from '../components/chat/ChatSheet'
 import { WitnessRun } from '../components/chat/WitnessRun'
 import type { WitnessInterpretRequestBody } from '../components/chat/WitnessRun'
 import { PageFrame } from '../components/layout/PageFrame'
 import { AsyncBoundary } from '../components/ui/AsyncBoundary'
-import { BeginReadingDialog } from '../components/readings/BeginReadingDialog'
-import { getNodeById } from '../data/selemeneNodes'
+import { getNodeById, SELEMENE_NODES } from '../data/selemeneNodes'
 import {
   buildConversationPath,
   navigate,
@@ -21,15 +20,10 @@ import type { WitnessInterpretResult } from '../lib/readings/witnessContract'
 import type { User, ApiError } from '../lib/api/contract'
 import type { AssetGenerateRequest } from '../types'
 
-/**
- * The route-owned conversation surface. When a `readingId` is present it
- * loads the owner-scoped canonical Folio reading through the existing
- * `/api/folio` list contract (the same one ReadingLibraryPage uses — there is
- * no separate single-reading GET route) and renders a focused WitnessRun chat
- * bound to that reading's id. Without a readingId, the original doorway
- * chooser + narrative onboarding ChatSheet remains: there is nothing to
- * witness yet.
- */
+const WITNESS_LENSES = SELEMENE_NODES.map((n) => ({
+  id: n.id, label: n.label, epithet: n.epithet,
+  children: (n.children ?? []).filter((c) => c.run?.kind === 'witness'),
+})).filter((n) => n.children.length > 0)
 
 async function postInterpretation(body: WitnessInterpretRequestBody): Promise<WitnessInterpretResult> {
   const response = await fetch('/api/chat/interpret', {
@@ -185,19 +179,30 @@ export function ConversationPage({
         </a>
 
         {!narrativeChild && (
-          <div className="mt-6 flex items-center gap-2 text-xs text-silver">
-            <MessageCircle className="h-4 w-4 text-gold" aria-hidden="true" />
-            Witness doorway chooser opening…
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {WITNESS_LENSES.map((lens) => (
+              <section key={lens.id} className="border-t border-gold/20 pt-3">
+                <h2 className="mb-2 font-serif text-lg text-parchment">{lens.label}</h2>
+                <ul className="grid gap-1.5">
+                  {lens.children.map((child) => (
+                    <li key={child.id}>
+                      <a
+                        href={`#${buildConversationPath({ nodeId: lens.id, childId: child.id })}`}
+                        data-conversation-doorway="true"
+                        onClick={(e) => { e.preventDefault(); chooseDoorway(lens.id, child.id) }}
+                        className="flex min-h-11 items-center gap-3 border border-gold/15 px-3 py-2 text-left transition-colors hover:border-gold/40"
+                      >
+                        <span className="h-1.5 w-1.5 shrink-0 rotate-45 border border-gold/50" aria-hidden="true" />
+                        <span className="font-display text-xs uppercase tracking-[0.16em] text-silver">{child.label}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
           </div>
         )}
       </main>
-
-      <BeginReadingDialog
-        open={!narrativeChild}
-        conversationOnly
-        onSelect={chooseDoorway}
-        onClose={close}
-      />
 
       {node && narrativeChild?.run?.kind === 'witness' && (
         <ChatSheet

@@ -140,7 +140,20 @@ export default function App() {
   }, [loadSubjects, me])
 
   if (route.view === 'threshold') {
-    return <ThresholdPage onComplete={completeThreshold} />
+    return (
+      <AppShell
+        navigation={
+          <nav className="flex items-center justify-between px-5 py-2.5 font-display text-[10px] uppercase sm:px-8" aria-label="Threshold navigation">
+            <span className="font-medium tracking-[0.28em] text-gold">Urania 137</span>
+            <a href="/api/logout" className="tracking-[0.18em] text-silver transition-colors hover:text-parchment">Leave the field</a>
+          </nav>
+        }
+        degradedNotice={experience.status === 'degraded' ? experience.notice : null}
+        variant="threshold"
+      >
+        <ThresholdPage onComplete={completeThreshold} />
+      </AppShell>
+    )
   }
 
   // Do not paint an interactive returning-user map before the authenticated

@@ -7,7 +7,7 @@ import { BottomChrome } from '../components/chrome/BottomChrome'
 import { CHROME } from '../components/chrome/insets'
 import { navigate } from '../hooks/useHashRoute'
 import { UI_COPY } from '../content/uiCopy'
-import { HomeJourneyRail } from '../components/home/HomeJourneyRail'
+import { ContinuationDock } from '../components/home/ContinuationDock'
 import {
   INITIAL_EXPERIENCE,
   type ExperienceState,
@@ -70,10 +70,7 @@ export function HomePage({
         </button>
       </section>
 
-      <HomeJourneyRail
-        experience={experience}
-        onBegin={() => navigate('/chat')}
-      />
+      <ContinuationDock experience={experience} />
 
       <BottomChrome>
         <StatFooter stats={HOME_TAXONOMY} />

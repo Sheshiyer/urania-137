@@ -529,6 +529,12 @@ export function ChatSheet({ seed, childLabel, nodeId, nodeLabel, owner, onClose,
               ✦ The story has been handed off to the engines ✦
             </p>
           )}
+          {done && (
+            <div className="flex flex-wrap justify-center gap-3 pt-3">
+              <a href="#/readings" className="btn-primary text-[9px]">Open reading</a>
+              <a href="#/chat" className="btn-ghost text-[9px]">Begin another doorway</a>
+            </div>
+          )}
         </div>
 
         {!threadScroll.following && (
