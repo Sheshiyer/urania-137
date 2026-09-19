@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode, type RefObject } from 'react'
 import type { GraphEntry } from '../../types'
 import { RelationList } from './RelationList'
+import { withViewTransition } from '../../lib/viewTransition'
 
 type GraphView = 'graph' | 'list'
 
@@ -79,7 +80,7 @@ export function GraphLens({
                 : 'text-secondary hover:bg-gold/10 hover:text-interaction-active',
             ].join(' ')}
             aria-pressed={view === candidate}
-            onClick={() => setRequestedView(candidate)}
+            onClick={() => withViewTransition(() => setRequestedView(candidate))}
           >
             {candidate}
           </button>

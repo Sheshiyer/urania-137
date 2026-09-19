@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { FolderClosed, Search, FileText, Database } from 'lucide-react'
 import { PageFrame } from '../components/layout/PageFrame'
+import { navigate, type AppPath } from '../hooks/useHashRoute'
 import {
   type CorpusReading,
   type CorpusListResponse,
@@ -16,17 +17,17 @@ interface PatternSearchList extends PatternSearchResponse {}
 type Section = 'corpus' | 'patterns' | null
 
 export function AdminDataBrowserPage({ me, section, recordId = null }: { me: User | null; section: Section; recordId?: string | null }) {
-  void recordId // corpus record deep links land with the admin route sync
-  const [activeSection, setActiveSection] = useState<Section>(section ?? 'corpus')
+  void recordId
+  const activeSection = section ?? 'corpus'
   const [readings, setReadings] = useState<CorpusReading[]>([])
   const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [modeFilter, setModeFilter] = useState<string>('all')
 
-  // Sync URL section change.
-  useEffect(() => {
-    if (section !== null) setActiveSection(section)
-  }, [section])
+  const goSection = (s: Section) => {
+    const path: AppPath = s === null ? '/admin-data' : `/admin-data/${s}`
+    navigate(path)
+  }
 
   const loadCorpus = useCallback(async () => {
     setLoading(true)
@@ -282,7 +283,7 @@ export function AdminDataBrowserPage({ me, section, recordId = null }: { me: Use
             </header>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <button
-                onClick={() => setActiveSection('corpus')}
+                onClick={() => goSection('corpus')}
                 className="flex items-start gap-4 rounded-lg border border-gold/20 p-4 text-left transition-colors hover:border-gold/60 hover:bg-gold/5"
               >
                 <FileText className="mt-0.5 h-5 w-5 text-gold" aria-hidden="true" />
@@ -296,7 +297,7 @@ export function AdminDataBrowserPage({ me, section, recordId = null }: { me: Use
                 </div>
               </button>
               <button
-                onClick={() => setActiveSection('patterns')}
+                onClick={() => goSection('patterns')}
                 className="flex items-start gap-4 rounded-lg border border-gold/20 p-4 text-left transition-colors hover:border-gold/60 hover:bg-gold/5"
               >
                 <Search className="mt-0.5 h-5 w-5 text-gold" aria-hidden="true" />
@@ -333,7 +334,7 @@ export function AdminDataBrowserPage({ me, section, recordId = null }: { me: Use
           <div className="flex items-end gap-3">
             <nav className="flex gap-1.5" role="tablist">
               <button
-                onClick={() => setActiveSection(null)}
+                onClick={() => goSection(null)}
                 className={`px-3 py-1.5 text-xs font-display uppercase tracking-[0.16em] ${
                   activeSection === null
                     ? 'border border-gold/40 bg-void text-gold'
@@ -343,7 +344,7 @@ export function AdminDataBrowserPage({ me, section, recordId = null }: { me: Use
                 Home
               </button>
               <button
-                onClick={() => setActiveSection('corpus')}
+                onClick={() => goSection('corpus')}
                 className={`px-3 py-1.5 text-xs font-display uppercase tracking-[0.16em] ${
                   activeSection === 'corpus'
                     ? 'border border-gold/40 bg-void text-gold'
@@ -353,7 +354,7 @@ export function AdminDataBrowserPage({ me, section, recordId = null }: { me: Use
                 Corpus
               </button>
               <button
-                onClick={() => setActiveSection('patterns')}
+                onClick={() => goSection('patterns')}
                 className={`px-3 py-1.5 text-xs font-display uppercase tracking-[0.16em] ${
                   activeSection === 'patterns'
                     ? 'border border-gold/40 bg-void text-gold'

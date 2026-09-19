@@ -13,7 +13,7 @@ import { PageFrame } from '../components/layout/PageFrame'
 import { StatFooter } from '../components/chrome/StatFooter'
 import { BottomChrome } from '../components/chrome/BottomChrome'
 import { CHROME } from '../components/chrome/insets'
-import { navigate, type AppPath } from '../hooks/useHashRoute'
+import { navigate, buildFolioPath, type AppPath } from '../hooks/useHashRoute'
 import { ChatSheet } from '../components/chat/ChatSheet'
 import { witnessThreadResult, type ThreadResult } from '../lib/chat/resultMessages'
 import type { SubmitPayload } from '../lib/chat/stateMachine'
@@ -97,7 +97,11 @@ export function NodePage({
     const child = node.children?.find((c) => c.id === childId)
     if (!child) return
     const entry = resolveNodeEntry(node.id, child)
-    if (entry === 'folio') return navigate('/readings')
+    if (entry === 'folio') {
+      if (child.action === 'favorites') return navigate(buildFolioPath({ favorites: true }))
+      if (child.action === 'search') return navigate(buildFolioPath({ q: '' }))
+      return navigate('/readings')
+    }
     childReturnFocusRef.current = findChildEntry(child)
     navigate(childPath(child))
   }
@@ -119,7 +123,12 @@ export function NodePage({
     if (!child) return
     const entry = resolveNodeEntry(node.id, child)
     if (entry === 'folio') {
-      navigate('/readings', { replace: true })
+      const path = child.action === 'favorites'
+        ? buildFolioPath({ favorites: true })
+        : child.action === 'search'
+          ? buildFolioPath({ q: '' })
+          : '/readings' as AppPath
+      navigate(path, { replace: true })
       return
     }
     setSelectedChild(child)
