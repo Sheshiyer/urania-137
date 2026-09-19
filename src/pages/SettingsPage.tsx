@@ -192,7 +192,7 @@ export function SettingsPage({ me, section = null }: { me: User | null; section?
               Your account owns access. Subjects name who a reading concerns. Shared relationships require both people to choose their own subject.
             </p>
           </div>
-          <a href="#/" className="btn-ghost cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold">
+          <a href="#/" className="btn-ghost">
             Return to map
           </a>
         </header>

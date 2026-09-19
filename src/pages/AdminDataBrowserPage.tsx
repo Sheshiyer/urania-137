@@ -366,7 +366,7 @@ export function AdminDataBrowserPage({ me, section, recordId = null }: { me: Use
             </nav>
             <a
               href="#/"
-              className="btn-ghost cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+              className="btn-ghost"
             >
               Return to map
             </a>

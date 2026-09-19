@@ -306,7 +306,7 @@ body {
 
   /* Primary action — the gold-filled pill from the moodboard's button states. */
   .btn-primary {
-    @apply inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full border border-gold bg-gold px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-void transition-[filter,opacity] duration-300 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 rounded-full border border-gold bg-gold px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-void transition-[filter,opacity] duration-300 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-parchment disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   /* Secondary action — interaction color, never computed-evidence emerald. */
@@ -316,7 +316,7 @@ body {
 
   /* Ghost action — quiet gold outline (CANCEL in the reference modal). */
   .btn-ghost {
-    @apply inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full border border-gold/30 px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-silver transition-colors duration-300 hover:border-gold/60 hover:text-parchment disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 rounded-full border border-gold/30 px-6 py-2.5 font-display text-[10px] font-medium uppercase tracking-[0.24em] text-silver transition-colors duration-300 hover:border-gold/60 hover:text-parchment focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-interaction-focus disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   /* Capsule — the floating shell surface (masthead, docks, action bars). */
