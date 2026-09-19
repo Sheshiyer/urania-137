@@ -5,7 +5,6 @@ import {
   Database,
   Link2,
   LockKeyhole,
-  LogOut,
   RefreshCw,
   ShieldCheck,
   Trash2,
@@ -36,13 +35,17 @@ import { PageFrame } from '../components/layout/PageFrame'
 import { PatternSection } from '../components/chrome/PatternSection'
 import { AsyncBoundary, type AsyncViewState } from '../components/ui/AsyncBoundary'
 import { ConsentConstellation } from '../components/settings/ConsentConstellation'
-import { DefinitionRow } from '../components/ui/DefinitionRow'
-import { appBuildInfo, formatBuildTime } from '../lib/appVersion'
+import { InstrumentDialog } from '../components/ui/InstrumentDialog'
+import { appBuildInfo } from '../lib/appVersion'
 
 type LoadState = 'loading' | 'ready' | 'error'
 
 export function SettingsPage({ me, section = null }: { me: User | null; section?: SettingsSection | null }) {
-  void section // sections arrive with the settings split
+  useEffect(() => {
+    if (!section) return
+    const el = document.getElementById(`settings-${section}`)
+    if (el) requestAnimationFrame(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }, [section])
   const [subjects, setSubjects] = useState<SubjectProfile[]>([])
   const [subjectState, setSubjectState] = useState<LoadState>('loading')
   const [subjectError, setSubjectError] = useState<string | null>(null)
@@ -59,6 +62,7 @@ export function SettingsPage({ me, section = null }: { me: User | null; section?
   const [invitationToken, setInvitationToken] = useState<string | null>(null)
   const [consumeToken, setConsumeToken] = useState('')
   const [consumeSubjectId, setConsumeSubjectId] = useState('')
+  const [confirm, setConfirm] = useState<{ message: string; action: () => void } | null>(null)
 
   const loadSubjects = useCallback(async () => {
     setSubjectState('loading')
@@ -169,15 +173,19 @@ export function SettingsPage({ me, section = null }: { me: User | null; section?
   }
 
   const removeCircleSubject = (subject: SubjectProfile) => {
-    if (!window.confirm(`Remove ${subject.name} from your circle? Existing readings remain in your Folio.`)) return
-    setBusy(`subject:${subject.id}`)
-    setSubjectError(null)
-    void deleteSubject(subject.id)
-      .then(() => loadSubjects())
-      .catch((error: unknown) => {
-        setSubjectError(error instanceof Error ? error.message : 'The circle member could not be removed.')
-      })
-      .finally(() => setBusy(null))
+    setConfirm({
+      message: `Remove ${subject.name} from your circle? Existing readings remain in your Folio.`,
+      action: () => {
+        setBusy(`subject:${subject.id}`)
+        setSubjectError(null)
+        void deleteSubject(subject.id)
+          .then(() => loadSubjects())
+          .catch((error: unknown) => {
+            setSubjectError(error instanceof Error ? error.message : 'The circle member could not be removed.')
+          })
+          .finally(() => setBusy(null))
+      },
+    })
   }
 
   return (
@@ -197,8 +205,14 @@ export function SettingsPage({ me, section = null }: { me: User | null; section?
           </a>
         </header>
 
-        <div className="mt-7 grid gap-7 lg:grid-cols-2">
-          <section className="space-y-4" aria-labelledby="identity-settings-title">
+        <nav className="mt-5 flex gap-1.5 overflow-x-auto" aria-label="Settings sections">
+          {([['pattern','Identity'],['circle','Relationships'],['consent','Consent'],['session','Session']] as const).map(([k,l]) => (
+            <a key={k} href={`#/settings/${k}`} className={`whitespace-nowrap px-3 py-1.5 font-display text-[10px] uppercase tracking-[0.16em] transition-colors ${section === k ? 'border-b border-gold text-parchment' : 'text-secondary hover:text-parchment'}`}>{l}</a>
+          ))}
+        </nav>
+
+        <div className="mt-5 grid gap-7 lg:grid-cols-2">
+          <section id="settings-pattern" className="space-y-4" aria-labelledby="identity-settings-title">
             <div>
               <p className="console-eyebrow">The owner and their field</p>
               <h2 id="identity-settings-title" className="mt-1 font-serif text-lg uppercase tracking-[0.14em] text-parchment">
@@ -208,27 +222,13 @@ export function SettingsPage({ me, section = null }: { me: User | null; section?
 
             <PatternSection onClose={() => undefined} />
 
-            <div className="console-card overflow-hidden">
-              <dl className="divide-y divide-gold/10">
-                <DefinitionRow label="App version" value={`v${info.version}`} mono />
-                <DefinitionRow label="Built" value={formatBuildTime(info.buildTime)} mono />
-                <DefinitionRow label="Commit" value={info.sha} mono />
-              </dl>
+            <div id="settings-session" className="console-card overflow-hidden">
+              <div className="px-4 py-2.5 font-mono text-xs text-metadata">
+                v{info.version} · {info.sha} · {info.buildTime.slice(0, 10)}
+              </div>
               <div className="flex items-center justify-between gap-4 border-t border-gold/10 px-4 py-3">
-                <div className="min-w-0">
-                  <p className="font-display text-xs uppercase tracking-[0.22em] text-metadata">Signed in</p>
-                  <p className="truncate text-sm text-parchment" title={me?.email}>
-                    {me?.email ?? 'Authenticated account'}
-                  </p>
-                </div>
-                <a
-                  href="/api/logout"
-                  className="inline-flex min-h-11 shrink-0 items-center gap-1.5 font-display text-[11px] uppercase tracking-[0.22em] text-silver transition-colors hover:text-gold"
-                  aria-label={me ? `Log out ${me.email}` : 'Log out'}
-                >
-                  <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
-                  Logout
-                </a>
+                <p className="min-w-0 truncate text-sm text-parchment" title={me?.email}>{me?.email ?? 'Authenticated account'}</p>
+                <a href="/api/logout" className="btn-ghost text-[10px]" aria-label={me ? `Log out ${me.email}` : 'Log out'}>Leave the field</a>
               </div>
             </div>
 
@@ -284,15 +284,9 @@ export function SettingsPage({ me, section = null }: { me: User | null; section?
                   </p>
                 </div>
               </div>
-              <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                <div className="border border-emerald/25 bg-emerald/5 p-3">
-                  <p className="font-display text-xs uppercase tracking-[0.16em] text-emerald">Current</p>
-                  <p className="mt-1 text-xs text-parchment">Owner-scoped Folio</p>
-                </div>
-                <div className="border border-gold/20 bg-gold/5 p-3">
-                  <p className="font-display text-xs uppercase tracking-[0.16em] text-gold">Shared readings</p>
-                  <p className="mt-1 text-xs text-parchment">Active consent only</p>
-                </div>
+              <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                <span className="border border-emerald/25 bg-emerald/5 px-2.5 py-1 text-emerald">Owner-scoped Folio</span>
+                <span className="border border-gold/20 bg-gold/5 px-2.5 py-1 text-gold">Active consent only</span>
               </div>
 
               {me && (
@@ -312,7 +306,7 @@ export function SettingsPage({ me, section = null }: { me: User | null; section?
             </div>
           </section>
 
-          <section className="space-y-4" aria-labelledby="relationship-settings-title">
+          <section id="settings-circle" className="space-y-4" aria-labelledby="relationship-settings-title">
             <div className="flex items-end justify-between gap-3">
               <div>
                 <p className="console-eyebrow">Two people · two owned subjects</p>
@@ -331,6 +325,7 @@ export function SettingsPage({ me, section = null }: { me: User | null; section?
               </button>
             </div>
 
+            <div id="settings-consent">
             <AsyncBoundary state={relationshipBoundary}>
               <ConsentConstellation
                 relationships={relationships}
@@ -338,14 +333,14 @@ export function SettingsPage({ me, section = null }: { me: User | null; section?
                 readingsByRelationship={readingsByRelationship}
                 busyRelationshipId={busy?.startsWith('revoke:') ? busy.slice('revoke:'.length) : null}
                 onRevoke={(relationshipId) => {
-                  if (!window.confirm('Revoke future shared generation for this relationship?')) return
-                  void runAction(
-                    `revoke:${relationshipId}`,
-                    () => revokeRelationship(relationshipId),
-                  )
+                  setConfirm({
+                    message: 'Revoke future shared generation for this relationship?',
+                    action: () => void runAction(`revoke:${relationshipId}`, () => revokeRelationship(relationshipId)),
+                  })
                 }}
               />
             </AsyncBoundary>
+            </div>
 
             <form onSubmit={createInvite} className="console-card p-4 sm:p-5">
               <div className="flex items-start gap-3">
@@ -464,6 +459,23 @@ export function SettingsPage({ me, section = null }: { me: User | null; section?
           </section>
         </div>
       </main>
+
+      <InstrumentDialog
+        open={Boolean(confirm)}
+        title="Confirm"
+        onClose={() => setConfirm(null)}
+        closeLabel="Cancel"
+      >
+        {confirm && (
+          <div className="space-y-5 p-5">
+            <p className="text-sm leading-relaxed text-secondary">{confirm.message}</p>
+            <div className="flex justify-end gap-3">
+              <button type="button" onClick={() => setConfirm(null)} className="btn-ghost">Cancel</button>
+              <button type="button" onClick={() => { confirm.action(); setConfirm(null) }} className="btn-primary">Confirm</button>
+            </div>
+          </div>
+        )}
+      </InstrumentDialog>
     </div>
   )
 }
