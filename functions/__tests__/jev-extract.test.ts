@@ -7,7 +7,6 @@ import {
   buildSequence,
 } from '../lib/jev-extract'
 import type { JevResult } from '../lib/jev-client'
-import type { JevExtraction } from '../lib/jev-extract'
 
 function mockJevResult(overrides: Partial<JevResult['answers']> = {}): JevResult {
   return {
