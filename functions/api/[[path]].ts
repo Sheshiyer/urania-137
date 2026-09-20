@@ -15,6 +15,7 @@ import {
 } from '../lib/db'
 import { forwardToEngineFromEnv } from '../lib/engine-proxy'
 import { createJevClient } from '../lib/jev-client'
+import { extractUnknownEngine } from '../lib/jev-extract'
 import { validateEngineOutput } from '../lib/jev-validate'
 import { validateMinimalInterpretationRequest } from '../lib/agents/interpret'
 import { createLlmProxyModel } from '../lib/agents/model'
@@ -368,6 +369,40 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
     } catch (err) {
       return json(
         { error: 'VALIDATION_FAILED', message: String((err as Error)?.message || err) } satisfies ApiError,
+        502,
+      )
+    }
+  }
+
+  // POST /api/selemene/extract — Jev-assisted extraction for unknown engines.
+  // When a new engine is added that has no hand-written extractor in
+  // elements.ts, the client can POST its raw payload here and receive
+  // ReadingElement-shaped JSON from the generic structural builders.
+  if (pathname === '/api/selemene/extract' && method === 'POST') {
+    const jev = createJevClient(ctx.env.TYPESAFE_API_KEY)
+    if (!jev) {
+      return json(
+        { error: 'NOT_CONFIGURED', message: 'TYPESAFE_API_KEY is not bound' } satisfies ApiError,
+        501,
+      )
+    }
+    const body = await readJson(ctx.request)
+    if (typeof body !== 'object' || body === null) {
+      return badRequest('POST /api/selemene/extract expects { engineId, payload }')
+    }
+    const { engineId, payload } = body as Record<string, unknown>
+    if (typeof engineId !== 'string' || !engineId) {
+      return badRequest('engineId must be a non-empty string')
+    }
+    if (payload === undefined || payload === null) {
+      return badRequest('payload must be present')
+    }
+    try {
+      const extraction = await extractUnknownEngine(jev, engineId, payload)
+      return json(extraction)
+    } catch (err) {
+      return json(
+        { error: 'EXTRACTION_FAILED', message: String((err as Error)?.message || err) } satisfies ApiError,
         502,
       )
     }
