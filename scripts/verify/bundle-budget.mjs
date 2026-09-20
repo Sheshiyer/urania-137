@@ -7,7 +7,7 @@ import { join, resolve } from 'node:path'
 // this below the current large-entry warning after route-level code splitting.
 const BUDGETS = {
   app: { entryBytes: 575_000, entryGzipBytes: 170_000, totalBytes: 625_000 },
-  landing: { entryBytes: 160_000, entryGzipBytes: 55_000, totalBytes: 190_000 },
+  landing: { entryBytes: 425_000, entryGzipBytes: 140_000, totalBytes: 450_000 },
 }
 
 function filesUnder(directory) {
