@@ -14,6 +14,8 @@ import {
   bulkImportReadings,
 } from '../lib/db'
 import { forwardToEngineFromEnv } from '../lib/engine-proxy'
+import { createJevClient } from '../lib/jev-client'
+import { validateEngineOutput } from '../lib/jev-validate'
 import { validateMinimalInterpretationRequest } from '../lib/agents/interpret'
 import { createLlmProxyModel } from '../lib/agents/model'
 import {
@@ -334,6 +336,40 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
       })
     } catch {
       return json({ ok: false, probe: 'acknowledged', delivered: false, probeId })
+    }
+  }
+
+  // POST /api/selemene/validate — Jev-powered engine output validation.
+  // The client sends { engineId, payload } after receiving an engine response;
+  // Jev assesses completeness, quality, and field presence. Degrades to 501
+  // when TYPESAFE_API_KEY is not configured; Jev errors surface as 502.
+  if (pathname === '/api/selemene/validate' && method === 'POST') {
+    const jev = createJevClient(ctx.env.TYPESAFE_API_KEY)
+    if (!jev) {
+      return json(
+        { error: 'NOT_CONFIGURED', message: 'TYPESAFE_API_KEY is not bound' } satisfies ApiError,
+        501,
+      )
+    }
+    const body = await readJson(ctx.request)
+    if (typeof body !== 'object' || body === null) {
+      return badRequest('POST /api/selemene/validate expects { engineId, payload }')
+    }
+    const { engineId, payload } = body as Record<string, unknown>
+    if (typeof engineId !== 'string' || !engineId) {
+      return badRequest('engineId must be a non-empty string')
+    }
+    if (payload === undefined || payload === null) {
+      return badRequest('payload must be present')
+    }
+    try {
+      const validation = await validateEngineOutput(jev, engineId, payload)
+      return json(validation)
+    } catch (err) {
+      return json(
+        { error: 'VALIDATION_FAILED', message: String((err as Error)?.message || err) } satisfies ApiError,
+        502,
+      )
     }
   }
 

@@ -70,6 +70,12 @@ export interface Env {
   /** Cloudflare alerting destination UUID (echoed in the probe receipt). */
   ALERT_DESTINATION_ID?: string
   /**
+   * TypeSafe API key for Jev System One judgments (engine output validation,
+   * reading quality scoring). Set via `wrangler pages secret put`; never
+   * committed. When unset, Jev-gated paths degrade gracefully (skip validation).
+   */
+  TYPESAFE_API_KEY?: string
+  /**
    * R2 bucket holding corpus HTML renders (ISC-#139) — 53 readings
    * (51 Solo + 2 Synastry).
    * Keys: corpus/readings/{sha256}/reading.html
