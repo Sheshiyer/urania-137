@@ -1,6 +1,6 @@
 # Urania 137 — Project Status
 
-**Updated:** 2026-09-19
+**Updated:** 2026-09-21
 
 ## Launch Decision
 
@@ -37,12 +37,13 @@ These states are cumulative only with evidence; none is inferred from another.
 | Vectorize continuous learning | blocked | One-shot ingest only (M5) |
 | Engine `daily-panchanga` | blocked | REQ-1/REQ-3 — Selemene repo |
 | Broad consumer launch | not claimed | M2–M7 product work remains |
-| Instrument-shell redesign | implemented + verified | 6 phases on `redesign/instrument-shell`; 883 unit + 128 node + 7 contract tests pass; bundle 574,793 B (budget 575,000); `docs/ui/2026-09-19-instrument-shell-redesign-ledger.md` |
+| Instrument-shell redesign | merged to main | 7 phases complete on `main`; 978 tests (118 files) pass; bundle 574,793 B (budget 575,000); dead code cleaned (`PageTabs`, `HomeJourneyRail`); Starfield scroll owner fixed to `[data-route-field]`; `docs/ui/2026-09-19-instrument-shell-redesign-ledger.md` |
+| TypeSafe Jev integration | implemented + verified | Phases A-E on `main` @ `77bccd6`; client, quality assessment, interpretation routing, transit significance scoring; 33 Jev-specific tests |
 
 ## Active Work
 
-- Branch: `redesign/instrument-shell` @ `8ab6ab1` (Phase 6)
-- Production: `main` @ `93f69e9` / tag `v0.6.3`
+- Branch: `main` @ `1bd63da` (redesign merged + Jev phases A-E + residual cleanup)
+- Production: `main` @ `93f69e9` / tag `v0.6.3` (deploy pending)
 - North star: `goal.md`
 - Live receipt: `docs/operations/2026-09-11-admin-e2e.md`
 - Redesign ledger: `docs/ui/2026-09-19-instrument-shell-redesign-ledger.md`
@@ -52,6 +53,8 @@ These states are cumulative only with evidence; none is inferred from another.
 
 ## Next Gate
 
-1. Merge `redesign/instrument-shell` into `main` after final review.
+1. Deploy `main` @ `1bd63da` to production (instrument-shell redesign + Jev integration).
 2. Either close R-9 residues (ISC-143/145/146) or consciously park them.
 3. Start M2 landing polish / funnel copy (split-host already deployed).
+4. Wire `FolioSkeleton` into `AsyncBoundary` loading state for Folio page.
+5. `AsyncBoundary` sweep: `NativeRunDialog`, `EngineStatusPanel`, `PatternSection`, `ChatSheet` boot state (deferred from Phase 6).
