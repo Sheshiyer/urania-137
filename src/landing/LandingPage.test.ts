@@ -2,6 +2,7 @@ import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
+import { ENGINE_COUNT, ROOM_COUNT } from './landingData'
 import { LandingPage } from './LandingPage'
 
 const origin = 'https://app.urania.tryambakam.space'
@@ -65,13 +66,14 @@ describe('public landing ecosystem (Golden Portal shell)', () => {
 
   it('renders instrument, lenses, principles, and enter rooms', () => {
     const instrument = render('/instrument')
-    expect(instrument).toContain('One field. Seven rooms. Every reading traceable.')
+    expect(instrument).toContain(`${ROOM_COUNT} rooms`)
+    expect(instrument).toContain(`${ENGINE_COUNT}+ engines`)
     expect(instrument).toContain('Threshold collects only what the capability needs.')
-    expect(instrument).toContain('Selemene stays named and separate.')
+    expect(instrument).toContain('Named and separate.')
     expect(instrument).toContain('href="/lenses"')
 
     const lenses = render('/lenses')
-    expect(lenses).toContain('Seven rooms. One graph.')
+    expect(lenses).toContain(`${ROOM_COUNT} rooms. One graph.`)
     expect(lenses).toContain('Birth Witness')
     expect(lenses).toContain('Bridge Query')
     expect(lenses).toContain('href="/principles"')
@@ -79,6 +81,7 @@ describe('public landing ecosystem (Golden Portal shell)', () => {
     const principles = render('/principles')
     expect(principles).toContain('Answers that keep authority with you.')
     expect(principles).toContain('What is Urania 137?')
+    expect(principles).toContain('Engines')
     expect(principles).toContain('Access')
 
     const enter = render('/enter')
@@ -87,6 +90,18 @@ describe('public landing ecosystem (Golden Portal shell)', () => {
     expect(enter).toContain('Open Urania 137')
     expect(enter).toContain('Cloudflare Access email OTP')
     expect(enter).toContain('preload="metadata"')
+  })
+
+  it('renders dynamic engine and room counts from source of truth', () => {
+    const html = render('/')
+    expect(html).toContain(`${ENGINE_COUNT}+`)
+    expect(html).toContain(`${ROOM_COUNT} rooms`)
+
+    const lenses = render('/lenses')
+    expect(lenses).toContain(`${ENGINE_COUNT}+ engines`)
+
+    const instrument = render('/instrument')
+    expect(instrument).toContain(`${ENGINE_COUNT}+ engines`)
   })
 
   it('rejects forbidden vocabulary and preserves no AI-as-feature framing', () => {

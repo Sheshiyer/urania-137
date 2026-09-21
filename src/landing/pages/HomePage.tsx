@@ -2,7 +2,17 @@ import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import BlurHighlight from '../../components/react-bits/blur-highlight'
 import StaggeredText from '../../components/react-bits/staggered-text'
-import { HERO, INVITATION, QA, QUOTE, SHOWCASE } from '../landingCopy'
+import {
+  ENGINE_ROSTER,
+  HERO,
+  INFRASTRUCTURE,
+  INVITATION,
+  QA,
+  QUOTE,
+  ROOMS_OVERVIEW,
+  SHOWCASE,
+  WORKFLOW_ROSTER,
+} from '../landingCopy'
 import { useParallax } from '../useParallax'
 import { useScrollReveal } from '../useScrollReveal'
 
@@ -55,6 +65,13 @@ function FlowerOfLife({ className }: { className?: string }) {
   )
 }
 
+const ROOM_COLORS: Record<string, string> = {
+  gold: 'var(--room-gold, #C5A017)',
+  violet: 'var(--room-violet, #2D0050)',
+  cyan: 'var(--room-cyan, #10B5A7)',
+  amber: 'var(--room-amber, #E6B84D)',
+}
+
 export function HomePage({ appHref }: { appHref: string }) {
   const pageRef = useRef<HTMLElement>(null)
   const qaRef = useRef<HTMLElement>(null)
@@ -68,6 +85,7 @@ export function HomePage({ appHref }: { appHref: string }) {
 
   return (
     <main id="main-content" ref={pageRef}>
+      {/* Hero */}
       <section className="gp-hero" aria-labelledby="landing-title">
         <video
           src="/media/gp-hero.mp4"
@@ -113,6 +131,7 @@ export function HomePage({ appHref }: { appHref: string }) {
         <img src="/media/gp-cloud.png" alt="" />
       </div>
 
+      {/* Showcase — instrument preview */}
       <div className="gp-showcase-wrap">
         <section id={SHOWCASE.id} className="gp-showcase" aria-labelledby="instrument-title">
           <img className="gp-showcase__bg" src="/media/urania/hero-2k.png" alt="" />
@@ -128,7 +147,7 @@ export function HomePage({ appHref }: { appHref: string }) {
             <Link
               className="gp-ghost reveal"
               to={SHOWCASE.href}
-              style={{ animationDelay: '0.45s' }}
+              style={{ animationDelay: '0.6s' }}
             >
               {SHOWCASE.cta}
             </Link>
@@ -138,6 +157,105 @@ export function HomePage({ appHref }: { appHref: string }) {
         <img className="gp-dove" src="/media/gp-dove.png" alt="" />
       </div>
 
+      {/* Rooms overview */}
+      <section id={ROOMS_OVERVIEW.id} className="gp-rooms" aria-labelledby="rooms-title">
+        <h2 id="rooms-title" className="gp-rooms__title reveal">{ROOMS_OVERVIEW.title}</h2>
+        <p className="gp-rooms__lede reveal">{ROOMS_OVERVIEW.lede}</p>
+        <div className="gp-rooms__grid">
+          {ROOMS_OVERVIEW.rooms.map((room, index) => (
+            <article
+              key={room.id}
+              className="gp-rooms__card liquid-glass reveal"
+              style={{ animationDelay: `${0.08 * (index + 1)}s` }}
+            >
+              <div
+                className="gp-rooms__accent"
+                style={{ backgroundColor: ROOM_COLORS[room.color] }}
+                aria-hidden="true"
+              />
+              <h3>{room.label}</h3>
+              <p className="gp-rooms__epithet">{room.epithet}</p>
+              <p className="gp-rooms__tagline">{room.tagline}</p>
+              <p className="gp-rooms__caps">
+                {room.engines.length > 0 && (
+                  <span>{room.engines.length} engine{room.engines.length > 1 ? 's' : ''}</span>
+                )}
+                {room.workflows.length > 0 && (
+                  <span>{room.workflows.length} workflow{room.workflows.length > 1 ? 's' : ''}</span>
+                )}
+                {room.witnesses.length > 0 && (
+                  <span>{room.witnesses.length} witness mode{room.witnesses.length > 1 ? 's' : ''}</span>
+                )}
+              </p>
+            </article>
+          ))}
+        </div>
+        <p className="gp-rooms__cta reveal">
+          <Link className="gp-ghost" to="/lenses">See each room in detail</Link>
+        </p>
+      </section>
+
+      {/* Engine roster */}
+      <section id={ENGINE_ROSTER.id} className="gp-engines" aria-labelledby="engines-title">
+        <ConstellationRing className="gp-engines__geometry" />
+        <h2 id="engines-title" className="reveal">{ENGINE_ROSTER.title}</h2>
+        <p className="gp-engines__lede reveal">{ENGINE_ROSTER.lede}</p>
+        <div className="gp-engines__grid">
+          {ENGINE_ROSTER.engines.map((engine, index) => (
+            <div
+              key={engine.id}
+              className="gp-engines__item reveal"
+              style={{ animationDelay: `${0.06 * (index + 1)}s` }}
+            >
+              <div className="gp-engines__head">
+                <span className="gp-engines__name">{engine.name}</span>
+                <span className={`gp-engines__tag gp-engines__tag--${engine.substrate.toLowerCase()}`}>
+                  {engine.substrate}
+                </span>
+              </div>
+              <p>{engine.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Workflow roster */}
+      <section id={WORKFLOW_ROSTER.id} className="gp-workflows" aria-labelledby="workflows-title">
+        <h2 id="workflows-title" className="reveal">{WORKFLOW_ROSTER.title}</h2>
+        <p className="gp-workflows__lede reveal">{WORKFLOW_ROSTER.lede}</p>
+        <div className="gp-workflows__grid">
+          {WORKFLOW_ROSTER.workflows.map((wf, index) => (
+            <article
+              key={wf.id}
+              className="gp-workflows__card liquid-glass reveal"
+              style={{ animationDelay: `${0.1 * (index + 1)}s` }}
+            >
+              <h3>{wf.name}</h3>
+              <p>{wf.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* Infrastructure */}
+      <section id={INFRASTRUCTURE.id} className="gp-infra" aria-labelledby="infra-title">
+        <FlowerOfLife className="gp-infra__geometry" />
+        <h2 id="infra-title" className="reveal">{INFRASTRUCTURE.title}</h2>
+        <div className="gp-infra__grid">
+          {INFRASTRUCTURE.sections.map((section, index) => (
+            <article
+              key={section.title}
+              className="gp-infra__card reveal"
+              style={{ animationDelay: `${0.1 * (index + 1)}s` }}
+            >
+              <h3>{section.title}</h3>
+              <p>{section.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* Q&A */}
       <section ref={qaRef} id={QA.id} className="gp-qa" aria-labelledby="lenses-title">
         <FlowerOfLife className="gp-qa__geometry" />
         <h2 id="lenses-title" className="gp-qa__title reveal">
@@ -174,6 +292,7 @@ export function HomePage({ appHref }: { appHref: string }) {
         <img ref={qaCloudRef} className="gp-qa__cloud" src="/media/gp-cloud.png" alt="" />
       </section>
 
+      {/* Quote / principles */}
       <section
         ref={quoteRef}
         id={QUOTE.id}
@@ -193,6 +312,7 @@ export function HomePage({ appHref }: { appHref: string }) {
         />
       </section>
 
+      {/* Invitation / threshold */}
       <section
         id={INVITATION.id}
         className="gp-invite liquid-glass"

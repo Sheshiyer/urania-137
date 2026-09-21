@@ -8,6 +8,13 @@
   --gold-warm: #e6b84d;
   --silver: #8a9ba8;
   --metadata: #aebbc4;
+  --witness-violet: #2d0050;
+  --flow-indigo: #0b50fb;
+  --coherence-emerald: #10b5a7;
+  --room-gold: #c5a017;
+  --room-violet: #2d0050;
+  --room-cyan: #10b5a7;
+  --room-amber: #e6b84d;
   --font-serif: Cinzel, Georgia, 'Times New Roman', serif;
   --font-sans: Satoshi, ui-sans-serif, system-ui, sans-serif;
 }
@@ -1200,4 +1207,404 @@ button:focus-visible {
 
 .eco-depth--wide {
   grid-column: 1 / -1;
+}
+
+/* ── Rooms overview ─────────────────────────────────── */
+
+.gp-rooms {
+  position: relative;
+  padding: 6rem 7vw;
+  background: var(--void-deep);
+  border-top: 1px solid rgb(197 160 23 / 0.1);
+}
+
+.gp-rooms__title {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 400;
+  text-align: center;
+}
+
+.gp-rooms__lede {
+  max-width: 40rem;
+  margin: 0 auto 3rem;
+  color: rgb(240 237 227 / 65%);
+  font-size: 1rem;
+  line-height: 1.65;
+  text-align: center;
+}
+
+.gp-rooms__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: 1rem;
+}
+
+.gp-rooms__card {
+  position: relative;
+  display: grid;
+  gap: 0.5rem;
+  padding: 1.5rem 1.5rem 1.5rem 1.75rem;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.gp-rooms__accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  opacity: 0.6;
+}
+
+.gp-rooms__card h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+.gp-rooms__epithet {
+  margin: 0;
+  color: var(--gold-warm);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.gp-rooms__tagline {
+  margin: 0;
+  color: rgb(240 237 227 / 60%);
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.gp-rooms__caps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.25rem 0 0;
+}
+
+.gp-rooms__caps span {
+  padding: 0.2rem 0.55rem;
+  border: 1px solid rgb(197 160 23 / 0.2);
+  border-radius: 999px;
+  color: var(--gold-warm);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gp-rooms__cta {
+  margin: 2.5rem 0 0;
+  text-align: center;
+}
+
+/* ── Engine roster ──────────────────────────────────── */
+
+.gp-engines {
+  position: relative;
+  overflow: hidden;
+  padding: 6rem 7vw;
+  border-top: 1px solid rgb(197 160 23 / 0.08);
+}
+
+.gp-engines__geometry {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  right: -10%;
+  width: min(50vw, 28rem);
+  height: min(50vw, 28rem);
+  transform: translateY(-50%);
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.gp-engines h2 {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 0.75rem;
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 400;
+  text-align: center;
+}
+
+.gp-engines__lede {
+  position: relative;
+  z-index: 1;
+  max-width: 44rem;
+  margin: 0 auto 3rem;
+  color: rgb(240 237 227 / 65%);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  text-align: center;
+}
+
+.gp-engines__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 0.75rem;
+}
+
+.gp-engines__item {
+  padding: 1.1rem 1.25rem;
+  border: 1px solid rgb(197 160 23 / 0.1);
+  border-radius: 0.75rem;
+  transition: border-color 200ms ease;
+}
+
+.gp-engines__item:hover {
+  border-color: rgb(197 160 23 / 0.25);
+}
+
+.gp-engines__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.gp-engines__name {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+.gp-engines__tag {
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gp-engines__tag--rust {
+  background: rgb(197 160 23 / 0.15);
+  color: var(--gold-warm);
+}
+
+.gp-engines__tag--typescript {
+  background: rgb(11 80 251 / 0.15);
+  color: #6B9BFF;
+}
+
+.gp-engines__item p {
+  margin: 0;
+  color: rgb(240 237 227 / 55%);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+/* ── Workflow roster ────────────────────────────────── */
+
+.gp-workflows {
+  padding: 5rem 7vw;
+  border-top: 1px solid rgb(197 160 23 / 0.08);
+}
+
+.gp-workflows h2 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 400;
+  text-align: center;
+}
+
+.gp-workflows__lede {
+  max-width: 40rem;
+  margin: 0 auto 3rem;
+  color: rgb(240 237 227 / 65%);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  text-align: center;
+}
+
+.gp-workflows__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 1rem;
+}
+
+.gp-workflows__card {
+  padding: 1.5rem;
+  border-radius: 1rem;
+}
+
+.gp-workflows__card h3 {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 400;
+}
+
+.gp-workflows__card p {
+  margin: 0;
+  color: rgb(240 237 227 / 60%);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+/* ── Infrastructure ─────────────────────────────────── */
+
+.gp-infra {
+  position: relative;
+  overflow: hidden;
+  padding: 6rem 7vw;
+  background: var(--void-deep);
+  border-top: 1px solid rgb(197 160 23 / 0.1);
+}
+
+.gp-infra__geometry {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: -5%;
+  width: min(30vw, 16rem);
+  height: min(30vw, 16rem);
+  transform: translateY(-50%);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.gp-infra h2 {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 2.5rem;
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 400;
+  text-align: center;
+}
+
+.gp-infra__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 1.25rem;
+}
+
+.gp-infra__card {
+  padding: 1.5rem;
+  border: 1px solid rgb(197 160 23 / 0.08);
+  border-radius: 0.75rem;
+}
+
+.gp-infra__card h3 {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--gold-warm);
+}
+
+.gp-infra__card p {
+  margin: 0;
+  color: rgb(240 237 227 / 60%);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+/* ── Lens detail (expanded lenses page) ─────────────── */
+
+.eco-lens-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.eco-lens-detail {
+  padding: 0 0.5rem 1.5rem;
+}
+
+.eco-lens-detail__body {
+  margin: 0 0 0.75rem;
+  color: rgb(240 237 227 / 65%);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.eco-lens-detail__caps {
+  margin: 0 0 0.75rem;
+  color: var(--gold-warm);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.eco-lens-detail__children {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.eco-lens-detail__children li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid rgb(240 237 227 / 0.1);
+  border-radius: 999px;
+}
+
+.eco-lens-detail__child-name {
+  font-size: 0.72rem;
+  color: rgb(240 237 227 / 80%);
+}
+
+.eco-lens-detail__child-kind {
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.eco-lens-detail__child-kind--engine {
+  color: var(--gold-warm);
+}
+
+.eco-lens-detail__child-kind--workflow {
+  color: var(--coherence-emerald);
+}
+
+.eco-lens-detail__child-kind--witness {
+  color: #6B9BFF;
+}
+
+.eco-lens-detail__child-kind--daily {
+  color: var(--gold-warm);
+}
+
+.eco-lens-detail__child-kind--info {
+  color: var(--silver);
+}
+
+/* ── Mobile for new sections ─────────────────────────── */
+
+@media (max-width: 900px) {
+  .gp-rooms,
+  .gp-engines,
+  .gp-workflows,
+  .gp-infra {
+    padding: 4rem 1.25rem;
+  }
+
+  .gp-rooms__grid,
+  .gp-engines__grid,
+  .gp-workflows__grid,
+  .gp-infra__grid {
+    grid-template-columns: 1fr;
+  }
 }

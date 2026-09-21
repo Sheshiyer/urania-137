@@ -22,22 +22,41 @@ export function LensesPage() {
         <p>{LENSES_PAGE.lede}</p>
       </header>
 
-      <div className="eco-mosaic" aria-label="Seven parent lenses">
+      <div className="eco-mosaic" aria-label="Parent lenses">
         {LENSES_PAGE.items.map((lens, index) => (
-          <DepthCard
-            key={lens.name}
-            image={lens.image}
-            title={`${lens.name} — ${lens.title}`}
-            description={lens.body}
-            width={index === 0 ? 920 : 300}
-            height={index === 0 ? 280 : 340}
-            borderRadius="18px"
-            spotlight
-            spotlightColor="rgba(230, 184, 77, 0.22)"
-            respectReducedMotion
-            disableOnMobile
-            className={index === 0 ? 'eco-depth eco-depth--wide' : 'eco-depth'}
-          />
+          <div key={lens.name} className="eco-lens-card">
+            <DepthCard
+              image={lens.image}
+              title={`${lens.name} — ${lens.title}`}
+              description={lens.capabilities}
+              width={index === 0 ? 920 : 300}
+              height={index === 0 ? 280 : 340}
+              borderRadius="18px"
+              spotlight
+              spotlightColor="rgba(230, 184, 77, 0.22)"
+              respectReducedMotion
+              disableOnMobile
+              className={index === 0 ? 'eco-depth eco-depth--wide' : 'eco-depth'}
+            />
+            <div className="eco-lens-detail">
+              <p className="eco-lens-detail__body">{lens.body}</p>
+              {lens.capabilities && (
+                <p className="eco-lens-detail__caps">{lens.capabilities}</p>
+              )}
+              {lens.children.length > 0 && (
+                <ul className="eco-lens-detail__children">
+                  {lens.children.map((child) => (
+                    <li key={child.id}>
+                      <span className="eco-lens-detail__child-name">{child.label}</span>
+                      <span className={`eco-lens-detail__child-kind eco-lens-detail__child-kind--${child.kind}`}>
+                        {child.kind}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
         ))}
       </div>
 
