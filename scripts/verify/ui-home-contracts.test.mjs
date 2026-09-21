@@ -14,7 +14,6 @@ const sources = {
   pageHeader: read('src/components/layout/PageHeader.tsx'),
   bottomChrome: read('src/components/chrome/BottomChrome.tsx'),
   graph: read('src/components/ConstellationGraph.tsx'),
-  pageTabs: read('src/components/chrome/PageTabs.tsx'),
   statFooter: read('src/components/chrome/StatFooter.tsx'),
   threshold: read('src/pages/ThresholdPage.tsx'),
   copy: read('src/content/uiCopy.ts'),
@@ -86,7 +85,7 @@ test('fictional telemetry and reference-only navigation language are absent', ()
   assert.doesNotMatch(runtime, /\b(?:Explore|Connect|Understand|Ascend)\b/)
   assert.doesNotMatch(sources.home, /\bHOME_STATS\b/)
   assert.doesNotMatch(sources.topNav, /label:\s*['"](?:Archive|Library)['"]/)
-  assert.doesNotMatch(sources.pageTabs, /\b(?:Nodes|Paths|Relations|Insights)\b/)
+  // PageTabs.tsx was removed as dead code — no longer needs vocabulary checks
 })
 
 test('Folio is the only saved-reading navigation noun and both entries converge', () => {
