@@ -11,11 +11,9 @@ import { VersionBadge } from './VersionBadge'
  * (top rule · field · bottom rule) instead of two floating islands.
  *
  * Slot contract: the FIRST child is pinned left (the page's StatFooter); every
- * remaining child is grouped right (the PageTabs), followed by the build
- * badge, which opens the Settings card. Edges own their slots, so the strip
- * and the tabs can never overlap when either changes size. On small screens
- * the row collapses to a centered stack (the tabs hide themselves below sm,
- * as before). The graph reserves this whole band via `CHROME`.
+ * remaining child is grouped right, followed by the build badge, which opens
+ * the Settings card. On small screens the row collapses to a centered stack.
+ * The graph reserves this whole band via `CHROME`.
  */
 export function BottomChrome({ children }: { children: ReactNode }) {
   const [left, ...rest] = Children.toArray(children)

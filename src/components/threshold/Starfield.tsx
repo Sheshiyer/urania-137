@@ -68,11 +68,15 @@ export function Starfield() {
     sizeField()
     window.addEventListener('resize', sizeField)
 
+    const getScrollOwner = () =>
+      document.querySelector<HTMLElement>('[data-route-field]') ?? document.documentElement
+    const getScrollY = () => getScrollOwner().scrollTop
+
     const t0 = performance.now()
     const draw = (now: number) => {
       if (!alive) return
       const t = (now - t0) / 1000
-      const sy = window.scrollY
+      const sy = getScrollY()
       ctx.clearRect(0, 0, w, h)
       for (const s of stars) {
         const breathe = reduced ? 0 : Math.sin(0.5 * t + s.phase) * s.amp
@@ -94,9 +98,10 @@ export function Starfield() {
     // the arrival and again approaching the Crossing track.
     const updateFX = () => {
       const vh = window.innerHeight
-      const p = window.scrollY / vh
+      const sy = getScrollY()
+      const p = sy / vh
       const crossingTop = document.getElementById('crossing-track')?.offsetTop ?? Infinity
-      if (window.scrollY >= crossingTop - vh * 0.5) {
+      if (sy >= crossingTop - vh * 0.5) {
         canvas.style.filter = 'blur(0px)'
         canvas.style.transform = 'scale(1)'
         return
@@ -108,14 +113,15 @@ export function Starfield() {
       canvas.style.filter = `blur(${Math.round(f * 14)}px)`
       canvas.style.transform = `scale(${1 + f * 0.14})`
     }
-    window.addEventListener('scroll', updateFX, { passive: true })
+    const scrollOwner = getScrollOwner()
+    scrollOwner.addEventListener('scroll', updateFX, { passive: true })
     updateFX()
 
     return () => {
       alive = false
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', sizeField)
-      window.removeEventListener('scroll', updateFX)
+      scrollOwner.removeEventListener('scroll', updateFX)
     }
   }, [])
 
