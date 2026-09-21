@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useCallback, lazy, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import BlurHighlight from '../../components/react-bits/blur-highlight'
 import StaggeredText from '../../components/react-bits/staggered-text'
@@ -15,6 +15,10 @@ import {
 } from '../landingCopy'
 import { useParallax } from '../useParallax'
 import { useScrollReveal } from '../useScrollReveal'
+
+const ConstellationScene = lazy(() =>
+  import('../components/ConstellationScene').then(m => ({ default: m.ConstellationScene }))
+)
 
 function ConstellationRing({ className }: { className?: string }) {
   return (
@@ -83,21 +87,22 @@ export function HomePage({ appHref }: { appHref: string }) {
   useParallax(qaRef, qaCloudRef, 30)
   useParallax(quoteRef, quoteOverlayRef, -80)
 
+  const handleRoomClick = useCallback((_roomId: string) => {
+    const el = document.getElementById('rooms')
+    if (el) el.scrollIntoView({ behavior: 'smooth' })
+  }, [])
+
   return (
     <main id="main-content" ref={pageRef}>
-      {/* Hero */}
+      {/* Hero — interactive 3D constellation */}
       <section className="gp-hero" aria-labelledby="landing-title">
-        <video
-          src="/media/gp-hero.mp4"
-          poster="/media/urania/hero-2k.png"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-hidden="true"
-        />
-        <ConstellationRing className="gp-hero__geometry" />
+        <Suspense fallback={null}>
+          <ConstellationScene
+            onRoomClick={handleRoomClick}
+            className="gp-hero__scene"
+          />
+        </Suspense>
+        <div className="gp-hero__veil" aria-hidden="true" />
         <div className="gp-hero__copy">
           <p className="gp-hero__kicker hero-fade-up">{HERO.kicker}</p>
           <p className="gp-hero__subkicker hero-fade-up">{HERO.subkicker}</p>
@@ -124,6 +129,9 @@ export function HomePage({ appHref }: { appHref: string }) {
           <a className="gp-cta liquid-glass hero-fade-up" href={appHref} data-protected-app-cta>
             {HERO.cta}
           </a>
+          <p className="gp-hero__orbit-hint hero-fade-up" style={{ animationDelay: '1.2s' }}>
+            Drag to orbit the constellation
+          </p>
         </div>
       </section>
 

@@ -61,6 +61,13 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       sourcemap: false,
       assetsInlineLimit: 4096,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'three-webgl': ['three', '@react-three/fiber', '@react-three/drei'],
+          },
+        },
+      },
     },
   }
 })
