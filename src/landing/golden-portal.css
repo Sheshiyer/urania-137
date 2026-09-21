@@ -219,6 +219,38 @@ button:focus-visible {
   object-fit: cover;
 }
 
+.gp-hero__scene {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.gp-hero__scene canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.gp-hero__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(7 11 29 / 0.6) 0%, transparent 30%),
+    linear-gradient(0deg, rgb(7 11 29 / 0.8) 0%, transparent 25%);
+}
+
+.gp-hero__orbit-hint {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgb(138 155 168 / 0.6);
+  animation-delay: 1.2s;
+}
+
 .gp-hero__copy {
   position: relative;
   z-index: 10;

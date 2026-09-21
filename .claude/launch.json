@@ -18,6 +18,12 @@
       "runtimeExecutable": "bash",
       "runtimeArgs": ["-c", "npm run build:landing && npx vite preview --config vite.landing.config.ts --port 5183 --strictPort"],
       "port": 5183
+    },
+    {
+      "name": "urania-landing-dev",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "--config", "vite.landing.config.ts", "--port", "5184", "--strictPort"],
+      "port": 5184
     }
   ]
 }
