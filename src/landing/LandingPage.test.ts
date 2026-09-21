@@ -65,7 +65,7 @@ describe('public landing ecosystem (Golden Portal shell)', () => {
 
   it('renders instrument, lenses, principles, and enter rooms', () => {
     const instrument = render('/instrument')
-    expect(instrument).toContain('One field. Many lenses. A traceable reading.')
+    expect(instrument).toContain('One field. Seven rooms. Every reading traceable.')
     expect(instrument).toContain('Threshold collects only what the capability needs.')
     expect(instrument).toContain('Selemene stays named and separate.')
     expect(instrument).toContain('href="/lenses"')

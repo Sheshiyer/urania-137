@@ -6,6 +6,55 @@ import { HERO, INVITATION, QA, QUOTE, SHOWCASE } from '../landingCopy'
 import { useParallax } from '../useParallax'
 import { useScrollReveal } from '../useScrollReveal'
 
+function ConstellationRing({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 600 600" fill="none" aria-hidden="true">
+      <circle cx="300" cy="300" r="280" stroke="rgb(197 160 23 / 0.12)" strokeWidth="0.5" />
+      <circle cx="300" cy="300" r="200" stroke="rgb(197 160 23 / 0.08)" strokeWidth="0.5" />
+      <circle cx="300" cy="300" r="120" stroke="rgb(197 160 23 / 0.06)" strokeWidth="0.5" />
+      {[0, 51.4, 102.9, 154.3, 205.7, 257.1, 308.6].map((angle) => {
+        const rad = (angle * Math.PI) / 180
+        const x = 300 + 280 * Math.cos(rad)
+        const y = 300 + 280 * Math.sin(rad)
+        return <circle key={angle} cx={x} cy={y} r="3" fill="rgb(197 160 23 / 0.18)" />
+      })}
+      {[0, 51.4, 102.9, 154.3, 205.7, 257.1, 308.6].map((angle, i, arr) => {
+        const rad1 = (angle * Math.PI) / 180
+        const rad2 = (arr[(i + 2) % arr.length] * Math.PI) / 180
+        return (
+          <line
+            key={`l${angle}`}
+            x1={300 + 280 * Math.cos(rad1)}
+            y1={300 + 280 * Math.sin(rad1)}
+            x2={300 + 280 * Math.cos(rad2)}
+            y2={300 + 280 * Math.sin(rad2)}
+            stroke="rgb(197 160 23 / 0.06)"
+            strokeWidth="0.5"
+          />
+        )
+      })}
+    </svg>
+  )
+}
+
+function FlowerOfLife({ className }: { className?: string }) {
+  const r = 40
+  const centers = [
+    [0, 0],
+    ...Array.from({ length: 6 }, (_, i) => {
+      const a = (i * 60 * Math.PI) / 180
+      return [r * Math.cos(a), r * Math.sin(a)]
+    }),
+  ]
+  return (
+    <svg className={className} viewBox="-100 -100 200 200" fill="none" aria-hidden="true">
+      {centers.map(([cx, cy], i) => (
+        <circle key={i} cx={cx} cy={cy} r={r} stroke="rgb(197 160 23 / 0.08)" strokeWidth="0.5" />
+      ))}
+    </svg>
+  )
+}
+
 export function HomePage({ appHref }: { appHref: string }) {
   const pageRef = useRef<HTMLElement>(null)
   const qaRef = useRef<HTMLElement>(null)
@@ -30,6 +79,7 @@ export function HomePage({ appHref }: { appHref: string }) {
           preload="metadata"
           aria-hidden="true"
         />
+        <ConstellationRing className="gp-hero__geometry" />
         <div className="gp-hero__copy">
           <p className="gp-hero__kicker hero-fade-up">{HERO.kicker}</p>
           <p className="gp-hero__subkicker hero-fade-up">{HERO.subkicker}</p>
@@ -89,6 +139,7 @@ export function HomePage({ appHref }: { appHref: string }) {
       </div>
 
       <section ref={qaRef} id={QA.id} className="gp-qa" aria-labelledby="lenses-title">
+        <FlowerOfLife className="gp-qa__geometry" />
         <h2 id="lenses-title" className="gp-qa__title reveal">
           <span>{QA.title[0]}</span>
           <em>{QA.title[1]}</em>
@@ -129,6 +180,7 @@ export function HomePage({ appHref }: { appHref: string }) {
         className="gp-quote"
         aria-labelledby="principles-title"
       >
+        <ConstellationRing className="gp-quote__geometry" />
         <p id="principles-title" className="reveal-scale">
           {QUOTE.text}
           <em>{QUOTE.emphasis}</em>

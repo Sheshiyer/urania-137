@@ -23,7 +23,7 @@ export const HERO = {
 export const SHOWCASE = {
   id: 'instrument',
   title: 'The instrument',
-  lines: ['One field. Many lenses.', 'A traceable reading.', 'Sources stay distinct.'],
+  lines: ['One field. Seven rooms.', 'Every reading traceable.', 'Every source distinct.'],
   cta: 'Inspect the field',
   href: '/instrument',
 } as const
@@ -34,15 +34,15 @@ export const QA = {
   left: [
     {
       q: 'What is Urania 137?',
-      a: 'The online entry to a private stellar console. The graph is the interface at every depth.',
+      a: 'A private stellar console. The graph is the interface at every depth.',
     },
     {
       q: 'How does a reading stay honest?',
-      a: 'Sources, inference, and conclusion remain legible — never collapsed into a single claim.',
+      a: 'Source, inference, and conclusion stay separate — never collapsed into one claim.',
     },
     {
       q: 'What is the Folio?',
-      a: 'The attributable record. The same document reopens with system stack and evidence ledger.',
+      a: 'The attributable record. Same document, same stack, same evidence ledger on reopen.',
     },
   ],
   right: [
@@ -52,11 +52,11 @@ export const QA = {
     },
     {
       q: 'How do I enter?',
-      a: 'The next page is the protected application. Cloudflare Access email OTP is required.',
+      a: 'Cloudflare Access email OTP. One boundary, then the private console.',
     },
     {
       q: 'What leaves this page?',
-      a: 'Nothing is sent from this public site. The private console activates only after the boundary.',
+      a: 'Nothing. This is a static public site. The console activates only after the boundary.',
     },
   ],
 } as const
@@ -79,11 +79,17 @@ export const INVITATION = {
 export const FOOTER = {
   mark: 'Urania 137',
   line: 'Living readings · attributable sources · protected by design',
+  rooms: [
+    { href: '/instrument', label: 'Instrument' },
+    { href: '/lenses', label: 'Lenses' },
+    { href: '/principles', label: 'Principles' },
+  ],
+  posture: 'Source before model. Consent before relation. Privacy before convenience.',
 } as const
 
 export const INSTRUMENT_PAGE = {
   badge: 'The instrument',
-  title: 'One field. Many lenses. A traceable reading.',
+  title: 'One field. Seven rooms. Every reading traceable.',
   next: { href: '/lenses', label: 'See the seven rooms' },
   rows: [
     {
