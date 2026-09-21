@@ -6,14 +6,14 @@ See: `goal.md` (end goal) and `.planning/PROJECT.md` (what this is).
 
 **Core value:** A person enters through conversation, receives a reading without losing the thread, reopens the same material as a legible folio that names exactly which systems and sources support it, and understands where computation ends and witness interpretation begins.
 
-Current focus: Close remaining M1 paper/ISA residues after live admin E2E on v0.6.3; then M2–M7 backlog.
+Current focus: v0.7.1 deployed with instrument-shell redesign + Jev integration. Next: R-9 residues, M2 landing polish, deferred UX wiring.
 
 ## Current Position
 
-Phase: M1 — Production readiness → release (wave 5 of 5 — verify + learn)
+Phase: Post-M1 — Production v0.7.1 deployed + verified
 Plan: `.planning/phases/05-verify-learn/05-01-PLAN.md`
-Status: **Release shipped. Admin E2E proven live on production.** Planning spine refreshed 2026-09-11 to match tag `v0.6.3` / SHA `93f69e975eb12d5f941af4cfc57ae96b45298237`.
-Last activity: 2026-09-11 — Access OTP → platform-admin; `#/admin-data` 53/53 + R2 body + Vectorize; WitnessRun non-degraded; `reading_interpretations` 0→2; attestation verified. Receipt: `docs/operations/2026-09-11-admin-e2e.md`.
+Status: **v0.7.1 released and verified on production.** Instrument-shell redesign (7 phases) and TypeSafe Jev integration (phases A-E) deployed. 978 tests pass across 118 files. Bundle 574,865 B (budget 575,000).
+Last activity: 2026-09-21 — Readiness run `35547295339` → release run `35547386273`. Attestation verified (`ok: true`, `issues: []`). Post-deploy: landing bundle `index-BjFRmXZG.js` confirmed, CF Access gate active, probes ok.
 
 ## Accumulated Context
 
@@ -25,16 +25,15 @@ Logged in `.planning/PROJECT.md` Key Decisions; ISA.md Decisions per iteration.
 - Corpus = 53 readings (51 Solo + 2 Synastry); `/723/` is a directory name, not a count.
 - Pages preview env stays fail-closed (no engine secrets) — accepted posture.
 - FV-189 (two-account synastry) deferred; R-8 covers FV-188 only. ISC-189 stays open-deferred.
-- **2026-09-11:** Wave 2 was never the release blocker. `release.yml` already cut v0.6.3. Remaining work was prove admin can see/run the live stack, then tell planning files the truth.
-- **2026-09-11:** Runtime `platform-admin` elevation is `CF_PLATFORM_ADMIN_EMAILS` (proven). Access group `selemene-admin` is not the live authority path (`functions/lib/authorization.ts`).
+- **2026-09-11:** Runtime `platform-admin` elevation is `CF_PLATFORM_ADMIN_EMAILS` (proven). Access group `selemene-admin` is not the live authority path.
+- **2026-09-19:** Instrument-shell redesign merged — 7 phases (foundation → capsule masthead → URL-is-state → folio gallery → threshold in-shell → settings sections → evidence re-baseline). Dead code removed (`PageTabs`, `HomeJourneyRail`). Starfield scroll owner fixed to `[data-route-field]`. Design ledger: `docs/ui/2026-09-19-instrument-shell-redesign-ledger.md`.
+- **2026-09-21:** v0.7.1 deployed to production. Supersedes v0.6.3. Bundle budget held (574,865 < 575,000). ReadingActionBar deduplication deferred — inline version stays because shared `ACTION_BTN` constant makes it smaller than the separate component import.
 
-### Closed this session (live)
+### Deployed in v0.7.1
 
-- R-8 / ISC-188 — fresh Access login → `platform-admin` + `admin:analytics`.
-- R-10–R-13 — governed release path + attestation for v0.6.3 (already shipped earlier 2026-09-11).
-- R-14 — corpus browser live behind Access: 53/53, R2 body, Vectorize hits, Folio 25.
-- WitnessRun production path — non-degraded narrator via `selemene-llm-proxy`; D1 `reading_interpretations` incremented.
-- Production `SELEMENE_API_KEY` valid through `/api/selemene/*` (health + engines 200).
+- Instrument-shell redesign: capsule masthead, command palette, URL-driven routing, folio gallery + filters, threshold in-shell, settings sections, view transitions, 3-radius/7-step type scale.
+- TypeSafe Jev integration: phases A-E (client, validation endpoint, quality assessment, interpretation routing, transit significance scoring). 33 Jev-specific tests.
+- Residual cleanup: dead code removal (`PageTabs.tsx`, `HomeJourneyRail.tsx`), Starfield scroll owner bug fix, `FolioFilters.test.ts` added, `ui-home-contracts.test.mjs` PageTabs reference removed.
 
 ### Still open
 
@@ -42,15 +41,16 @@ Logged in `.planning/PROJECT.md` Key Decisions; ISA.md Decisions per iteration.
 - Engine REQ-1/REQ-3 (`daily-panchanga`) — Selemene repo.
 - M2–M7 backlog (landing polish, relationship UI, canonical 723 import, Vectorize write loop, AgentScope, fast-follows).
 - Governance: no branch protection on `main`; production Environment required reviewers = 0.
+- Wire `FolioSkeleton` into `AsyncBoundary` loading state for Folio page.
+- `AsyncBoundary` sweep: `NativeRunDialog`, `EngineStatusPanel`, `PatternSection`, `ChatSheet` boot state.
 
 ## Session Continuity
 
-Last session: 2026-09-11 (admin E2E on production v0.6.3)
-Stopped at: planning spine + ISA/_PROJECT-STATUS refreshed after live proofs.
-Resume file: `docs/operations/2026-09-11-admin-e2e.md`
-Next: M2 landing polish/funnel copy, or R-9 residues (ISC-143/145/146).
+Last session: 2026-09-21 (deploy v0.7.1 + post-deploy verification)
+Stopped at: project status + planning state updated after verified deploy.
+Resume file: `_PROJECT-STATUS.md`
+Next: R-9 residues (ISC-143/145/146), M2 landing polish/funnel copy, FolioSkeleton wiring, AsyncBoundary sweep.
 
 ### M2 landing (local → deploy, 2026-09-11)
 
 In-repo Motionsites craft rewrite of `src/landing/*` (static, no hydrate). Ledger: `docs/ui/2026-09-11-m2-landing-design-ledger.md`. Evidence: `docs/ui/evidence/2026-09-11-m2-landing/`.
-
