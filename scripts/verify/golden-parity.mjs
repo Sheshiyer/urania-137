@@ -20,9 +20,10 @@
  *   # 4. PROBE contract shapes only (no fixtures), e.g. engine capabilities:
  *   node scripts/verify/golden-parity.mjs --probe --base http://localhost:8788
  *
- * VERIFY also runs the CONTRACT_PROBES. They assert response shape rather than
- * bytes (capability availability is live state); a 404 is reported as SKIP so a
- * pre-capability deployment does not fail the corpus.
+ * CONTRACT_PROBES run ONLY under --probe (never in --verify, whose replay stub
+ * has no fixture for them). They assert response shape rather than bytes
+ * (capability availability is live state); a 404 is reported as SKIP so a
+ * pre-capability deployment does not fail the probe.
  *
  * Seeds use FIXED dates/birth data so captures are comparable across runs.
  * VERIFY asserts, per seed: equal status, equal content-type, byte-identical
@@ -208,12 +209,10 @@ const main = async () => {
     rows.push({ name: seed.name, ok, status: r.status, bytes: r.body.length, ttfbMs: Math.round(r.tFirst ?? -1), totalMs: Math.round(r.tTotal), streamed, diffs })
     console.log(`  ${ok ? 'PASS' : 'FAIL'}  ${seed.name.padEnd(22)} ${r.status} · ${r.body.length}B · ttfb ${Math.round(r.tFirst ?? -1)}ms / total ${Math.round(r.tTotal)}ms ${streamed ? '· incremental' : '· single-shot'}${diffs.length ? `\n      ${diffs.join('\n      ')}` : ''}`)
   }
-  const probeFailed = await runContractProbes()
-  const report = { verifiedAt: new Date().toISOString(), base: TARGET, fixtures: FIXTURES, seeds: rows, differences: failed, contractProbeFailures: probeFailed }
+  const report = { verifiedAt: new Date().toISOString(), base: TARGET, fixtures: FIXTURES, seeds: rows, differences: failed }
   writeFileSync(join(FIXTURES, 'diff-report.json'), JSON.stringify(report, null, 2))
   console.log(`\nGolden parity: ${SEEDS.length - failed}/${SEEDS.length} seeds identical (status + content-type + body bytes) · diff report → ${join(FIXTURES, 'diff-report.json')}`)
-  if (probeFailed) console.log(`Contract probes: ${probeFailed} failing`)
-  if (failed || probeFailed) { console.log('Golden parity: FAIL'); process.exit(1) }
+  if (failed) { console.log('Golden parity: FAIL'); process.exit(1) }
   console.log('Golden parity: PASS (0 differences)')
 }
 main()

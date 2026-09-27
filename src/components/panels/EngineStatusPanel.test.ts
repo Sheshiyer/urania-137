@@ -100,10 +100,17 @@ describe('EngineStatusPanel', () => {
       }),
     )
 
-    expect(html).toMatch(/bg-emerald" role="img" aria-label="available"/)
-    expect(html).toMatch(/bg-terracotta" role="img" aria-label="degraded"/)
+    // Scope each assertion to that engine's roster <li> so the health and
+    // infrastructure dots (also emerald) cannot satisfy it.
+    const rosterRow = (id: string) => {
+      const row = html.split('<li').find((chunk) => chunk.includes(`>${id}</span>`))
+      expect(row, `roster row for ${id}`).toBeDefined()
+      return row as string
+    }
+    expect(rosterRow('tarot')).toContain('bg-emerald" role="img" aria-label="available"')
+    expect(rosterRow('raaga')).toContain('bg-terracotta" role="img" aria-label="degraded"')
     // numerology has no capability row, so it is `declared` (neutral) even
     // though bridge readiness reports it healthy.
-    expect(html).toMatch(/bg-silver\/40" role="img" aria-label="unknown"/)
+    expect(rosterRow('numerology')).toContain('bg-silver/40" role="img" aria-label="unknown"')
   })
 })
