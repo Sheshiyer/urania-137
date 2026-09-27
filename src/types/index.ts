@@ -77,6 +77,33 @@ export interface BirthData {
 export interface EngineResult {
   engine_id: string
   result: Record<string, unknown>
+  /** Contract-v1 provenance; absent on pre-capability deployments. */
+  provenance?: EngineProvenance
+}
+
+export type CapabilityAvailability = 'declared' | 'available' | 'degraded' | 'unavailable'
+export type RuntimeKind = 'native' | 'typescript' | 'python' | 'database-conditional' | 'composed'
+
+export interface EngineProvenance {
+  runtime_kind: RuntimeKind
+  implementation_version: string
+  cached: boolean
+  fallback_used: boolean
+  backend_id?: string
+  provider_id?: string
+  confidence?: number
+}
+
+/** `GET /api/v1/engines/capabilities` row (contract v1). */
+export interface EngineCapability {
+  contract_version: 'v1'
+  engine_id: string
+  display_name: string
+  availability: CapabilityAvailability
+  runtime_kind: RuntimeKind
+  dependencies: string[]
+  required_phase?: number
+  implementation_version?: string
 }
 
 /** `POST /api/v1/workflows/{id}` */
@@ -281,6 +308,7 @@ export interface EngineStatus {
   health: SelemeneHealth | null
   ready: SelemeneReady | null
   engines: string[]
+  capabilities: EngineCapability[]
   loading: boolean
   error: string | null
 }
