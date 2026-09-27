@@ -48,6 +48,7 @@ const status: EngineStatus = {
     overall_status: 'ready',
   },
   engines: canonicalEngineIds,
+  capabilities: [],
   loading: false,
   error: null,
 }
@@ -82,5 +83,27 @@ describe('EngineStatusPanel', () => {
     expect(html).toContain('operator-status-roster')
     expect(html.match(/<li/g)).toHaveLength(canonicalEngineIds.length)
     canonicalEngineIds.forEach((engineId) => expect(html).toContain(engineId))
+  })
+
+  it('renders contract-v1 capability availability, with degraded in the unavailable style', () => {
+    const html = renderToStaticMarkup(
+      createElement(EngineStatusPanel, {
+        child: { id: 'tarot', label: 'Tarot', run: { kind: 'engine', engineId: 'tarot' } },
+        status: {
+          ...status,
+          engines: ['tarot', 'raaga', 'numerology'],
+          capabilities: [
+            { contract_version: 'v1', engine_id: 'tarot', display_name: 'Tarot', availability: 'available', runtime_kind: 'typescript', dependencies: [] },
+            { contract_version: 'v1', engine_id: 'raaga', display_name: 'Raaga', availability: 'degraded', runtime_kind: 'python', dependencies: [] },
+          ],
+        },
+      }),
+    )
+
+    expect(html).toMatch(/bg-emerald" role="img" aria-label="available"/)
+    expect(html).toMatch(/bg-terracotta" role="img" aria-label="degraded"/)
+    // numerology has no capability row, so it is `declared` (neutral) even
+    // though bridge readiness reports it healthy.
+    expect(html).toMatch(/bg-silver\/40" role="img" aria-label="unknown"/)
   })
 })
