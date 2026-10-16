@@ -17,6 +17,14 @@
  *   node scripts/verify/golden-parity.mjs --export /tmp/p2-fixtures \
  *     --fixtures scripts/verify/fixtures/golden
  *
+ *   # 4. PROBE contract shapes only (no fixtures), e.g. engine capabilities:
+ *   node scripts/verify/golden-parity.mjs --probe --base http://localhost:8788
+ *
+ * CONTRACT_PROBES run ONLY under --probe (never in --verify, whose replay stub
+ * has no fixture for them). They assert response shape rather than bytes
+ * (capability availability is live state); a 404 is reported as SKIP so a
+ * pre-capability deployment does not fail the probe.
+ *
  * Seeds use FIXED dates/birth data so captures are comparable across runs.
  * VERIFY asserts, per seed: equal status, equal content-type, byte-identical
  * reconstructed body, and incremental delivery (first byte before stream end).
@@ -32,6 +40,7 @@ const arg = (name, dflt = undefined) => {
 }
 const CAPTURE = process.argv.includes('--capture')
 const VERIFY = process.argv.includes('--verify')
+const PROBE = process.argv.includes('--probe')
 const TARGET = (arg('target') || arg('base') || 'http://localhost:8788').replace(/\/+$/, '')
 const FIXTURES = arg('fixtures', 'scripts/verify/fixtures/golden')
 
@@ -65,6 +74,42 @@ const SEEDS = [
   },
 ]
 
+/**
+ * Shape-asserted contract probes (not byte-compared). Sits next to the
+ * `engines-list` seed: `/api/v1/engines/capabilities` must return contract-v1 rows.
+ */
+const CONTRACT_PROBES = [
+  {
+    name: 'engines-capabilities', method: 'GET', path: '/api/v1/engines/capabilities',
+    check: (body) => {
+      if (!Array.isArray(body?.capabilities)) return ['body.capabilities is not an array']
+      return body.capabilities
+        .map((row, i) => (row?.contract_version === 'v1' ? null : `capabilities[${i}] (${row?.engine_id ?? '?'}) contract_version=${JSON.stringify(row?.contract_version)} != "v1"`))
+        .filter(Boolean)
+    },
+  },
+]
+
+/** Run CONTRACT_PROBES through the Worker path; returns the failure count. */
+const runContractProbes = async () => {
+  let failed = 0
+  for (const probe of CONTRACT_PROBES) {
+    const r = await timedFetch(`${TARGET}/api/selemene${probe.path}`, probe, '')
+    if (r.status === 404) {
+      console.log(`  SKIP  ${probe.name.padEnd(22)} 404 · endpoint not deployed (pre-capability)`)
+      continue
+    }
+    let problems
+    if (r.status < 200 || r.status >= 300) problems = [`status ${r.status}`]
+    else {
+      try { problems = probe.check(JSON.parse(r.body)) } catch (e) { problems = [`invalid JSON: ${e.message}`] }
+    }
+    if (problems.length) failed++
+    console.log(`  ${problems.length ? 'FAIL' : 'PASS'}  ${probe.name.padEnd(22)} ${r.status} · ${r.body.length}B · contract probe${problems.length ? `\n      ${problems.join('\n      ')}` : ''}`)
+  }
+  return failed
+}
+
 const keyFor = (method, path, rawBody) =>
   createHash('sha256').update(`${method} ${path}\n${rawBody}`).digest('hex')
 const sha = (s) => createHash('sha256').update(s).digest('hex')
@@ -94,8 +139,13 @@ const timedFetch = async (url, seed, rawBody) => {
 
 const main = async () => {
   const EXPORT_FROM = arg('export')
+  if (PROBE) {
+    const probeFailed = await runContractProbes()
+    console.log(`\nContract probes: ${probeFailed ? 'FAIL' : 'PASS'}`)
+    process.exit(probeFailed ? 1 : 0)
+  }
   if (!EXPORT_FROM && CAPTURE === VERIFY) {
-    console.error('usage: golden-parity.mjs (--capture --target <base> | --verify --base <worker> | --export <sessionDir>) [--fixtures <dir>]')
+    console.error('usage: golden-parity.mjs (--capture --target <base> | --verify --base <worker> | --export <sessionDir> | --probe --base <worker>) [--fixtures <dir>]')
     process.exit(2)
   }
   mkdirSync(FIXTURES, { recursive: true })
