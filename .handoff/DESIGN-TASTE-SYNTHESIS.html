@@ -1,0 +1,757 @@
+<title>Urania 137 Taste</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --void: #070B1D;
+    --surface: #0E1428;
+    --surface-raised: #141A30;
+    --parchment: #F0EDE3;
+    --silver: #8A9BA8;
+    --gold: #C5A017;
+    --gold-warm: #E6B84D;
+    --violet: #2D0050;
+    --indigo: #0B50FB;
+    --emerald: #10B5A7;
+    --terracotta: #C65D3B;
+    --text-primary: #F0EDE3;
+    --text-secondary: #C2CBD1;
+    --text-meta: #AEBBC4;
+    --bg: var(--void);
+    --card-bg: var(--surface);
+    --card-border: rgba(197, 160, 23, 0.12);
+    --rule: rgba(197, 160, 23, 0.15);
+  }
+
+  /* Dark-first: this IS the Urania void */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #F5F3EE;
+      --card-bg: #EDEAE3;
+      --card-border: rgba(197, 160, 23, 0.2);
+      --text-primary: #070B1D;
+      --text-secondary: #3A4250;
+      --text-meta: #5A6570;
+      --rule: rgba(197, 160, 23, 0.25);
+      --surface-raised: #E5E2DB;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #F5F3EE;
+    --card-bg: #EDEAE3;
+    --card-border: rgba(197, 160, 23, 0.2);
+    --text-primary: #070B1D;
+    --text-secondary: #3A4250;
+    --text-meta: #5A6570;
+    --rule: rgba(197, 160, 23, 0.25);
+    --surface-raised: #E5E2DB;
+  }
+  :root[data-theme="dark"] {
+    --bg: var(--void);
+    --card-bg: var(--surface);
+    --card-border: rgba(197, 160, 23, 0.12);
+    --text-primary: #F0EDE3;
+    --text-secondary: #C2CBD1;
+    --text-meta: #AEBBC4;
+    --rule: rgba(197, 160, 23, 0.15);
+    --surface-raised: #141A30;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.7;
+    padding-inline: 24px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    color: var(--gold);
+    margin-block: 3rem 0.5rem;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+    color: var(--text-meta);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-block: 0 3rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+
+  h2 {
+    font-size: clamp(1.25rem, 3vw, 1.625rem);
+    color: var(--gold);
+    margin-block: 3.5rem 1rem;
+    padding-block-end: 0.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  h3 {
+    font-size: 1.125rem;
+    color: var(--text-primary);
+    margin-block: 2rem 0.75rem;
+  }
+
+  p { margin-block: 0 1rem; color: var(--text-secondary); }
+
+  .gold { color: var(--gold); }
+  .emerald { color: var(--emerald); }
+  .violet-text { color: #7B68EE; }
+
+  /* Token grid */
+  .token-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+    margin-block: 1.5rem;
+  }
+  .token-swatch {
+    aspect-ratio: 2 / 1;
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-end;
+    padding: 8px 10px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .token-swatch span {
+    display: block;
+    line-height: 1.2;
+  }
+  .token-swatch .hex {
+    opacity: 0.7;
+    font-size: 0.65rem;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    margin-top: 2px;
+  }
+
+  /* Moodboard gallery */
+  .moodboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-block: 1.5rem;
+  }
+  .moodboard-card {
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+  }
+  .moodboard-card img {
+    width: 100%;
+    display: block;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  .moodboard-card.square img { aspect-ratio: 1 / 1; }
+  .moodboard-card.portrait img { aspect-ratio: 9 / 16; }
+  .moodboard-card figcaption {
+    padding: 12px 14px;
+    font-size: 0.8rem;
+    color: var(--text-meta);
+  }
+  .moodboard-card figcaption strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+  }
+
+  /* Reference cards */
+  .ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-block: 1.5rem;
+  }
+  .ref-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .ref-card h4 {
+    font-family: 'Cinzel', serif;
+    font-weight: 500;
+    font-size: 1rem;
+    margin: 0 0 8px;
+    color: var(--gold);
+  }
+  .ref-card p {
+    font-size: 0.85rem;
+    margin: 0 0 8px;
+  }
+  .ref-card .match-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(197, 160, 23, 0.12);
+    color: var(--gold);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .ref-card .match-tag.exact {
+    background: rgba(197, 160, 23, 0.22);
+  }
+
+  /* Type specimen */
+  .type-specimen {
+    margin-block: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .type-row {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .type-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-meta);
+    width: 100px;
+    flex-shrink: 0;
+  }
+  .type-display {
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    color: var(--text-primary);
+    letter-spacing: 0.08em;
+  }
+  .type-body {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.0625rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+  .type-mono {
+    font-family: 'SF Mono', 'Menlo', monospace;
+    font-size: 0.875rem;
+    color: var(--emerald);
+  }
+
+  /* Motion spec */
+  .motion-spec {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-block: 1.5rem;
+  }
+  .motion-item {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .motion-item .value {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .motion-item .label {
+    font-size: 0.75rem;
+    color: var(--text-meta);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Direction section */
+  .direction-block {
+    background: var(--surface-raised);
+    border: 1px solid var(--card-border);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 10px 10px 0;
+    padding: 24px;
+    margin-block: 1.5rem;
+  }
+  .direction-block h4 {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    color: var(--gold);
+    margin: 0 0 8px;
+  }
+  .direction-block p {
+    font-size: 0.9rem;
+    margin: 0 0 8px;
+  }
+  .direction-block ul {
+    margin: 8px 0;
+    padding-left: 20px;
+  }
+  .direction-block li {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+
+  /* Constraint list */
+  .constraint-list {
+    list-style: none;
+    padding: 0;
+    margin-block: 1rem;
+  }
+  .constraint-list li {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(138, 155, 168, 0.08);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .constraint-list li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+
+  /* Layer diagram */
+  .layer-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-block: 1.5rem;
+    max-width: 600px;
+  }
+  .layer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+  }
+  .layer .name {
+    font-weight: 600;
+    min-width: 140px;
+    color: var(--text-primary);
+  }
+  .layer .desc {
+    color: var(--text-meta);
+    font-size: 0.8rem;
+  }
+  .layer-webgl { background: rgba(16, 181, 167, 0.08); border-left: 3px solid var(--emerald); }
+  .layer-html { background: rgba(197, 160, 23, 0.06); border-left: 3px solid var(--gold); }
+  .layer-motion { background: rgba(45, 0, 80, 0.15); border-left: 3px solid #7B68EE; }
+  .layer-data { background: rgba(11, 80, 251, 0.06); border-left: 3px solid var(--indigo); }
+
+  /* Banned vocab */
+  .banned {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-block: 1rem;
+  }
+  .banned span {
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(198, 93, 59, 0.12);
+    color: var(--terracotta);
+    text-decoration: line-through;
+    font-weight: 500;
+  }
+
+  /* Room accent map */
+  .room-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin-block: 1rem;
+  }
+  .room-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    border: 1px solid var(--card-border);
+  }
+  .room-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Footer */
+  .doc-footer {
+    margin-block: 4rem 2rem;
+    padding-block-start: 1.5rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.75rem;
+    color: var(--text-meta);
+    text-align: center;
+  }
+
+  @media (max-width: 500px) {
+    .type-row { flex-direction: column; gap: 4px; }
+    .type-label { width: auto; }
+    .moodboard-grid { grid-template-columns: 1fr; }
+    .ref-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<h1>Urania 137 Taste</h1>
+<p class="subtitle">Design direction &middot; Visual references &middot; 3D interactive concept</p>
+
+<p>This document synthesizes the design taste-building pass for the Urania 137 landing redesign: brand DNA from the existing token system, visual moodboard images, Motionsites reference patterns, and the new procedural 3D WebGL direction. It serves as the single design brief before implementation begins.</p>
+
+<h2>I. Brand DNA</h2>
+
+<h3>Color Tokens</h3>
+<p>The instrument's palette is celestial-dark: Void Black as the infinite field, Sacred Gold as structure (never fill), and accent colors mapped to the 7 rooms. No light mode on the landing.</p>
+
+<div class="token-grid">
+  <div class="token-swatch" style="background:#070B1D;color:#F0EDE3"><span>Void Black<span class="hex">#070B1D</span></span></div>
+  <div class="token-swatch" style="background:#0E1428;color:#F0EDE3"><span>Surface<span class="hex">#0E1428</span></span></div>
+  <div class="token-swatch" style="background:#F0EDE3;color:#070B1D"><span>Parchment<span class="hex">#F0EDE3</span></span></div>
+  <div class="token-swatch" style="background:#C5A017;color:#070B1D"><span>Sacred Gold<span class="hex">#C5A017</span></span></div>
+  <div class="token-swatch" style="background:#8A9BA8;color:#070B1D"><span>Silver<span class="hex">#8A9BA8</span></span></div>
+  <div class="token-swatch" style="background:#2D0050;color:#F0EDE3"><span>Witness Violet<span class="hex">#2D0050</span></span></div>
+  <div class="token-swatch" style="background:#0B50FB;color:#F0EDE3"><span>Flow Indigo<span class="hex">#0B50FB</span></span></div>
+  <div class="token-swatch" style="background:#10B5A7;color:#070B1D"><span>Coherence Emerald<span class="hex">#10B5A7</span></span></div>
+  <div class="token-swatch" style="background:#C65D3B;color:#F0EDE3"><span>Terracotta<span class="hex">#C65D3B</span></span></div>
+</div>
+
+<h3>Typography</h3>
+<div class="type-specimen">
+  <div class="type-row">
+    <span class="type-label">Display</span>
+    <span class="type-display">URANIA 137</span>
+  </div>
+  <div class="type-row">
+    <span class="type-label">Serif</span>
+    <span style="font-family:'Cinzel',serif;font-size:1.25rem;letter-spacing:0.06em;color:var(--text-primary)">See the pattern. Keep the authority.</span>
+  </div>
+  <div class="type-row">
+    <span class="type-label">Body</span>
+    <span class="type-body">A graph-first reading field: conversation as threshold, Selemene as computation, Folio as the attributable record.</span>
+  </div>
+  <div class="type-row">
+    <span class="type-label">Data</span>
+    <span class="type-mono">7 rooms &middot; 13 engines &middot; 6 workflows &middot; 22 capabilities</span>
+  </div>
+</div>
+
+<p>Landing typestack: <strong>Cinzel</strong> (serif display &amp; headings) + <strong>Satoshi</strong> (sans body). App adds <strong>Panchang</strong> (display) and <strong>SF Mono</strong> (data). The serif carries engraved-instrument authority; the sans carries readability.</p>
+
+<h3>Motion Spec</h3>
+<div class="motion-spec">
+  <div class="motion-item">
+    <div class="value">out-expo</div>
+    <div class="label">Easing curve</div>
+  </div>
+  <div class="motion-item">
+    <div class="value">1000ms</div>
+    <div class="label">Reveal duration</div>
+  </div>
+  <div class="motion-item">
+    <div class="value">300ms</div>
+    <div class="label">Snap / interact</div>
+  </div>
+  <div class="motion-item">
+    <div class="value">0.19, 1, 0.22, 1</div>
+    <div class="label">cubic-bezier</div>
+  </div>
+</div>
+<p>Single easing for the entire instrument. This is an <em>exact match</em> with the Motionsites <strong>Ancient Oath</strong> template's motion curve &mdash; the strongest signal from the reference library.</p>
+
+<h3>Room Accent Map</h3>
+<div class="room-map">
+  <div class="room-chip"><div class="room-dot" style="background:#C5A017"></div><span>Birth Witness &middot; Gold</span></div>
+  <div class="room-chip"><div class="room-dot" style="background:#2D0050"></div><span>Union Mirror &middot; Violet</span></div>
+  <div class="room-chip"><div class="room-dot" style="background:#10B5A7"></div><span>Sky Weather &middot; Cyan</span></div>
+  <div class="room-chip"><div class="room-dot" style="background:#E6B84D"></div><span>Noesis Reading &middot; Amber</span></div>
+  <div class="room-chip"><div class="room-dot" style="background:#10B5A7"></div><span>Engine Status &middot; Cyan</span></div>
+  <div class="room-chip"><div class="room-dot" style="background:#C5A017"></div><span>Folio Archive &middot; Gold</span></div>
+  <div class="room-chip"><div class="room-dot" style="background:#2D0050"></div><span>Bridge Query &middot; Violet</span></div>
+</div>
+
+<h3>Brand Constraints</h3>
+<ul class="constraint-list">
+  <li>No light mode &mdash; the void IS the instrument</li>
+  <li>Gold is structure only &mdash; never fill, never background</li>
+  <li>Tokens-only hex &mdash; no ad-hoc colors outside tokens.ts</li>
+  <li>Graph-first navigation &mdash; the constellation IS the interface</li>
+  <li>Witness not seer &mdash; the system observes, does not predict</li>
+  <li>Folio not archive &mdash; the record is attributable, not stored</li>
+  <li>14 sacred geometry glyphs &mdash; each room maps to one</li>
+</ul>
+
+<p style="font-size:0.85rem"><strong>Banned vocabulary:</strong></p>
+<div class="banned">
+  <span>journey</span>
+  <span>path</span>
+  <span>healing</span>
+  <span>manifesting</span>
+  <span>AI as a feature</span>
+  <span>artificial intelligence</span>
+  <span>Archive</span>
+  <span>Library</span>
+</div>
+
+<h2>II. Visual Moodboard</h2>
+<p>Six generated images capturing different facets of the Urania aesthetic &mdash; celestial UI density, sacred geometry, glassmorphism, and the void-field instrument character.</p>
+
+<div class="moodboard-grid">
+  <figure class="moodboard-card">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_30z4Oh7xYDkggUGOx5DwahUHD2P/hf_20260921_204620_d91b68c9-5ce6-4096-8a28-4bbcf1a94486.png" alt="Constellation UI dashboard">
+    <figcaption>
+      <strong>Constellation UI</strong>
+      Graph-first navigation with orbital node rings, gold wireframe structure on void. Target information density for the landing's room overview.
+    </figcaption>
+  </figure>
+  <figure class="moodboard-card">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_30z4Oh7xYDkggUGOx5DwahUHD2P/hf_20260921_204620_e247b495-b2d3-4d1c-b82a-4adac2bab3ce.png" alt="Hero astrolabe">
+    <figcaption>
+      <strong>Hero Astrolabe</strong>
+      Central astrolabe instrument with concentric orbital plates, gold engraving on deep void. The hero section's geometric anchor.
+    </figcaption>
+  </figure>
+  <figure class="moodboard-card square">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_30z4Oh7xYDkggUGOx5DwahUHD2P/hf_20260921_204621_5c96e6b7-a162-4e20-9dce-0503153e9dbf.png" alt="Sacred geometry pattern">
+    <figcaption>
+      <strong>Sacred Geometry</strong>
+      Flower-of-life, metatron's cube, and seed-of-life overlays at low opacity. The ambient texture layer beneath content.
+    </figcaption>
+  </figure>
+  <figure class="moodboard-card">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_30z4Oh7xYDkggUGOx5DwahUHD2P/hf_20260921_204621_49c93635-6b0a-4076-91bf-f43db17a58a3.png" alt="Glassmorphism cards">
+    <figcaption>
+      <strong>Glassmorphism Cards</strong>
+      Liquid-glass panels with backdrop-blur over celestial background. Room cards and engine roster treatment.
+    </figcaption>
+  </figure>
+  <figure class="moodboard-card portrait">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_30z4Oh7xYDkggUGOx5DwahUHD2P/hf_20260921_204622_af13de2a-04a2-4b5f-aedd-39615f1799ed.png" alt="Scroll section mobile">
+    <figcaption>
+      <strong>Scroll Section (Mobile)</strong>
+      Vertical scroll-driven reveal with staggered text and depth parallax. Mobile-first section pacing reference.
+    </figcaption>
+  </figure>
+  <figure class="moodboard-card">
+    <img src="https://d8j0ntlcm91z4.cloudfront.net/user_30z4Oh7xYDkggUGOx5DwahUHD2P/hf_20260921_204620_0da8597b-24d2-49f2-8d2d-872fbb692ea6.png" alt="Footer with glyphs">
+    <figcaption>
+      <strong>Footer Glyphs</strong>
+      Sacred geometry glyph system as navigation anchors. Gold line-art on void with subtle ambient glow.
+    </figcaption>
+  </figure>
+</div>
+
+<h2>III. Motionsites References</h2>
+<p>Seven premium Motionsites templates analyzed for pattern affinity with Urania's brand. The strongest signal: <strong>Ancient Oath's easing curve is identical to Urania's motion token</strong>.</p>
+
+<div class="ref-grid">
+  <div class="ref-card">
+    <h4>Ancient Oath</h4>
+    <p>GSAP-driven parallax with multiple depth planes, arch-clipped chapter sections, scroll-triggered reveals. Dark temple aesthetic with gold structural accents.</p>
+    <p style="font-size:0.8rem;color:var(--gold)">Easing: cubic-bezier(0.19, 1, 0.22, 1) &mdash; out-expo</p>
+    <span class="match-tag exact">Exact easing match</span>
+    <span class="match-tag">Dark palette</span>
+    <span class="match-tag">Parallax depth</span>
+  </div>
+  <div class="ref-card">
+    <h4>Liquid Glass Features</h4>
+    <p>Glassmorphism CSS with backdrop-filter blur, alternating chess layout (content left/right). Transparency-over-depth card treatment.</p>
+    <span class="match-tag">Glass cards</span>
+    <span class="match-tag">Chess layout</span>
+  </div>
+  <div class="ref-card">
+    <h4>Dreamcore Landing</h4>
+    <p>Curtain reveal on scroll, portal zoom-through transition, ferris-wheel slider for showcasing. Immersive scroll-scrubbed parallax throughout.</p>
+    <span class="match-tag">Portal transition</span>
+    <span class="match-tag">Scroll-driven</span>
+  </div>
+  <div class="ref-card">
+    <h4>Monolithic / ORBIS R8</h4>
+    <p>Scroll-scrubbed video with WebCodecs, polarity detection (light/dark auto-switching), reveal wipes, spec-card reveals. Technical product showcase.</p>
+    <span class="match-tag">Video scroll</span>
+    <span class="match-tag">Spec cards</span>
+  </div>
+  <div class="ref-card">
+    <h4>Celestix</h4>
+    <p>Space/cosmic theme with copper-metallic accents on black. Parallax star field, orbital motion, constellation line patterns.</p>
+    <span class="match-tag">Cosmic aesthetic</span>
+    <span class="match-tag">Metallic accents</span>
+  </div>
+  <div class="ref-card">
+    <h4>Cinematic Landing</h4>
+    <p>GSAP ScrollTrigger throughout, SplitText character-level reveals, dramatic section transitions. Cinematic pacing with theatrical timing.</p>
+    <span class="match-tag">Char reveals</span>
+    <span class="match-tag">GSAP scroll</span>
+  </div>
+</div>
+
+<h2>IV. 3D WebGL Interactive Direction</h2>
+<p>The landing shifts from a scroll-driven 2D page to an <strong>interactive 3D WebGL scene</strong> with Urania's sacred geometry narrative rendered as an explorable space. Clickable room/engine components overlay the 3D canvas as HTML/CSS elements.</p>
+
+<div class="direction-block">
+  <h4>The Concept</h4>
+  <p>A procedural Three.js scene generates Urania's celestial instrument at runtime &mdash; no external 3D models. The constellation graph becomes a navigable 3D space: orbital rings trace the 7 rooms, astrolabe plates rotate at the center, flower-of-life sacred geometry pulses as ambient structure, and beaded lattice connects the engine nodes.</p>
+  <p>The viewer orbits this space freely (OrbitControls). Clickable HTML/CSS components &mdash; room cards, engine panels, workflow indicators &mdash; are positioned in 3D space using CSS3DRenderer or projected screen coordinates, creating a hybrid WebGL + DOM interface.</p>
+</div>
+
+<h3>Architecture: The Split Render</h3>
+<div class="layer-stack">
+  <div class="layer layer-webgl">
+    <span class="name">WebGL Canvas</span>
+    <span class="desc">Three.js procedural geometry &mdash; orbital rings, astrolabe, sacred geometry, starfield, nebulae, particle systems</span>
+  </div>
+  <div class="layer layer-html">
+    <span class="name">HTML Overlay</span>
+    <span class="desc">Room cards, engine panels, workflow roster, navigation, copy &mdash; positioned via CSS3DRenderer or screen projection</span>
+  </div>
+  <div class="layer layer-motion">
+    <span class="name">Motion Layer</span>
+    <span class="desc">GSAP scroll-driven transitions between views, explode/reassemble animations, camera path sequences</span>
+  </div>
+  <div class="layer layer-data">
+    <span class="name">Data Layer</span>
+    <span class="desc">selemeneNodes.ts &rarr; landingData.ts &rarr; landingCopy.ts &rarr; 3D scene graph (unchanged data chain)</span>
+  </div>
+</div>
+
+<h3>Procedural Geometry Inventory</h3>
+<div class="ref-grid">
+  <div class="ref-card">
+    <h4>Constellation Ring</h4>
+    <p>7 room nodes positioned on a great circle. Each node emits its room-color glow. Connecting lines form the constellation pattern. Slow 120s rotation.</p>
+    <span class="match-tag">Existing SVG &rarr; 3D</span>
+  </div>
+  <div class="ref-card">
+    <h4>Astrolabe Core</h4>
+    <p>Concentric rotating plates at the scene center &mdash; the Urania instrument. Gold wireframe construction with engraved detail rings. The app's OrnateCore aesthetic translated to 3D.</p>
+    <span class="match-tag">New procedural</span>
+  </div>
+  <div class="ref-card">
+    <h4>Sacred Geometry Field</h4>
+    <p>Flower-of-life, seed-of-life, and metatron's cube rendered as transparent wireframe structures floating in the void. Subtle pulse animation.</p>
+    <span class="match-tag">Existing SVG &rarr; 3D</span>
+  </div>
+  <div class="ref-card">
+    <h4>Starfield + Nebulae</h4>
+    <p>Particle system starfield with volumetric nebula clouds in room accent colors. Parallax depth as the camera moves. The void made tangible.</p>
+    <span class="match-tag">New procedural</span>
+  </div>
+  <div class="ref-card">
+    <h4>Beaded Lattice</h4>
+    <p>Connection lines between engine nodes rendered as beaded chains &mdash; small spheres along spline paths. Gold with room-color tinting at endpoints.</p>
+    <span class="match-tag">Existing SVG &rarr; 3D</span>
+  </div>
+  <div class="ref-card">
+    <h4>Compass Stars</h4>
+    <p>Cardinal direction markers as 3D compass star glyphs. Orientation anchors that ground the viewer in the celestial space.</p>
+    <span class="match-tag">Existing SVG &rarr; 3D</span>
+  </div>
+</div>
+
+<h3>Interaction Model</h3>
+<div class="direction-block">
+  <h4>Camera + Navigation</h4>
+  <ul>
+    <li><strong>Orbit</strong> &mdash; Free orbital camera via OrbitControls (damped, bounded). Default view: slightly above, looking down at the constellation plane.</li>
+    <li><strong>Focus</strong> &mdash; Click a room node to fly the camera toward it, revealing its engine/workflow children in an exploded view. GSAP-driven camera path with out-expo easing.</li>
+    <li><strong>Explode/Reassemble</strong> &mdash; Room detail view spreads child nodes outward; returning to overview reassembles the constellation. Inspired by the Temple of Heaven reference.</li>
+    <li><strong>Scroll Integration</strong> &mdash; On mobile or when the user scrolls rather than orbits, the camera follows a predefined path through the scene &mdash; a guided tour through rooms in sequence.</li>
+  </ul>
+</div>
+
+<div class="direction-block">
+  <h4>Clickable Components (HTML Overlay)</h4>
+  <ul>
+    <li><strong>Room Cards</strong> &mdash; Liquid-glass panels that appear when a room node is focused. Show room label, epithet, engine/workflow counts, and a "learn more" CTA.</li>
+    <li><strong>Engine Panels</strong> &mdash; Compact cards showing engine name, substrate tag (Rust/TypeScript), and one-line description. Visible in room detail view.</li>
+    <li><strong>Hero Copy</strong> &mdash; Fixed overlay for the landing headline, brand line, and primary CTA. Fades as the user begins to orbit.</li>
+    <li><strong>Navigation HUD</strong> &mdash; Minimal fixed nav with room pills that double as camera-target buttons.</li>
+    <li><strong>Invitation Panel</strong> &mdash; The threshold invitation as a centered glass panel at the "exit" of the guided tour.</li>
+  </ul>
+</div>
+
+<h3>Mobile Fallback</h3>
+<p>Mobile devices that cannot sustain 60fps WebGL get a <strong>scroll-driven 2D experience</strong> using the existing motion system (GSAP + IntersectionObserver). The ConstellationGraph SVG replaces the 3D scene. Feature detection via <code>WebGLRenderingContext</code> availability + device memory/GPU tier.</p>
+
+<h2>V. Unified Design Direction</h2>
+
+<div class="direction-block">
+  <h4>The Thesis</h4>
+  <p>Urania 137's landing is a <strong>celestial instrument you can explore</strong> &mdash; not a page you scroll through. The constellation graph (7 rooms, 13 engines, 6 workflows) becomes a navigable 3D space where every node is a real capability. Clickable glass panels overlay the procedural geometry, bridging the abstract beauty of the sacred geometry with the concrete utility of the reading field.</p>
+  <p>The visitor's first experience is <em>witnessing the instrument assemble itself</em> &mdash; procedural geometry building from void to constellation &mdash; before they can orbit it, focus on rooms, and eventually cross the threshold into the protected app.</p>
+</div>
+
+<h3>Key Decisions</h3>
+<ul class="constraint-list">
+  <li><strong>Three.js + CSS3DRenderer</strong> for the hybrid WebGL + DOM approach. R3F (React Three Fiber) for React integration.</li>
+  <li><strong>GSAP ScrollTrigger</strong> for camera path sequences and scroll-to-orbit handoff on desktop.</li>
+  <li><strong>Procedural everything</strong> &mdash; no external models. All geometry generated from code: torus knots, parametric curves, instanced meshes.</li>
+  <li><strong>Data-driven scene graph</strong> &mdash; room positions, colors, and engine counts derived from selemeneNodes.ts. Same data chain, 3D output.</li>
+  <li><strong>Existing motion token</strong> &mdash; cubic-bezier(0.19, 1, 0.22, 1) drives all GSAP camera animations. One easing for the whole instrument.</li>
+  <li><strong>Progressive enhancement</strong> &mdash; 3D for capable devices, scroll-driven SVG fallback for mobile/low-end. Bundle budget: Three.js core ~150KB gzipped, offset by removing the Golden Portal template weight.</li>
+  <li><strong>Assembly entrance</strong> &mdash; initial load plays a 3-4 second build sequence: void &rarr; starfield &rarr; orbital rings &rarr; room nodes &rarr; constellation lines &rarr; astrolabe core. Then hero copy fades in.</li>
+</ul>
+
+<h3>Visual Priorities</h3>
+<ol style="padding-left:20px;color:var(--text-secondary);font-size:0.9rem">
+  <li style="margin-bottom:8px"><strong>Gold wireframe structure on void</strong> &mdash; the primary visual language. No solid fills, no gradients. Gold outlines define every geometric form.</li>
+  <li style="margin-bottom:8px"><strong>Room-color nebula accents</strong> &mdash; volumetric glow in each room's accent color creates spatial depth and identity without overwhelming the gold wireframe.</li>
+  <li style="margin-bottom:8px"><strong>Liquid-glass HTML panels</strong> &mdash; backdrop-blur glass cards for all readable content. The existing liquid-glass CSS class, elevated to 3D space.</li>
+  <li style="margin-bottom:8px"><strong>Sacred geometry as ambient structure</strong> &mdash; flower-of-life, metatron's cube as subtle transparent planes. Always present, never the focus.</li>
+  <li style="margin-bottom:8px"><strong>Cinzel headlines, Satoshi body</strong> &mdash; the type stack is unchanged. Engraved serif authority for titles, clean sans for utility.</li>
+</ol>
+
+<h3>What Carries Forward from the Approved Plan</h3>
+<ul class="constraint-list">
+  <li>All 5 routes preserved: /, /instrument, /lenses, /principles, /enter</li>
+  <li>Data chain untouched: selemeneNodes &rarr; landingData &rarr; landingCopy &rarr; components</li>
+  <li>Shell (nav + footer) liquid-glass treatment</li>
+  <li>14 easter eggs from the plan (adapted to 3D context)</li>
+  <li>GlyphIcon component port from app</li>
+  <li>RevealCounter, AmbientGlow, SectionSeparator primitives</li>
+  <li>Bundle budget discipline (Three.js replaces Golden Portal template weight)</li>
+  <li>Orphaned landing.css deletion</li>
+  <li>All copy, counts, and room data from landingCopy.ts</li>
+</ul>
+
+<h3>What Changes</h3>
+<ul class="constraint-list">
+  <li>HomePage hero: video background &rarr; interactive Three.js scene</li>
+  <li>Rooms overview: card grid &rarr; explorable 3D constellation with glass overlays</li>
+  <li>Engine roster: flat grid &rarr; engine nodes in room detail view</li>
+  <li>Navigation model: scroll-driven &rarr; orbit + focus + scroll fallback</li>
+  <li>New dependency: three + @react-three/fiber + @react-three/drei</li>
+  <li>ConstellationField (planned 2D SVG) &rarr; ConstellationScene (3D procedural)</li>
+</ul>
+
+<div class="doc-footer">
+  Urania 137 &middot; Tryambakam Noesis &middot; Design Taste Document &middot; 2026-09-21
+</div>
