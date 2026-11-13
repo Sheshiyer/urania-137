@@ -2,7 +2,10 @@ import {
   AssetGenerateRequest,
   AssetGenerateResponse,
   BirthData,
+  CapabilityAvailability,
+  EngineCapability,
   EngineResult,
+  RuntimeKind,
   SelemeneHealth,
   SelemeneReady,
   SelemeneWorkflow,
@@ -71,6 +74,37 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
 export const fetchHealth = () => getJson<SelemeneHealth>('/health')
 export const fetchReady = () => getJson<SelemeneReady>('/health/ready')
 export const fetchEngines = () => getJson<{ engines: string[] }>('/api/v1/engines').then((r) => r.engines)
+const AVAILABILITY: readonly CapabilityAvailability[] = ['declared', 'available', 'degraded', 'unavailable']
+
+/** Anything outside the contract-v1 availability enum is treated as `declared`. */
+export function normalizeAvailability(value: unknown): CapabilityAvailability {
+  return AVAILABILITY.includes(value as CapabilityAvailability) ? (value as CapabilityAvailability) : 'declared'
+}
+
+/**
+ * Contract-v1 engine capabilities. A 404 means the deployment predates the
+ * capability endpoint, so it degrades to an empty list rather than failing.
+ */
+export async function fetchCapabilities(): Promise<EngineCapability[]> {
+  const res = await fetch(`${PROXY_BASE}/api/v1/engines/capabilities`, { headers: { Accept: 'application/json' } })
+  if (res.status === 404) return []
+  if (!res.ok) throw new Error(`capabilities ${res.status}`)
+  const body = (await res.json()) as { capabilities?: unknown[] }
+  return (body.capabilities ?? []).map((raw) => {
+    const row = raw as Record<string, unknown>
+    return {
+      contract_version: 'v1',
+      engine_id: String(row.engine_id),
+      display_name: String(row.display_name ?? row.engine_id),
+      availability: normalizeAvailability(row.availability),
+      runtime_kind: (row.runtime_kind as RuntimeKind) ?? 'native',
+      dependencies: Array.isArray(row.dependencies) ? (row.dependencies as string[]) : [],
+      required_phase: typeof row.required_phase === 'number' ? row.required_phase : undefined,
+      implementation_version: typeof row.implementation_version === 'string' ? row.implementation_version : undefined,
+    }
+  })
+}
+
 export const fetchWorkflows = () => getJson<{ workflows: SelemeneWorkflow[] }>('/api/v1/workflows').then((r) => r.workflows)
 
 /** A workflow's definition — `engine_ids` lets us spot engines it drops silently. */

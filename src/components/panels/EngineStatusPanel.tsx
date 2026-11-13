@@ -1,4 +1,4 @@
-import { EngineStatus, SelemeneChild } from '../../types'
+import { CapabilityAvailability, EngineStatus, SelemeneChild } from '../../types'
 import { OperatorField } from '../readings/OperatorField'
 import { Collapsible } from '../ui/Collapsible'
 
@@ -9,14 +9,16 @@ function fmtUptime(s: number): string {
   return d > 0 ? `${d}d ${h}h` : h > 0 ? `${h}h ${m}m` : `${m}m`
 }
 
-function Dot({ state }: { state: 'available' | 'unavailable' | 'unknown' }) {
+type DotState = 'available' | 'degraded' | 'unavailable' | 'unknown'
+
+function Dot({ state }: { state: DotState }) {
   return (
     <span
       className={[
         'h-1.5 w-1.5 rounded-full',
         state === 'available'
           ? 'bg-emerald'
-          : state === 'unavailable'
+          : state === 'unavailable' || state === 'degraded'
             ? 'bg-terracotta'
             : 'bg-silver/40',
       ].join(' ')}
@@ -26,10 +28,16 @@ function Dot({ state }: { state: 'available' | 'unavailable' | 'unknown' }) {
   )
 }
 
-function availability(value: string): 'available' | 'unavailable' {
+/** Health/infra strings from `/health` and `/health/ready` (not engine rows). */
+function serviceState(value: string): 'available' | 'unavailable' {
   return value === 'ok' || value === 'ready' || value === 'available'
     ? 'available'
     : 'unavailable'
+}
+
+/** Contract-v1 availability → dot. `declared` proves registration, not health. */
+function capabilityDot(value: CapabilityAvailability): DotState {
+  return value === 'declared' ? 'unknown' : value
 }
 
 /**
@@ -38,9 +46,10 @@ function availability(value: string): 'available' | 'unavailable' {
  * maps to a real Selemene engine.
  */
 export function EngineStatusPanel({ child, status }: { child: SelemeneChild | null; status: EngineStatus }) {
-  const { health, ready, engines, loading, error } = status
+  const { health, ready, engines, capabilities, loading, error } = status
   const highlight = child?.run?.kind === 'engine' ? child.run.engineId : undefined
   const healthById = new Map((ready?.bridge_engines ?? []).map((e) => [e.engine_id, e]))
+  const hasCapabilities = capabilities.length > 0
 
   return (
     <OperatorField title="Selemene engine status">
@@ -63,7 +72,7 @@ export function EngineStatusPanel({ child, status }: { child: SelemeneChild | nu
             <div className="min-w-0 rounded-sm border border-gold/20 bg-surface/90 px-4 py-3">
               <dt className="font-display text-xs uppercase tracking-[0.14em] text-gold">Availability</dt>
               <dd className="mt-2 flex min-w-0 items-center gap-2 break-words text-primary">
-                <Dot state={availability(health.status)} />
+                <Dot state={serviceState(health.status)} />
                 {health.status}
               </dd>
             </div>
@@ -95,7 +104,7 @@ export function EngineStatusPanel({ child, status }: { child: SelemeneChild | nu
                 ['bridge', ready.bridge_status],
               ] as const).map(([key, value]) => (
                 <div key={key} className="flex min-w-0 items-start gap-3 rounded-sm border border-gold/20 bg-surface/90 px-3 py-3">
-                  <Dot state={availability(value)} />
+                  <Dot state={serviceState(value)} />
                   <div className="min-w-0">
                     <div className="font-display text-xs uppercase tracking-[0.14em] text-gold">{key}</div>
                     <div className="mt-1 [overflow-wrap:anywhere] font-mono text-sm text-primary">{value}</div>
@@ -112,11 +121,15 @@ export function EngineStatusPanel({ child, status }: { child: SelemeneChild | nu
             <ul className="operator-status-roster grid gap-2">
               {engines.map((id) => {
                 const evidence = healthById.get(id)
-                const state = evidence
-                  ? evidence.healthy
-                    ? 'available'
-                    : 'unavailable'
-                  : 'unknown'
+                // Contract-v1 capability rows are authoritative when served;
+                // pre-capability deployments fall back to bridge readiness.
+                const state: DotState = hasCapabilities
+                  ? capabilityDot(capabilities.find((c) => c.engine_id === id)?.availability ?? 'declared')
+                  : evidence
+                    ? evidence.healthy
+                      ? 'available'
+                      : 'unavailable'
+                    : 'unknown'
                 const selected = id === highlight
                 return (
                   <li
